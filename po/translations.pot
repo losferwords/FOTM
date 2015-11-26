@@ -1,0 +1,2381 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+
+#: public/js/services/arenaService.js:209
+msgid "'s grinder looking for meat!"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:103
+#: public/js/controllers/ArenaController.js:43
+msgid "<p class='tooltip-need-weapon'>Need weapon</p>"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:104
+#: public/js/controllers/ArenaController.js:44
+msgid "<p class='tooltip-spell'>Spell</p>"
+msgstr ""
+
+#: public/js/factories/character.js:654
+msgid "<p><strong>Attack Power</strong> increases your physical damage from weapons and abilities.</p><p>From strength: {{one}}%</p><p>From items: {{two}}%</p><p>Total: {{three}}%</p><p>Damage: {{four}}-{{five}}</p>"
+msgstr ""
+
+#: public/js/factories/character.js:707
+msgid "<p><strong>Block Chance</strong> is a chance to block some damage.</p><p>From strength: {{one}}%</p><p>From items: {{two}}%</p><p>Total: {{three}}%</p><p>{{four}}% damage will be blocked</p><p>Limit: 50%</p>"
+msgstr ""
+
+#: public/js/factories/character.js:737
+msgid "<p><strong>Critical Rating</strong> is a chance to deal more damage with weapon or ability. Besides, it increases your damage when you deal critically hit.</p><p>From dexterity: {{one}}%</p><p>From items: {{two}}%</p><p>Total: {{three}}%</p><p>Critical Damage from weapon: {{four}}-{{five}}</p><p>Limit: 50%</p>"
+msgstr ""
+
+#: public/js/factories/character.js:721
+msgid "<p><strong>Dexterity</strong> increases your Critical Rating, Energy, Hit Chance, Dodge Chance and Luck.</p><p><strong>Dexterity Maximum</strong> is a potential, which your current dexterity can achieve in character triangle.</p><p>Maximum: {{one}}</p><p>Basic: {{two}}</p><p>From items: {{three}}</p><p>Percent: {{four}}%</p><p>Current: {{five}}</p>"
+msgstr ""
+
+#: public/js/factories/character.js:779
+msgid "<p><strong>Dodge Chance</strong> is a chance to completely avoid enemy attack.</p><p>From dexterity: {{one}}%</p><p>From items: {{two}}%</p><p>Total: {{three}}%</p><p>Limit: 60%</p>"
+msgstr ""
+
+#: public/js/factories/character.js:681
+msgid "<p><strong>Health Regeneration</strong> is a percent from maximum health, which you restore every turn.</p><p>From strength: {{one}}%</p><p>From items: {{two}}%</p><p>Total: {{three}}%</p><p>Every turn you restore {{four}} health</p><p>Limit: 8%</p>"
+msgstr ""
+
+#: public/js/factories/character.js:765
+msgid "<p><strong>Hit Chance</strong> decreases your chances to miss with your abilities.</p><p>Basic: {{one}}%</p><p>From dexterity: {{two}}%</p><p>From items: {{three}}%</p><p>Total: {{four}}%</p><p>Limit: 100%</p>"
+msgstr ""
+
+#: public/js/factories/character.js:869
+msgid "<p><strong>Initiative</strong> determines this character position in turns queue. Besides, it give you a chance to drop cooldown of any ability when turn starts.</p><p>From intellect: {{one}}</p><p>From items: {{two}}</p><p>Total: {{three}}</p><p>Drop cooldown chance: {{four}}%</p>"
+msgstr ""
+
+#: public/js/factories/character.js:803
+msgid "<p><strong>Intellect</strong> increases your Spell Power, Mana, Mana Regeneration, Magic Resistance and Initiative.</p><p><strong>Intellect Maximum</strong> is a potential, which your current intellect can achieve in character triangle.</p><p>Maximum: {{one}}</p><p>Basic: {{two}}</p><p>From items: {{three}}</p><p>Percent: {{four}}%</p><p>Current: {{five}}</p>"
+msgstr ""
+
+#: public/js/factories/character.js:791
+msgid "<p><strong>Luck</strong> is a chance to save your energy when you do some action.</p><p>From dexterity: {{one}}%</p><p>From items: {{two}}%</p><p>Total: {{three}}%</p><p>Limit: 50%</p>"
+msgstr ""
+
+#: public/js/factories/character.js:857
+msgid "<p><strong>Magical Resistance</strong> decreases magical damage what you take.</p><p>From intellect: {{one}}%</p><p>From items: {{two}}%</p><p>Total: {{three}}%</p><p>Limit: 60%</p>"
+msgstr ""
+
+#: public/js/factories/character.js:843
+msgid "<p><strong>Mana Regeneration</strong> is a percent from maximum mana, which you restore every turn.</p><p>From intellect: {{one}}%</p><p>From items: {{two}}%</p><p>Total: {{three}}%</p><p>Every turn you restore {{four}} mana</p><p>Limit: 10%</p>"
+msgstr ""
+
+#: public/js/factories/character.js:830
+msgid "<p><strong>Mana</strong> is a resource, what needs to use your abilities.</p><p>Basic: {{one}}</p><p>From intellect: {{two}}</p><p>From items: {{three}}</p><p>Total: {{four}}</p>"
+msgstr ""
+
+#: public/js/factories/character.js:695
+msgid "<p><strong>Physical Resistance</strong> decrease physical damage what you take.</p><p>From strength: {{one}}%</p><p>From items: {{two}}%</p><p>Total: {{three}}%</p><p>Limit: 60%</p>"
+msgstr ""
+
+#: public/js/factories/character.js:819
+msgid "<p><strong>Spell Power</strong> increases your magical damage from abilities.</p><p>From intellect: {{one}}%</p><p>From items: {{two}}%</p><p>Total: {{three}}%</p>"
+msgstr ""
+
+#: public/js/factories/character.js:638
+msgid "<p><strong>Strength</strong> increases your Attack Power, Health, Health Regeneration, Physical Resistance and Block Chance.</p><p><strong>Strength Maximum</strong> is a potential, which your current strength can achieve in character triangle.</p><p>Maximum: {{one}}</p><p>Basic: {{two}}</p><p>From items: {{three}}</p><p>Percent: {{four}}%</p><p>Current: {{five}}</p>"
+msgstr ""
+
+#: public/js/factories/character.js:752
+msgid "<p>Amount of <strong>energy</strong> determines how many actions you can do in this turn. Energy needs to move and use abilities.</p><p>Basic: {{one}}</p><p>From dexterity: {{two}}</p><p>From items: {{three}}</p><p>Total: {{four}}</p>"
+msgstr ""
+
+#: public/js/factories/character.js:668
+msgid "<p>Amount of <strong>health</strong> determines how long you can fight. If you lose your health you die.</p><p>Basic: {{one}}</p><p>From strength: {{two}}</p><p>From items: {{three}}</p><p>Total: {{four}}</p>"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:107
+#: public/js/controllers/ArenaController.js:47
+msgid "<p>Cooldown: {{one}}</p>"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:239
+msgid "<p>Create blue soul gem</p><p>Cost: 4 blue shards</p>"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:238
+msgid "<p>Create green soul gem</p><p>Cost: 4 green shards</p>"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:236
+msgid "<p>Create random soul gem</p><p>Cost:</p><p>1 red shard</p><p>1 green shard</p><p>1 blue shard</p>"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:237
+msgid "<p>Create red soul gem</p><p>Cost: 4 red shards</p>"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:108
+#: public/js/controllers/ArenaController.js:48
+msgid "<p>Duration: {{one}}</p>"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:109
+#: public/js/controllers/ArenaController.js:49
+msgid "<p>Energy Cost: {{one}}</p>"
+msgstr ""
+
+#: public/js/controllers/ArenaController.js:33
+msgid "<p>Left: {{one}}</p>"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:110
+#: public/js/controllers/ArenaController.js:50
+msgid "<p>Mana Cost: {{one}}</p>"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:105
+#: public/js/controllers/ArenaController.js:45
+msgid "<p>Range: {{one}}</p>"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:106
+#: public/js/controllers/ArenaController.js:46
+msgid "<p>Range: Self</p>"
+msgstr ""
+
+#: public/js/controllers/ArenaController.js:31
+msgid "<p>Stacks: {{one}}/{{two}}</p>"
+msgstr ""
+
+#: public/js/services/abilityService.js:2852
+#: public/js/services/arenaService.js:482
+msgid "A Touch Of Evil"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:99
+msgid "Abaddon Blade"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:5
+#: template/partials/charInfo.ejs:47
+#: template/partials/city.ejs:39
+#: template/partials/inventoryInfo.ejs:304
+msgid "Abilities"
+msgstr ""
+
+#: public/js/services/abilityService.js:697
+msgid "Ability can be used only if character health is less than 30%. Heals up caster for {{one}} and increases Critical Chance for {{two}}%."
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:47
+msgid "Ability Tune"
+msgstr ""
+
+#: template/partials/charInfo.ejs:39
+msgid "Accept"
+msgstr ""
+
+#: public/js/services/abilityService.js:1572
+msgid "All enemies in 1 cell radius becomes silenced"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:112
+#: public/js/controllers/InventoryInfoController.js:61
+msgid "Amulet"
+msgstr ""
+
+#: template/partials/city.ejs:100
+msgid "Are you sure?"
+msgstr ""
+
+#: public/js/services/arenaService.js:200
+msgid "area effect"
+msgstr ""
+
+#: public/js/services/effectService.js:1263
+msgid "Attack Power decreased to {{one}}%."
+msgstr ""
+
+#: public/js/services/effectService.js:1325
+msgid "Attack Power decreased to 25%.<br>Block Chance decreased to 25%."
+msgstr ""
+
+#: public/js/services/effectService.js:207
+msgid "Attack Power increased to {{one}}% until miss."
+msgstr ""
+
+#: public/js/services/effectService.js:260
+#: public/js/services/effectService.js:527
+msgid "Attack Power increased to {{one}}%."
+msgstr ""
+
+#: public/js/services/abilityService.js:662
+msgid "Attack Power increased to {{one}}%. Health Regeneration increased to {{two}}%."
+msgstr ""
+
+#: public/js/services/effectService.js:1112
+msgid "Attack Power increased to 25%.<br>Block Chance increased to 25%."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:210
+#: template/partials/abilitiesInfo.ejs:137
+#: template/partials/charInfo.ejs:72
+#: template/partials/inventoryInfo.ejs:336
+#: template/partials/inventoryInfo.ejs:84
+msgid "Attack Power:"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:116
+#: template/partials/arena.ejs:120
+#: template/partials/charInfo.ejs:49
+#: template/partials/inventoryInfo.ejs:305
+msgid "Back to city"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:9
+msgid "Basic info"
+msgstr ""
+
+#: template/partials/arena.ejs:7
+msgid "Battle"
+msgstr ""
+
+#: public/js/services/arenaService.js:187
+msgid "Battle begins! First move for"
+msgstr ""
+
+#: public/js/services/arenaService.js:232
+msgid "because immunity"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:100
+msgid "Best Faith Gun"
+msgstr ""
+
+#: public/js/services/effectService.js:40
+#: public/js/services/effectService.js:41
+msgid "Block Chance increased to 10%.<br>Physical Resistance increased to 10%.<br>Magical Resistance increased to 10%."
+msgstr ""
+
+#: public/js/services/effectService.js:42
+#: public/js/services/effectService.js:43
+msgid "Block Chance increased to 20%.<br>Physical Resistance increased to 20%.<br>Magical Resistance increased to 20%."
+msgstr ""
+
+#: public/js/services/effectService.js:44
+msgid "Block Chance increased to 40%.<br>Physical Resistance increased to 40%.<br>Magical Resistance increased to 40%."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:214
+#: template/partials/abilitiesInfo.ejs:177
+#: template/partials/charInfo.ejs:112
+#: template/partials/inventoryInfo.ejs:100
+#: template/partials/inventoryInfo.ejs:376
+msgid "Block Chance:"
+msgstr ""
+
+#: public/js/services/arenaService.js:240
+msgid "blocked"
+msgstr ""
+
+#: public/js/services/abilityService.js:2541
+#: public/js/services/arenaService.js:461
+msgid "Bloodsucker"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:104
+msgid "Book Of Souls"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:60
+msgid "Boots"
+msgstr ""
+
+#: public/js/services/abilityService.js:1698
+#: public/js/services/arenaService.js:404
+msgid "Brain Damage"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:73
+msgid "Breastplate"
+msgstr ""
+
+#: public/js/services/effectService.js:1374
+msgid "Buffs and debuffs of this character can't be dispelled or stolen."
+msgstr ""
+
+#: public/js/services/arenaService.js:221
+msgid "Buffs can't be removed, because target is under 'Locked And Loaded' effect!"
+msgstr ""
+
+#: public/js/services/arenaService.js:215
+msgid "Buffs can't be stolen, because target is under 'Locked And Loaded' effect!"
+msgstr ""
+
+#: template/partials/arena.ejs:197
+msgid "Buffs:"
+msgstr ""
+
+#: template/partials/city.ejs:68
+msgid "Burn"
+msgstr ""
+
+#: public/js/services/abilityService.js:1881
+#: public/js/services/arenaService.js:416
+#: public/js/services/effectService.js:842
+msgid "Burning Ambition"
+msgstr ""
+
+#: public/js/services/abilityService.js:1885
+msgid "Burns target weapon and deals {{one}} magical damage."
+msgstr ""
+
+#: public/js/services/abilityService.js:625
+msgid "Calls to hell and becomes immune to magical attacks"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:20
+#: public/js/controllers/CharInfoController.js:60
+#: public/js/controllers/CreateCharacterController.js:144
+#: public/js/controllers/InventoryInfoController.js:20
+msgid "Cambion"
+msgstr ""
+
+#: public/js/services/characterService.js:27
+msgid "Cambions are children of demons and humans. They follow the path of chaos and destruction.Cambions get random extra-abilities of Slayer, Ripper, Malefic and Heretic."
+msgstr ""
+
+#: public/js/services/arenaService.js:212
+msgid "can't calculate the distance and miss with"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:146
+#: template/partials/createTeam.ejs:69
+#: template/partials/registration.ejs:33
+msgid "Cancel"
+msgstr ""
+
+#: public/js/services/arenaService.js:282
+#: public/js/services/arenaService.js:286
+msgid "cast"
+msgstr ""
+
+#: public/js/services/abilityService.js:242
+msgid "Cast on ally target. Caster takes {{one}}% of damage taken by target ally."
+msgstr ""
+
+#: public/js/services/abilityService.js:1090
+msgid "Cast on ally target. Draws the target to caster. Every turn restores {{one}} target's health."
+msgstr ""
+
+#: public/js/services/abilityService.js:2080
+msgid "Cast on ally target. Every turn restores {{one}} health and burns {{two}} mana."
+msgstr ""
+
+#: public/js/services/abilityService.js:2232
+msgid "Cast on ally target. Every turn restores {{one}} health. Stacks up 3 times."
+msgstr ""
+
+#: public/js/services/abilityService.js:2412
+msgid "Cast on ally target. Increases Attack Power and Block Chance for 25%."
+msgstr ""
+
+#: public/js/services/abilityService.js:83
+msgid "Cast on ally target. Increases Block Chance, Magical and Physical Resistances for 10%."
+msgstr ""
+
+#: public/js/services/abilityService.js:85
+msgid "Cast on ally target. Increases Block Chance, Magical and Physical Resistances for 20%"
+msgstr ""
+
+#: public/js/services/abilityService.js:87
+msgid "Cast on ally target. Increases Block Chance, Magical and Physical Resistances for 40%"
+msgstr ""
+
+#: public/js/services/abilityService.js:2413
+msgid "Cast on ally target. Increases Critical Chance and Dodge Chance for 25%."
+msgstr ""
+
+#: public/js/services/abilityService.js:879
+msgid "Cast on ally target. Increases Hit Chance for {{one}}% and Critical Chance for {{two}}%."
+msgstr ""
+
+#: public/js/services/abilityService.js:1750
+msgid "Cast on ally target. Increases Initiative for {{one}}%. Every turn restores {{two}}% mana."
+msgstr ""
+
+#: public/js/services/abilityService.js:2416
+msgid "Cast on ally target. Increases Magical Resistance and Mana Regeneration for 25%."
+msgstr ""
+
+#: public/js/services/abilityService.js:2415
+msgid "Cast on ally target. Increases Physical Resistance and Health Regeneration for 25%."
+msgstr ""
+
+#: public/js/services/abilityService.js:2414
+msgid "Cast on ally target. Increases Spell Power and Hit Chance for 25%."
+msgstr ""
+
+#: public/js/services/abilityService.js:378
+msgid "Cast on ally target. Removes 3 random negative effects, that cause periodic damage. Restore {{one}} health."
+msgstr ""
+
+#: public/js/services/abilityService.js:2506
+msgid "Cast on ally target. Removes all debuffs from target and makes it immune to physical and magical attacks. This ability also stuns this target."
+msgstr ""
+
+#: public/js/services/abilityService.js:1452
+msgid "Cast on ally target. Target becomes invisible"
+msgstr ""
+
+#: public/js/services/abilityService.js:2810
+msgid "Cast on any target. While this effect active, owner's buffs and debuffs can't be dispelled or stolen."
+msgstr ""
+
+#: public/js/services/abilityService.js:2769
+msgid "Cast on enemy target. Decreases Attack Power and Block Chance for 25%."
+msgstr ""
+
+#: public/js/services/abilityService.js:2770
+msgid "Cast on enemy target. Decreases Critical Chance and Dodge Chance for 25%."
+msgstr ""
+
+#: public/js/services/abilityService.js:2773
+msgid "Cast on enemy target. Decreases Magical Resistance and Mana Regeneration for 25%."
+msgstr ""
+
+#: public/js/services/abilityService.js:2772
+msgid "Cast on enemy target. Decreases Physical Resistance and Health Regeneration for 25%."
+msgstr ""
+
+#: public/js/services/abilityService.js:2771
+msgid "Cast on enemy target. Decreases Spell Power and Hit Chance for 25%."
+msgstr ""
+
+#: public/js/services/abilityService.js:1781
+#: public/js/services/arenaService.js:410
+#: public/js/services/effectService.js:802
+msgid "Caught Somewhere In Time"
+msgstr ""
+
+#: public/js/services/abilityService.js:2076
+#: public/js/services/arenaService.js:428
+#: public/js/services/effectService.js:979
+msgid "Cauterization"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:114
+#: template/partials/city.ejs:38
+#: template/partials/inventoryInfo.ejs:303
+msgid "Character"
+msgstr ""
+
+#: public/js/services/abilityService.js:738
+msgid "Character becomes immune to control abilities"
+msgstr ""
+
+#: public/js/services/abilityService.js:1176
+msgid "Character becomes invisible. Invisibility fades if owner takes or deals damage. While character is invisible, his Attack Power increased to {{one}}%."
+msgstr ""
+
+#: public/js/services/effectService.js:1278
+msgid "Character infects nearby allies in 1 cell radius."
+msgstr ""
+
+#: template/partials/charInfo.ejs:5
+msgid "Character Info"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:141
+msgid "Character name is required"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:143
+msgid "Character name must be between 3 and 15 characters"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:142
+msgid "Character name must contain latin or cyrillic letters only"
+msgstr ""
+
+#: public/js/services/abilityService.js:568
+msgid "Charges to enemy and deals {{one}}% of weapon damage."
+msgstr ""
+
+#: public/js/services/abilityService.js:1263
+msgid "Charges to enemy, deals {{one}}% of weapon damage and immobilizes target"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:57
+msgid "Chest"
+msgstr ""
+
+#: public/js/services/abilityService.js:2764
+#: public/js/services/arenaService.js:476
+#: public/js/services/effectService.js:1320
+msgid "Children Of The Damned"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:49
+msgid "Choose ability for tune"
+msgstr ""
+
+#: template/partials/inventoryInfo.ejs:61
+msgid "Choose item slot in left panel"
+msgstr ""
+
+#: template/partials/city.ejs:5
+msgid "City"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:103
+msgid "Clairvoyant Wand"
+msgstr ""
+
+#: public/js/services/abilityService.js:2370
+#: public/js/services/arenaService.js:449
+msgid "Cleanse The Soul"
+msgstr ""
+
+#: public/js/services/effectService.js:956
+msgid "Clearcasting state. Don't spend mana on spells."
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:32
+#: public/js/controllers/CharInfoController.js:72
+#: public/js/controllers/InventoryInfoController.js:32
+#: template/partials/createCharacter.ejs:47
+msgid "Cleric"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:89
+msgid "Cleric crown"
+msgstr ""
+
+#: public/js/services/abilityService.js:2446
+msgid "Cleric shines on all targets in 2 cell radius. Deals {{one}} magical damage to all enemies. And heals up allies for {{two}}."
+msgstr ""
+
+#: public/js/services/characterService.js:43
+msgid "Clerics are called to bring the light of healing into battlefield. Their prayers and blessings protect allies from a terrible fate."
+msgstr ""
+
+#: template/partials/city.ejs:130
+msgid "Close"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:87
+msgid "Cloth boots"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:85
+msgid "Cloth gloves"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:83
+msgid "Cloth Hat"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:88
+msgid "Cloth mask"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:86
+msgid "Cloth pants"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:84
+msgid "Cloth robe"
+msgstr ""
+
+#: public/js/services/abilityService.js:324
+#: public/js/services/arenaService.js:311
+msgid "Come And Get It"
+msgstr ""
+
+#: public/js/services/abilityService.js:1086
+#: public/js/services/arenaService.js:362
+#: public/js/services/effectService.js:451
+msgid "Come Cover Me"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:63
+msgid "Cooldown: {{interestingAbility.cooldown()}}"
+msgstr ""
+
+#: template/partials/city.ejs:33
+#: template/partials/createCharacter.ejs:145
+#: template/partials/createTeam.ejs:33
+#: template/partials/createTeam.ejs:42
+#: template/partials/createTeam.ejs:51
+#: template/partials/createTeam.ejs:68
+msgid "Create"
+msgstr ""
+
+#: public/js/controllers/CreateTeamController.js:21
+msgid "Create 1 more member"
+msgid_plural "Create {{$count}} more members"
+msgstr[0] ""
+msgstr[1] ""
+
+#: template/partials/createCharacter.ejs:5
+msgid "Create Character"
+msgstr ""
+
+#: template/partials/createTeam.ejs:5
+msgid "Create Team"
+msgstr ""
+
+#: public/js/services/abilityService.js:2642
+#: public/js/services/arenaService.js:467
+#: public/js/services/effectService.js:1220
+msgid "Creeping Death"
+msgstr ""
+
+#: public/js/services/arenaService.js:242
+#: public/js/services/arenaService.js:250
+#: public/js/services/arenaService.js:256
+msgid "CRITICAL"
+msgstr ""
+
+#: public/js/services/effectService.js:1273
+msgid "Critical Chance decreased to {{one}}%."
+msgstr ""
+
+#: public/js/services/effectService.js:1326
+msgid "Critical Chance decreased to 25%.<br>Dodge Chance decreased to 25%."
+msgstr ""
+
+#: public/js/services/effectService.js:1025
+#: public/js/services/effectService.js:291
+#: public/js/services/effectService.js:343
+msgid "Critical Chance increased to {{one}}%."
+msgstr ""
+
+#: public/js/services/effectService.js:1113
+msgid "Critical Chance increased to 25%.<br>Dodge Chance increased to 25%."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:216
+#: template/partials/abilitiesInfo.ejs:203
+#: template/partials/charInfo.ejs:138
+#: template/partials/inventoryInfo.ejs:109
+#: template/partials/inventoryInfo.ejs:402
+msgid "Critical Rating:"
+msgstr ""
+
+#: public/js/services/arenaService.js:241
+msgid "damage from"
+msgstr ""
+
+#: template/partials/inventoryInfo.ejs:68
+msgid "Damage:"
+msgstr ""
+
+#: public/js/services/abilityService.js:2597
+msgid "Deals {{one}} magical damage and infects target with Fear Of The Dark, which deals {{two}} magical damage"
+msgstr ""
+
+#: public/js/services/abilityService.js:1702
+msgid "Deals {{one}} magical damage for every turn, that lefts for every target ability."
+msgstr ""
+
+#: public/js/services/abilityService.js:1938
+msgid "Deals {{one}} magical damage to target and {{two}} magical damage to all enemy targets in 1 cell radius."
+msgstr ""
+
+#: public/js/services/arenaService.js:218
+msgid "Debuffs can't be removed, because target is under 'Locked And Loaded' effect!"
+msgstr ""
+
+#: template/partials/arena.ejs:208
+msgid "Debuffs:"
+msgstr ""
+
+#: template/partials/charInfo.ejs:40
+msgid "Decline"
+msgstr ""
+
+#: public/js/services/abilityService.js:1329
+msgid "Decreases movement cost to {{one}} energy. Remove all immobilize effects."
+msgstr ""
+
+#: public/js/services/abilityService.js:78
+#: public/js/services/arenaService.js:296
+#: public/js/services/effectService.js:35
+msgid "Defender Of The Faith"
+msgstr ""
+
+#: template/partials/city.ejs:81
+msgid "Delete Team"
+msgstr ""
+
+#: template/partials/city.ejs:97
+msgid "Deleting team"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:128
+msgid "Dexterity"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:215
+#: template/partials/abilitiesInfo.ejs:193
+#: template/partials/charInfo.ejs:128
+#: template/partials/inventoryInfo.ejs:105
+#: template/partials/inventoryInfo.ejs:392
+msgid "Dexterity:"
+msgstr ""
+
+#: public/js/services/arenaService.js:230
+msgid "didn't take damage from"
+msgstr ""
+
+#: public/js/services/abilityService.js:421
+#: public/js/services/arenaService.js:317
+msgid "Die By The Sword"
+msgstr ""
+
+#: public/js/services/abilityService.js:138
+#: public/js/services/arenaService.js:299
+#: public/js/services/effectService.js:90
+msgid "Disarm"
+msgstr ""
+
+#: public/js/services/abilityService.js:1890
+msgid "Disarm lasts {{$count}} turn."
+msgid_plural "Disarm lasts {{$count}} turns."
+msgstr[0] ""
+msgstr[1] ""
+
+#: public/js/services/effectService.js:846
+#: public/js/services/effectService.js:94
+msgid "Disarmed. Can't use abilities, what needs weapon."
+msgstr ""
+
+#: public/js/services/effectService.js:626
+msgid "Dodge Chance increased to {{one}}%."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:219
+#: template/partials/abilitiesInfo.ejs:233
+#: template/partials/charInfo.ejs:168
+#: template/partials/inventoryInfo.ejs:121
+#: template/partials/inventoryInfo.ejs:432
+msgid "Dodge Chance:"
+msgstr ""
+
+#: public/js/services/arenaService.js:235
+msgid "dodged from"
+msgstr ""
+
+#: public/js/services/arenaService.js:203
+msgid "DOT effect"
+msgstr ""
+
+#: public/js/services/abilityService.js:2110
+#: public/js/services/arenaService.js:431
+#: public/js/services/effectService.js:1016
+msgid "Down In Flames"
+msgstr ""
+
+#: public/js/services/arenaService.js:227
+msgid "drop cooldown for"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:64
+msgid "Duration: {{interestingAbility.duration()}}"
+msgstr ""
+
+#: public/js/services/abilityService.js:1133
+#: public/js/services/abilityService.js:1790
+#: public/js/services/abilityService.js:2603
+#: public/js/services/abilityService.js:2651
+msgid "during next turn"
+msgid_plural "during next {{$count}} turns"
+msgstr[0] ""
+msgstr[1] ""
+
+#: public/js/services/abilityService.js:693
+#: public/js/services/arenaService.js:335
+#: public/js/services/effectService.js:287
+msgid "Dyers Eve"
+msgstr ""
+
+#: template/partials/registration.ejs:41
+msgid "E-mail is required"
+msgstr ""
+
+#: public/js/services/effectService.js:1030
+msgid "Effect fades if character miss."
+msgstr ""
+
+#: public/js/services/abilityService.js:1456
+msgid "Effect fades if owner takes or deals damage."
+msgstr ""
+
+#: public/js/services/effectService.js:959
+msgid "Effect fades if you use ability."
+msgstr ""
+
+#: public/js/services/abilityService.js:826
+#: public/js/services/arenaService.js:344
+msgid "Electric Eye"
+msgstr ""
+
+#: public/js/services/effectService.js:741
+msgid "Enemy can see spells of that character."
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:65
+msgid "Energy cost: {{interestingAbility.energyCost()}}"
+msgstr ""
+
+#: public/js/services/arenaService.js:261
+msgid "energy with"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:217
+#: template/partials/abilitiesInfo.ejs:213
+#: template/partials/charInfo.ejs:148
+#: template/partials/inventoryInfo.ejs:113
+#: template/partials/inventoryInfo.ejs:412
+msgid "Energy:"
+msgstr ""
+
+#: template/partials/login.ejs:24
+msgid "Enter"
+msgstr ""
+
+#: public/js/services/abilityService.js:1785
+#: public/js/services/abilityService.js:2646
+msgid "Every turn deals {{one}} magical damage"
+msgstr ""
+
+#: public/js/services/effectService.js:1190
+#: public/js/services/effectService.js:1224
+#: public/js/services/effectService.js:1258
+#: public/js/services/effectService.js:490
+#: public/js/services/effectService.js:806
+#: public/js/services/effectService.js:867
+msgid "Every turn deals {{one}} magical damage."
+msgstr ""
+
+#: public/js/services/abilityService.js:2688
+msgid "Every turn deals {{one}} magical damage. Decreases target's Attack Power, Spell Power and Critical Chance to {{two}}%. This effect spreads on all enemies in 1 cell radius around target."
+msgstr ""
+
+#: public/js/services/effectService.js:171
+msgid "Every turn deals {{one}} physical damage."
+msgstr ""
+
+#: public/js/services/effectService.js:775
+msgid "Every turn restore {{one}}% mana."
+msgstr ""
+
+#: public/js/services/effectService.js:419
+msgid "Every turn restores {{one}} health and {{two}} mana."
+msgstr ""
+
+#: public/js/services/effectService.js:983
+msgid "Every turn restores {{one}} health and burns {{two}} mana."
+msgstr ""
+
+#: public/js/services/effectService.js:1078
+#: public/js/services/effectService.js:455
+msgid "Every turn restores {{one}} health."
+msgstr ""
+
+#: template/partials/toolbars/header.ejs:16
+msgid "Exit"
+msgstr ""
+
+#: public/js/services/arenaService.js:206
+msgid "explosion"
+msgstr ""
+
+#: public/js/services/abilityService.js:1448
+#: public/js/services/arenaService.js:386
+#: public/js/services/effectService.js:669
+msgid "Fade To Black"
+msgstr ""
+
+#: public/js/services/abilityService.js:1827
+#: public/js/services/arenaService.js:413
+msgid "Family Tree"
+msgstr ""
+
+#: public/js/services/abilityService.js:1360
+#: public/js/services/arenaService.js:380
+#: public/js/services/effectService.js:617
+msgid "Fast As The Shark"
+msgstr ""
+
+#: public/js/services/abilityService.js:2593
+#: public/js/services/arenaService.js:464
+#: public/js/services/effectService.js:1186
+msgid "Fear Of The Dark"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:24
+msgid "Female"
+msgstr ""
+
+#: public/js/services/abilityService.js:2141
+#: public/js/services/arenaService.js:434
+#: public/js/services/effectService.js:1050
+msgid "Fight Fire With Fire"
+msgstr ""
+
+#: public/js/services/abilityService.js:1934
+#: public/js/services/arenaService.js:419
+msgid "Fireball"
+msgstr ""
+
+#: public/js/services/abilityService.js:564
+#: public/js/services/arenaService.js:326
+msgid "Follow The Tears"
+msgstr ""
+
+#: public/js/services/arenaService.js:255
+msgid "for"
+msgstr ""
+
+#: public/js/services/abilityService.js:1011
+#: public/js/services/abilityService.js:1215
+#: public/js/services/abilityService.js:1268
+#: public/js/services/abilityService.js:1370
+#: public/js/services/abilityService.js:1404
+#: public/js/services/abilityService.js:1454
+#: public/js/services/abilityService.js:1494
+#: public/js/services/abilityService.js:1575
+#: public/js/services/abilityService.js:193
+#: public/js/services/abilityService.js:2009
+#: public/js/services/abilityService.js:283
+#: public/js/services/abilityService.js:40
+#: public/js/services/abilityService.js:628
+#: public/js/services/abilityService.js:741
+#: public/js/services/abilityService.js:920
+#: public/js/services/abilityService.js:971
+msgid "for next turn."
+msgid_plural "for next {{$count}} turns."
+msgstr[0] ""
+msgstr[1] ""
+
+#: public/js/services/abilityService.js:1005
+msgid "Fully restores energy. Every turn restores {{one}} health and {{two}} mana"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:20
+msgid "Gender"
+msgstr ""
+
+#: template/partials/inventoryInfo.ejs:302
+msgid "Get Gem"
+msgstr ""
+
+#: public/js/controllers/CreateTeamController.js:18
+msgid "Give a name for your team"
+msgstr ""
+
+#: public/js/services/arenaService.js:239
+msgid "got"
+msgstr ""
+
+#: public/js/services/abilityService.js:510
+#: public/js/services/arenaService.js:323
+msgid "Grinder"
+msgstr ""
+
+#: public/js/services/abilityService.js:2407
+#: public/js/services/arenaService.js:452
+#: public/js/services/effectService.js:1107
+msgid "Hallowed Be Thy Name"
+msgstr ""
+
+#: public/js/services/abilityService.js:2176
+#: public/js/services/arenaService.js:437
+msgid "Hammer Of The Gods"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:58
+msgid "Hands"
+msgstr ""
+
+#: public/js/services/arenaService.js:224
+msgid "has immunity to control effects!"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:56
+msgid "Head"
+msgstr ""
+
+#: public/js/services/arenaService.js:249
+msgid "healed for"
+msgstr ""
+
+#: public/js/services/abilityService.js:2268
+msgid "Heals 1000 health for one target"
+msgstr ""
+
+#: public/js/services/abilityService.js:2269
+msgid "Heals 2000 health for one target"
+msgstr ""
+
+#: public/js/services/abilityService.js:2267
+msgid "Heals 500 health for one target"
+msgstr ""
+
+#: public/js/services/abilityService.js:2270
+msgid "Heals 5000 health for one target"
+msgstr ""
+
+#: public/js/services/abilityService.js:2314
+msgid "Heals up ally target for {{one}}. Or deals {{two}} magical damage to enemy target."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:212
+#: template/partials/abilitiesInfo.ejs:157
+#: template/partials/charInfo.ejs:92
+#: template/partials/inventoryInfo.ejs:356
+#: template/partials/inventoryInfo.ejs:92
+msgid "Health Reg.:"
+msgstr ""
+
+#: public/js/services/abilityService.js:973
+msgid "Health Regeneration increased to {{one}} %."
+msgstr ""
+
+#: public/js/services/effectService.js:265
+#: public/js/services/effectService.js:393
+msgid "Health Regeneration increased to {{one}}%."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:211
+#: template/partials/abilitiesInfo.ejs:147
+#: template/partials/charInfo.ejs:82
+#: template/partials/inventoryInfo.ejs:346
+#: template/partials/inventoryInfo.ejs:88
+msgid "Health:"
+msgstr ""
+
+#: public/js/services/abilityService.js:2502
+#: public/js/services/arenaService.js:458
+#: public/js/services/effectService.js:1157
+msgid "Heaven Can Wait"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:33
+#: public/js/controllers/CharInfoController.js:73
+#: public/js/controllers/InventoryInfoController.js:33
+#: template/partials/createCharacter.ejs:48
+msgid "Heretic"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:94
+msgid "Heretic crown"
+msgstr ""
+
+#: public/js/services/characterService.js:45
+msgid "Heretics sends diseases and curses on the heads of their enemies. Their only faith is to drain all life and energy from enemy."
+msgstr ""
+
+#: public/js/services/effectService.js:15
+#: public/js/services/effectService.js:338
+msgid "Hit Chance increased to {{one}}%."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:218
+#: template/partials/abilitiesInfo.ejs:223
+#: template/partials/charInfo.ejs:158
+#: template/partials/inventoryInfo.ejs:117
+#: template/partials/inventoryInfo.ejs:422
+msgid "Hit Chance:"
+msgstr ""
+
+#: public/js/services/abilityService.js:2442
+#: public/js/services/arenaService.js:455
+msgid "Hit The Lights"
+msgstr ""
+
+#: public/js/services/abilityService.js:1259
+#: public/js/services/arenaService.js:374
+#: public/js/services/effectService.js:570
+msgid "Hog Tied"
+msgstr ""
+
+#: public/js/services/abilityService.js:2310
+#: public/js/services/arenaService.js:446
+msgid "Holy Smoke"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:19
+#: public/js/controllers/CharInfoController.js:59
+#: public/js/controllers/CreateCharacterController.js:143
+#: public/js/controllers/InventoryInfoController.js:19
+msgid "Human"
+msgstr ""
+
+#: public/js/services/characterService.js:25
+msgid "Humans are free to choose their own path.They get random extra-abilities of all available roles."
+msgstr ""
+
+#: public/js/services/abilityService.js:734
+#: public/js/services/arenaService.js:338
+#: public/js/services/effectService.js:311
+msgid "I Dont Wanna Stop"
+msgstr ""
+
+#: public/js/services/abilityService.js:1792
+msgid "Immobilize target. Every turn damage from this effect rise up for {{one}}%."
+msgstr ""
+
+#: public/js/services/effectService.js:574
+#: public/js/services/effectService.js:811
+msgid "Immobilized. Can't move."
+msgstr ""
+
+#: public/js/services/effectService.js:231
+msgid "Immune to magical attacks."
+msgstr ""
+
+#: public/js/services/effectService.js:1161
+msgid "Immune to physical and magical attacks."
+msgstr ""
+
+#: public/js/services/effectService.js:390
+msgid "Immune to physical attacks."
+msgstr ""
+
+#: public/js/services/effectService.js:315
+msgid "Immunity to control abilities."
+msgstr ""
+
+#: public/js/services/abilityService.js:84
+msgid "Increases Block Chance, Magical and Physical Resistances of all party members for 10%"
+msgstr ""
+
+#: public/js/services/abilityService.js:86
+msgid "Increases Block Chance, Magical and Physical Resistances of all party members for 20%"
+msgstr ""
+
+#: public/js/services/abilityService.js:1364
+msgid "Increases Luck for {{one}}% and Dodge Chance for {{two}}%"
+msgstr ""
+
+#: public/js/services/abilityService.js:2114
+msgid "Increases Spell Power and Critical Chance for {{one}}%. Effect fades if you miss. Stacks up 10 times."
+msgstr ""
+
+#: public/js/services/abilityService.js:2049
+msgid "Increases Spell Power for {{one}}%. Brings you in clearcasting state. In this state you doesn't need mana for abilities. This effect is active until you use any ability."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:108
+msgid "Incubus Dagger"
+msgstr ""
+
+#: public/js/services/abilityService.js:1746
+#: public/js/services/arenaService.js:407
+#: public/js/services/effectService.js:771
+msgid "Infinite Dreams"
+msgstr ""
+
+#: public/js/services/effectService.js:748
+msgid "Initiative decreased to {{one}}%."
+msgstr ""
+
+#: public/js/services/effectService.js:780
+msgid "Initiative increased to {{one}}%."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:226
+#: template/partials/abilitiesInfo.ejs:309
+#: template/partials/charInfo.ejs:244
+#: template/partials/inventoryInfo.ejs:150
+#: template/partials/inventoryInfo.ejs:508
+msgid "Initiative:"
+msgstr ""
+
+#: public/js/services/abilityService.js:1123
+#: public/js/services/arenaService.js:365
+#: public/js/services/effectService.js:486
+msgid "Inject The Venom"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:130
+msgid "Intellect"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:221
+#: template/partials/abilitiesInfo.ejs:259
+#: template/partials/charInfo.ejs:194
+#: template/partials/inventoryInfo.ejs:130
+#: template/partials/inventoryInfo.ejs:458
+msgid "Intellect:"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:115
+#: template/partials/charInfo.ejs:48
+#: template/partials/city.ejs:40
+#: template/partials/inventoryInfo.ejs:5
+msgid "Inventory"
+msgstr ""
+
+#: public/js/services/abilityService.js:1172
+#: public/js/services/arenaService.js:368
+#: public/js/services/effectService.js:520
+msgid "Invisible"
+msgstr ""
+
+#: public/js/services/arenaService.js:246
+msgid "is dead"
+msgstr ""
+
+#: public/js/services/arenaService.js:273
+msgid "is in clearcasting state and save mana"
+msgstr ""
+
+#: public/js/services/arenaService.js:279
+msgid "is stunned and skip turn"
+msgstr ""
+
+#: public/js/services/arenaService.js:270
+msgid "is very lucky and save his energy"
+msgstr ""
+
+#: public/js/services/abilityService.js:1206
+#: public/js/services/arenaService.js:371
+#: public/js/services/effectService.js:549
+msgid "Jawbreaker"
+msgstr ""
+
+#: public/js/controllers/CityController.js:34
+msgid "Join Battle"
+msgstr ""
+
+#: public/js/services/abilityService.js:1095
+#: public/js/services/abilityService.js:1181
+#: public/js/services/abilityService.js:1334
+#: public/js/services/abilityService.js:147
+#: public/js/services/abilityService.js:1631
+#: public/js/services/abilityService.js:1756
+#: public/js/services/abilityService.js:2085
+#: public/js/services/abilityService.js:2149
+#: public/js/services/abilityService.js:2237
+#: public/js/services/abilityService.js:247
+#: public/js/services/abilityService.js:2509
+#: public/js/services/abilityService.js:2694
+#: public/js/services/abilityService.js:668
+#: public/js/services/abilityService.js:703
+#: public/js/services/abilityService.js:885
+msgid "Lasts {{$count}} turn."
+msgid_plural "Lasts {{$count}} turns."
+msgstr[0] ""
+msgstr[1] ""
+
+#: public/js/services/abilityService.js:2262
+#: public/js/services/arenaService.js:443
+msgid "Laying On Hands"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:81
+msgid "Leather boots"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:82
+msgid "Leather cloak"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:79
+msgid "Leather gloves"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:77
+msgid "Leather hood"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:80
+msgid "Leather pants"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:78
+msgid "Leather vest"
+msgstr ""
+
+#: template/partials/city.ejs:77
+msgid "Leave Queue"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:65
+msgid "Left hand weapon"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:62
+msgid "Left ring"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:59
+msgid "Legs"
+msgstr ""
+
+#: public/js/services/abilityService.js:1662
+#: public/js/services/arenaService.js:401
+msgid "Lets Me Take It"
+msgstr ""
+
+#: public/js/services/abilityService.js:875
+#: public/js/services/arenaService.js:347
+#: public/js/services/effectService.js:334
+msgid "Lights In The Sky"
+msgstr ""
+
+#: public/js/services/abilityService.js:2806
+#: public/js/services/arenaService.js:479
+#: public/js/services/effectService.js:1370
+msgid "Locked And Loaded"
+msgstr ""
+
+#: template/partials/login.ejs:12
+#: template/partials/registration.ejs:12
+msgid "Login"
+msgstr ""
+
+#: template/partials/registration.ejs:39
+msgid "Login must be between 3 and 20 characters."
+msgstr ""
+
+#: template/partials/registration.ejs:38
+msgid "Login must start with a letter, <br>and contain english letters &amp; numbers only."
+msgstr ""
+
+#: template/partials/login.ejs:27
+#: template/partials/registration.ejs:37
+msgid "Login name is required"
+msgstr ""
+
+#: public/js/services/effectService.js:621
+msgid "Luck increased to {{one}}%."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:220
+#: template/partials/abilitiesInfo.ejs:243
+#: template/partials/charInfo.ejs:178
+#: template/partials/inventoryInfo.ejs:125
+#: template/partials/inventoryInfo.ejs:442
+msgid "Luck:"
+msgstr ""
+
+#: public/js/services/abilityService.js:621
+#: public/js/services/arenaService.js:329
+#: public/js/services/effectService.js:227
+msgid "Made In Hell"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:225
+#: template/partials/abilitiesInfo.ejs:299
+#: template/partials/charInfo.ejs:234
+#: template/partials/inventoryInfo.ejs:146
+#: template/partials/inventoryInfo.ejs:498
+msgid "Magic Resist.:"
+msgstr ""
+
+#: public/js/services/effectService.js:743
+msgid "Magical Resistance decreased to {{one}}%."
+msgstr ""
+
+#: public/js/services/effectService.js:1329
+msgid "Magical Resistance decreased to 25%.<br>Mana Regeneration decreased to 25%."
+msgstr ""
+
+#: public/js/services/effectService.js:1116
+msgid "Magical Resistance increased to 25%.<br>Mana Regeneration increased to 25%."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:93
+msgid "Mail boots"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:91
+msgid "Mail gloves"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:92
+msgid "Mail pants"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:90
+msgid "Mail plastron"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:23
+msgid "Male"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:31
+#: public/js/controllers/CharInfoController.js:71
+#: public/js/controllers/InventoryInfoController.js:31
+#: template/partials/createCharacter.ejs:46
+msgid "Malefic"
+msgstr ""
+
+#: public/js/services/abilityService.js:1831
+msgid "Malefic staff transforms into the burning tree. Deals {{one}}% of weapon damage and {{two}} magical damage to all enemies in 1 cell radius."
+msgstr ""
+
+#: public/js/services/characterService.js:41
+msgid "Malefics bring down fire and death on the battlefield. The forces of hell are helping them to inflict enormous damage on their victims."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:106
+msgid "Malleus Maleficarum"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:66
+msgid "Mana cost: {{interestingAbility.manaCost()}}"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:224
+#: template/partials/abilitiesInfo.ejs:289
+#: template/partials/charInfo.ejs:224
+#: template/partials/inventoryInfo.ejs:142
+#: template/partials/inventoryInfo.ejs:488
+msgid "Mana Reg.:"
+msgstr ""
+
+#: public/js/services/abilityService.js:630
+msgid "Mana Regeneration increased to {{one}} %."
+msgstr ""
+
+#: public/js/services/effectService.js:234
+msgid "Mana Regeneration increased to {{one}}%."
+msgstr ""
+
+#: public/js/services/arenaService.js:266
+msgid "mana with"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:223
+#: template/partials/abilitiesInfo.ejs:279
+#: template/partials/charInfo.ejs:214
+#: template/partials/inventoryInfo.ejs:138
+#: template/partials/inventoryInfo.ejs:478
+msgid "Mana:"
+msgstr ""
+
+#: public/js/services/abilityService.js:2228
+#: public/js/services/arenaService.js:440
+#: public/js/services/effectService.js:1074
+msgid "Mercyful Fate"
+msgstr ""
+
+#: public/js/services/arenaService.js:196
+msgid "miss against"
+msgstr ""
+
+#: public/js/services/effectService.js:595
+msgid "Movement cost decreased to {{one}} energy."
+msgstr ""
+
+#: public/js/services/abilityService.js:1037
+#: public/js/services/arenaService.js:359
+msgid "My Last Words"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:14
+msgid "Name"
+msgstr ""
+
+#: public/js/controllers/CreateCharacterController.js:32
+msgid "Name {{one}} is already in use"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:16
+#: template/partials/charInfo.ejs:13
+#: template/partials/inventoryInfo.ejs:316
+msgid "Name: {{char.charName}}"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:59
+msgid "Need weapon"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:18
+#: public/js/controllers/CharInfoController.js:58
+#: public/js/controllers/CreateCharacterController.js:142
+#: public/js/controllers/InventoryInfoController.js:18
+msgid "Nephilim"
+msgstr ""
+
+#: public/js/services/characterService.js:23
+msgid "Nephilims are children of angels and humans. They revere the light and eradicate the evil of this world.Nephilims get random extra-abilities of Sentinel, Redeemer, Prophet and Cleric."
+msgstr ""
+
+#: public/js/services/abilityService.js:1568
+#: public/js/services/arenaService.js:395
+#: public/js/services/effectService.js:716
+msgid "Never A Word"
+msgstr ""
+
+#: public/js/services/abilityService.js:374
+#: public/js/services/arenaService.js:314
+msgid "New Faith"
+msgstr ""
+
+#: template/partials/city.ejs:104
+msgid "No"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:140
+msgid "Not enough blue shards"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:139
+msgid "Not enough green shards"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:138
+msgid "Not enough red shards"
+msgstr ""
+
+#: public/js/services/arenaService.js:190
+msgid "Now is turn of"
+msgstr ""
+
+#: public/js/controllers/FormController.js:9
+msgid "Now you can log in"
+msgstr ""
+
+#: public/js/services/arenaService.js:231
+#: public/js/services/arenaService.js:236
+#: public/js/services/arenaService.js:243
+msgid "of"
+msgstr ""
+
+#: public/js/services/arenaService.js:283
+msgid "on"
+msgstr ""
+
+#: template/partials/toolbars/header.ejs:7
+msgid "Online:"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:123
+msgid "Parameters"
+msgstr ""
+
+#: template/partials/charInfo.ejs:21
+msgid "Parameters Tune"
+msgstr ""
+
+#: template/partials/login.ejs:18
+#: template/partials/registration.ejs:24
+msgid "Password"
+msgstr ""
+
+#: public/js/controllers/FormController.js:42
+msgid "Password incorrect"
+msgstr ""
+
+#: template/partials/login.ejs:28
+#: template/partials/registration.ejs:43
+msgid "Password is required"
+msgstr ""
+
+#: template/partials/registration.ejs:44
+msgid "Password must be between 5 and 20 characters."
+msgstr ""
+
+#: template/partials/registration.ejs:45
+msgid "Password Must contain one lower &amp; uppercase letter,<br>and one non-alpha character (a number or a symbol.)"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:213
+#: template/partials/abilitiesInfo.ejs:167
+#: template/partials/charInfo.ejs:102
+#: template/partials/inventoryInfo.ejs:366
+#: template/partials/inventoryInfo.ejs:96
+msgid "Physical Resist.:"
+msgstr ""
+
+#: public/js/services/effectService.js:97
+msgid "Physical Resistance decreased to {{one}}%."
+msgstr ""
+
+#: public/js/services/effectService.js:1328
+msgid "Physical Resistance decreased to 25%.<br>Health Regeneration decreased to 25%."
+msgstr ""
+
+#: public/js/services/effectService.js:1115
+msgid "Physical Resistance increased to 25%.<br>Health Regeneration increased to 25%."
+msgstr ""
+
+#: template/partials/inventoryInfo.ejs:243
+msgid "Place any soul gem there to destroy it and release it souls"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:74
+msgid "Plate gloves"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:75
+msgid "Plate greaves"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:72
+msgid "Plate Helmet"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:76
+msgid "Plate sabatons"
+msgstr ""
+
+#: template/partials/toolbars/header.ejs:7
+msgid "player"
+msgid_plural "players"
+msgstr[0] ""
+msgstr[1] ""
+
+#: template/partials/login.ejs:10
+msgid "Please login or <a href=\"/registration\">register</a>"
+msgstr ""
+
+#: template/partials/registration.ejs:9
+msgid "Please, complete this form"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:91
+msgid "Portrait"
+msgstr ""
+
+#: public/js/services/abilityService.js:2045
+#: public/js/services/arenaService.js:425
+#: public/js/services/effectService.js:947
+msgid "Powerslave"
+msgstr ""
+
+#: public/js/services/abilityService.js:1622
+#: public/js/services/arenaService.js:398
+#: public/js/services/effectService.js:737
+msgid "Prophecy"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:30
+#: public/js/controllers/CharInfoController.js:70
+#: public/js/controllers/InventoryInfoController.js:30
+#: template/partials/createCharacter.ejs:45
+msgid "Prophet"
+msgstr ""
+
+#: public/js/services/characterService.js:39
+msgid "Prophets know a lot about the future. They use this knowledge as a weapon to control the fate of their enemies."
+msgstr ""
+
+#: public/js/services/abilityService.js:1395
+#: public/js/services/arenaService.js:383
+#: public/js/services/effectService.js:648
+msgid "Prowler"
+msgstr ""
+
+#: public/js/services/abilityService.js:2727
+#: public/js/services/arenaService.js:473
+msgid "Purgatory"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:230
+msgid "Quality: {{one}}%"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:29
+msgid "Race"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:107
+msgid "Race info"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:17
+#: template/partials/charInfo.ejs:14
+#: template/partials/inventoryInfo.ejs:317
+msgid "Race: {{getCharRace()}}"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:40
+msgid "Random"
+msgstr ""
+
+#: template/partials/inventoryInfo.ejs:72
+msgid "Range distance:"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:62
+msgid "Range: {{interestingAbility.range()}}"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:61
+msgid "Range: Self"
+msgstr ""
+
+#: template/partials/city.ejs:87
+msgid "Rating: {{team.rating}} (Rank {{rank}})"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:28
+#: public/js/controllers/CharInfoController.js:68
+#: public/js/controllers/InventoryInfoController.js:28
+#: template/partials/createCharacter.ejs:43
+msgid "Redeemer"
+msgstr ""
+
+#: public/js/services/characterService.js:35
+msgid "Redeemers judge all their enemies from long distance. They use their range weapons to control situation on battlefield."
+msgstr ""
+
+#: template/partials/registration.ejs:30
+msgid "Register"
+msgstr ""
+
+#: template/partials/registration.ejs:4
+msgid "Registration"
+msgstr ""
+
+#: public/js/controllers/FormController.js:63
+msgid "Registration successful"
+msgstr ""
+
+#: public/js/services/abilityService.js:464
+#: public/js/services/arenaService.js:320
+#: public/js/services/effectService.js:203
+msgid "Reign In Blood"
+msgstr ""
+
+#: public/js/services/abilityService.js:2374
+msgid "Removes {{$count}} random negative effects from ally."
+msgid_plural "Removes {{$count}} random negative effect from ally."
+msgstr[0] ""
+msgstr[1] ""
+
+#: public/js/services/abilityService.js:2731
+msgid "Removes {{$count}} random positive effects from enemy."
+msgid_plural "Removes {{$count}} random positive effect from enemy."
+msgstr[0] ""
+msgstr[1] ""
+
+#: public/js/services/arenaService.js:260
+#: public/js/services/arenaService.js:265
+msgid "restore"
+msgstr ""
+
+#: public/js/services/abilityService.js:2271
+msgid "Restore full health for one target"
+msgstr ""
+
+#: public/js/services/abilityService.js:743
+msgid "Restores {{one}} energy."
+msgstr ""
+
+#: template/partials/city.ejs:62
+msgid "Resurrect"
+msgstr ""
+
+#: template/partials/city.ejs:44
+msgid "Resurrection cost:"
+msgstr ""
+
+#: template/partials/arena.ejs:79
+msgid "Retreat"
+msgstr ""
+
+#: public/js/services/arenaService.js:276
+msgid "retreats"
+msgstr ""
+
+#: public/js/services/abilityService.js:2145
+#: public/js/services/effectService.js:1054
+msgid "Returns {{one}}% of damage back to the attacker."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:95
+msgid "Rib armor"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:64
+msgid "Right hand weapon"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:63
+msgid "Right ring"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:111
+msgid "Ring"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:29
+#: public/js/controllers/CharInfoController.js:69
+#: public/js/controllers/InventoryInfoController.js:29
+#: template/partials/createCharacter.ejs:44
+msgid "Ripper"
+msgstr ""
+
+#: public/js/services/characterService.js:37
+msgid "Rippers are designed to shred the bodies of their victims when they do not expect it. Craziness of rippers make them unpredictable."
+msgstr ""
+
+#: template/partials/createCharacter.ejs:37
+msgid "Role"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:53
+msgid "Role cost"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:115
+msgid "Role info"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:18
+#: template/partials/charInfo.ejs:15
+#: template/partials/inventoryInfo.ejs:318
+msgid "Role: {{getCharRole()}}"
+msgstr ""
+
+#: public/js/controllers/CityController.js:177
+#: public/js/controllers/CityController.js:275
+#: template/partials/city.ejs:110
+msgid "Roll Dices"
+msgstr ""
+
+#: public/js/services/abilityService.js:1325
+#: public/js/services/arenaService.js:377
+#: public/js/services/effectService.js:591
+msgid "Running Free"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:107
+msgid "Salvation Crucifix"
+msgstr ""
+
+#: public/js/services/abilityService.js:238
+#: public/js/services/arenaService.js:305
+#: public/js/services/effectService.js:140
+msgid "Sanctuary"
+msgstr ""
+
+#: template/partials/searchTeam.ejs:5
+msgid "Search Team..."
+msgstr ""
+
+#: public/js/controllers/CityController.js:38
+msgid "searching."
+msgstr ""
+
+#: public/js/controllers/CityController.js:39
+msgid "searching.."
+msgstr ""
+
+#: public/js/controllers/CityController.js:40
+msgid "searching..."
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:26
+#: public/js/controllers/CharInfoController.js:66
+#: public/js/controllers/InventoryInfoController.js:26
+#: template/partials/createCharacter.ejs:41
+msgid "Sentinel"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:98
+msgid "Sentinel Shield"
+msgstr ""
+
+#: public/js/services/characterService.js:31
+msgid "Sentinels are pain for all casters on the battlefield. They use shields to protect themselves and other party members from damage."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:97
+msgid "Seraph Spear"
+msgstr ""
+
+#: public/js/services/abilityService.js:1487
+msgid "Shoots the enemy with wand, deals {{one}}% of weapon damage, {{two}} magical damage and increases Spell Power to {{three}}%"
+msgstr ""
+
+#: public/js/services/abilityService.js:781
+#: public/js/services/abilityService.js:830
+msgid "Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage."
+msgstr ""
+
+#: public/js/services/abilityService.js:777
+#: public/js/services/arenaService.js:341
+msgid "Shot Down In Flames"
+msgstr ""
+
+#: public/js/services/abilityService.js:1626
+msgid "Shows current spells of the target. Decreases Magical Resistance and Initiative of the target to {{one}}%."
+msgstr ""
+
+#: public/js/services/effectService.js:553
+#: public/js/services/effectService.js:720
+msgid "Silenced. Can't cast spells."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:102
+msgid "Slaughter Dagger"
+msgstr ""
+
+#: public/js/controllers/AbilitiesInfoController.js:27
+#: public/js/controllers/CharInfoController.js:67
+#: public/js/controllers/InventoryInfoController.js:27
+#: template/partials/createCharacter.ejs:42
+msgid "Slayer"
+msgstr ""
+
+#: public/js/services/characterService.js:33
+msgid "Slayers are weapon of Devil itself. They destroy enemies in melee combat with huge sword and deals a lot of damage."
+msgstr ""
+
+#: public/js/services/arenaService.js:193
+msgid "Someone invisible stands on that cell!"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:195
+msgid "Soul Of Accuracy"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:197
+msgid "Soul Of Destiny"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:192
+msgid "Soul Of Dexterity"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:194
+msgid "Soul Of Energy"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:193
+msgid "Soul Of Extremum"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:198
+msgid "Soul Of Intellect"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:199
+msgid "Soul Of Magic"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:201
+msgid "Soul Of Meditation"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:187
+msgid "Soul Of Power"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:189
+msgid "Soul Of Regeneration"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:190
+msgid "Soul Of Stone"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:186
+msgid "Soul Of Strength"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:196
+msgid "Soul Of Swiftness"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:203
+msgid "Soul Of Tactic"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:188
+msgid "Soul Of Vitality"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:191
+msgid "Soul Of Wall"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:202
+msgid "Soul Of Will"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:200
+msgid "Soul Of Wisdom"
+msgstr ""
+
+#: template/partials/city.ejs:8
+#: template/partials/createTeam.ejs:8
+#: template/partials/inventoryInfo.ejs:218
+msgid "Soul shards:"
+msgstr ""
+
+#: public/js/services/abilityService.js:1541
+#: public/js/services/arenaService.js:392
+msgid "Speed Of Light"
+msgstr ""
+
+#: template/partials/abilitiesInfo.ejs:60
+msgid "Spell"
+msgstr ""
+
+#: public/js/services/effectService.js:1268
+msgid "Spell Power decreased to {{one}}%."
+msgstr ""
+
+#: public/js/services/effectService.js:1327
+msgid "Spell Power decreased to 25%.<br>Hit Chance decreased to 25%."
+msgstr ""
+
+#: public/js/services/effectService.js:1020
+#: public/js/services/effectService.js:696
+#: public/js/services/effectService.js:951
+msgid "Spell Power increased to {{one}}%."
+msgstr ""
+
+#: public/js/services/effectService.js:1114
+msgid "Spell Power increased to 25%.<br>Hit Chance increased to 25%."
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:222
+#: template/partials/abilitiesInfo.ejs:269
+#: template/partials/charInfo.ejs:204
+#: template/partials/inventoryInfo.ejs:134
+#: template/partials/inventoryInfo.ejs:468
+msgid "Spell Power:"
+msgstr ""
+
+#: public/js/services/abilityService.js:658
+#: public/js/services/arenaService.js:332
+#: public/js/services/effectService.js:256
+msgid "Spill The Blood"
+msgstr ""
+
+#: public/js/services/abilityService.js:2684
+#: public/js/services/arenaService.js:470
+#: public/js/services/effectService.js:1254
+msgid "Spreading The Disease"
+msgstr ""
+
+#: public/js/services/abilityService.js:1496
+#: public/js/services/abilityService.js:2653
+#: public/js/services/abilityService.js:2696
+msgid "Stacks up 5 times."
+msgstr ""
+
+#: public/js/services/abilityService.js:1483
+#: public/js/services/arenaService.js:389
+#: public/js/services/effectService.js:692
+msgid "Stargazer"
+msgstr ""
+
+#: public/js/services/abilityService.js:1001
+#: public/js/services/arenaService.js:356
+#: public/js/services/effectService.js:415
+msgid "State Of Grace"
+msgstr ""
+
+#: public/js/services/abilityService.js:1666
+msgid "Steals 1 random positive effect from enemy to caster."
+msgstr ""
+
+#: public/js/controllers/CityController.js:272
+msgid "Stop"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:126
+msgid "Strength"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:209
+#: template/partials/abilitiesInfo.ejs:127
+#: template/partials/charInfo.ejs:62
+#: template/partials/inventoryInfo.ejs:326
+#: template/partials/inventoryInfo.ejs:80
+msgid "Strength:"
+msgstr ""
+
+#: public/js/services/abilityService.js:514
+msgid "Strikes all enemies in 1 cell radius, deals {{one}}% of weapon damage. Ability has {{two}}% chance to restore it's cooldown immediately."
+msgstr ""
+
+#: public/js/services/abilityService.js:2856
+msgid "Strikes enemy with dagger, deals {{one}}% of weapon damage and {{two}} magical damage for each effect on target."
+msgstr ""
+
+#: public/js/services/abilityService.js:2545
+msgid "Strikes enemy with dagger, deals {{one}}% of weapon damage, {{two}} magical damage and restores health equal to dealing damage."
+msgstr ""
+
+#: public/js/services/abilityService.js:2180
+msgid "Strikes enemy with hammer, deals {{one}}% of weapon damage, {{two}} magical damage and restores mana equal to dealing damage."
+msgstr ""
+
+#: public/js/services/abilityService.js:188
+msgid "Strikes enemy with shield, deals {{one}}% of weapon damage, throws enemy away and stuns him"
+msgstr ""
+
+#: public/js/services/abilityService.js:468
+msgid "Strikes enemy, deals {{one}}% of weapon damage and increases Attack Power to {{two}}% until miss. Stacks up 5 times."
+msgstr ""
+
+#: public/js/services/abilityService.js:34
+msgid "Strikes enemy, deals {{one}}% of weapon damage and increases Hit Chance to {{two}}%"
+msgstr ""
+
+#: public/js/services/abilityService.js:1127
+msgid "Strikes enemy, deals {{one}}% of weapon damage and injects the venom, what deals {{two}} magical damage"
+msgstr ""
+
+#: public/js/services/abilityService.js:1210
+msgid "Strikes enemy, deals {{one}}% of weapon damage and makes target silenced"
+msgstr ""
+
+#: public/js/services/abilityService.js:1399
+msgid "Strikes enemy, deals {{one}}% of weapon damage and stuns target"
+msgstr ""
+
+#: public/js/services/abilityService.js:425
+msgid "Strikes enemy, deals {{one}}% of weapon damage."
+msgstr ""
+
+#: public/js/services/abilityService.js:277
+msgid "Strikes enemy, deals {{one}}% of weapon damage. After that causes bleeding for {{two}}% of dealing damage"
+msgstr ""
+
+#: public/js/services/abilityService.js:30
+#: public/js/services/arenaService.js:293
+#: public/js/services/effectService.js:11
+msgid "Strong Arm Of The Law"
+msgstr ""
+
+#: public/js/services/effectService.js:1164
+#: public/js/services/effectService.js:123
+#: public/js/services/effectService.js:369
+#: public/js/services/effectService.js:652
+#: public/js/services/effectService.js:930
+msgid "Stunned. Skip next turn."
+msgstr ""
+
+#: public/js/controllers/CreateCharacterController.js:103
+#: public/js/controllers/CreateTeamController.js:51
+msgid "Successful"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:109
+msgid "Succubus Shield"
+msgstr ""
+
+#: public/js/services/effectService.js:146
+msgid "takes {{one}}% of damage from this character."
+msgstr ""
+
+#: public/js/services/abilityService.js:142
+msgid "Takes off target weapon and some armor. Reduces target physical resistance for {{one}}%."
+msgstr ""
+
+#: public/js/services/abilityService.js:2004
+msgid "Target becomes living bomb and every turn gets {{one}} magical damage"
+msgstr ""
+
+#: template/partials/createTeam.ejs:57
+msgid "Team name"
+msgstr ""
+
+#: public/js/controllers/CreateTeamController.js:35
+msgid "Team name {{one}} is already in use"
+msgstr ""
+
+#: template/partials/createTeam.ejs:64
+msgid "Team name is required"
+msgstr ""
+
+#: template/partials/createTeam.ejs:66
+msgid "Team name must be between 3 and 15 characters"
+msgstr ""
+
+#: template/partials/createTeam.ejs:65
+msgid "Team name must contain latin or cyrillic letters only"
+msgstr ""
+
+#: template/partials/createCharacter.ejs:72
+msgid "Team shards"
+msgstr ""
+
+#: public/js/services/abilityService.js:1545
+msgid "Teleports character to any cell in {{$count}} cell radius."
+msgid_plural "Teleports character to any cell in {{$count}} cells radius."
+msgstr[0] ""
+msgstr[1] ""
+
+#: public/js/services/abilityService.js:2000
+#: public/js/services/arenaService.js:422
+#: public/js/services/effectService.js:863
+msgid "Thank God For The Bomb"
+msgstr ""
+
+#: public/js/services/effectService.js:926
+msgid "Thank God For The Bomb (Stun)"
+msgstr ""
+
+#: public/js/services/abilityService.js:273
+#: public/js/services/arenaService.js:308
+#: public/js/services/effectService.js:167
+msgid "The Punishment Due"
+msgstr ""
+
+#: public/js/services/abilityService.js:1041
+msgid "This ability can be used only against characters with less than 30% health. Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage."
+msgstr ""
+
+#: public/js/services/abilityService.js:748
+msgid "This ability doesn't remove control effects, which is already on character."
+msgstr ""
+
+#: template/partials/arena.ejs:195
+msgid "This character hasn't any effects"
+msgstr ""
+
+#: public/js/services/effectService.js:524
+#: public/js/services/effectService.js:673
+msgid "This character is invisible for enemy. Effect fades if character takes or deals damage."
+msgstr ""
+
+#: public/js/controllers/FormController.js:76
+msgid "This e-mail is in use"
+msgstr ""
+
+#: public/js/services/abilityService.js:915
+msgid "Throws lightning which deals {{one}} magical damage and stuns target"
+msgstr ""
+
+#: public/js/services/abilityService.js:328
+msgid "Throws spear to enemy, deals {{one}}% of weapon damage and draws the target to caster."
+msgstr ""
+
+#: public/js/services/abilityService.js:911
+#: public/js/services/arenaService.js:350
+#: public/js/services/effectService.js:365
+msgid "Thunderstruck"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:101
+msgid "Tormentor Dagger"
+msgstr ""
+
+#: public/js/services/abilityService.js:968
+msgid "Up in the air and becomes immune to physical attacks"
+msgstr ""
+
+#: public/js/services/arenaService.js:262
+#: public/js/services/arenaService.js:267
+msgid "used by"
+msgstr ""
+
+#: public/js/controllers/FormController.js:45
+msgid "User {{username}} not found"
+msgstr ""
+
+#: public/js/controllers/FormController.js:73
+msgid "User is already created"
+msgstr ""
+
+#: public/js/services/abilityService.js:8
+#: public/js/services/arenaService.js:290
+msgid "Void"
+msgstr ""
+
+#: template/partials/arena.ejs:5
+msgid "Waiting For Enemy..."
+msgstr ""
+
+#: public/js/services/abilityService.js:184
+#: public/js/services/arenaService.js:302
+#: public/js/services/effectService.js:119
+msgid "Walk Away"
+msgstr ""
+
+#: public/js/services/arenaService.js:254
+msgid "was healed by"
+msgstr ""
+
+#: template/partials/login.ejs:5
+msgid "Welcome to FOTM"
+msgstr ""
+
+#: public/js/controllers/FormController.js:32
+msgid "Welcome!"
+msgstr ""
+
+#: public/js/services/effectService.js:872
+msgid "When this effect ends, all allies of this character in one cell radius gets {{one}} magical damage and becomes stunned for 3 turns."
+msgstr ""
+
+#: public/js/services/abilityService.js:2011
+msgid "When this effect ends, all enemies in one cell radius around target gets {{one}} magical damage and becomes stunned for 3 turns."
+msgstr ""
+
+#: template/partials/city.ejs:88
+msgid "Win Rate: {{team.wins}}-{{team.loses}}"
+msgstr ""
+
+#: public/js/services/arenaService.js:197
+#: public/js/services/arenaService.js:251
+#: public/js/services/arenaService.js:257
+msgid "with"
+msgstr ""
+
+#: template/partials/city.ejs:103
+msgid "Yes"
+msgstr ""
+
+#: public/js/services/abilityService.js:964
+#: public/js/services/arenaService.js:353
+#: public/js/services/effectService.js:386
+msgid "You Aint No Angel"
+msgstr ""
+
+#: template/partials/arena.ejs:105
+msgid "You gain:"
+msgstr ""
+
+#: public/js/controllers/ArenaController.js:628
+msgid "You lose"
+msgstr ""
+
+#: template/partials/inventoryInfo.ejs:236
+#: template/partials/inventoryInfo.ejs:253
+msgid "You receive:"
+msgstr ""
+
+#: public/js/services/characterService.js:47
+msgid "You will get random role of available for chosen race."
+msgstr ""
+
+#: public/js/controllers/ArenaController.js:679
+msgid "You win"
+msgstr ""
+
+#: public/js/controllers/ArenaController.js:707
+msgid "Your enemy not ready to battle"
+msgstr ""
+
+#: public/js/controllers/ArenaController.js:782
+#: public/js/controllers/ArenaController.js:787
+msgid "Your enemy was disconnected"
+msgstr ""
+
+#: public/js/controllers/FormController.js:27
+msgid "Your local date or time is incorrect!"
+msgstr ""
+
+#: template/partials/arena.ejs:104
+msgid "Your rating now: {{battleEnd.rating}} ({{battleEnd.ratingChange}})"
+msgstr ""
+
+#: public/js/controllers/InventoryInfoController.js:105
+msgid "Zaqqum Branch"
+msgstr ""

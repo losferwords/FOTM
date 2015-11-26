@@ -1,0 +1,6 @@
+$ cat .gitignore
+*.[oa]
+*~
+/node_modules
+/public/vendor/bower_components
+/.idea

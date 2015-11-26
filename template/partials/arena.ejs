@@ -1,0 +1,222 @@
+<div ng-controller="SocketController">
+    <%- partial('../partials/toolbars/header') %>
+    <div class="row" ng-controller="ArenaController">
+        <div class="col-md-12 well bs-component header-overlay" ng-if="!enemyTeamLoaded"></div>
+        <div class="col-md-12 well bs-component" ng-if="opponentWaiting"><legend translate>Waiting For Enemy...</legend></div>
+        <div class="col-md-12 well bs-component battleScreen" ng-if="!opponentWaiting">
+            <legend translate>Battle</legend>
+            <div class="clearfix">
+                <div class="my-team-info">
+                    <div class="panel panel-primary team-panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{::myTeam.teamName}}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div ng-repeat="char in myTeam.characters track by $index">
+                                <div class="panel panel-default char-panel" ng-style="::{'border-color' : char.battleColor }">
+                                    <div class="panel-body">
+                                        <div class="portrait btn"
+                                                ng-style="{'background-image': getCharPortrait(char)}"
+                                                popover-template="'effectsPopover.html'">
+                                            <div class="role-in-portrait ally" ng-class="::[char.role+'-icon']"></div>
+                                        </div>
+                                        <div class="char-info">
+                                            <p class="text-left char-name" ng-style="::{'color' : char.battleColor}">{{::char.charName}}</p>
+                                            <div class="row">
+                                                <div class="col-sm-12"><progressbar dynamic-max="{{::char.maxHealth}}" value="char.curHealth" type="danger" progress-text><span class="number">{{char.curHealth}} / {{::char.maxHealth}}</span><span class="percent">{{calculateInPercent(char.curHealth, char.maxHealth)}}%</span></progressbar></div>
+                                                <div class="col-sm-12"><progressbar dynamic-max="{{::char.maxEnergy}}" value="char.curEnergy" type="success" progress-text><span class="number">{{char.curEnergy}} / {{::char.maxEnergy}}</span><span class="percent">{{calculateInPercent(char.curEnergy, char.maxEnergy)}}%</span></progressbar></div>
+                                                <div class="col-sm-12"><progressbar dynamic-max="{{::char.maxMana}}" value="char.curMana" type="primary" progress-text><span class="number">{{char.curMana}} / {{::char.maxMana}}</span><span class="percent">{{calculateInPercent(char.curMana, char.maxMana)}}%</span></progressbar></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 ability-group" ng-if="$index!==2">
+                                            <div class="btn-group">
+                                                <div class="ability-wrapper btn btn-default"
+                                                     ng-repeat="ability in char.abilities track by $index"
+                                                     tooltip-html="getAbilityTooltip(ability)"
+                                                     tooltip-placement="bottom"
+                                                     tooltip-append-to-body="true"
+                                                     tooltip-animation="false"
+                                                     tooltip-class="ability-tooltip">
+                                                    <div class="ability-icon"
+                                                         ng-style="::{'background-image': ability.icon(), 'background-color': getAbilityColor(ability)}"
+                                                         ng-disabled="!checkAbilityForUse(ability, char) || waitServ || !enemyTeamLoaded"
+                                                         ng-class="{'prepared': checkPreparedAbility(ability, char)}"
+                                                         ng-click="prepareAbility($index)"
+                                                         >
+                                                            <span ng-if="ability.cd>0">{{ability.cd}}</span>
+                                                            <div class="ability-fade"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 ability-group" ng-if="$index===2">
+                                            <div class="btn-group">
+                                                <div class="ability-wrapper btn btn-default"
+                                                     ng-repeat="ability in char.abilities track by $index"
+                                                     tooltip-html="getAbilityTooltip(ability)"
+                                                     tooltip-placement="top"
+                                                     tooltip-append-to-body="true"
+                                                     tooltip-animation="false"
+                                                     tooltip-class="ability-tooltip">
+                                                    <div class="ability-icon"
+                                                         ng-style="::{'background-image': ability.icon(), 'background-color': getAbilityColor(ability)}"
+                                                         ng-disabled="!checkAbilityForUse(ability, char) || waitServ || !enemyTeamLoaded"
+                                                         ng-class="{'prepared': checkPreparedAbility(ability, char)}"
+                                                         ng-click="prepareAbility($index)"
+                                                            >
+                                                        <span ng-if="ability.cd>0">{{ability.cd}}</span>
+                                                        <div class="ability-fade"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-group optional-btns">
+                        <button class="btn btn-warning" ng-click="retreatClick()" ng-disabled="waitServ || !enemyTeamLoaded || !myTurn" translate>Retreat</button>
+                        <button class="btn btn-success" ng-click="testFunction()" ng-disabled="waitServ">Test</button>
+                    </div>
+                </div>
+                <div class="center-info" ng-if="!battleEnd.ended">
+                    <div class="map">
+                        <canvas width="320" height="320" arrows start="activeChar.position" end-tile="tileForArrow" end-char="charForArrow.position" arrow-color="arrowColor"></canvas>
+                        <div ng-repeat="tile in map track by $index" class="map_tile" ng-style="::{'left' : tile.x*32, 'top' : tile.y*32, 'background-image': tile.image}"><div class="overlay" ng-class="{'move': tile.move}" ng-mouseenter="setTileForArrow(tile)" ng-mouseleave="resetArrow()" ng-click="moveToTile(tile)" ng-hide="waitServ || !enemyTeamLoaded"></div></div>
+                        <div ng-repeat="char in myTeam.characters track by $index" class="char_tile" ng-style="{'left' : char.position.x*32, 'top' : char.position.y*32, 'border-color' : char.battleColor, 'background-image' : 'url('+char.portrait+')'}" ng-if="!char.isDead" ><div class="overlay" ng-class="{'myAbility': char.underAbility}" ng-mouseenter="setCharForArrow(char)" ng-mouseleave="resetArrow()" ng-click="castAbility(char)" ng-disabled="waitServ"></div></div>
+                        <div ng-repeat="char in enemyTeam.characters track by $index" class="char_tile" ng-style="{'left' : char.position.x*32, 'top' : char.position.y*32, 'border-color' : char.battleColor, 'background-image' : 'url('+char.portrait+')'}" ng-if="!(char.isDead || char.invisible)" ><div class="overlay" ng-class="{'enemyAbility': char.underAbility}" ng-mouseenter="setCharForArrow(char)" ng-mouseleave="resetArrow()" ng-click="castAbility(char)" ng-disabled="waitServ"></div></div>
+                    </div>
+                    <div class="queue-info">
+                        <div class="queue">
+                            <div ng-repeat="player in queue track by $index" class="portrait" ng-style="{'border-color' : player.battleColor, 'background-image': 'url('+player.portrait+')'}"></div>
+                        </div>
+                        <button class="btn btn-default btn-end-turn" ng-class="{'waiting' : waitServ}" ng-style="{'background-color': queue[0].battleColor}" ng-disabled="!myTurn || $scope.activeChar.turnEnded || !enemyTeamLoaded" ng-click="endTurn()">{{getTurnTime()}}</button>
+                        <div class="loader" ng-if="waitServ || !enemyTeamLoaded"></div>
+                    </div>
+                    <div class="combatLog well customScrollBar" autoscroll>
+                        <p ng-repeat="logStr in CombatLog track by $index" ng-style="{'color' : logStr.color}"><span class="text-muted">{{logStr.time}} </span> {{logStr.text}}</p>
+                    </div>
+                </div>
+                <div class="center-info" ng-if="battleEnd.ended">
+                    <div class="well battle-end-container">
+                        <h2>{{::battleEnd.title}}</h2>
+                        <h4 translate>Your rating now: {{battleEnd.rating}} ({{battleEnd.ratingChange}})</h4>
+                        <p translate>You gain:</p>
+                        <div class="shards-container">
+                            <div class="shard red-shard">
+                                <div class="icon"></div>
+                                <span>+{{::battleEnd.souls.red}}</span>
+                            </div>
+                            <div class="shard green-shard">
+                                <div class="icon"></div>
+                                <span>+{{::battleEnd.souls.green}}</span>
+                            </div>
+                            <div class="shard blue-shard">
+                                <div class="icon"></div>
+                                <span>+{{::battleEnd.souls.blue}}</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-success" ng-click="backToCity()" ng-disabled="waitServ" translate>Back to city</button>
+                    </div>
+                </div>
+                <div class="enemy-team-info">
+                    <div class="panel panel-danger">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{::enemyTeam.teamName}}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div ng-repeat="char in enemyTeam.characters track by $index">
+                                <div class="panel panel-default char-panel" ng-style="::{'border-color' : char.battleColor }">
+                                    <div class="panel-body">
+                                        <div class="portrait btn"
+                                             ng-style="{'background-image': getCharPortrait(char)}"
+                                             popover-template="'effectsPopover.html'">
+                                            <div class="role-in-portrait enemy" ng-class="::[char.role+'-icon']"></div>
+                                        </div>
+                                        <div class="char-info">
+                                            <p class="text-left char-name" ng-style="::{'color' : char.battleColor }">{{::char.charName}}</p>
+                                            <div class="row">
+                                                <div class="col-sm-12"><progressbar dynamic-max="{{::char.maxHealth}}" value="char.curHealth" type="danger" progress-text><span class="number">{{char.curHealth}} / {{::char.maxHealth}}</span><span class="percent">{{calculateInPercent(char.curHealth, char.maxHealth)}}%</span></progressbar></div>
+                                                <div class="col-sm-12"><progressbar dynamic-max="{{::char.maxEnergy}}" value="char.curEnergy" type="success" progress-text><span class="number">{{char.curEnergy}} / {{::char.maxEnergy}}</span><span class="percent">{{calculateInPercent(char.curEnergy, char.maxEnergy)}}%</span></progressbar></div>
+                                                <div class="col-sm-12"><progressbar dynamic-max="{{::char.maxMana}}" value="char.curMana" type="primary" progress-text><span class="number">{{char.curMana}} / {{::char.maxMana}}</span><span class="percent">{{calculateInPercent(char.curMana, char.maxMana)}}%</span></progressbar></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 enemy-abilities ability-group" ng-if="$index!==2">
+                                            <div class="btn-group" ng-if="char.underProphecy">
+                                                <div class="ability-wrapper btn btn-default"
+                                                     ng-repeat="ability in char.abilities track by $index"
+                                                     tooltip-html="getAbilityTooltip(ability)"
+                                                     tooltip-placement="bottom"
+                                                     tooltip-append-to-body="true"
+                                                     tooltip-animation="false"
+                                                     tooltip-class="ability-tooltip">
+                                                    <div class="ability-icon"
+                                                         ng-style="::{'background-image': ability.icon(), 'background-color': getAbilityColor(ability)}"
+                                                         ng-disabled="true"
+                                                            >
+                                                        <span ng-if="ability.cd>0">{{ability.cd}}</span>
+                                                        <div class="ability-fade"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 enemy-abilities ability-group" ng-if="$index===2">
+                                            <div class="btn-group" ng-if="char.underProphecy">
+                                                <div class="ability-wrapper btn btn-default"
+                                                     ng-repeat="ability in char.abilities track by $index"
+                                                     tooltip-html="getAbilityTooltip(ability)"
+                                                     tooltip-placement="bottom"
+                                                     tooltip-append-to-body="true"
+                                                     tooltip-animation="false"
+                                                     tooltip-class="ability-tooltip">
+                                                    <div class="ability-icon"
+                                                         ng-style="::{'background-image': ability.icon(), 'background-color': getAbilityColor(ability)}"
+                                                         ng-disabled="true"
+                                                            >
+                                                        <span ng-if="ability.cd>0">{{ability.cd}}</span>
+                                                        <div class="ability-fade"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script id="effectsPopover.html" type="text/ng-template">
+        <div class="effects-popover">
+            <p ng-if="char.buffs.length===0 && char.debuffs.length===0" translate>This character hasn't any effects</p>
+            <div ng-if="char.buffs.length>0">
+                <p translate>Buffs:</p>
+                <div ng-repeat="effect in char.buffs track by $index"
+                     class='buff-icon'
+                     ng-style="{'background-image': effect.icon(), 'background-color': getAbilityColor(effect)}"
+                     tooltip-html="getEffectTooltip(effect)"
+                     tooltip-placement="bottom"
+                     tooltip-append-to-body="true"
+                     tooltip-animation="false"
+                     tooltip-class="effect-tooltip"><span ng-class="{'for-cleric': (effect.role()=='cleric')}" ng-if="effect.stacks>1">{{effect.stacks}}</span></div>
+            </div>
+            <div ng-if="char.debuffs.length>0">
+                <p translate>Debuffs:</p>
+                <div ng-repeat="effect in char.debuffs track by $index"
+                     class='buff-icon'
+                     ng-style="{'background-image': effect.icon(), 'background-color': getAbilityColor(effect)}"
+                     tooltip-html="getEffectTooltip(effect)"
+                     tooltip-placement="bottom"
+                     tooltip-append-to-body="true"
+                     tooltip-animation="false"
+                     tooltip-class="effect-tooltip"><span ng-class="{'for-cleric': (effect.role()=='cleric')}" ng-if="effect.stacks>1">{{effect.stacks}}</span></div>
+            </div>
+        </div>
+    </script>
+
+    <%- partial('../partials/toolbars/footer') %>
+</div>

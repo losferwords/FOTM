@@ -1,0 +1,22 @@
+<% if(user){ %>
+<div class="row">
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <ul class="nav col-xs-8 col-sm-9 col-lg-10">
+                <li>
+                    <p class="navbar-text online-text"><span class="text-info"><span translate>Online:</span><span class="badge">{{onlineUsers}}</span> <span translate translate-n="onlineUsers" translate-plural="players">player</span></span></p>
+                    <button class="language-btn btn" ng-click="changeLanguage('ru')"><img src="images/interface/ru.gif" alt=""/></button>
+                    <button class="language-btn btn" ng-click="changeLanguage('en')"><img src="images/interface/gb.gif" alt=""/></button>
+                    <button class="btn btn-sm navbar-btn mute-btn" ng-class="{'btn-success': soundEnabled, 'btn-danger': !soundEnabled}" ng-click="toggleSound()"><span ng-class="{'glyphicon glyphicon-volume-up': soundEnabled, 'glyphicon glyphicon-volume-off': !soundEnabled}"></span></button>
+                </li>
+            </ul>
+            <ul class="nav col-xs-4 col-sm-3 col-lg-2">
+                <li class="col-xs-6"><p class="navbar-text"><span class="text-info text-right">{{::userName}}</span></p></li>
+                <li class="col-xs-6">
+                    <button class="btn btn-warning btn-sm navbar-btn" href="" onclick="$('<form method=POST action=/logout></form>').submit(); return false" translate>Exit</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+<% } %>

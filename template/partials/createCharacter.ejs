@@ -1,0 +1,153 @@
+<div ng-controller="SocketController">
+    <%- partial('../partials/toolbars/header') %>
+    <div class="row" ng-controller="CreateCharacterController">
+        <div class="col-md-10 col-md-offset-1 well bs-component row-same-height row-full-height">
+            <legend translate>Create Character</legend>
+                <div class="col-sm-6">
+                    <div class="panel panel-primary" style="height: 100%">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" translate>Basic info</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form name="charForm" class="form-horizontal create-char-form" novalidate>
+                                <div class="form-group" ng-class="{'has-error': charForm.charName.$invalid, 'has-success': charForm.charName.$valid}">
+                                    <label for="input-charName" class="control-label form-left" translate>Name</label>
+                                    <div class="form-right">
+                                        <input name="charName" type="text" class="form-control" id="input-charName" ng-model="charName" ng-minlength="3" ng-maxlength="15" ng-pattern="/^(([a-zA-Z]+)|([а-яёА-ЯЁ]+))$/i" ng-focus="" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label text-success form-left" translate>Gender</label>
+                                    <div class="text-center form-right">
+                                        <div class="btn-group">
+                                            <div class="btn btn-primary icon-small" ng-model="gender" btn-radio="'male'" ng-style="{'background-image':'url(./images/icons/interface/male.svg)'}" tooltip-placement="left" tooltip="{{'Male' |translate}}" tooltip-append-to-body="true"></div>
+                                            <div class="btn btn-primary icon-small" ng-model="gender" btn-radio="'female'" ng-style="{'background-image':'url(./images/icons/interface/female.svg)'}" tooltip-placement="right" tooltip="{{'Female' |translate}}" tooltip-append-to-body="true"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label text-success form-left" translate>Race</label>
+                                    <div class="text-center form-right">
+                                        <div class="btn-group">
+                                            <div class="btn icon-race" ng-class="getRaceBtnClass(race)" ng-model="currentRace.name" ng-repeat="race in races" btn-radio="race" ng-style="racePortraitPaths($index)" tooltip-placement="bottom" tooltip="{{getRaceName(race)}}" tooltip-append-to-body="true"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label text-success form-left" translate>Role</label>
+                                    <div class="text-center form-right">
+                                        <div class="btn-group">
+                                            <div class="btn btn-default icon-role icon-random" ng-model="role" btn-radio="'random'" ng-style="{'background-image':'url(./images/icons/interface/random.svg)'}" tooltip-placement="bottom" tooltip="{{'Random' |translate}}" tooltip-append-to-body="true"></div>
+                                            <div class="btn btn-default icon-role icon-sentinel" ng-model="role" btn-radio="'sentinel'" ng-style="{'background-image':'url(./images/icons/roles/sentinel.svg)'}" tooltip-placement="bottom" tooltip="{{'Sentinel' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='cambion'"></div>
+                                            <div class="btn btn-default icon-role icon-slayer" ng-model="role" btn-radio="'slayer'" ng-style="{'background-image':'url(./images/icons/roles/slayer.svg)'}" tooltip-placement="bottom" tooltip="{{'Slayer' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='nephilim'"></div>
+                                            <div class="btn btn-default icon-role icon-redeemer" ng-model="role" btn-radio="'redeemer'" ng-style="{'background-image':'url(./images/icons/roles/redeemer.svg)'}" tooltip-placement="bottom" tooltip="{{'Redeemer' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='cambion'"></div>
+                                            <div class="btn btn-default icon-role icon-ripper" ng-model="role" btn-radio="'ripper'" ng-style="{'background-image':'url(./images/icons/roles/ripper.svg)'}" tooltip-placement="bottom" tooltip="{{'Ripper' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='nephilim'"></div>
+                                            <div class="btn btn-default icon-role icon-prophet" ng-model="role" btn-radio="'prophet'" ng-style="{'background-image':'url(./images/icons/roles/prophet.svg)'}" tooltip-placement="bottom" tooltip="{{'Prophet' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='cambion'"></div>
+                                            <div class="btn btn-default icon-role icon-malefic" ng-model="role" btn-radio="'malefic'" ng-style="{'background-image':'url(./images/icons/roles/malefic.svg)'}" tooltip-placement="bottom" tooltip="{{'Malefic' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='nephilim'"></div>
+                                            <div class="btn btn-default icon-role icon-cleric" ng-model="role" btn-radio="'cleric'" ng-style="{'background-image':'url(./images/icons/roles/cleric.svg)'}" tooltip-placement="bottom" tooltip="{{'Cleric' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='cambion'"></div>
+                                            <div class="btn btn-default icon-role icon-heretic" ng-model="role" btn-radio="'heretic'" ng-style="{'background-image':'url(./images/icons/roles/heretic.svg)'}" tooltip-placement="bottom" tooltip="{{'Heretic' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='nephilim'"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label text-success form-left smaller" translate>Role cost</label>
+                                    <div class="text-center form-right">
+                                        <div class="shards-container shards-cost">
+                                            <div class="shard red-shard">
+                                                <div class="icon"></div>
+                                                <span ng-class="{'not-enough': (teamSouls.red-roleCost.red)<0}">{{roleCost.red}}</span>
+                                            </div>
+                                            <div class="shard green-shard">
+                                                <div class="icon"></div>
+                                                <span ng-class="{'not-enough': (teamSouls.green-roleCost.green)<0}">{{roleCost.green}}</span>
+                                            </div>
+                                            <div class="shard blue-shard">
+                                                <div class="icon"></div>
+                                                <span ng-class="{'not-enough': (teamSouls.blue-roleCost.blue)<0}">{{roleCost.blue}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label text-success form-left smaller" translate>Team shards</label>
+                                    <div class="text-center form-right">
+                                        <div class="shards-container shards-cost">
+                                            <div class="shard red-shard">
+                                                <div class="icon"></div>
+                                                <span>{{teamSouls.red}}</span>
+                                            </div>
+                                            <div class="shard green-shard">
+                                                <div class="icon"></div>
+                                                <span>{{teamSouls.green}}</span>
+                                            </div>
+                                            <div class="shard blue-shard">
+                                                <div class="icon"></div>
+                                                <span>{{teamSouls.blue}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label text-success form-left" translate>Portrait</label>
+                                    <div class="form-right">
+                                        <carousel interval="0" class="carousel portrait-carousel">
+                                            <slide ng-repeat="portrait in portraits" active="portrait.active">
+                                                <img ng-src="{{portrait.image}}" style="margin:auto">
+                                            </slide>
+                                        </carousel>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" translate>Race info</h3>
+                        </div>
+                        <div class="panel-body">
+                            {{getRaceInfo()}}
+                        </div>
+                    </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" translate>Role info</h3>
+                        </div>
+                        <div class="panel-body">
+                            {{getRoleInfo()}}
+                        </div>
+                    </div>
+                    <div class="panel panel-info" ng-if="role!=='random'">
+                        <div class="panel-heading">
+                            <h3 class="panel-title" translate>Parameters</h3>
+                        </div>
+                        <div class="panel-body">
+                            <p class="text-left text-danger" translate>Strength</p>
+                            <progressbar max="150" value="params.strMax" type="danger">{{params.strMax}}</progressbar>
+                            <p class="text-left text-success" translate>Dexterity</p>
+                            <progressbar max="150" value="params.dxtMax" type="success">{{params.dxtMax}}</progressbar>
+                            <p class="text-left text-primary" translate>Intellect</p>
+                            <progressbar max="150" value="params.intMax" type="primary">{{params.intMax}}</progressbar>
+                        </div>
+                    </div>
+                </div>
+
+            <div ng-class="{'text-danger': cssError, 'text-success': cssSuccess, 'text-info': cssText}">{{info}}</div>
+
+            <div class="text-danger" ng-if="(teamSouls.red-roleCost.red)<0" translate>Not enough red shards</div>
+            <div class="text-danger" ng-if="(teamSouls.green-roleCost.green)<0" translate>Not enough green shards</div>
+            <div class="text-danger" ng-if="(teamSouls.blue-roleCost.blue)<0" translate>Not enough blue shards</div>
+            <div class="text-danger" ng-if="charForm.charName.$error.required && charForm.charName.$dirty" translate>Character name is required</div>
+            <div class="text-danger" ng-if="!charForm.charName.$error.minLength && !charForm.charName.$error.maxLength && charForm.charName.$error.pattern && charForm.charName.$dirty" translate>Character name must contain latin or cyrillic letters only</div>
+            <div class="text-danger" ng-if="!charForm.charName.$error.required && (charForm.charName.$error.minlength || charForm.charName.$error.maxlength) && charForm.charName.$dirty" translate>Character name must be between 3 and 15 characters</div>
+            <div class="form-group">
+                <button class="btn btn-success" ng-disabled="charForm.$invalid || (teamSouls.red-roleCost.red)<0 || (teamSouls.green-roleCost.green)<0 || (teamSouls.blue-roleCost.blue)<0" ng-click="submitCharClick()" translate>Create</button>
+                <button class="btn btn-warning" ng-click="cancelCharClick()" translate>Cancel</button>
+            </div>
+
+
+        </div>
+    </div>
+    <%- partial('../partials/toolbars/footer') %>
+</div>

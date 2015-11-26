@@ -1,0 +1,525 @@
+<div ng-controller="SocketController">
+    <%- partial('../partials/toolbars/header') %>
+    <div class="row" ng-controller="InventoryInfoController">
+        <div class="col-xs-12 well bs-component inventory">
+            <legend translate>Inventory</legend>
+            <div class="clearfix">
+                <div class="content-left">
+                    <div class="panel doll-panel">
+                        <div class="panel-body">
+                            <div class="btn btn-default slot slot-md head"
+                                 ng-class="{'active': interestingItem.slot=='head'}"
+                                 ng-style="{'background-image': getSlotImage('head'), 'background-color': char.getRoleColor()}"
+                                 ng-click="chooseSlot('head')"></div>
+                            <div class="btn btn-default slot slot-md chest"
+                                 ng-class="{'active': interestingItem.slot=='chest'}"
+                                 ng-style="{'background-image': getSlotImage('chest'), 'background-color': char.getRoleColor()}"
+                                 ng-click="chooseSlot('chest')"></div>
+                            <div class="btn btn-default slot slot-md hands left"
+                                 ng-class="{'active': interestingItem.slot=='hands'}"
+                                 ng-style="{'background-image': getSlotImage('hands'), 'background-color': char.getRoleColor()}"
+                                 ng-click="chooseSlot('hands')"></div>
+                            <div class="btn btn-default slot slot-md hands right"
+                                 ng-class="{'active': interestingItem.slot=='hands'}"
+                                 ng-style="{'background-image': getSlotImage('hands'), 'background-color': char.getRoleColor()}"
+                                 ng-click="chooseSlot('hands')"></div>
+                            <div class="btn btn-default slot slot-md legs"
+                                 ng-class="{'active': interestingItem.slot=='legs'}"
+                                 ng-style="{'background-image': getSlotImage('legs'), 'background-color': char.getRoleColor()}"
+                                 ng-click="chooseSlot('legs')"></div>
+                            <div class="btn btn-default slot slot-md boots"
+                                 ng-class="{'active': interestingItem.slot=='boots'}"
+                                 ng-style="{'background-image': getSlotImage('boots'), 'background-color': char.getRoleColor()}"
+                                 ng-click="chooseSlot('boots')"></div>
+                            <div class="btn btn-default slot slot-lg mainHandWeapon"
+                                 ng-class="{'active': interestingItem.slot=='mainHandWeapon'}"
+                                 ng-style="{'background-image': getSlotImage('mainHandWeapon'), 'background-color': char.getRoleColor()}"
+                                 ng-click="chooseSlot('mainHandWeapon')"></div>
+                            <div class="btn btn-default slot slot-lg offHandWeapon"
+                                 ng-disabled="char.equip['offHandWeapon'].name == 'Void'"
+                                 ng-class="{'active': interestingItem.slot=='offHandWeapon'}"
+                                 ng-style="{'background-image': getSlotImage('offHandWeapon'), 'background-color': char.getRoleColor()}"
+                                 ng-click="chooseSlot('offHandWeapon')"></div>
+                            <div class="btn btn-default slot slot-sm amulet"
+                                 ng-class="{'active': interestingItem.slot=='amulet'}"
+                                 ng-style="{'background-image': getSlotImage('amulet'), 'background-color': char.getRoleColor()}"
+                                 ng-click="chooseSlot('amulet')"></div>
+                            <div class="btn btn-default slot slot-sm leftRing"
+                                 ng-class="{'active': interestingItem.slot=='leftRing'}"
+                                 ng-style="{'background-image': getSlotImage('leftRing'), 'background-color': char.getRoleColor()}"
+                                 ng-click="chooseSlot('leftRing')"></div>
+                            <div class="btn btn-default slot slot-sm rightRing"
+                                 ng-class="{'active': interestingItem.slot=='rightRing'}"
+                                 ng-style="{'background-image': getSlotImage('rightRing'), 'background-color': char.getRoleColor()}"
+                                 ng-click="chooseSlot('rightRing')"></div>
+                        </div>
+                    </div>
+                    <div class="panel socket-panel">
+                        <div class="panel-body">
+                            <div class="item-info">
+                                <div ng-hide="interestingItem">
+                                    <h4 translate>Choose item slot in left panel</h4>
+                                </div>
+                                <div ng-show="interestingItem">
+                                    <h4>{{formatItemName(interestingItem.name)}}</h4>
+                                    <p>{{formatSlotName(interestingItem.slot)}}</p>
+                                    <table>
+                                        <tr ng-show="interestingItem.minDamage>0" class="text-danger">
+                                            <td translate>Damage:</td>
+                                            <td>{{interestingItem.minDamage}}-{{interestingItem.maxDamage}}</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.minDamage>0" class="text-danger">
+                                            <td translate>Range distance:</td>
+                                            <td>{{interestingItem.range}}</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.minDamage>0">
+                                            <td>&nbsp;</td>
+                                        </tr>
+
+                                        <tr ng-show="interestingItem.str>0" class="text-danger">
+                                            <td translate>Strength:</td>
+                                            <td>{{interestingItem.str}}</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.attackPower>0" class="text-danger">
+                                            <td translate>Attack Power:</td>
+                                            <td>{{(interestingItem.attackPower*100).toFixed(2)}}%</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.maxHealth>0" class="text-danger">
+                                            <td translate>Health:</td>
+                                            <td>{{interestingItem.maxHealth}}</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.healthReg>0" class="text-danger">
+                                            <td translate>Health Reg.:</td>
+                                            <td>{{(interestingItem.healthReg*100).toFixed(2)}}%</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.physRes>0" class="text-danger">
+                                            <td translate>Physical Resist.:</td>
+                                            <td>{{(interestingItem.physRes*100).toFixed(2)}}%</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.blockChance>0" class="text-danger">
+                                            <td translate>Block Chance:</td>
+                                            <td>{{(interestingItem.blockChance*100).toFixed(2)}}%</td>
+                                        </tr>
+
+                                        <tr ng-show="interestingItem.dxt>0" class="text-success">
+                                            <td translate>Dexterity:</td>
+                                            <td>{{interestingItem.dxt}}</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.critChance>0" class="text-success">
+                                            <td translate>Critical Rating:</td>
+                                            <td>{{(interestingItem.critChance*100).toFixed(2)}}%</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.maxEnergy>0" class="text-success">
+                                            <td translate>Energy:</td>
+                                            <td>{{interestingItem.maxEnergy}}</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.hitChance>0" class="text-success">
+                                            <td translate>Hit Chance:</td>
+                                            <td>{{(interestingItem.hitChance*100).toFixed(2)}}%</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.dodgeChance>0" class="text-success">
+                                            <td translate>Dodge Chance:</td>
+                                            <td>{{(interestingItem.dodgeChance*100).toFixed(2)}}%</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.luck>0" class="text-success">
+                                            <td translate>Luck:</td>
+                                            <td>{{(interestingItem.luck*100).toFixed(2)}}%</td>
+                                        </tr>
+
+                                        <tr ng-show="interestingItem.int>0" class="text-primary">
+                                            <td translate>Intellect:</td>
+                                            <td>{{interestingItem.int}}</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.spellPower>0" class="text-primary">
+                                            <td translate>Spell Power:</td>
+                                            <td>{{(interestingItem.spellPower*100).toFixed(2)}}%</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.maxMana>0" class="text-primary">
+                                            <td translate>Mana:</td>
+                                            <td>{{interestingItem.maxMana}}</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.manaReg>0" class="text-primary">
+                                            <td translate>Mana Reg.:</td>
+                                            <td>{{(interestingItem.manaReg*100).toFixed(2)}}%</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.magicRes>0" class="text-primary">
+                                            <td translate>Magic Resist.:</td>
+                                            <td>{{(interestingItem.magicRes*100).toFixed(2)}}%</td>
+                                        </tr>
+                                        <tr ng-show="interestingItem.initiative>0" class="text-primary">
+                                            <td translate>Initiative:</td>
+                                            <td>{{interestingItem.initiative}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="socket-info">
+                                <div class="socket-container" ng-show="interestingItem" ng-class="{'six': checkSocketCount()}">
+                                    <div class="socket"
+                                         ng-repeat="socket in interestingItem.sockets track by $index"
+                                         ng-class="{'dropable': dragGem}"
+                                         ng-style="{'background-image': getSocketImage(socket)}"
+                                         ng-disabled="socket.gem=='Void'"
+                                         dnd-droppable="true"
+                                         dnd-droppable-opts = "{layer: 'layer1'}"
+                                         dnd-on-drop = "setGemToSocket(socket)">
+
+                                        <div class="gem"
+                                             ng-show="socket.gem!='Void'"
+                                             ng-style="{'background-image': socket.gem.image,
+                                                    'background-color': socket.gem.bgColor}"
+                                             tooltip-html="getGemTooltip(socket.gem)"
+                                             tooltip-placement="bottom"
+                                             tooltip-append-to-body="true"
+                                             tooltip-animation="false"
+                                             dnd-draggable="true"
+                                             dnd-draggable-opts = "{layer: 'layer2', helper : 'clone'}"
+                                             dnd-on-dragstart = "socketDragStart(socket)"
+                                             dnd-on-dragend = "socketDragEnd(socket)">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel inventory-panel" ng-class="{'dropable': dragSocketGem}">
+                        <div class="panel-body">
+                            <div class="inventory-filter">
+                                <div class="btn-group">
+                                    <button class="btn btn-sm show-all" btn-radio="'all'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
+                                    <button class="btn btn-sm show-red" btn-radio="'red'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
+                                    <button class="btn btn-sm show-green" btn-radio="'green'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
+                                    <button class="btn btn-sm show-blue" btn-radio="'blue'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
+                                </div>
+                            </div>
+                            <div class="inventory-tab customScrollBar"
+                                 dnd-droppable="true"
+                                 dnd-droppable-opts = "{layer: 'layer2'}"
+                                 dnd-on-drop = "setGemToInventory()">
+                                <div class="gem"
+                                     ng-repeat="gem in getGems(gemFilter) track by $index"
+                                     ng-style="{'background-image': gem.image,
+                                                    'background-color': gem.bgColor}"
+                                     tooltip-html="getGemTooltip(gem)"
+                                     tooltip-placement="top"
+                                     tooltip-append-to-body="true"
+                                     tooltip-animation="false"
+                                     dnd-draggable="true"
+                                     dnd-draggable-opts = "{layer: 'layer1', helper : 'clone'}"
+                                     dnd-on-dragstart = "inventoryDragStart(gem)"
+                                     dnd-on-dragend = "inventoryDragEnd()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel options-panel">
+                        <div class="panel-body">
+                            <div class="left">
+                                <p translate>Soul shards:</p>
+                                <div class="shards-container">
+                                    <div class="shard red-shard">
+                                        <div class="icon"></div>
+                                        <span>{{souls.red}}</span>
+                                    </div>
+                                    <div class="shard green-shard">
+                                        <div class="icon"></div>
+                                        <span>{{souls.green}}</span>
+                                    </div>
+                                    <div class="shard blue-shard">
+                                        <div class="icon"></div>
+                                        <span>{{souls.blue}}</span>
+                                    </div>
+                                </div>
+                                <div class="info-container">
+                                    <div class="dis-info">
+                                        <div ng-show="newSoul">
+                                            <p translate>You receive: </p>
+                                            <div class="icon-receive" ng-style="{'background-image':newSoul.image}"></div>
+                                            <div class="delta">+{{newSoul.delta}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="gem-dis"
+                                         ng-class="{'dropable': dragGem}"
+                                         tooltip="{{'Place any soul gem there to destroy it and release it souls' |translate}}"
+                                         tooltip-placement="bottom"
+                                         tooltip-append-to-body="true"
+                                         tooltip-animation="false"
+                                         dnd-droppable="true"
+                                         dnd-droppable-opts = "{layer: 'layer1'}"
+                                         dnd-on-drop = "destroyGem()">
+                                    </div>
+                                    <div class="craft-info">
+                                        <div ng-show="newGem">
+                                            <p translate>You receive: </p>
+                                            <div class="icon-receive"
+                                                 tooltip-html="getGemTooltip(newGem)"
+                                                 tooltip-placement="top"
+                                                 tooltip-append-to-body="true"
+                                                 tooltip-animation="false"
+                                                 ng-style="{'background-image':newGem.image, 'background-color':newGem.bgColor}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="craft-container">
+                                    <div class="craft-icon any btn"
+                                         ng-click="craftGem()"
+                                         ng-disabled="souls.red==0 || souls.green==0 || souls.blue==0"
+                                         tooltip-html="getCraftTooltip('any')"
+                                         tooltip-placement="top"
+                                         tooltip-append-to-body="true"
+                                         tooltip-animation="false"></div>
+                                    <div class="craft-icon red btn"
+                                         ng-click="craftGem('red')"
+                                         ng-disabled="souls.red<4"
+                                         tooltip-html="getCraftTooltip('red')"
+                                         tooltip-placement="top"
+                                         tooltip-append-to-body="true"
+                                         tooltip-animation="false"></div>
+                                    <div class="craft-icon green btn"
+                                         ng-click="craftGem('green')"
+                                         ng-disabled="souls.green<4"
+                                         tooltip-html="getCraftTooltip('green')"
+                                         tooltip-placement="top"
+                                         tooltip-append-to-body="true"
+                                         tooltip-animation="false"></div>
+                                    <div class="craft-icon blue btn"
+                                         ng-click="craftGem('blue')"
+                                         ng-disabled="souls.blue<4"
+                                         tooltip-html="getCraftTooltip('blue')"
+                                         tooltip-placement="top"
+                                         tooltip-append-to-body="true"
+                                         tooltip-animation="false"></div>
+                                </div>
+
+                            </div>
+                            <div class="right">
+                                <div class="btn-group-vertical options">
+                                    <div class="btn-group choose-char">
+                                        <button class="btn btn-success btn-sm" ng-click="prevCharClick()" ng-disabled="checkForLosers()"><</button>
+                                        <button class="btn btn-success btn-sm" ng-click="nextCharClick()" ng-disabled="checkForLosers()">></button>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm" ng-click="addGem()" translate>Get Gem</button>
+                                    <button class="btn btn-default btn-sm" ng-click="characterClick()" translate>Character</button>
+                                    <button class="btn btn-info btn-sm" ng-click="abilitiesClick()" translate>Abilities</button>
+                                    <button class="btn btn-warning btn-sm" ng-click="exitClick()" translate>Back to city</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content-right">
+                    <div class="panel char-desc-panel col-sm-3 col-md-12" ng-style="{'border-color': char.getRoleColor()}">
+                        <div class="panel-body text-left">
+                            <img class="portrait" ng-src="{{char.portrait}}">
+                            <div class="char-desc">
+                                <p translate>Name: {{char.charName}}</p>
+                                <p translate>Race: {{getCharRace()}}</p>
+                                <p translate>Role: {{getCharRole()}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-danger stats col-sm-3 col-md-12">
+                        <div class="panel-body">
+                            <table>
+                                <tr>
+                                    <td translate>Strength:</td>
+                                    <td tooltip-html="char.getParamTooltip('str')"
+                                        tooltip-placement="bottom"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{char.str}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Attack Power:</td>
+                                    <td tooltip-html="char.getParamTooltip('attackPower')"
+                                        tooltip-placement="bottom"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{(char.attackPower*100).toFixed(2)}}%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Health:</td>
+                                    <td tooltip-html="char.getParamTooltip('maxHealth')"
+                                        tooltip-placement="bottom"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{char.maxHealth}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Health Reg.:</td>
+                                    <td tooltip-html="char.getParamTooltip('healthReg')"
+                                        tooltip-placement="bottom"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{(char.healthReg*100).toFixed(2)}}%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Physical Resist.:</td>
+                                    <td tooltip-html="char.getParamTooltip('physRes')"
+                                        tooltip-placement="bottom"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{(char.physRes*100).toFixed(2)}}%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Block Chance:</td>
+                                    <td tooltip-html="char.getParamTooltip('blockChance')"
+                                        tooltip-placement="bottom"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{(char.blockChance*100).toFixed(2)}}%
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="panel panel-success stats col-sm-3 col-md-12">
+                        <div class="panel-body">
+                            <table>
+                                <tr>
+                                    <td translate>Dexterity:</td>
+                                    <td tooltip-html="char.getParamTooltip('dxt')"
+                                        tooltip-placement="bottom"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{char.dxt}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Critical Rating:</td>
+                                    <td tooltip-html="char.getParamTooltip('critChance')"
+                                        tooltip-placement="bottom"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{(char.critChance*100).toFixed(2)}}%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Energy:</td>
+                                    <td tooltip-html="char.getParamTooltip('maxEnergy')"
+                                        tooltip-placement="bottom"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{char.maxEnergy}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Hit Chance:</td>
+                                    <td tooltip-html="char.getParamTooltip('hitChance')"
+                                        tooltip-placement="bottom"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{(char.hitChance*100).toFixed(2)}}%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Dodge Chance:</td>
+                                    <td tooltip-html="char.getParamTooltip('dodgeChance')"
+                                        tooltip-placement="bottom"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{(char.dodgeChance*100).toFixed(2)}}%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Luck:</td>
+                                    <td tooltip-html="char.getParamTooltip('luck')"
+                                        tooltip-placement="bottom"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{(char.luck*100).toFixed(2)}}%
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="panel panel-primary stats col-sm-3 col-md-12">
+                        <div class="panel-body">
+                            <table>
+                                <tr>
+                                    <td translate>Intellect:</td>
+                                    <td tooltip-html="char.getParamTooltip('int')"
+                                        tooltip-placement="top"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{char.int}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Spell Power:</td>
+                                    <td tooltip-html="char.getParamTooltip('spellPower')"
+                                        tooltip-placement="top"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{(char.spellPower*100).toFixed(2)}}%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Mana:</td>
+                                    <td tooltip-html="char.getParamTooltip('maxMana')"
+                                        tooltip-placement="top"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{char.maxMana}}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Mana Reg.:</td>
+                                    <td tooltip-html="char.getParamTooltip('manaReg')"
+                                        tooltip-placement="top"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{(char.manaReg*100).toFixed(2)}}%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Magic Resist.:</td>
+                                    <td tooltip-html="char.getParamTooltip('magicRes')"
+                                        tooltip-placement="top"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{(char.magicRes*100).toFixed(2)}}%
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td translate>Initiative:</td>
+                                    <td tooltip-html="char.getParamTooltip('initiative')"
+                                        tooltip-placement="top"
+                                        tooltip-append-to-body="true"
+                                        tooltip-animation="false"
+                                        tooltip-class="param-tooltip">
+                                        {{char.initiative}}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- partial('../partials/toolbars/footer') %>
+</div>

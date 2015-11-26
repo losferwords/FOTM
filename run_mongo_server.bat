@@ -1,0 +1,1 @@
+E:/mongo/bin/mongod.exe --dbpath data/db --httpinterface --rest

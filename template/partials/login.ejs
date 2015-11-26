@@ -1,0 +1,32 @@
+<div class="row">
+    <div class="col-lg-4 col-lg-offset-4 col-sm-6 col-sm-offset-3 col-xs-12 well bs-component withoutHeader">
+        <form name="loginForm" class="form-horizontal" ng-controller="FormController" novalidate>
+            <fieldset>
+                <legend translate>Welcome to FOTM</legend>
+                <div class="form-group">
+                    <button class="language-btn btn" type="button" ng-click="changeLanguage('ru')"><img src="images/interface/ru.gif" alt=""/></button>
+                    <button class="language-btn btn" type="button" ng-click="changeLanguage('en')"><img src="images/interface/gb.gif" alt=""/></button>
+                </div>
+                <p translate>Please login or <a href="/registration">register</a></p>
+                <div class="form-group" ng-class="{'has-error': loginForm.username.$invalid, 'has-success': loginForm.username.$valid}">
+                    <label for="input-username" class="col-xs-3 col-xs-offset-2 control-label" translate>Login</label>
+                    <div class="col-xs-5">
+                        <input name="username" type="text" class="form-control" id="input-username" ng-model="username" required>
+                    </div>
+                </div>
+                <div class="form-group" ng-class="{'has-error': loginForm.password.$invalid, 'has-success': loginForm.password.$valid}">
+                    <label for="input-password" class="col-xs-3 col-xs-offset-2 control-label" translate>Password</label>
+                    <div class="col-xs-5">
+                        <input name="password" type="password" class="form-control" id="input-password" ng-model="password" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-success btn-large" type="submit" ng-click="submitLogin()" ng-disabled="loginForm.$invalid || loginForm.$submitted" translate>Enter</button>
+                </div>
+                <div ng-class="{'text-danger': cssError, 'text-success': cssSuccess, 'text-info': cssText}">{{info}}</div>
+                <div class="text-danger" ng-if="loginForm.username.$error.required && loginForm.username.$dirty" translate>Login name is required</div>
+                <div class="text-danger" ng-if="loginForm.password.$error.required && loginForm.password.$dirty" translate>Password is required</div>
+            </fieldset>
+        </form>
+    </div>
+</div>

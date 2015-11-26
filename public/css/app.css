@@ -1,0 +1,2370 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  font-weight: bold;
+  margin-bottom: 60px;
+}
+
+.well {
+  border: 2px solid #000000;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.btn:active:focus {
+  outline: none;
+}
+
+.withoutHeader {
+  margin-top: 5%;
+}
+
+form input {
+  padding-left: 10px;
+}
+
+.create-char-form .form-left {
+  text-align: right;
+  margin-bottom: 0;
+  padding-top: 0;
+  display: inline-block;
+  vertical-align: middle;
+  width: 25%;
+  margin-right: 5%;
+}
+
+.create-char-form .form-left.smaller {
+  font-size: 12px;
+}
+
+.create-char-form .form-right {
+  display: inline-block;
+  vertical-align: middle;
+  width: 65%;
+}
+
+.form-group .language-btn {
+  margin-top: 0;
+}
+
+body .tooltip {
+  display: none;
+  top: -9999px;
+  left: -9999px;
+}
+
+.navbar-text .badge {
+  margin-right: 5px;
+  margin-left: 5px;
+}
+
+.language-btn {
+  width: 27px;
+  height: 15px;
+  padding: 0;
+  margin-right: 5px;
+  display: inline-block;
+  vertical-align: middle;
+  border: none;
+}
+
+.language-btn:last-child {
+  margin-right: 0;
+}
+
+.language-btn img {
+  display: block;
+  width: 27px;
+  height: 15px;
+}
+
+.mute-btn {
+  margin-right: 5px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.tooltip-inner {
+  max-width: 250px;
+  text-align: justify;
+}
+
+.customScrollBar::-webkit-scrollbar-track
+{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  background-color: #F5F5F5;
+}
+
+.customScrollBar::-webkit-scrollbar
+{
+  width: 10px;
+  background-color: #F5F5F5;
+}
+
+.customScrollBar::-webkit-scrollbar-thumb
+{
+  background-color: #000000;
+  border: 2px solid #555555;
+}
+
+.top-shown-shards p {
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+.top-shown-shards {
+  margin-bottom: 5px;
+}
+
+.top-shown-shards .shards-container .shard .icon {
+  width: 28px;
+  height: 28px;
+  margin: 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.top-shown-shards .shards-container .shard span {
+  text-align: center;
+  color: #fff;
+  display: inline-block;
+  vertical-align: middle;
+  width: 20px;
+}
+
+.team_creation .panel{
+  height: 200px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.team_creation .panel button{
+  margin-top: 66px;
+}
+
+.team_creation {
+  margin-bottom: 15px;
+}
+
+.team_creation .portrait {
+  background-repeat: no-repeat;
+  position: relative;
+  width: 128px;
+  height: 128px;
+  border-radius: 4px;
+  margin: 0 auto;
+}
+
+.team_creation .portrait .role-in-portrait{
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  bottom: 0;
+  right: 0;
+  background-repeat: no-repeat;
+  border-radius: 4px;
+  opacity: 0.9;
+}
+
+.navbar-right {
+  margin-right: 0;
+}
+
+.shards-cost.shards-container .shard{
+  width: 32%;
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+}
+
+.shards-cost.shards-container .shard .icon {
+  width: 20px;
+  height: 20px;
+  margin: 0 auto;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.shards-cost.shards-container .shard span {
+  text-align: left;
+  color: #fff;
+  display: inline-block;
+  vertical-align: middle;
+  width: 55px;
+}
+
+.shards-cost.shards-container .shard span.not-enough {
+  color: #FF0000;
+}
+
+.city .portrait {
+  background-repeat: no-repeat;
+  position: relative;
+  width: 128px;
+  height: 128px;
+  border-radius: 4px;
+  margin: 0 auto 10px auto;
+}
+
+.city .portrait .role-in-portrait{
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  bottom: 0;
+  right: 0;
+  background-repeat: no-repeat;
+  border-radius: 4px;
+  opacity: 0.9;
+}
+
+.city .panel {
+  border-width: 2px;
+  width: 30%;
+  height: 330px;
+  margin-right: 5%;
+  display: inline-block;
+  vertical-align: top;
+  border-radius: 6px;
+}
+.city .panel:last-child {
+  margin-right: 0;
+}
+
+.city .panel .btn {
+  margin-top: 15px;
+}
+
+.city .panel .btn-group-char-options {
+  margin-top: 17px;
+}
+
+.city .panel .btn.btn-create {
+  margin-top: 110px;
+}
+
+.city .panel h2 {
+  color: #fff;
+}
+
+.city .btn-group-vertical .btn {
+  margin: 0 auto;
+}
+
+.shards-dices {
+  margin-bottom: 5px;
+}
+
+.shards-dices .modal-footer {
+  text-align: center;
+}
+
+.shards-dices .dice {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  border-radius: 5px;
+}
+
+.shards-dices .red-dice {
+  background-color: #cc0000;
+}
+
+.shards-dices .green-dice {
+  background-color: #77b300;
+}
+
+.shards-dices .blue-dice {
+  background-color: #2a9fd6;
+}
+
+.shards-dices .dice.none {
+  background-image: url(../images/icons/interface/dice0.svg);
+}
+
+.shards-dices .dice.one {
+  background-image: url(../images/icons/interface/dice1.svg);
+}
+
+.shards-dices .dice.two {
+  background-image: url(../images/icons/interface/dice2.svg);
+}
+.shards-dices .dice.three {
+  background-image: url(../images/icons/interface/dice3.svg);
+}
+.shards-dices .dice.four {
+  background-image: url(../images/icons/interface/dice4.svg);
+}
+.shards-dices .dice.five {
+  background-image: url(../images/icons/interface/dice5.svg);
+}
+.shards-dices .dice.six {
+  background-image: url(../images/icons/interface/dice6.svg);
+}
+
+.resurrect-shards .shards-container {
+  font-size: 0;
+  margin-bottom: 5px;
+}
+
+.resurrect-shards p {
+  color: #fff;
+  margin-bottom: 0;
+  font-size: 10px;
+}
+
+.resurrect-shards .shards-container .shard .icon {
+  width: 20px;
+  height: 20px;
+  margin: 2px auto;
+}
+
+.resurrect-shards .shards-container .shard span {
+  text-align: center;
+  color: #fff;
+  font-size: 12px;
+}
+
+.icon-small{
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background-repeat: no-repeat;
+}
+
+.icon-medium{
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  background-repeat: no-repeat;
+}
+
+.icon-role {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background-repeat: no-repeat;
+}
+
+.btn.icon-random.active{
+  background-color: #ff1493;
+}
+
+.btn.icon-sentinel.active{
+  background-color: #f7f7f7;
+}
+
+.btn.icon-slayer.active{
+  background-color: #ff0906;
+}
+
+.btn.icon-redeemer.active{
+  background-color: #0055AF;
+}
+
+.btn.icon-ripper.active{
+  background-color: #61dd45;
+}
+
+.btn.icon-prophet.active{
+  background-color: #00b3ee;
+}
+
+.btn.icon-malefic.active{
+  background-color: #f05800;
+}
+
+.btn.icon-cleric.active{
+  background-color: #ffc520;
+}
+
+.btn.icon-heretic.active{
+  background-color: #862197;
+}
+
+.icon-race {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  background-size: cover;
+  border-width:2px;
+}
+
+.portrait {
+  height: auto;
+  padding: 0;
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  background-size: cover;
+  border-width:3px;
+  border-radius: 3px;
+}
+
+.portrait-lg{
+  width: 128px;
+}
+
+.portrait-md{
+  width: 64px;
+}
+
+.portrait-sm{
+  width: 48px;
+}
+
+.portrait-xs{
+  width: 32px;
+}
+
+.portrait-carousel{
+  height: 128px;
+}
+
+.portrait-carousel img {
+  height: 128px;
+  width: 128px;
+}
+
+.portrait-carousel .carousel-indicators {
+  display: none;
+}
+
+.header-overlay {
+  background-color: #060606;
+  width: 100%;
+  position: absolute;
+  height: 52px;
+  top:0;
+}
+
+.battleScreen {
+  padding: 5px;
+}
+
+.battleScreen .panel-body{
+  padding: 5px;
+}
+
+.battleScreen .my-team-info,
+.battleScreen .center-info,
+.battleScreen .enemy-team-info {
+  width: 380px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.battleScreen .char-panel .portrait {
+  cursor: pointer;
+  width: 68px;
+  height: 68px;
+  margin-right: 11px;
+  display: inline-block;
+  vertical-align: middle;
+  padding: 0;
+  border: none;
+  position: relative;
+}
+
+.battleScreen .char-panel .portrait .role-in-portrait{
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  bottom: 0;
+  background-repeat: no-repeat;
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+.battleScreen .char-panel .portrait .role-in-portrait.ally {
+  right: 0;
+}
+
+.battleScreen .char-panel .portrait .role-in-portrait.enemy {
+  left: 0;
+}
+
+.effects-popover {
+  text-align: center;
+}
+
+.effects-popover p{
+  color: #eee;
+  text-align: center;
+  font-size: 12px;
+  margin: 5px;
+}
+
+.battleScreen .char-panel .char-info {
+  width: 220px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.buff-icon {
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  border-radius: 4px;
+  margin: 5px;
+}
+
+.buff-icon span {
+  position: absolute;
+  display: block;
+  right: 2px;
+  bottom: 0;
+  font-size: 11px;
+  color: #ffff00;
+}
+
+.buff-icon span.for-cleric {
+  color: #fff;
+}
+
+.battleScreen .progress {
+  margin-bottom: 5px;
+  position: relative;
+  height: 15px;
+}
+
+.battleScreen .progress-bar {
+  font-size: 10px;
+  line-height: 15px;
+  width: 190px;
+}
+
+.battleScreen .progress-bar span {
+  text-align: center;
+  width: 220px;
+  cursor: default;
+}
+
+.battleScreen .progress-bar span.number {
+  display: block;
+}
+
+.battleScreen .progress-bar span.percent {
+  display: none;
+}
+
+.battleScreen .progress-bar:hover span.number {
+  display: none;
+}
+
+.battleScreen .progress-bar:hover span.percent {
+  display: block;
+}
+
+.battleScreen .team-panel {
+  margin-bottom: 0;
+}
+
+.char-panel {
+  border-width: 2px;
+}
+
+.char-panel .char-name {
+  margin-bottom: 5px;
+  font-size: 12px;
+  line-height: 12px;
+}
+
+.battleScreen .ability-group {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.battleScreen .optional-btns {
+  margin: 10px auto;
+  text-align: center;
+}
+
+.map {
+  width: 320px;
+  height: 320px;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.map_tile {
+  position: absolute;
+  z-index: 1000;
+  width: 32px;
+  height: 32px;
+  background-size: 100% 100%;
+  border: 1px solid #888;
+}
+
+.char_tile {
+  position: absolute;
+  z-index: 1001;
+  width: 32px;
+  height: 32px;
+  border: 3px solid #000;
+  background-size: 100% 100%;
+
+  -webkit-transition: top 0.5s ease-in, left 0.5s ease-in;
+  transition: top 0.5s ease-in, 0.5s ease-in;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 0.5;
+  background-color: transparent;
+  z-index: 1002;
+}
+
+.overlay:hover {
+  background-color: #000;
+}
+
+.overlay.move {
+ background-color: #11ff00;
+}
+
+.overlay.move:hover {
+  background-color: #118800;
+}
+
+.overlay.myAbility {
+  background-color: #00b3ee;
+}
+
+.overlay.myAbility:hover {
+  background-color: #003377;
+}
+
+.overlay.enemyAbility {
+  background-color: #ff0906;
+}
+
+.overlay.enemyAbility:hover {
+  background-color: #770906;
+}
+
+.control_btns {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.control_btns .btn-default {
+  width: 75%;
+}
+
+.control_btns .btn-danger {
+  width: 25%;
+}
+
+.combatLog {
+  padding: 5px;
+  height: 137px;
+  overflow-y: scroll;
+}
+
+.combatLog p {
+  text-align: left;
+  font-size: 12px;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.queue-info {
+  font-size: 0;
+  position: relative;
+}
+
+.queue {
+  margin: 10px 0;
+  text-align: left;
+  display: inline-block;
+}
+
+.queue .portrait:first-child {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #000;
+}
+
+.queue .portrait {
+  width: 28px;
+  height: 28px;
+  display: inline-block;
+  vertical-align: middle;
+  border: 2px solid #000;
+  border-radius: 0;
+}
+
+.btn-end-turn {
+  display: inline-block;
+  border: none;
+  border-radius: 0;
+  background-image: url(../images/icons/interface/end-turn.svg);
+  color: #fff;
+  font-size: 14px;
+  width: 36px;
+  height: 36px;
+  text-align: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.btn-end-turn:disabled {
+  background-image: none;
+}
+
+.loader {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  font-size: 6px;
+  text-indent: -9999em;
+  border-top: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-right: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-left: 1.1em solid #ffffff;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation: load8 1.1s infinite linear;
+  animation: load8 1.1s infinite linear;
+}
+
+.loader,
+.loader:after {
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+}
+
+@-webkit-keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+canvas {
+  position: absolute;
+  z-index: 1003;
+  pointer-events: none;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.battleScreen .ability-wrapper {
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  position: relative;
+  padding: 0;
+  margin: 0 !important;
+  border: none;
+}
+
+.battleScreen .ability-wrapper:focus,
+.battleScreen .ability-wrapper:hover {
+  margin: 0 !important;
+  border: none;
+}
+
+.battleScreen .ability-wrapper:first-child .ability-icon{
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.ability-wrapper:last-child .ability-icon{
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.ability-icon {
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  position: relative;
+  border: 1px solid #000;
+}
+
+.ability-icon .ability-fade {
+  background-color: #000000;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1001;
+}
+
+.ability-icon[disabled] {
+  opacity: 1;
+  cursor: default;
+}
+
+.ability-icon[disabled] .ability-fade{
+  opacity: 0.5;
+}
+
+.ability-icon.prepared {
+  border: 3px solid #ffff00;
+}
+
+.ability-icon span {
+  color: #ffff00;
+  font-size: 14px;
+  line-height: 32px;
+  text-align: center;
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1002;
+}
+
+.enemy-abilities {
+  height: 32px;
+}
+
+
+.battle-end-container h2 {
+  margin-top: 5px;
+}
+
+.battle-end-container .shards-container {
+  margin-bottom: 10px;
+}
+
+.charInfo .char-desc-panel {
+  width: 40%;
+  margin-right: 15px;
+  display: inline-block;
+  vertical-align: top;
+  height: 180px;
+}
+
+.charInfo .portrait {
+  width: 64px;
+  height: 64px;
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 15px;
+}
+
+.charInfo .char-desc {
+  width: 180px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.charInfo .panel-triangle {
+  width: 57%;
+  height: 180px;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  padding: 10px;
+}
+
+.charInfo .panel-triangle .left,
+.charInfo .panel-triangle .right{
+  width: 49%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.charInfo .panel-triangle .panel-body{
+  padding: 0;
+}
+
+.charInfo .panel-triangle p.title {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 0;
+}
+
+.charInfo .panel-triangle .str {
+  position: absolute;
+  top: 150px;
+  left: 5px;
+  width: 36px;
+  text-align: right;
+}
+.charInfo .panel-triangle .dxt {
+  position: absolute;
+  top: 10px;
+  left: 104px;
+  width: 36px;
+  text-align: center;
+}
+.charInfo .panel-triangle .int {
+  position: absolute;
+  top: 150px;
+  left: 203px;
+  width: 36px;
+  text-align: left;
+}
+
+.charInfo .panel-triangle .param-pointer {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.charInfo .triangle-container {
+  width: 150px;
+  height: 130px;
+  margin-left: 35px;
+  background-image: url(../images/interface/triangle.png);
+  background-repeat: no-repeat;
+}
+
+.charInfo .panel-triangle .btn-group-vertical {
+  margin-right: 15px;
+}
+
+.options .btn-group.choose-char {
+  font-size: 0;
+}
+
+.options .btn-group.choose-char .btn {
+  display: inline-block;
+  width: 50%;
+  margin: 0;
+  font-size: 12px;
+}
+
+.charInfo .stats {
+  width: 30%;
+  margin-right: 5%;
+  margin-bottom: 0;
+  padding: 0;
+  background-color: #000;
+  border-width: 3px;
+}
+
+.charInfo .stats .panel-body {
+  padding: 5px;
+}
+
+.charInfo .stats:last-child {
+  margin-right: 0;
+}
+
+.charInfo .char-desc p {
+  text-transform: capitalize;
+  text-align: left;
+  color: #fff;
+  margin-bottom: 3px;
+}
+
+.charInfo table td:first-child {
+  text-align: left;
+  width: 70%;
+  cursor: default;
+}
+
+.charInfo table td:last-child {
+  width: 30%;
+  cursor: default;
+  border: 1px solid #ccc;
+}
+
+.charInfo table {
+  width: 100%;
+  background-color: transparent;
+}
+
+.inventory .content-left {
+  width: 685px;
+  margin-right: 15px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.inventory .content-right {
+  width: 300px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.inventory .char-desc-panel {
+  margin-bottom: 10px;
+  border-width: 3px;
+}
+
+.inventory .portrait {
+  width: 64px;
+  height: 64px;
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 15px;
+}
+
+.inventory .char-desc {
+  width: 150px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.inventory .char-desc p {
+  text-transform: capitalize;
+  text-align: left;
+  color: #fff;
+  margin-bottom: 3px;
+}
+
+.inventory .stats {
+  margin-bottom: 10px;
+  padding: 0;
+  background-color: #000;
+  border-width: 3px;
+}
+
+.inventory .stats .panel-body {
+  padding: 5px;
+}
+
+.inventory table {
+  width: 100%;
+  background-color: transparent;
+}
+
+.inventory table td:first-child {
+  text-align: left;
+  width: 70%;
+  cursor: default;
+}
+
+.inventory table td:last-child {
+  width: 30%;
+  cursor: default;
+  border: 1px solid #ccc;
+}
+
+.inventory .doll-panel {
+  padding: 0;
+  width: 338px;
+  height: 348px;
+  display: inline-block;
+  vertical-align: top;
+  border: 3px solid #eee;
+  margin-bottom: 5px;
+}
+
+.inventory .doll-panel .panel-body,
+.inventory .socket-panel .panel-body{
+  position: relative;
+  padding: 0;
+}
+
+.inventory .socket-panel {
+  padding: 0;
+  width: 338px;
+  height: 348px;
+  display: inline-block;
+  border: 3px solid #eee;
+  vertical-align: top;
+  margin-bottom: 5px;
+}
+
+.inventory .slot {
+  background-repeat: no-repeat;
+  position: absolute;
+}
+
+.inventory .slot.active {
+  border: 3px solid #ffff00;
+}
+
+.inventory .slot-lg {
+  width: 64px;
+  height: 64px;
+}
+
+.inventory .slot-md {
+  width: 48px;
+  height: 48px;
+}
+
+.inventory .slot-sm {
+  width: 32px;
+  height: 32px;
+}
+
+.inventory .slot.head {
+  top: 10px;
+  left: 142px;
+}
+
+.inventory .slot.amulet {
+  top: 68px;
+  left: 150px;
+}
+
+.inventory .slot.chest {
+  top: 110px;
+  left: 142px;
+}
+
+.inventory .slot.hands.left {
+  top: 134px;
+  left: 200px;
+  -moz-transform: scaleX(-1);
+  -o-transform: scaleX(-1);
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}
+
+.inventory .slot.leftRing {
+  top: 192px;
+  left: 208px;
+}
+
+.inventory .slot.offHandWeapon {
+  top: 126px;
+  left: 258px;
+}
+
+.inventory .slot.hands.right {
+  top: 134px;
+  left: 84px;
+}
+
+.inventory .slot.rightRing {
+  top: 192px;
+  left: 92px;
+}
+
+.inventory .slot.mainHandWeapon {
+  top: 126px;
+  left: 10px;
+}
+
+.inventory .slot.legs {
+  top: 226px;
+  left: 142px;
+}
+
+.inventory .slot.boots {
+  top: 284px;
+  left: 142px;
+}
+
+.inventory .item-info {
+  width: 225px;
+  height: 342px;
+  border-right: 3px solid #eee;
+  padding: 10px;
+  display: inline-block;
+  vertical-align: top;
+  background-color: #000;
+}
+
+.inventory .item-info p {
+  text-align: left;
+  color: #fff;
+}
+
+.inventory .item-info table {
+  width: 100%;
+}
+
+.inventory .item-info table td:first-child {
+  width: 60%;
+}
+
+.inventory .item-info table td:last-child {
+  width: 40%;
+  border: none;
+  text-align: left;
+}
+
+.inventory .socket-info {
+  width: 103px;
+  height: 336px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.inventory .socket-info .socket-container {
+  margin: 65px auto 0 auto;
+}
+
+.inventory .socket-info .socket-container.six {
+  margin-top: 10px;
+}
+
+.inventory .socket-container .socket {
+  width: 48px;
+  height: 48px;
+  margin-top: 0;
+  margin-bottom: 30px;
+  margin-right: auto;
+  margin-left: auto;
+  background-color: #999;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0px 0px 20px 5px rgba(0,0,0,0.75);
+  -moz-box-shadow: inset 0px 0px 20px 5px rgba(0,0,0,0.75);
+  box-shadow: inset 0px 0px 20px 5px rgba(0,0,0,0.75);
+}
+
+.inventory .dropable {
+  outline: 2px solid #ffff00;
+}
+
+.inventory .socket-container.six .socket {
+  margin-bottom: 6px;
+}
+
+.inventory .inventory-panel {
+  width: 338px;
+  height: 210px;
+  display: inline-block;
+  border: 3px solid #eee;
+  vertical-align: top;
+  padding: 10px;
+}
+
+.inventory .options-panel {
+  width: 338px;
+  height: 210px;
+  display: inline-block;
+  border: 3px solid #eee;
+  vertical-align: top;
+}
+
+.inventory .inventory-panel .panel-body,
+.inventory .options-panel .panel-body{
+  position: relative;
+  padding: 0;
+}
+
+.inventory .inventory-filter {
+  text-align: center;
+  width: 300px;
+  height: 38px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border: 1px solid #eee;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.inventory .inventory-filter .btn{
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  margin: 0;
+}
+
+.inventory .inventory-filter .show-all{
+  background-image: url(../images/icons/inventory/gems.svg);
+  background-color: #fff;
+}
+
+.inventory .inventory-filter .show-red {
+  background-image: url(../images/icons/inventory/rupee.svg);
+  background-color: #cc0000;
+}
+
+.inventory .inventory-filter .show-green {
+  background-image: url(../images/icons/inventory/emerald.svg);
+  background-color: #77b300;
+}
+
+.inventory .inventory-filter .show-blue {
+  background-image: url(../images/icons/inventory/saphir.svg);
+  background-color: #2a9fd6;
+}
+
+.inventory .inventory-filter .active {
+  border: 2px solid #ffff00;
+  outline: none;
+  z-index: 0;
+}
+
+.inventory .inventory-filter .btn:focus,
+.inventory .inventory-filter .btn:hover{
+  margin: 0;
+}
+
+.inventory-tab {
+  overflow-y: scroll;
+  text-align: left;
+  width: 300px;
+  height: 146px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid #eee;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  font-size: 0;
+  line-height: 0;
+  position: relative;
+}
+
+.inventory .gem {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  cursor: pointer;
+  border: 1px solid #000;
+  border-radius: 4px;
+}
+
+.inventory .options-panel .left {
+  width: 225px;
+  height: 204px;
+  border-right: 3px solid #eee;
+  padding: 10px;
+  display: inline-block;
+  vertical-align: top;
+  background-color: #000;
+}
+
+.inventory .options-panel .right {
+  width: 103px;
+  height: 204px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.inventory .options-panel .right .btn-group-vertical{
+  vertical-align: middle;
+  margin-top: 28px;
+}
+
+.inventory .options-panel .left p {
+  color: #fff;
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.shards-container .shard{
+  width: 32%;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.shards-container .shard .icon {
+  width: 32px;
+  height: 32px;
+  margin: 5px auto;
+}
+
+.shards-container .shard span {
+  text-align: center;
+  color: #fff;
+}
+
+.shards-container .red-shard .icon{
+  background-image: url(../images/icons/inventory/crystal-shine-red.svg);
+  background-repeat: no-repeat;
+}
+
+.shards-container .green-shard .icon{
+  background-image: url(../images/icons/inventory/crystal-shine-green.svg);
+  background-repeat: no-repeat;
+}
+
+.shards-container .blue-shard .icon{
+  background-image: url(../images/icons/inventory/crystal-shine-blue.svg);
+  background-repeat: no-repeat;
+}
+
+.inventory .info-container .dis-info,
+.inventory .info-container .craft-info{
+  display: inline-block;
+  vertical-align: top;
+  width: 62px;
+  padding-top: 5px;
+}
+
+.inventory .info-container .dis-info p,
+.inventory .info-container .craft-info p{
+  text-align: center;
+  color: #fff;
+  font-size: 10px;
+}
+
+.inventory .info-container .dis-info .delta {
+  display: inline-block;
+  vertical-align: middle;
+  width: 15px;
+  color: #fff;
+}
+
+.inventory .info-container .dis-info .icon-receive {
+  display: inline-block;
+  vertical-align: middle;
+  width: 32px;
+  height: 32px;
+  margin-right: 5px;
+}
+
+.inventory .info-container .craft-info .icon-receive {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+}
+
+.inventory .gem-dis {
+  width: 48px;
+  height: 48px;
+  margin: 5px auto 0 auto;
+  background-image: url(../images/icons/inventory/diamond-hard.svg);
+  background-color: #999;
+  border-radius: 4px;
+  display: inline-block;
+  vertical-align: top;
+  -webkit-box-shadow: inset 0px 0px 20px 5px rgba(0,0,0,0.75);
+  -moz-box-shadow: inset 0px 0px 20px 5px rgba(0,0,0,0.75);
+  box-shadow: inset 0px 0px 20px 5px rgba(0,0,0,0.75);
+}
+
+.inventory .craft-container {
+  margin-top: 10px;
+}
+
+.inventory .craft-container .craft-icon{
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  background-image: url(../images/icons/inventory/floating-crystal.svg);
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 1px;
+  cursor: pointer;
+}
+
+.inventory .craft-container .craft-icon.any {
+  background-color: #fff;
+}
+
+.inventory .craft-container .craft-icon.red {
+  background-color: #cc0000;
+}
+
+.inventory .craft-container .craft-icon.green {
+  background-color: #77b300;
+}
+
+.inventory .craft-container .craft-icon.blue {
+  background-color: #2a9fd6;
+}
+
+.param-tooltip .tooltip-inner{
+  border: 1px solid #eee;
+}
+
+.param-tooltip p {
+  text-align: left;
+}
+
+.param-tooltip p strong {
+  font-size: 13px;
+  line-height: 1.22857143;
+}
+
+.param-tooltip .tooltip-inner p:last-child {
+  margin-bottom: 0;
+}
+
+.waiting {
+  cursor: default;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.abilitiesInfo .stats {
+  margin-bottom: 17px;
+  padding: 0;
+  background-color: #000;
+  border-width: 3px;
+}
+
+.abilitiesInfo .stats .panel-body {
+  padding: 5px;
+}
+
+.abilitiesInfo .stats table {
+  width: 100%;
+  background-color: transparent;
+}
+
+.abilitiesInfo .stats table td:first-child {
+  text-align: left;
+  width: 70%;
+  cursor: default;
+}
+
+.abilitiesInfo .stats table td:last-child {
+  width: 30%;
+  cursor: default;
+  border: 1px solid #ccc;
+}
+
+.abilitiesInfo .char-desc-panel {
+  width: 48%;
+  margin-right: 15px;
+  margin-bottom: 0;
+  display: inline-block;
+  vertical-align: top;
+  height: 300px;
+}
+
+.abilitiesInfo .portrait {
+  width: 64px;
+  height: 64px;
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 15px;
+}
+
+.abilitiesInfo .char-desc {
+  width: 200px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.abilitiesInfo .char-desc p {
+  text-transform: capitalize;
+  text-align: left;
+  color: #fff;
+  margin-bottom: 3px;
+}
+
+.abilitiesInfo .ability-tune {
+  width: 48%;
+  height: 300px;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  padding: 10px;
+  margin-bottom: 0;
+}
+
+.abilitiesInfo .ability-tune .tune .arrow-container {
+  margin-top: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.abilitiesInfo .ability-tune .tune .btn.arrow {
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  vertical-align: middle;
+  padding: 0;
+  line-height: 32px;
+}
+
+.abilitiesInfo .ability-tune .description {
+  background-color: #000;
+  border-radius: 5px;
+  padding: 5px;
+  margin-top: 5px;
+}
+
+.abilitiesInfo .ability-tune .description span {
+  color: #fff;
+  display: block;
+  font-size: 12px;
+  text-align: left;
+}
+
+.abilitiesInfo .ability-tune .description span.name {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.abilitiesInfo .ability-tune .description span.desc {
+  margin-bottom: 5px;
+}
+
+.abilitiesInfo .ability-tune .panel-body{
+  padding: 0;
+}
+
+.abilitiesInfo .ability-tune p.title {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 0;
+}
+
+.ability-slot-container {
+  margin: 10px auto 0 auto;
+  text-align: center;
+}
+
+.abilitiesInfo .ability-slot.dropable {
+  border: 2px solid #ffff00;
+}
+
+.abilitiesInfo .ability-switch {
+  margin: 10px auto;
+  width: 64px;
+  height: 64px;
+  background-color: #cccccc;
+}
+
+.abilitiesInfo .ability-switch.tune {
+  background-image: url(../images/icons/interface/gears.svg);
+}
+
+.abilitiesInfo .ability-switch.move {
+  background-image: url(../images/icons/interface/move.svg);
+}
+
+.abilitiesInfo .ability-slot {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 4px;
+  border: 1px solid #000;
+  margin: 0 !important;
+  position: relative;
+}
+
+
+.angular-dnd-draggable-helper {
+  z-index: 9999 !important;
+}
+
+.abilitiesInfo .ability-slot:hover,
+.abilitiesInfo .ability-slot:focus {
+  margin: 0;
+}
+
+.ability-slot.active {
+  border: 2px solid #ffff00;
+}
+
+.abilitiesInfo .ability-book {
+  float: left;
+  margin-left: 50px;
+}
+
+.abilitiesInfo .options {
+  margin-top: 52px;
+  margin-right: 32px;
+  float: right;
+}
+
+.abilitiesInfo .ability-filter {
+  text-align: center;
+  width: 300px;
+  height: 38px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border: 1px solid #eee;
+  border-bottom: none;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.abilitiesInfo .ability-filter .btn{
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  margin: 0;
+  padding: 0;
+}
+
+.abilitiesInfo .ability-filter .show-all{
+  background-image: url(../images/icons/roles/spellbook.svg) !important;
+  background-color: #ccc;
+}
+
+.sentinel-icon {
+  background-image: url(../images/icons/roles/sentinel.svg) !important;
+  background-color: #f7f7f7;
+}
+
+.slayer-icon {
+  background-image: url(../images/icons/roles/slayer.svg) !important;
+  background-color: #ff0906;
+}
+
+.redeemer-icon {
+  background-image: url(../images/icons/roles/redeemer.svg) !important;
+  background-color: #0055AF;
+}
+
+.ripper-icon {
+  background-image: url(../images/icons/roles/ripper.svg) !important;
+  background-color: #61dd45;
+}
+
+.prophet-icon {
+  background-image: url(../images/icons/roles/prophet.svg) !important;
+  background-color: #00b3ee;
+}
+
+.malefic-icon {
+  background-image: url(../images/icons/roles/malefic.svg) !important;
+  background-color: #f05800;
+}
+
+.cleric-icon {
+  background-image: url(../images/icons/roles/cleric.svg) !important;
+  background-color: #ffc520;
+}
+
+.heretic-icon {
+  background-image: url(../images/icons/roles/heretic.svg) !important;
+  background-color: #862197;
+}
+
+.abilitiesInfo .ability-filter .show-cleric.nephilim {
+  border-bottom-right-radius: 3px !important;
+  border-top-right-radius: 3px !important;
+}
+
+.abilitiesInfo .ability-filter .active {
+  border: 2px solid #ffff00;
+  outline: none;
+  z-index: 0;
+}
+
+.abilitiesInfo .ability-filter .btn:focus,
+.abilitiesInfo .ability-filter .btn:hover{
+  margin: 0;
+}
+
+.ability-tab {
+  overflow-y: scroll;
+  text-align: left;
+  width: 600px;
+  height: 146px;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  font-size: 0;
+  line-height: 0;
+  position: relative;
+}
+
+.abilitiesInfo .ability-tab.dropable {
+  outline: 2px solid #ffff00;
+}
+
+.ability-tab .ability-icon {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  cursor: pointer;
+  border: 1px solid #000;
+  border-radius: 4px;
+}
+
+.ability-tooltip p {
+  color: #fff;
+  display: block;
+  font-size: 12px;
+  text-align: left;
+  margin-bottom: 0;
+  font-weight: bold;
+}
+
+.ability-tooltip p.tooltip-need-weapon,
+.abilitiesInfo .ability-tune .description span.tooltip-need-weapon>*{
+  color: #cc0000;
+}
+
+.ability-tooltip p.tooltip-spell,
+.abilitiesInfo .ability-tune .description span.tooltip-spell>*{
+  color: #0055AF;
+}
+
+.ability-tooltip p.name {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.ability-tooltip p.desc {
+  margin-bottom: 5px;
+}
+
+.effect-tooltip p {
+  color: #fff;
+  display: block;
+  font-size: 12px;
+  text-align: left;
+  margin-bottom: 0;
+  font-weight: bold;
+}
+
+.effect-tooltip p.name {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.effect-tooltip p.desc {
+  margin-bottom: 5px;
+}
+
+/* MD------------------------------------------------------*/
+
+@media (min-width: 992px) and (max-width: 1200px) {
+
+  .create-char-form .form-left {
+    width: 30%;
+    margin-right: 2%;
+  }
+
+  .create-char-form .form-left.smaller {
+    font-size: 11px;
+  }
+
+  .create-char-form .form-right {
+    width: 65%;
+  }
+
+  .shards-cost.shards-container .shard span {
+    width: 45px;
+  }
+
+  .icon-role {
+    width: 26px;
+    height: 26px;
+  }
+
+  .team_creation .portrait {
+    width: 112px;
+    height: 112px;
+  }
+
+  .abilitiesInfo .options {
+    margin-right: 74px;
+  }
+
+  .inventory .content-right {
+    width: 224px;
+  }
+
+  .inventory .portrait {
+    width: 48px;
+    height: 48px;
+    margin-right: 5px;
+  }
+
+  .inventory .char-desc {
+    width: 120px;
+  }
+
+  .inventory .char-desc-panel .panel-body {
+    padding-right: 5px;
+    padding-left: 5px;
+  }
+
+  .battleScreen .my-team-info,
+  .battleScreen .enemy-team-info {
+    width: 300px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .battleScreen .center-info {
+    width: 340px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .battleScreen .char-panel .portrait {
+    width: 48px;
+    height: 48px;
+    margin-right: 5px;
+  }
+
+  .battleScreen .char-panel .portrait .role-in-portrait {
+    width: 16px;
+    height: 16px;
+  }
+
+  .battleScreen .char-panel .char-info {
+    width: 190px;
+  }
+
+  .battleScreen .progress-bar span {
+    width: 190px;
+  }
+
+  .loader {
+    right: 8px;
+  }
+
+}
+
+/* SM------------------------------------------------------*/
+
+@media (min-width: 768px) and (max-width: 992px) {
+  .panel-body {
+    padding: 10px;
+  }
+
+  .form-horizontal .form-group {
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  .create-char-form .form-left {
+    width: 30%;
+    margin-right: 1%;
+  }
+
+  .create-char-form .form-left.smaller {
+    font-size: 10px;
+  }
+
+  .create-char-form .form-right {
+    width: 65%;
+  }
+
+  .shards-cost.shards-container .shard span {
+    width: 32px;
+  }
+
+  .icon-role {
+    width: 24px;
+    height: 24px;
+  }
+
+  .team_creation .portrait {
+    width: 90px;
+    height: 90px;
+  }
+
+  .charInfo .char-desc {
+    width: 170px;
+  }
+
+  .abilitiesInfo .ability-slot {
+    width: 42px;
+    height: 42px;
+  }
+
+  .ability-tab {
+    width: 528px;
+    height: 128px;
+  }
+
+  .ability-tab .ability-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .abilitiesInfo .ability-book {
+    margin-left: 30px;
+  }
+
+  .abilitiesInfo .options {
+    margin-right: 17px;
+  }
+
+  .inventory .char-desc-panel {
+    height: 125px;
+  }
+
+  .inventory .content-right {
+    width: 100%;
+    display: block;
+    font-size: 12px;
+  }
+
+  .inventory .char-desc-panel .panel-body {
+    padding-right: 5px;
+    padding-left: 5px;
+  }
+
+  .inventory .portrait {
+    width: 42px;
+    height: 42px;
+    margin-right: 5px;
+  }
+
+  .inventory .char-desc {
+    width: 81px;
+    font-size: 10px;
+  }
+
+  .battleScreen .panel-body {
+    padding: 3px;
+  }
+
+  .battleScreen .my-team-info,
+  .battleScreen .enemy-team-info {
+    width: 199px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .battleScreen .center-info {
+    width: 330px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .battleScreen .char-panel .portrait {
+    width: 32px;
+    height: 32px;
+    margin-right: 5px;
+  }
+
+  .battleScreen .char-panel .portrait .role-in-portrait {
+    width: 12px;
+    height: 12px;
+  }
+
+  .battleScreen .char-panel .char-info {
+    width: 120px;
+  }
+
+  .battleScreen .progress-bar span {
+    width: 120px;
+  }
+
+  .battleScreen .ability-group {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .battleScreen .ability-wrapper {
+    width: 24px;
+    height: 24px;
+  }
+
+  .battleScreen .ability-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .battleScreen .ability-icon span {
+    font-size: 12px;
+    line-height: 24px;
+  }
+
+  .loader {
+    right: 8px;
+  }
+
+  .battleScreen .buff-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  body {
+    font-size: 12px;
+  }
+
+  .container {
+    width: 360px;
+  }
+
+  .well {
+    padding: 5px;
+  }
+
+  .btn {
+    font-size: 12px;
+  }
+
+  .form-control {
+    font-size: 12px;
+  }
+
+  .form-horizontal .form-group {
+    margin-left: -5px;
+    margin-right: -5px;
+  }
+
+  .form-group {
+    margin-bottom: 10px;
+  }
+
+  label {
+    height: 38px;
+    line-height: 38px;
+    margin-bottom: 0;
+  }
+
+  .panel {
+    margin-bottom: 5px;
+  }
+
+  .panel-body {
+    padding: 5px;
+  }
+
+  .panel-title {
+    font-size: 14px;
+  }
+
+  .online-text {
+    width: 120px;
+    display: inline-block;
+  }
+
+  .language-btn {
+    width: 14px;
+    height: 8px;
+    margin-left: 2px;
+  }
+
+  .language-btn img {
+    width: 14px;
+    height: 8px;
+  }
+
+  .mute-btn {
+    padding: 3px 5px;
+    margin-left: 0;
+  }
+
+  .create-char-form .form-left {
+    width: 30%;
+    margin-right: 1%;
+  }
+
+  .create-char-form .form-left.smaller {
+    font-size: 10px;
+  }
+
+  .create-char-form .form-right {
+    width: 65%;
+  }
+
+  .shards-cost.shards-container .shard span {
+    width: 32px;
+  }
+
+  .icon-role {
+    width: 21px;
+    height: 21px;
+  }
+
+  .city .portrait {
+    width: 60px;
+    height: 60px;
+  }
+
+  .city .portrait .role-in-portrait {
+    width: 24px;
+    height: 24px;
+  }
+
+  .city .btn-group-vertical {
+    font-size: 11px;
+  }
+
+  .city .panel .btn-group-char-options {
+    margin-top: 37px;
+  }
+
+  .charInfo .char-desc-panel {
+    width: 100%;
+    height: 77px;
+    display: block;
+  }
+
+  .charInfo .portrait {
+    margin-right: 5px;
+  }
+
+  .charInfo .char-desc {
+    width: 210px;
+  }
+
+  .charInfo .panel-triangle p.title {
+    margin-bottom: 18px;
+  }
+
+  .charInfo .panel-triangle {
+    width: 100%;
+    display: block;
+    height: 290px;
+  }
+
+  .charInfo .panel-triangle .left,
+  .charInfo .panel-triangle .right {
+    width: 100%;
+    display: block;
+  }
+
+  .charInfo .triangle-container {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .charInfo .panel-triangle .str {
+    top: 167px;
+    left: 41px;
+  }
+
+  .charInfo .panel-triangle .dxt {
+    top: 30px;
+    left: 139px;
+  }
+
+  .charInfo .panel-triangle .int {
+    top: 167px;
+    left: 237px
+  }
+
+  .charInfo .panel-triangle .right {
+    margin-top: 10px;
+  }
+
+  .charInfo .stats {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+
+  .abilitiesInfo .char-desc-panel {
+    width: 100%;
+    display: block;
+    margin-right: 0;
+    height: 188px;
+    margin-bottom: 5px;
+  }
+
+  .abilitiesInfo .ability-slot {
+    width: 42px;
+    height: 42px;
+  }
+
+  .abilitiesInfo .ability-switch {
+    width: 48px;
+    height: 48px;
+  }
+
+  .abilitiesInfo .ability-tune {
+    width: 100%;
+    display: block;
+    height: 280px;
+  }
+
+  .abilitiesInfo .ability-tune .description span {
+    font-size: 10px;
+  }
+
+  .abilitiesInfo .hidden-on-xs {
+    display: none;
+  }
+
+  .abilitiesInfo .ability-book {
+    float: none;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .ability-tab {
+    width: 306px;
+    height: 128px;
+  }
+
+  .ability-tab .ability-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .abilitiesInfo .options {
+    margin-top: 5px;
+    margin-right: auto;
+    margin-left: auto;
+    float: none;
+  }
+
+  .abilitiesInfo .stats {
+    margin-bottom: 5px;
+  }
+
+  .inventory .content-left {
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+    display: block;
+  }
+
+  .inventory .content-right {
+    width: 100%;
+    display: block;
+  }
+
+  .inventory .char-desc-panel {
+    width: 100%;
+    height: 77px;
+    display: block;
+  }
+
+  .inventory .portrait {
+    margin-right: 5px;
+  }
+
+  .inventory .char-desc {
+    width: 210px;
+  }
+
+  .battleScreen .my-team-info,
+  .battleScreen .center-info,
+  .battleScreen .enemy-team-info {
+    width: 345px;
+    padding-left: 0;
+    padding-right: 0;
+    display: block;
+  }
+
+}
+

@@ -1,0 +1,264 @@
+<div ng-controller="SocketController">
+    <%- partial('../partials/toolbars/header') %>
+    <div class="row" ng-controller="CharInfoController">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-xs-12 well bs-component charInfo">
+            <legend translate>Character Info</legend>
+            <div class="clearfix">
+                <div class="col-xs-12">
+                    <div class="row">
+                        <div class="panel panel-primary char-desc-panel">
+                            <div class="panel-body text-left">
+                                <img class="portrait" ng-src="{{char.portrait}}">
+                                <div class="char-desc">
+                                    <p translate>Name: {{char.charName}}</p>
+                                    <p translate>Race: {{getCharRace()}}</p>
+                                    <p translate>Role: {{getCharRole()}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-warning panel-triangle">
+                            <div class="panel-body">
+                                <p class="title" translate>Parameters Tune</p>
+                                <div class="left">
+                                    <div class="text-danger str">{{char.params.strMax}}</div>
+                                    <div class="text-success dxt">{{char.params.dxtMax}}</div>
+                                    <div class="text-primary int">{{char.params.intMax}}</div>
+                                    <div class="triangle-container dnd-container">
+                                        <div class="param-pointer"
+                                             dnd-draggable="true"
+                                             dnd-draggable-opts = "{layer: 'layer1' }"
+                                             dnd-on-drag = "changeParams()"
+                                             dnd-containment = "'.dnd-container'"
+                                             dnd-rect = "paramPoint">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="right">
+                                    <div class="btn-group-vertical">
+                                        <button class="btn btn-success btn-sm" ng-disabled="!charChanged" ng-click="acceptChangesClick()" translate>Accept</button>
+                                        <button class="btn btn-wanring btn-sm" ng-disabled="!charChanged" ng-click="declineChangesClick()" translate>Decline</button>
+                                    </div>
+                                    <div class="btn-group-vertical options">
+                                        <div class="btn-group choose-char">
+                                            <button class="btn btn-default btn-sm" ng-click="prevCharClick()" ng-disabled="checkForLosers()"><</button>
+                                            <button class="btn btn-default btn-sm" ng-click="nextCharClick()" ng-disabled="checkForLosers()">></button>
+                                        </div>
+                                        <button class="btn btn-info btn-sm" ng-click="abilitiesClick()" translate>Abilities</button>
+                                        <button class="btn btn-success btn-sm" ng-click="inventoryClick()" translate>Inventory</button>
+                                        <button class="btn btn-warning btn-sm" ng-click="exitClick()" translate>Back to city</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="panel panel-info">
+                            <div class="panel-body">
+                                <div class="panel panel-danger col-sm-4 stats">
+                                    <div class="panel-body">
+                                        <table>
+                                            <tr>
+                                                <td translate>Strength:</td>
+                                                <td tooltip-html="char.getParamTooltip('str')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{char.str}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Attack Power:</td>
+                                                <td tooltip-html="char.getParamTooltip('attackPower')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{(char.attackPower*100).toFixed(2)}}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Health:</td>
+                                                <td tooltip-html="char.getParamTooltip('maxHealth')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{char.maxHealth}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Health Reg.:</td>
+                                                <td tooltip-html="char.getParamTooltip('healthReg')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{(char.healthReg*100).toFixed(2)}}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Physical Resist.:</td>
+                                                <td tooltip-html="char.getParamTooltip('physRes')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{(char.physRes*100).toFixed(2)}}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Block Chance:</td>
+                                                <td tooltip-html="char.getParamTooltip('blockChance')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{(char.blockChance*100).toFixed(2)}}%
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="panel panel-success col-sm-4 stats">
+                                    <div class="panel-body">
+                                        <table>
+                                            <tr>
+                                                <td translate>Dexterity:</td>
+                                                <td tooltip-html="char.getParamTooltip('dxt')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{char.dxt}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Critical Rating:</td>
+                                                <td tooltip-html="char.getParamTooltip('critChance')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{(char.critChance*100).toFixed(2)}}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Energy:</td>
+                                                <td tooltip-html="char.getParamTooltip('maxEnergy')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{char.maxEnergy}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Hit Chance:</td>
+                                                <td tooltip-html="char.getParamTooltip('hitChance')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{(char.hitChance*100).toFixed(2)}}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Dodge Chance:</td>
+                                                <td tooltip-html="char.getParamTooltip('dodgeChance')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{(char.dodgeChance*100).toFixed(2)}}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Luck:</td>
+                                                <td tooltip-html="char.getParamTooltip('luck')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{(char.luck*100).toFixed(2)}}%
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="panel panel-primary col-sm-4 stats">
+                                    <div class="panel-body">
+                                        <table>
+                                            <tr>
+                                                <td translate>Intellect:</td>
+                                                <td tooltip-html="char.getParamTooltip('int')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{char.int}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Spell Power:</td>
+                                                <td tooltip-html="char.getParamTooltip('spellPower')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{(char.spellPower*100).toFixed(2)}}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Mana:</td>
+                                                <td tooltip-html="char.getParamTooltip('maxMana')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{char.maxMana}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Mana Reg.:</td>
+                                                <td tooltip-html="char.getParamTooltip('manaReg')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{(char.manaReg*100).toFixed(2)}}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Magic Resist.:</td>
+                                                <td tooltip-html="char.getParamTooltip('magicRes')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{(char.magicRes*100).toFixed(2)}}%
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td translate>Initiative:</td>
+                                                <td tooltip-html="char.getParamTooltip('initiative')"
+                                                    tooltip-placement="top"
+                                                    tooltip-append-to-body="true"
+                                                    tooltip-animation="false"
+                                                    tooltip-class="param-tooltip">
+                                                    {{char.initiative}}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- partial('../partials/toolbars/footer') %>
+</div>

@@ -1,0 +1,75 @@
+<div ng-controller="SocketController">
+    <%- partial('../partials/toolbars/header') %>
+    <div class="row" ng-controller="CreateTeamController">
+        <div class="col-sm-6 col-sm-offset-3 well bs-component">
+            <legend translate>Create Team</legend>
+
+            <div class="top-shown-shards">
+                <p translate>Soul shards:</p>
+                <div class="shards-container">
+                    <div class="shard red-shard">
+                        <div class="icon"></div>
+                        <span>{{team.souls.red}}</span>
+                    </div>
+                    <div class="shard green-shard">
+                        <div class="icon"></div>
+                        <span>{{team.souls.green}}</span>
+                    </div>
+                    <div class="shard blue-shard">
+                        <div class="icon"></div>
+                        <span>{{team.souls.blue}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-primary text-center">{{moreChars()}}</p>
+            <div class="team_creation clearfix">
+                <div class="col-sm-4 panel panel-primary">
+                    <div class="panel-body">
+                        <div class="text-success" ng-if="createdChars[0]">{{::createdChars[0].charName}}</div>
+                        <div class="portrait" ng-style="{'background-image': getCharPortrait(createdChars[0])}" ng-if="createdChars[0]">
+                            <div class="role-in-portrait" ng-class="[createdChars[0].role+'-icon']"></div>
+                        </div>
+                        <button class="btn btn-primary" ng-if="!createdChars[0]" ng-click="createCharClick()" translate>Create</button>
+                    </div>
+                </div>
+                <div class="col-sm-4 panel panel-primary">
+                    <div class="panel-body">
+                        <div class="text-success" ng-if="createdChars[1]">{{::createdChars[1].charName}}</div>
+                        <div class="portrait" ng-style="{'background-image': getCharPortrait(createdChars[1])}" ng-if="createdChars[1]">
+                            <div class="role-in-portrait" ng-class="[createdChars[1].role+'-icon']"></div>
+                        </div>
+                        <button class="btn btn-primary" ng-if="!createdChars[1]" ng-click="createCharClick()" ng-disabled="!createdChars[0]" translate>Create</button>
+                    </div>
+                </div>
+                <div class="col-sm-4 panel panel-primary">
+                    <div class="panel-body">
+                        <div class="text-success" ng-if="createdChars[2]">{{::createdChars[2].charName}}</div>
+                        <div class="portrait" ng-style="{'background-image': getCharPortrait(createdChars[2])}" ng-if="createdChars[2]">
+                            <div class="role-in-portrait" ng-class="[createdChars[2].role+'-icon']"></div>
+                        </div>
+                        <button class="btn btn-primary" ng-if="!createdChars[2]" ng-click="createCharClick()" ng-disabled="!createdChars[1]" translate>Create</button>
+                    </div>
+                </div>
+            </div>
+            <form name="teamForm" class="form-horizontal col-md-12" novalidate>
+                <div class="form-group" ng-class="{'has-error': teamForm.teamName.$invalid, 'has-success': teamForm.teamName.$valid}" ng-show="createdChars.length===3">
+                    <label for="input-teamName" class="col-md-5 control-label" translate>Team name</label>
+                    <div class="col-md-7">
+                        <input name="teamName" type="text" class="form-control" id="input-teamName" ng-model="teamName" ng-minlength="3" ng-maxlength="15" ng-pattern="/^(([a-zA-Z]+)|([а-яёА-ЯЁ]+))$/i" ng-focus="" required>
+                    </div>
+                </div>
+                <div ng-class="{'text-danger': cssError, 'text-success': cssSuccess, 'text-info': cssText}">{{info}}</div>
+
+                <div class="text-danger" ng-if="teamForm.teamName.$error.required && teamForm.teamName.$dirty" translate>Team name is required</div>
+                <div class="text-danger" ng-if="!teamForm.teamName.$error.minLength && !teamForm.teamName.$error.maxLength && teamForm.teamName.$error.pattern && teamForm.teamName.$dirty" translate>Team name must contain latin or cyrillic letters only</div>
+                <div class="text-danger" ng-if="!teamForm.teamName.$error.required && (teamForm.teamName.$error.minlength || teamForm.teamName.$error.maxlength) && teamForm.teamName.$dirty" translate>Team name must be between 3 and 15 characters</div>
+                <div class="form-group">
+                    <button class="btn btn-success" ng-click="submitTeamClick()" ng-disabled="createdChars.length<3 || teamForm.teamName.$invalid" translate>Create</button>
+                    <button class="btn btn-warning" ng-click="cancelTeamClick()" translate>Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <%- partial('../partials/toolbars/footer') %>
+</div>

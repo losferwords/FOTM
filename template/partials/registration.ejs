@@ -1,0 +1,48 @@
+<div class="row">
+    <div class="col-lg-4 col-lg-offset-4 col-sm-6 col-sm-offset-3 col-xs-12 well bs-component withoutHeader">
+        <form name="registerForm" class="form-horizontal" ng-controller="FormController" novalidate>
+            <legend translate>Registration</legend>
+            <div class="form-group">
+                <button class="language-btn btn" type="button" ng-click="changeLanguage('ru')"><img src="images/interface/ru.gif" alt=""/></button>
+                <button class="language-btn btn" type="button" ng-click="changeLanguage('gb')"><img src="images/interface/gb.gif" alt=""/></button>
+            </div>
+            <p translate>Please, complete this form</p>
+
+            <div class="form-group" ng-class="{'has-error': registerForm.username.$invalid, 'has-success': registerForm.username.$valid}">
+                <label for="input-username" class="col-xs-3 col-xs-offset-2 control-label" translate>Login</label>
+                <div class="col-xs-5">
+                    <input name="username" type="text" id="input-username" class="form-control" ng-model="username" ng-minlength="3" ng-maxlength="20" ng-pattern="/^[A-z][A-z0-9]*$/" required>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{'has-error': registerForm.email.$invalid, 'has-success': registerForm.email.$valid}">
+                <label for="input-email" class="col-xs-3 col-xs-offset-2 control-label">E-mail</label>
+                <div class="col-xs-5">
+                    <input name="email" type="email" id="input-email" class="form-control" ng-model="email" required>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{'has-error': registerForm.password.$invalid, 'has-success': registerForm.password.$valid}">
+                <label for="input-password" class="col-xs-3 col-xs-offset-2 control-label" translate>Password</label>
+                <div class="col-xs-5">
+                    <input name="password" type="password" id="input-password" class="form-control" ng-model="password" ng-minlength="5" ng-maxlength="20" ng-pattern="/(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z])/" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-success btn-large" ng-click="submitRegistration()" ng-disabled="registerForm.$invalid || registerForm.$submitted" translate>Register</button>
+            </div>
+            <div class="form-group">
+                <button type="cancel" class="btn btn-default btn-large" ng-model="formButton" ng-click="cancelRegistration()" ng-disabled="registerForm.$submitted" translate>Cancel</button>
+            </div>
+            <div ng-class="{'text-danger': cssError, 'text-success': cssSuccess, 'text-info': cssText}">{{info}}</div>
+
+            <div class="text-danger" ng-if="registerForm.username.$error.required && registerForm.username.$dirty" translate>Login name is required</div>
+            <div class="text-danger" ng-if="!registerForm.username.$error.minLength && !registerForm.username.$error.maxLength && registerForm.username.$error.pattern && registerForm.username.$dirty" translate>Login must start with a letter, <br />and contain english letters &amp; numbers only.</div>
+            <div class="text-danger" ng-if="!registerForm.username.$error.required && (registerForm.username.$error.minlength || registerForm.username.$error.maxlength) && registerForm.username.$dirty" translate>Login must be between 3 and 20 characters.</div>
+
+            <div class="text-danger" ng-if="registerForm.email.$error.required && registerForm.mail.$dirty" translate>E-mail is required</div>
+
+            <div class="text-danger" ng-if="registerForm.password.$error.required && registerForm.password.$dirty" translate>Password is required</div>
+            <div class="text-danger" ng-if="!registerForm.password.$error.required && (registerForm.password.$error.minlength || registerForm.password.$error.maxlength) && registerForm.password.$dirty" translate>Password must be between 5 and 20 characters.</div>
+            <div class="text-danger" ng-if="!registerForm.password.$error.required && !registerForm.password.$error.minlength && !registerForm.password.$error.maxlength && registerForm.password.$error.pattern && registerForm.password.$dirty" translate>Password Must contain one lower &amp; uppercase letter,<br />and one non-alpha character (a number or a symbol.)</div>
+        </form>
+    </div>
+</div>
