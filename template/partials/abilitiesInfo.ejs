@@ -24,7 +24,7 @@
                                                  ng-class="{'active': interestingAbility.name===ability.name, 'dropable': movingAbility}"
                                                  ng-style="{'background-image': ability.icon(), 'background-color' : getAbilityColor(ability)}"
                                                  ng-disabled = "ability.name==='Void'"
-                                                 tooltip-html="getAbilityTooltip(ability)"
+                                                 uib-tooltip-html="getAbilityTooltip(ability)"
                                                  tooltip-placement="top"
                                                  tooltip-append-to-body="true"
                                                  tooltip-animation="false"
@@ -74,15 +74,15 @@
                                 <div class="ability-book">
                                     <div class="ability-filter">
                                         <div class="btn-group">
-                                            <button class="btn btn-sm show-all" btn-radio="'all'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('all')"></button>
-                                            <button class="btn btn-sm sentinel-icon" btn-radio="'sentinel'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('sentinel')" ng-hide="char.race=='cambion'"></button>
-                                            <button class="btn btn-sm slayer-icon" btn-radio="'slayer'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('slayer')" ng-hide="char.race=='nephilim'"></button>
-                                            <button class="btn btn-sm redeemer-icon" btn-radio="'redeemer'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('redeemer')" ng-hide="char.race=='cambion'"></button>
-                                            <button class="btn btn-sm ripper-icon" btn-radio="'ripper'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('ripper')" ng-hide="char.race=='nephilim'"></button>
-                                            <button class="btn btn-sm prophet-icon" btn-radio="'prophet'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('prophet')" ng-hide="char.race=='cambion'"></button>
-                                            <button class="btn btn-sm malefic-icon" btn-radio="'malefic'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('malefic')" ng-hide="char.race=='nephilim'"></button>
-                                            <button class="btn btn-sm cleric-icon" btn-radio="'cleric'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('cleric')" ng-hide="char.race=='cambion'" ng-class="{'nephilim':char.race==='nephilim'}"></button>
-                                            <button class="btn btn-sm heretic-icon" btn-radio="'heretic'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('heretic')" ng-hide="char.race=='nephilim'"></button>
+                                            <button class="btn btn-sm show-all" uib-btn-radio="'all'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('all')"></button>
+                                            <button class="btn btn-sm sentinel-icon" uib-btn-radio="'sentinel'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('sentinel')" ng-hide="char.race=='cambion'"></button>
+                                            <button class="btn btn-sm slayer-icon" uib-btn-radio="'slayer'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('slayer')" ng-hide="char.race=='nephilim'"></button>
+                                            <button class="btn btn-sm redeemer-icon" uib-btn-radio="'redeemer'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('redeemer')" ng-hide="char.race=='cambion'"></button>
+                                            <button class="btn btn-sm ripper-icon" uib-btn-radio="'ripper'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('ripper')" ng-hide="char.race=='nephilim'"></button>
+                                            <button class="btn btn-sm prophet-icon" uib-btn-radio="'prophet'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('prophet')" ng-hide="char.race=='cambion'"></button>
+                                            <button class="btn btn-sm malefic-icon" uib-btn-radio="'malefic'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('malefic')" ng-hide="char.race=='nephilim'"></button>
+                                            <button class="btn btn-sm cleric-icon" uib-btn-radio="'cleric'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('cleric')" ng-hide="char.race=='cambion'" ng-class="{'nephilim':char.race==='nephilim'}"></button>
+                                            <button class="btn btn-sm heretic-icon" uib-btn-radio="'heretic'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('heretic')" ng-hide="char.race=='nephilim'"></button>
                                         </div>
                                     </div>
                                     <div class="ability-tab customScrollBar"
@@ -94,7 +94,7 @@
                                              ng-repeat="ability in abilitiesBook track by $index"
                                              ng-style="{'background-image': ability.icon(),
                                                         'background-color': getAbilityColor(ability)}"
-                                             tooltip-html="getAbilityTooltip(ability)"
+                                             uib-tooltip-html="getAbilityTooltip(ability)"
                                              tooltip-placement="top"
                                              tooltip-append-to-body="true"
                                              tooltip-animation="false"
@@ -125,7 +125,7 @@
                             <table>
                                 <tr>
                                     <td translate>Strength:</td>
-                                    <td tooltip-html="char.getParamTooltip('str')"
+                                    <td uib-tooltip-html="char.getParamTooltip('str')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -135,7 +135,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Attack Power:</td>
-                                    <td tooltip-html="char.getParamTooltip('attackPower')"
+                                    <td uib-tooltip-html="char.getParamTooltip('attackPower')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -145,7 +145,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Health:</td>
-                                    <td tooltip-html="char.getParamTooltip('maxHealth')"
+                                    <td uib-tooltip-html="char.getParamTooltip('maxHealth')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -155,7 +155,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Health Reg.:</td>
-                                    <td tooltip-html="char.getParamTooltip('healthReg')"
+                                    <td uib-tooltip-html="char.getParamTooltip('healthReg')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -165,7 +165,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Physical Resist.:</td>
-                                    <td tooltip-html="char.getParamTooltip('physRes')"
+                                    <td uib-tooltip-html="char.getParamTooltip('physRes')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -175,7 +175,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Block Chance:</td>
-                                    <td tooltip-html="char.getParamTooltip('blockChance')"
+                                    <td uib-tooltip-html="char.getParamTooltip('blockChance')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -191,7 +191,7 @@
                             <table>
                                 <tr>
                                     <td translate>Dexterity:</td>
-                                    <td tooltip-html="char.getParamTooltip('dxt')"
+                                    <td uib-tooltip-html="char.getParamTooltip('dxt')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -201,7 +201,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Critical Rating:</td>
-                                    <td tooltip-html="char.getParamTooltip('critChance')"
+                                    <td uib-tooltip-html="char.getParamTooltip('critChance')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -211,7 +211,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Energy:</td>
-                                    <td tooltip-html="char.getParamTooltip('maxEnergy')"
+                                    <td uib-tooltip-html="char.getParamTooltip('maxEnergy')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -221,7 +221,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Hit Chance:</td>
-                                    <td tooltip-html="char.getParamTooltip('hitChance')"
+                                    <td uib-tooltip-html="char.getParamTooltip('hitChance')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -231,7 +231,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Dodge Chance:</td>
-                                    <td tooltip-html="char.getParamTooltip('dodgeChance')"
+                                    <td uib-tooltip-html="char.getParamTooltip('dodgeChance')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -241,7 +241,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Luck:</td>
-                                    <td tooltip-html="char.getParamTooltip('luck')"
+                                    <td uib-tooltip-html="char.getParamTooltip('luck')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -257,7 +257,7 @@
                             <table>
                                 <tr>
                                     <td translate>Intellect:</td>
-                                    <td tooltip-html="char.getParamTooltip('int')"
+                                    <td uib-tooltip-html="char.getParamTooltip('int')"
                                         tooltip-placement="top"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -267,7 +267,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Spell Power:</td>
-                                    <td tooltip-html="char.getParamTooltip('spellPower')"
+                                    <td uib-tooltip-html="char.getParamTooltip('spellPower')"
                                         tooltip-placement="top"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -277,7 +277,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Mana:</td>
-                                    <td tooltip-html="char.getParamTooltip('maxMana')"
+                                    <td uib-tooltip-html="char.getParamTooltip('maxMana')"
                                         tooltip-placement="top"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -287,7 +287,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Mana Reg.:</td>
-                                    <td tooltip-html="char.getParamTooltip('manaReg')"
+                                    <td uib-tooltip-html="char.getParamTooltip('manaReg')"
                                         tooltip-placement="top"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -297,7 +297,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Magic Resist.:</td>
-                                    <td tooltip-html="char.getParamTooltip('magicRes')"
+                                    <td uib-tooltip-html="char.getParamTooltip('magicRes')"
                                         tooltip-placement="top"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -307,7 +307,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Initiative:</td>
-                                    <td tooltip-html="char.getParamTooltip('initiative')"
+                                    <td uib-tooltip-html="char.getParamTooltip('initiative')"
                                         tooltip-placement="top"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"

@@ -1,7 +1,7 @@
-angular.module('fotm').register.controller("CityController", ["$scope", '$rootScope', '$location', '$interval', '$modal', '$route', 'characterService', 'mainSocket', 'gettextCatalog', CityController]);
+angular.module('fotm').register.controller("CityController", ["$scope", '$rootScope', '$location', '$interval', '$uibModal', '$route', 'characterService', 'mainSocket', 'gettextCatalog', CityController]);
 
 //Контроллер выбора пати
-function CityController($scope, $rootScope, $location, $interval, $modal, $route, characterService, mainSocket, gettextCatalog) {
+function CityController($scope, $rootScope, $location, $interval, $uibModal, $route, characterService, mainSocket, gettextCatalog) {
     var searchTimer;
     var searchProcessStep=0;
     var charSetFlag;
@@ -137,7 +137,7 @@ function CityController($scope, $rootScope, $location, $interval, $modal, $route
 
     //Функция запускает modal удаления команды
     $scope.deleteTeamClick = function() {
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             animation: $scope.animationsEnabled,
             templateUrl: 'deleteModal.html',
             controller: 'CityModalController',
@@ -152,7 +152,7 @@ function CityController($scope, $rootScope, $location, $interval, $modal, $route
 
     //Функция запускает modal костей
     $scope.rollDicesClick = function() {
-        var modalInstance = $modal.open({
+        var modalInstance = $uibModal.open({
             animation: $scope.animationsEnabled,
             templateUrl: 'diceModal.html',
             controller: 'diceModalController',
@@ -238,26 +238,26 @@ function CityController($scope, $rootScope, $location, $interval, $modal, $route
     }
 }
 
-angular.module('fotm').register.controller("CityModalController", ["$scope", '$location', 'mainSocket', '$modalInstance', 'teamId', CityModalController]);
+angular.module('fotm').register.controller("CityModalController", ["$scope", '$location', 'mainSocket', '$uibModalInstance', 'teamId', CityModalController]);
 
 //Контроллер подтверждения удаления команды
-function CityModalController($scope, $location, mainSocket, $modalInstance, teamId) {
+function CityModalController($scope, $location, mainSocket, $uibModalInstance, teamId) {
 
     $scope.deleteYes = function () {
         mainSocket.emit("deleteTeam", teamId);
         $location.path("/createTeam");
-        $modalInstance.close('cancel');
+        $uibModalInstance.close('cancel');
     };
 
     $scope.deleteNo = function () {
-        $modalInstance.dismiss('cancel');
+        $uibModalInstance.dismiss('cancel');
     };
 }
 
-angular.module('fotm').register.controller("diceModalController", ["$scope", '$interval', 'mainSocket', '$modalInstance', 'gettextCatalog', 'randomService', 'team', diceModalController]);
+angular.module('fotm').register.controller("diceModalController", ["$scope", '$interval', 'mainSocket', '$uibModalInstance', 'gettextCatalog', 'randomService', 'team', diceModalController]);
 
 //Контроллер костей
-function diceModalController($scope, $interval, mainSocket, $modalInstance, gettextCatalog, randomService, team) {
+function diceModalController($scope, $interval, mainSocket, $uibModalInstance, gettextCatalog, randomService, team) {
     $scope.dices = {
         red: 0,
         green: 0,
@@ -307,6 +307,6 @@ function diceModalController($scope, $interval, mainSocket, $modalInstance, gett
     $scope.$on('$destroy', $interval.cancel(rollingTimer));
 
     $scope.rollBack = function () {
-        $modalInstance.close('cancel');
+        $uibModalInstance.close('cancel');
     };
 }

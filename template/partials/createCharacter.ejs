@@ -20,8 +20,8 @@
                                     <label class="control-label text-success form-left" translate>Gender</label>
                                     <div class="text-center form-right">
                                         <div class="btn-group">
-                                            <div class="btn btn-primary icon-small" ng-model="gender" btn-radio="'male'" ng-style="{'background-image':'url(./images/icons/interface/male.svg)'}" tooltip-placement="left" tooltip="{{'Male' |translate}}" tooltip-append-to-body="true"></div>
-                                            <div class="btn btn-primary icon-small" ng-model="gender" btn-radio="'female'" ng-style="{'background-image':'url(./images/icons/interface/female.svg)'}" tooltip-placement="right" tooltip="{{'Female' |translate}}" tooltip-append-to-body="true"></div>
+                                            <div class="btn btn-primary icon-small" ng-model="gender" uib-btn-radio="'male'" ng-style="{'background-image':'url(./images/icons/interface/male.svg)'}" tooltip-placement="left" uib-tooltip="{{'Male' |translate}}" tooltip-append-to-body="true"></div>
+                                            <div class="btn btn-primary icon-small" ng-model="gender" uib-btn-radio="'female'" ng-style="{'background-image':'url(./images/icons/interface/female.svg)'}" tooltip-placement="right" uib-tooltip="{{'Female' |translate}}" tooltip-append-to-body="true"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -29,7 +29,7 @@
                                     <label class="control-label text-success form-left" translate>Race</label>
                                     <div class="text-center form-right">
                                         <div class="btn-group">
-                                            <div class="btn icon-race" ng-class="getRaceBtnClass(race)" ng-model="currentRace.name" ng-repeat="race in races" btn-radio="race" ng-style="racePortraitPaths($index)" tooltip-placement="bottom" tooltip="{{getRaceName(race)}}" tooltip-append-to-body="true"></div>
+                                            <div class="btn icon-race" ng-class="getRaceBtnClass(race)" ng-model="currentRace.name" ng-repeat="race in races" uib-btn-radio="race" ng-style="racePortraitPaths($index)" tooltip-placement="bottom" uib-tooltip="{{getRaceName(race)}}" tooltip-append-to-body="true"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -37,15 +37,15 @@
                                     <label class="control-label text-success form-left" translate>Role</label>
                                     <div class="text-center form-right">
                                         <div class="btn-group">
-                                            <div class="btn btn-default icon-role icon-random" ng-model="role" btn-radio="'random'" ng-style="{'background-image':'url(./images/icons/interface/random.svg)'}" tooltip-placement="bottom" tooltip="{{'Random' |translate}}" tooltip-append-to-body="true"></div>
-                                            <div class="btn btn-default icon-role icon-sentinel" ng-model="role" btn-radio="'sentinel'" ng-style="{'background-image':'url(./images/icons/roles/sentinel.svg)'}" tooltip-placement="bottom" tooltip="{{'Sentinel' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='cambion'"></div>
-                                            <div class="btn btn-default icon-role icon-slayer" ng-model="role" btn-radio="'slayer'" ng-style="{'background-image':'url(./images/icons/roles/slayer.svg)'}" tooltip-placement="bottom" tooltip="{{'Slayer' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='nephilim'"></div>
-                                            <div class="btn btn-default icon-role icon-redeemer" ng-model="role" btn-radio="'redeemer'" ng-style="{'background-image':'url(./images/icons/roles/redeemer.svg)'}" tooltip-placement="bottom" tooltip="{{'Redeemer' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='cambion'"></div>
-                                            <div class="btn btn-default icon-role icon-ripper" ng-model="role" btn-radio="'ripper'" ng-style="{'background-image':'url(./images/icons/roles/ripper.svg)'}" tooltip-placement="bottom" tooltip="{{'Ripper' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='nephilim'"></div>
-                                            <div class="btn btn-default icon-role icon-prophet" ng-model="role" btn-radio="'prophet'" ng-style="{'background-image':'url(./images/icons/roles/prophet.svg)'}" tooltip-placement="bottom" tooltip="{{'Prophet' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='cambion'"></div>
-                                            <div class="btn btn-default icon-role icon-malefic" ng-model="role" btn-radio="'malefic'" ng-style="{'background-image':'url(./images/icons/roles/malefic.svg)'}" tooltip-placement="bottom" tooltip="{{'Malefic' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='nephilim'"></div>
-                                            <div class="btn btn-default icon-role icon-cleric" ng-model="role" btn-radio="'cleric'" ng-style="{'background-image':'url(./images/icons/roles/cleric.svg)'}" tooltip-placement="bottom" tooltip="{{'Cleric' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='cambion'"></div>
-                                            <div class="btn btn-default icon-role icon-heretic" ng-model="role" btn-radio="'heretic'" ng-style="{'background-image':'url(./images/icons/roles/heretic.svg)'}" tooltip-placement="bottom" tooltip="{{'Heretic' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='nephilim'"></div>
+                                            <div class="btn btn-default icon-role icon-random" ng-model="role" uib-btn-radio="'random'" ng-style="{'background-image':'url(./images/icons/interface/random.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Random' |translate}}" tooltip-append-to-body="true"></div>
+                                            <div class="btn btn-default icon-role icon-sentinel" ng-model="role" uib-btn-radio="'sentinel'" ng-style="{'background-image':'url(./images/icons/roles/sentinel.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Sentinel' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='cambion'"></div>
+                                            <div class="btn btn-default icon-role icon-slayer" ng-model="role" uib-btn-radio="'slayer'" ng-style="{'background-image':'url(./images/icons/roles/slayer.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Slayer' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='nephilim'"></div>
+                                            <div class="btn btn-default icon-role icon-redeemer" ng-model="role" uib-btn-radio="'redeemer'" ng-style="{'background-image':'url(./images/icons/roles/redeemer.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Redeemer' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='cambion'"></div>
+                                            <div class="btn btn-default icon-role icon-ripper" ng-model="role" uib-btn-radio="'ripper'" ng-style="{'background-image':'url(./images/icons/roles/ripper.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Ripper' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='nephilim'"></div>
+                                            <div class="btn btn-default icon-role icon-prophet" ng-model="role" uib-btn-radio="'prophet'" ng-style="{'background-image':'url(./images/icons/roles/prophet.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Prophet' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='cambion'"></div>
+                                            <div class="btn btn-default icon-role icon-malefic" ng-model="role" uib-btn-radio="'malefic'" ng-style="{'background-image':'url(./images/icons/roles/malefic.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Malefic' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='nephilim'"></div>
+                                            <div class="btn btn-default icon-role icon-cleric" ng-model="role" uib-btn-radio="'cleric'" ng-style="{'background-image':'url(./images/icons/roles/cleric.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Cleric' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='cambion'"></div>
+                                            <div class="btn btn-default icon-role icon-heretic" ng-model="role" uib-btn-radio="'heretic'" ng-style="{'background-image':'url(./images/icons/roles/heretic.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Heretic' |translate}}" tooltip-append-to-body="true" ng-hide="currentRace.name=='nephilim'"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -90,11 +90,11 @@
                                 <div class="form-group">
                                     <label class="control-label text-success form-left" translate>Portrait</label>
                                     <div class="form-right">
-                                        <carousel interval="0" class="carousel portrait-carousel">
-                                            <slide ng-repeat="portrait in portraits" active="portrait.active">
+                                        <uib-carousel interval="0" class="carousel portrait-carousel">
+                                            <uib-slide ng-repeat="portrait in portraits" active="portrait.active">
                                                 <img ng-src="{{portrait.image}}" style="margin:auto">
-                                            </slide>
-                                        </carousel>
+                                            </uib-slide>
+                                        </uib-carousel>
                                     </div>
                                 </div>
                             </form>
@@ -124,11 +124,11 @@
                         </div>
                         <div class="panel-body">
                             <p class="text-left text-danger" translate>Strength</p>
-                            <progressbar max="150" value="params.strMax" type="danger">{{params.strMax}}</progressbar>
+                            <uib-progressbar max="150" value="params.strMax" type="danger">{{params.strMax}}</uib-progressbar>
                             <p class="text-left text-success" translate>Dexterity</p>
-                            <progressbar max="150" value="params.dxtMax" type="success">{{params.dxtMax}}</progressbar>
+                            <uib-progressbar max="150" value="params.dxtMax" type="success">{{params.dxtMax}}</uib-progressbar>
                             <p class="text-left text-primary" translate>Intellect</p>
-                            <progressbar max="150" value="params.intMax" type="primary">{{params.intMax}}</progressbar>
+                            <uib-progressbar max="150" value="params.intMax" type="primary">{{params.intMax}}</uib-progressbar>
                         </div>
                     </div>
                 </div>

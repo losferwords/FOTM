@@ -17,22 +17,22 @@
                                     <div class="panel-body">
                                         <div class="portrait btn"
                                                 ng-style="{'background-image': getCharPortrait(char)}"
-                                                popover-template="'effectsPopover.html'">
+                                                uib-popover-template="'effectsPopover.html'">
                                             <div class="role-in-portrait ally" ng-class="::[char.role+'-icon']"></div>
                                         </div>
                                         <div class="char-info">
                                             <p class="text-left char-name" ng-style="::{'color' : char.battleColor}">{{::char.charName}}</p>
                                             <div class="row">
-                                                <div class="col-sm-12"><progressbar dynamic-max="{{::char.maxHealth}}" value="char.curHealth" type="danger" progress-text><span class="number">{{char.curHealth}} / {{::char.maxHealth}}</span><span class="percent">{{calculateInPercent(char.curHealth, char.maxHealth)}}%</span></progressbar></div>
-                                                <div class="col-sm-12"><progressbar dynamic-max="{{::char.maxEnergy}}" value="char.curEnergy" type="success" progress-text><span class="number">{{char.curEnergy}} / {{::char.maxEnergy}}</span><span class="percent">{{calculateInPercent(char.curEnergy, char.maxEnergy)}}%</span></progressbar></div>
-                                                <div class="col-sm-12"><progressbar dynamic-max="{{::char.maxMana}}" value="char.curMana" type="primary" progress-text><span class="number">{{char.curMana}} / {{::char.maxMana}}</span><span class="percent">{{calculateInPercent(char.curMana, char.maxMana)}}%</span></progressbar></div>
+                                                <div class="col-sm-12"><uib-progressbar dynamic-max="{{::char.maxHealth}}" value="char.curHealth" type="danger" progress-text><span class="number">{{char.curHealth}} / {{::char.maxHealth}}</span><span class="percent">{{calculateInPercent(char.curHealth, char.maxHealth)}}%</span></uib-progressbar></div>
+                                                <div class="col-sm-12"><uib-progressbar dynamic-max="{{::char.maxEnergy}}" value="char.curEnergy" type="success" progress-text><span class="number">{{char.curEnergy}} / {{::char.maxEnergy}}</span><span class="percent">{{calculateInPercent(char.curEnergy, char.maxEnergy)}}%</span></uib-progressbar></div>
+                                                <div class="col-sm-12"><uib-progressbar dynamic-max="{{::char.maxMana}}" value="char.curMana" type="primary" progress-text><span class="number">{{char.curMana}} / {{::char.maxMana}}</span><span class="percent">{{calculateInPercent(char.curMana, char.maxMana)}}%</span></uib-progressbar></div>
                                             </div>
                                         </div>
                                         <div class="col-xs-12 ability-group" ng-if="$index!==2">
                                             <div class="btn-group">
                                                 <div class="ability-wrapper btn btn-default"
                                                      ng-repeat="ability in char.abilities track by $index"
-                                                     tooltip-html="getAbilityTooltip(ability)"
+                                                     uib-tooltip-html="getAbilityTooltip(ability)"
                                                      tooltip-placement="bottom"
                                                      tooltip-append-to-body="true"
                                                      tooltip-animation="false"
@@ -53,7 +53,7 @@
                                             <div class="btn-group">
                                                 <div class="ability-wrapper btn btn-default"
                                                      ng-repeat="ability in char.abilities track by $index"
-                                                     tooltip-html="getAbilityTooltip(ability)"
+                                                     uib-tooltip-html="getAbilityTooltip(ability)"
                                                      tooltip-placement="top"
                                                      tooltip-append-to-body="true"
                                                      tooltip-animation="false"
@@ -131,22 +131,22 @@
                                     <div class="panel-body">
                                         <div class="portrait btn"
                                              ng-style="{'background-image': getCharPortrait(char)}"
-                                             popover-template="'effectsPopover.html'">
+                                             uib-popover-template="'effectsPopover.html'">
                                             <div class="role-in-portrait enemy" ng-class="::[char.role+'-icon']"></div>
                                         </div>
                                         <div class="char-info">
                                             <p class="text-left char-name" ng-style="::{'color' : char.battleColor }">{{::char.charName}}</p>
                                             <div class="row">
-                                                <div class="col-sm-12"><progressbar dynamic-max="{{::char.maxHealth}}" value="char.curHealth" type="danger" progress-text><span class="number">{{char.curHealth}} / {{::char.maxHealth}}</span><span class="percent">{{calculateInPercent(char.curHealth, char.maxHealth)}}%</span></progressbar></div>
-                                                <div class="col-sm-12"><progressbar dynamic-max="{{::char.maxEnergy}}" value="char.curEnergy" type="success" progress-text><span class="number">{{char.curEnergy}} / {{::char.maxEnergy}}</span><span class="percent">{{calculateInPercent(char.curEnergy, char.maxEnergy)}}%</span></progressbar></div>
-                                                <div class="col-sm-12"><progressbar dynamic-max="{{::char.maxMana}}" value="char.curMana" type="primary" progress-text><span class="number">{{char.curMana}} / {{::char.maxMana}}</span><span class="percent">{{calculateInPercent(char.curMana, char.maxMana)}}%</span></progressbar></div>
+                                                <div class="col-sm-12"><uib-progressbar dynamic-max="{{::char.maxHealth}}" value="char.curHealth" type="danger" progress-text><span class="number">{{char.curHealth}} / {{::char.maxHealth}}</span><span class="percent">{{calculateInPercent(char.curHealth, char.maxHealth)}}%</span></uib-progressbar></div>
+                                                <div class="col-sm-12"><uib-progressbar dynamic-max="{{::char.maxEnergy}}" value="char.curEnergy" type="success" progress-text><span class="number">{{char.curEnergy}} / {{::char.maxEnergy}}</span><span class="percent">{{calculateInPercent(char.curEnergy, char.maxEnergy)}}%</span></uib-progressbar></div>
+                                                <div class="col-sm-12"><uib-progressbar dynamic-max="{{::char.maxMana}}" value="char.curMana" type="primary" progress-text><span class="number">{{char.curMana}} / {{::char.maxMana}}</span><span class="percent">{{calculateInPercent(char.curMana, char.maxMana)}}%</span></uib-progressbar></div>
                                             </div>
                                         </div>
                                         <div class="col-xs-12 enemy-abilities ability-group" ng-if="$index!==2">
                                             <div class="btn-group" ng-if="char.underProphecy">
                                                 <div class="ability-wrapper btn btn-default"
                                                      ng-repeat="ability in char.abilities track by $index"
-                                                     tooltip-html="getAbilityTooltip(ability)"
+                                                     uib-tooltip-html="getAbilityTooltip(ability)"
                                                      tooltip-placement="bottom"
                                                      tooltip-append-to-body="true"
                                                      tooltip-animation="false"
@@ -165,7 +165,7 @@
                                             <div class="btn-group" ng-if="char.underProphecy">
                                                 <div class="ability-wrapper btn btn-default"
                                                      ng-repeat="ability in char.abilities track by $index"
-                                                     tooltip-html="getAbilityTooltip(ability)"
+                                                     uib-tooltip-html="getAbilityTooltip(ability)"
                                                      tooltip-placement="bottom"
                                                      tooltip-append-to-body="true"
                                                      tooltip-animation="false"
@@ -198,7 +198,7 @@
                 <div ng-repeat="effect in char.buffs track by $index"
                      class='buff-icon'
                      ng-style="{'background-image': effect.icon(), 'background-color': getAbilityColor(effect)}"
-                     tooltip-html="getEffectTooltip(effect)"
+                     uib-tooltip-html="getEffectTooltip(effect)"
                      tooltip-placement="bottom"
                      tooltip-append-to-body="true"
                      tooltip-animation="false"
@@ -209,7 +209,7 @@
                 <div ng-repeat="effect in char.debuffs track by $index"
                      class='buff-icon'
                      ng-style="{'background-image': effect.icon(), 'background-color': getAbilityColor(effect)}"
-                     tooltip-html="getEffectTooltip(effect)"
+                     uib-tooltip-html="getEffectTooltip(effect)"
                      tooltip-placement="bottom"
                      tooltip-append-to-body="true"
                      tooltip-animation="false"

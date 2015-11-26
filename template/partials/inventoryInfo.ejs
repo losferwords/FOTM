@@ -168,7 +168,7 @@
                                              ng-show="socket.gem!='Void'"
                                              ng-style="{'background-image': socket.gem.image,
                                                     'background-color': socket.gem.bgColor}"
-                                             tooltip-html="getGemTooltip(socket.gem)"
+                                             uib-tooltip-html="getGemTooltip(socket.gem)"
                                              tooltip-placement="bottom"
                                              tooltip-append-to-body="true"
                                              tooltip-animation="false"
@@ -186,10 +186,10 @@
                         <div class="panel-body">
                             <div class="inventory-filter">
                                 <div class="btn-group">
-                                    <button class="btn btn-sm show-all" btn-radio="'all'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
-                                    <button class="btn btn-sm show-red" btn-radio="'red'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
-                                    <button class="btn btn-sm show-green" btn-radio="'green'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
-                                    <button class="btn btn-sm show-blue" btn-radio="'blue'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
+                                    <button class="btn btn-sm show-all" uib-btn-radio="'all'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
+                                    <button class="btn btn-sm show-red" uib-btn-radio="'red'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
+                                    <button class="btn btn-sm show-green" uib-btn-radio="'green'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
+                                    <button class="btn btn-sm show-blue" uib-btn-radio="'blue'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
                                 </div>
                             </div>
                             <div class="inventory-tab customScrollBar"
@@ -200,7 +200,7 @@
                                      ng-repeat="gem in getGems(gemFilter) track by $index"
                                      ng-style="{'background-image': gem.image,
                                                     'background-color': gem.bgColor}"
-                                     tooltip-html="getGemTooltip(gem)"
+                                     uib-tooltip-html="getGemTooltip(gem)"
                                      tooltip-placement="top"
                                      tooltip-append-to-body="true"
                                      tooltip-animation="false"
@@ -240,7 +240,7 @@
                                     </div>
                                     <div class="gem-dis"
                                          ng-class="{'dropable': dragGem}"
-                                         tooltip="{{'Place any soul gem there to destroy it and release it souls' |translate}}"
+                                         uib-tooltip="{{'Place any soul gem there to destroy it and release it souls' |translate}}"
                                          tooltip-placement="bottom"
                                          tooltip-append-to-body="true"
                                          tooltip-animation="false"
@@ -252,7 +252,7 @@
                                         <div ng-show="newGem">
                                             <p translate>You receive: </p>
                                             <div class="icon-receive"
-                                                 tooltip-html="getGemTooltip(newGem)"
+                                                 uib-tooltip-html="getGemTooltip(newGem)"
                                                  tooltip-placement="top"
                                                  tooltip-append-to-body="true"
                                                  tooltip-animation="false"
@@ -265,28 +265,28 @@
                                     <div class="craft-icon any btn"
                                          ng-click="craftGem()"
                                          ng-disabled="souls.red==0 || souls.green==0 || souls.blue==0"
-                                         tooltip-html="getCraftTooltip('any')"
+                                         uib-tooltip-html="getCraftTooltip('any')"
                                          tooltip-placement="top"
                                          tooltip-append-to-body="true"
                                          tooltip-animation="false"></div>
                                     <div class="craft-icon red btn"
                                          ng-click="craftGem('red')"
                                          ng-disabled="souls.red<4"
-                                         tooltip-html="getCraftTooltip('red')"
+                                         uib-tooltip-html="getCraftTooltip('red')"
                                          tooltip-placement="top"
                                          tooltip-append-to-body="true"
                                          tooltip-animation="false"></div>
                                     <div class="craft-icon green btn"
                                          ng-click="craftGem('green')"
                                          ng-disabled="souls.green<4"
-                                         tooltip-html="getCraftTooltip('green')"
+                                         uib-tooltip-html="getCraftTooltip('green')"
                                          tooltip-placement="top"
                                          tooltip-append-to-body="true"
                                          tooltip-animation="false"></div>
                                     <div class="craft-icon blue btn"
                                          ng-click="craftGem('blue')"
                                          ng-disabled="souls.blue<4"
-                                         tooltip-html="getCraftTooltip('blue')"
+                                         uib-tooltip-html="getCraftTooltip('blue')"
                                          tooltip-placement="top"
                                          tooltip-append-to-body="true"
                                          tooltip-animation="false"></div>
@@ -324,7 +324,7 @@
                             <table>
                                 <tr>
                                     <td translate>Strength:</td>
-                                    <td tooltip-html="char.getParamTooltip('str')"
+                                    <td uib-tooltip-html="char.getParamTooltip('str')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -334,7 +334,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Attack Power:</td>
-                                    <td tooltip-html="char.getParamTooltip('attackPower')"
+                                    <td uib-tooltip-html="char.getParamTooltip('attackPower')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -344,7 +344,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Health:</td>
-                                    <td tooltip-html="char.getParamTooltip('maxHealth')"
+                                    <td uib-tooltip-html="char.getParamTooltip('maxHealth')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -354,7 +354,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Health Reg.:</td>
-                                    <td tooltip-html="char.getParamTooltip('healthReg')"
+                                    <td uib-tooltip-html="char.getParamTooltip('healthReg')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -364,7 +364,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Physical Resist.:</td>
-                                    <td tooltip-html="char.getParamTooltip('physRes')"
+                                    <td uib-tooltip-html="char.getParamTooltip('physRes')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -374,7 +374,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Block Chance:</td>
-                                    <td tooltip-html="char.getParamTooltip('blockChance')"
+                                    <td uib-tooltip-html="char.getParamTooltip('blockChance')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -390,7 +390,7 @@
                             <table>
                                 <tr>
                                     <td translate>Dexterity:</td>
-                                    <td tooltip-html="char.getParamTooltip('dxt')"
+                                    <td uib-tooltip-html="char.getParamTooltip('dxt')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -400,7 +400,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Critical Rating:</td>
-                                    <td tooltip-html="char.getParamTooltip('critChance')"
+                                    <td uib-tooltip-html="char.getParamTooltip('critChance')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -410,7 +410,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Energy:</td>
-                                    <td tooltip-html="char.getParamTooltip('maxEnergy')"
+                                    <td uib-tooltip-html="char.getParamTooltip('maxEnergy')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -420,7 +420,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Hit Chance:</td>
-                                    <td tooltip-html="char.getParamTooltip('hitChance')"
+                                    <td uib-tooltip-html="char.getParamTooltip('hitChance')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -430,7 +430,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Dodge Chance:</td>
-                                    <td tooltip-html="char.getParamTooltip('dodgeChance')"
+                                    <td uib-tooltip-html="char.getParamTooltip('dodgeChance')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -440,7 +440,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Luck:</td>
-                                    <td tooltip-html="char.getParamTooltip('luck')"
+                                    <td uib-tooltip-html="char.getParamTooltip('luck')"
                                         tooltip-placement="bottom"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -456,7 +456,7 @@
                             <table>
                                 <tr>
                                     <td translate>Intellect:</td>
-                                    <td tooltip-html="char.getParamTooltip('int')"
+                                    <td uib-tooltip-html="char.getParamTooltip('int')"
                                         tooltip-placement="top"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -466,7 +466,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Spell Power:</td>
-                                    <td tooltip-html="char.getParamTooltip('spellPower')"
+                                    <td uib-tooltip-html="char.getParamTooltip('spellPower')"
                                         tooltip-placement="top"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -476,7 +476,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Mana:</td>
-                                    <td tooltip-html="char.getParamTooltip('maxMana')"
+                                    <td uib-tooltip-html="char.getParamTooltip('maxMana')"
                                         tooltip-placement="top"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -486,7 +486,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Mana Reg.:</td>
-                                    <td tooltip-html="char.getParamTooltip('manaReg')"
+                                    <td uib-tooltip-html="char.getParamTooltip('manaReg')"
                                         tooltip-placement="top"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -496,7 +496,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Magic Resist.:</td>
-                                    <td tooltip-html="char.getParamTooltip('magicRes')"
+                                    <td uib-tooltip-html="char.getParamTooltip('magicRes')"
                                         tooltip-placement="top"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"
@@ -506,7 +506,7 @@
                                 </tr>
                                 <tr>
                                     <td translate>Initiative:</td>
-                                    <td tooltip-html="char.getParamTooltip('initiative')"
+                                    <td uib-tooltip-html="char.getParamTooltip('initiative')"
                                         tooltip-placement="top"
                                         tooltip-append-to-body="true"
                                         tooltip-animation="false"

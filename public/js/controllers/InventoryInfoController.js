@@ -206,6 +206,7 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
     }
 
     function transformTooltip(gem) {
+        if(!gem.tootip) return "";
         if(gem.tootip.indexOf("Strength:")!=-1) return gem.tootip.replace("Strength:",gettextCatalog.getString("Strength:"));
         else if(gem.tootip.indexOf("Attack Power:")!=-1) return gem.tootip.replace("Attack Power:",gettextCatalog.getString("Attack Power:"));
         else if(gem.tootip.indexOf("Health:")!=-1) return gem.tootip.replace("Health:",gettextCatalog.getString("Health:"));

@@ -96,7 +96,7 @@ function AbilitiesInfoController($scope, $rootScope, $route, $location, mainSock
 
     //Функция формирует подсказку для способности
     $scope.getAbilityTooltip = function(ability){
-        if(!ability) return;
+        if(!ability || ability.name==="Void") return;
         var tooltip = "";
         tooltip+="<p class='name'>"+ability.localName()+" "+ability.variant+"</p>";
         tooltip+="<p class='desc'>"+ability.desc()+"</p>";

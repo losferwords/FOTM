@@ -40,7 +40,7 @@
                                     <button class="btn btn-success btn-sm" ng-click="inventoryClick(char)" ng-disabled="searchBattle" translate>Inventory</button>
                                 </div>
 
-                                <div class="resurrect-shards" ng-if="(char.lose || char.charName===char._id)">
+                                <div class="resurrect-shards" ng-if="(char.lose && char.charName!==char._id)">
                                     <p translate>Resurrection cost:</p>
                                     <div class="shards-container">
                                         <div class="shard red-shard">
@@ -58,7 +58,7 @@
                                     </div>
                                 </div>
 
-                                <div class="btn-group-vertical" ng-if="(char.lose || char.charName===char._id)">
+                                <div class="btn-group-vertical" ng-if="(char.lose && char.charName!==char._id)">
                                     <button class="btn btn-success btn-sm"
                                             ng-click="resurrectClick(char)"
                                             ng-disabled="checkResurrectCost(char)"

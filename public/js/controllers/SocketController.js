@@ -55,7 +55,6 @@ function SocketController($scope, $window, $location, $rootScope, $timeout, main
     //Получение имени игрока от сервера
     $scope.$on('$routeChangeSuccess', function () {
         mainSocket.emit("getUserName");
-        mainSocket.emit("getServerTime");
     });
     mainSocket.on("getUserNameResult", function(name, time){
         $scope.userName = name;

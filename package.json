@@ -1,22 +1,61 @@
 {
-  "name": "FOTM",
+  "name": "fotm",
   "version": "0.5.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "body-parser": "^1.0.0",
-    "cookie-parser": "^1.0.1",
-    "debug": "^2.0.0",
-    "express": "^4.0.0",
-    "express-session": "^1.9.3",
-    "morgan": "^1.0.0",
-    "socket.io-handshake": "^0.0.10",
-    "static-favicon": "^1.0.0"
+    "async": "^1.5.0",
+    "body-parser": "^1.14.1",
+    "connect": "^3.4.0",
+    "connect-mongo": "^0.8.2",
+    "cookie": "^0.2.3",
+    "cookie-parser": "^1.4.0",
+    "debug": "^2.2.0",
+    "ejs": "^2.3.4",
+    "ejs-mate": "^2.3.0",
+    "errorhandler": "^1.4.2",
+    "express": "^4.13.3",
+    "express-error-handler": "^1.0.1",
+    "express-session": "^1.12.1",
+    "mongodb": "^2.0.49",
+    "mongoose": "^4.2.8",
+    "morgan": "^1.6.1",
+    "nconf": "^0.8.2",
+    "serve-favicon": "^2.3.0",
+    "socket.io": "^1.3.7",
+    "socket.io-emitter": "^0.2.0",
+    "socket.io-handshake": "0.0.10",
+    "static-favicon": "^1.0.2",
+    "winston": "^2.1.1"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-angular-gettext": "^2.1.3"
-  }
+  },
+  "description": "My own multiplayer game created with node.js, angular.js and socket.io.",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/losferwords/FOTM.git"
+  },
+  "keywords": [
+    "fotm",
+    "nephilim",
+    "cambion",
+    "TBRPG",
+    "RPG",
+    "strategy",
+    "angular",
+    "mongodb",
+    "socket.io",
+    "node"
+  ],
+  "author": "Maksim Nasonov (Losfer)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/losferwords/FOTM/issues"
+  },
+  "homepage": "https://github.com/losferwords/FOTM#readme"
 }
