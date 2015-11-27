@@ -68,26 +68,15 @@ app.use(function (err, req, res, next) {
     }
 
 });
+
 //</editor-fold>
-/*
 //<editor-fold desc="запуск сервера">
 var server = http.createServer(app);
-server.listen(process.env.PORT || 5000, function () {
-    log.info('Express server listening on port ' + process.env.PORT || 5000);
+server.listen(process.env.PORT, function () {
+    log.info('Express server listening on port ' + process.env.PORT);
 });
 //</editor-fold>
-*/
-app.set('port', (process.env.PORT || 5000));
 
-//For avoidong Heroku $PORT error
-app.get('/', function(request, response) {
-    var result = 'App is running';
-    response.send(result);
-    var server = http.createServer(app);
-    server.listen(app.get('port'), function () {
-        log.info('Express server listening on port ' + app.get('port'));
-    });
-});
 
 var io = require('socket')(server);
 app.set('io', io);
