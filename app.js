@@ -72,7 +72,7 @@ app.use(function (err, req, res, next) {
 
 //<editor-fold desc="запуск сервера">
 var server = http.createServer(app);
-server.listen(process.env.PORT || 5000, 'localhost', function () {
+server.listen(process.env.PORT || 5000, function () {
     log.info('Express server listening on port ' + process.env.PORT || 5000);
 });
 //</editor-fold>
