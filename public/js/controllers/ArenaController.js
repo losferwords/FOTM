@@ -12,9 +12,9 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
     //Музыка
     $rootScope.cityAmbience.stop();
     switch($rootScope.currentBattle.groundType){
-        case 0: $rootScope.grassAmbience.play(); break;
-        case 1: $rootScope.desertAmbience.play(); break;
-        case 2: $rootScope.snowAmbience.play(); break;
+        case 0: $rootScope.battleAmbience.play("sounds/music/grass.mp3"); break;
+        case 1: $rootScope.battleAmbience.play("sounds/music/desert.mp3"); break;
+        case 2: $rootScope.battleAmbience.play("sounds/music/snow.mp3"); break;
     }
 
     //Возвращает процентные показатели ресурсов при наведении мышки
@@ -697,7 +697,6 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
 
         var timerCount = 0;
         soundService.loadSounds(); //Загружаем все необходимые для боя звуки
-        soundService.unbindSounds(); //отцепляем звуки
         $scope.waitOpponentTimer=$interval(function(){
             mainSocket.emit("checkOpponent", $rootScope.currentBattle.room);
             timerCount++;

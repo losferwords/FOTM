@@ -4,3 +4,5 @@ $ cat .gitignore
 /node_modules
 /public/vendor/bower_components
 /.idea
+/data
+run_mongo_server.bat

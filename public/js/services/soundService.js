@@ -3,7 +3,8 @@ angular.module('fotm').register.service('soundService', ["ngAudio", function(ngA
     var loadedSounds = [];
     return {
         playSound: function(name){
-            loadedSounds[name].play();
+            //loadedSounds[name].play();
+            ngAudio.play(loadedSounds[name]).volume=0.4;
         },
         loadSounds: function(){
             var fxNames = [
@@ -91,19 +92,22 @@ angular.module('fotm').register.service('soundService', ["ngAudio", function(ngA
                 'A Touch Of Evil'
             ];
 
+            /* создавая объекты
             for(var i=0;i<fxNames.length;i++){
                 loadedSounds[fxNames[i]]=ngAudio.load("sounds/fx/"+fxNames[i]+".mp3");
             }
             for(i=0;i<spellNames.length;i++){
                 loadedSounds[spellNames[i]]=ngAudio.load("sounds/fx/spells/"+spellNames[i]+".mp3");
             }
-        },
-        unbindSounds: function() {
-            for(var sound in loadedSounds) {
-                if (loadedSounds.hasOwnProperty(sound)) {
-                    loadedSounds[sound].unbind();
-                }
-            }
+            */
+
+            //не создавая объекты
+             for(var i=0;i<fxNames.length;i++){
+             loadedSounds[fxNames[i]]="sounds/fx/"+fxNames[i]+".mp3";
+             }
+             for(i=0;i<spellNames.length;i++){
+             loadedSounds[spellNames[i]]="sounds/fx/spells/"+spellNames[i]+".mp3";
+             }
         }
     }
 }]);

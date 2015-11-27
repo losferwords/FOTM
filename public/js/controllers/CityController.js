@@ -11,9 +11,7 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
     $scope.searchBattle = false;
 
     $rootScope.cityAmbience.play();
-    $rootScope.grassAmbience.stop();
-    $rootScope.desertAmbience.stop();
-    $rootScope.snowAmbience.stop();
+    $rootScope.battleAmbience.stop();
 
     //Кнопка "Встать в очередь на арену"
     $scope.joinArenaClick = function () {

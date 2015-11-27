@@ -4,25 +4,17 @@ angular.module('fotm').controller("MainController", ["$scope", '$rootScope', '$w
 function MainController($scope, $rootScope, $window, $location, gettextCatalog, ngAudio) {
     gettextCatalog.setCurrentLanguage('en');
     $rootScope.soundEnabled=true;
-    ngAudio.performance=100000000;
+    ngAudio.performance=1000;
 
     //Музыка
     $rootScope.cityAmbience = ngAudio.load("sounds/music/city.mp3");
     $rootScope.cityAmbience.play();
     $rootScope.cityAmbience.loop = true;
-    $rootScope.cityAmbience.volume=0.0;
+    $rootScope.cityAmbience.volume=0.3;
 
-    $rootScope.grassAmbience = ngAudio.load("sounds/music/grass.mp3");
-    $rootScope.grassAmbience.loop = true;
-    $rootScope.grassAmbience.volume=0.0;
-
-    $rootScope.desertAmbience = ngAudio.load("sounds/music/desert.mp3");
-    $rootScope.desertAmbience.loop = true;
-    $rootScope.desertAmbience.volume=0.0;
-
-    $rootScope.snowAmbience = ngAudio.load("sounds/music/snow.mp3");
-    $rootScope.snowAmbience.loop = true;
-    $rootScope.snowAmbience.volume=0.0;
+    $rootScope.battleAmbience = ngAudio.load("sounds/music/grass.mp3");
+    $rootScope.battleAmbience.loop = true;
+    $rootScope.battleAmbience.volume=0.3;
 
     //Блок обработки нажатия на кнопку <- в браузере
     $rootScope.$on('$locationChangeSuccess', function() {
