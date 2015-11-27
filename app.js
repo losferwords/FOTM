@@ -72,7 +72,7 @@ app.use(function (err, req, res, next) {
 
 //<editor-fold desc="запуск сервера">
 var server = http.createServer(app);
-server.listen(config.get('port'), 'fotm.herokuapp.com', function () {
+server.listen(config.get('port'), 'localhost', function () {
     log.info('Express server listening on port ' + config.get('port'));
 });
 //</editor-fold>

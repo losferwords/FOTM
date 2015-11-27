@@ -41,6 +41,11 @@ module.exports = function (server) {
 
     var io = require('socket.io').listen(server);
 
+    io.configure(function () {
+        io.set("transports", ["xhr-polling"]);
+        io.set("polling duration", 10);
+    });
+
     //io.set('origins', 'http://node.test:*');
 
     io.use(function (socket, next) {
