@@ -174,7 +174,6 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
         }
         console.log(str);
         */
-        soundService.unbindSounds(); //отцепляем звуки
     };
 
     //Функция устанавливает клетку карты под курсором конечной точкой для стрелки
@@ -698,6 +697,7 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
 
         var timerCount = 0;
         soundService.loadSounds(); //Загружаем все необходимые для боя звуки
+        soundService.unbindSounds(); //отцепляем звуки
         $scope.waitOpponentTimer=$interval(function(){
             mainSocket.emit("checkOpponent", $rootScope.currentBattle.room);
             timerCount++;
