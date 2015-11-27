@@ -1,4 +1,3 @@
 {
-  "directory": "public/vendor/bower_components",
-  "json": "public/vendor/bower.json"
+  "directory": "public/vendor"
 }
