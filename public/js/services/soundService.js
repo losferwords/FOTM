@@ -102,7 +102,6 @@ angular.module('fotm').register.service('soundService', ["ngAudio", function(ngA
             for(var sound in loadedSounds) {
                 if (loadedSounds.hasOwnProperty(sound)) {
                     loadedSounds[sound].unbind();
-                    loadedSounds[sound].destroy();
                 }
             }
         }

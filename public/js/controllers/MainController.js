@@ -4,7 +4,7 @@ angular.module('fotm').controller("MainController", ["$scope", '$rootScope', '$w
 function MainController($scope, $rootScope, $window, $location, gettextCatalog, ngAudio) {
     gettextCatalog.setCurrentLanguage('en');
     $rootScope.soundEnabled=true;
-    ngAudio.performance=1000;
+    ngAudio.performance=100000000;
 
     //Музыка
     $rootScope.cityAmbience = ngAudio.load("sounds/music/city.mp3");
