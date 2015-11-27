@@ -23,9 +23,9 @@
                                         <div class="char-info">
                                             <p class="text-left char-name" ng-style="::{'color' : char.battleColor}">{{::char.charName}}</p>
                                             <div class="row">
-                                                <div class="col-sm-12"><uib-progressbar dynamic-max="{{char.maxHealth}}" value="char.curHealth" type="danger" progress-text><span class="number">{{char.curHealth}} / {{char.maxHealth}}</span><span class="percent">{{calculateInPercent(char.curHealth, char.maxHealth)}}%</span></uib-progressbar></div>
-                                                <div class="col-sm-12"><uib-progressbar dynamic-max="{{char.maxEnergy}}" value="char.curEnergy" type="success" progress-text><span class="number">{{char.curEnergy}} / {{char.maxEnergy}}</span><span class="percent">{{calculateInPercent(char.curEnergy, char.maxEnergy)}}%</span></uib-progressbar></div>
-                                                <div class="col-sm-12"><uib-progressbar dynamic-max="{{char.maxMana}}" value="char.curMana" type="primary" progress-text><span class="number">{{char.curMana}} / {{char.maxMana}}</span><span class="percent">{{calculateInPercent(char.curMana, char.maxMana)}}%</span></uib-progressbar></div>
+                                                <div class="col-sm-12"><uib-progressbar max="{{char.maxHealth}}" value="char.curHealth" type="danger" progress-text><span class="number">{{char.curHealth}} / {{char.maxHealth}}</span><span class="percent">{{calculateInPercent(char.curHealth, char.maxHealth)}}%</span></uib-progressbar></div>
+                                                <div class="col-sm-12"><uib-progressbar max="{{char.maxEnergy}}" value="char.curEnergy" type="success" progress-text><span class="number">{{char.curEnergy}} / {{char.maxEnergy}}</span><span class="percent">{{calculateInPercent(char.curEnergy, char.maxEnergy)}}%</span></uib-progressbar></div>
+                                                <div class="col-sm-12"><uib-progressbar max="{{char.maxMana}}" value="char.curMana" type="primary" progress-text><span class="number">{{char.curMana}} / {{char.maxMana}}</span><span class="percent">{{calculateInPercent(char.curMana, char.maxMana)}}%</span></uib-progressbar></div>
                                             </div>
                                         </div>
                                         <div class="col-xs-12 ability-group" ng-if="$index!==2">
