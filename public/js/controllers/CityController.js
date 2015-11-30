@@ -106,12 +106,15 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
     });
 
     $scope.checkResurrectCost = function(char){
-        if(($scope.team.souls.red-characterService.getRoleCost(char.role).red>0) &&
-            ($scope.team.souls.green-characterService.getRoleCost(char.role).green>0) &&
-            ($scope.team.souls.blue-characterService.getRoleCost(char.role).blue>0)) {
+        if(char.charName==="Six"){
             console.log("Red: "+($scope.team.souls.red-characterService.getRoleCost(char.role).red));
             console.log("Green: "+($scope.team.souls.green-characterService.getRoleCost(char.role).green));
             console.log("Blue: "+($scope.team.souls.blue-characterService.getRoleCost(char.role).blue));
+        }
+
+        if(($scope.team.souls.red-characterService.getRoleCost(char.role).red>0) &&
+            ($scope.team.souls.green-characterService.getRoleCost(char.role).green>0) &&
+            ($scope.team.souls.blue-characterService.getRoleCost(char.role).blue>0)) {
             return false;
         }
         return true;
