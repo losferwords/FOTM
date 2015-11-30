@@ -70,19 +70,22 @@ app.use(function (err, req, res, next) {
 });
 
 //Deploy
-/*
-var server = http.createServer(app);
-server.listen(process.env.PORT, process.env.IP || '0.0.0.0', function () {
-    log.info('Express server listening on port ' + process.env.PORT);
-});
-*/
-
+if(process.env.NODE_ENV==="production"){
+    var server = http.createServer(app);
+    server.listen(process.env.PORT, process.env.IP || '0.0.0.0', function () {
+        log.info('Express server listening on port ' + process.env.PORT);
+    });
+}
 //local
+else {
+    var server = http.createServer(app);
+    server.listen(3000, '192.168.0.114', function () {
+        log.info('Express server listening on port ' + 3000);
+    });
+}
 
-var server = http.createServer(app);
-server.listen(3000, '192.168.0.114', function () {
-    log.info('Express server listening on port ' + 3000);
-});
+
+
 
 
 var io = require('socket')(server);
