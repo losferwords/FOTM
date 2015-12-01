@@ -10,11 +10,11 @@ function MainController($scope, $rootScope, $window, $location, gettextCatalog, 
     $rootScope.cityAmbience = ngAudio.load("sounds/music/city.mp3");
     $rootScope.cityAmbience.play();
     $rootScope.cityAmbience.loop = true;
-    $rootScope.cityAmbience.volume=0;
+    $rootScope.cityAmbience.volume=0.4;
 
     $rootScope.battleAmbience = ngAudio.load("sounds/music/grass.mp3");
     $rootScope.battleAmbience.loop = true;
-    $rootScope.battleAmbience.volume=0;
+    $rootScope.battleAmbience.volume=0.4;
 
     //Блок обработки нажатия на кнопку <- в браузере
     $rootScope.$on('$locationChangeSuccess', function() {
