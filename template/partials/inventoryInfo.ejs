@@ -156,7 +156,7 @@
                             <div class="socket-info">
                                 <div class="socket-container" ng-show="interestingItem" ng-class="{'six': checkSocketCount()}">
                                     <div class="socket"
-                                         ng-repeat="socket in interestingItem.sockets"
+                                         ng-repeat="socket in interestingItem.sockets track by $index"
                                          ng-class="{'dropable': dragGem}"
                                          ng-style="{'background-image': getSocketImage(socket)}"
                                          ng-disabled="socket.gem=='Void'"
@@ -197,7 +197,7 @@
                                  dnd-droppable-opts = "{layer: 'layer2'}"
                                  dnd-on-drop = "setGemToInventory()">
                                 <div class="gem"
-                                     ng-repeat="gem in getGems(gemFilter)"
+                                     ng-repeat="gem in getGems(gemFilter) track by $index"
                                      ng-style="{'background-image': gem.image,
                                                     'background-color': gem.bgColor}"
                                      uib-tooltip-html="getGemTooltip(gem)"
