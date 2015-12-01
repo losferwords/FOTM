@@ -12,9 +12,9 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
     //Музыка
     $rootScope.cityAmbience.stop();
     switch($rootScope.currentBattle.groundType){
-        case 0: $rootScope.battleAmbience.play("sounds/music/grass.mp3"); break;
-        case 1: $rootScope.battleAmbience.play("sounds/music/desert.mp3"); break;
-        case 2: $rootScope.battleAmbience.play("sounds/music/snow.mp3"); break;
+        case (0): $rootScope.battleAmbience.play("sounds/music/grass.mp3"); break;
+        case (1): $rootScope.battleAmbience.play("sounds/music/desert.mp3"); break;
+        case (2): $rootScope.battleAmbience.play("sounds/music/snow.mp3"); break;
     }
 
     //Возвращает процентные показатели ресурсов при наведении мышки
@@ -106,7 +106,7 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
     //Функция возвращает значение оставшегося до конца хода времени
     $scope.getTurnTime =  function(){
         if($scope.myTurn){
-            if($scope.secondsForTurn<=15){
+            if($scope.secondsForTurn<=30){
                 return $scope.secondsForTurn;
             }
             else {
@@ -434,7 +434,7 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
     //таймер хода для игрока
     function startTurnTimer() {
         var now, before = new Date();
-        $scope.secondsForTurn = 60;
+        $scope.secondsForTurn = 90;
         stopTurnTimer();
         //Здесь костыль, для того, чтобы в неактивной вкладке браузера время не отставало
         $scope.turnTime=$interval(function(){
@@ -452,7 +452,6 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
                 //Если сейчас мой ход, то завершаем его
                 if($scope.myTurn) {
                     $scope.endTurn();
-
                 }
             }
         },1000);

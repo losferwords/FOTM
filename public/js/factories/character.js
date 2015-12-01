@@ -129,7 +129,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 //Сбросы кд
                 if(self.checkCooldownDrop()){
                     self.abilities[i].cd=0;
-                    self.logBuffer.push(self.charName+" drop cooldown for "+self.abilities[i].name);
+                    self.logBuffer.push(self.charName+" drop cooldown for '"+self.abilities[i].name+"'");
                     self.playSound("initiative");
                 }
                 else self.abilities[i].cd--;

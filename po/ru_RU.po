@@ -241,15 +241,15 @@ msgstr ""
 msgid "<p>Cooldown: {{one}}</p>"
 msgstr "<p>Восстановление: {{one}}</p>"
 
-#: public/js/controllers/InventoryInfoController.js:239
+#: public/js/controllers/InventoryInfoController.js:240
 msgid "<p>Create blue soul gem</p><p>Cost: 4 blue shards</p>"
 msgstr "<p>Создать синий камень душ</p><p>Стоимость: 4 синих осколка</p>"
 
-#: public/js/controllers/InventoryInfoController.js:238
+#: public/js/controllers/InventoryInfoController.js:239
 msgid "<p>Create green soul gem</p><p>Cost: 4 green shards</p>"
 msgstr "<p>Создать зеленый камень душ</p><p>Стоимость: 4 зеленых осколка</p>"
 
-#: public/js/controllers/InventoryInfoController.js:236
+#: public/js/controllers/InventoryInfoController.js:237
 msgid ""
 "<p>Create random soul gem</p><p>Cost:</p><p>1 red shard</p><p>1 green shard</"
 "p><p>1 blue shard</p>"
@@ -257,7 +257,7 @@ msgstr ""
 "<p>Создать случайный камень душ</p><p>Стоимость:</p><p>1 красный осколок</"
 "p><p>1 зелёный осколок</p><p>1 синий осколок</p>"
 
-#: public/js/controllers/InventoryInfoController.js:237
+#: public/js/controllers/InventoryInfoController.js:238
 msgid "<p>Create red soul gem</p><p>Cost: 4 red shards</p>"
 msgstr "<p>Создать красный камень душ</p><p>Стоимость: 4 красных осколка</p>"
 
@@ -371,7 +371,7 @@ msgstr ""
 msgid "Attack Power increased to 25%.<br>Block Chance increased to 25%."
 msgstr "Сила атаки увеличина на 25%.<br>Шанс блока увеличен на 25%."
 
-#: public/js/controllers/InventoryInfoController.js:210
+#: public/js/controllers/InventoryInfoController.js:211
 #: template/partials/abilitiesInfo.ejs:137 template/partials/charInfo.ejs:72
 #: template/partials/inventoryInfo.ejs:336
 #: template/partials/inventoryInfo.ejs:84
@@ -429,7 +429,7 @@ msgstr ""
 "Шанс блока увеличен на 40%.<br>Физическая защита увеличена на 40%."
 "<br>Магическая защита увеличена на 40%."
 
-#: public/js/controllers/InventoryInfoController.js:214
+#: public/js/controllers/InventoryInfoController.js:215
 #: template/partials/abilitiesInfo.ejs:177 template/partials/charInfo.ejs:112
 #: template/partials/inventoryInfo.ejs:100
 #: template/partials/inventoryInfo.ejs:376
@@ -916,7 +916,7 @@ msgstr "Критический рейтинг увеличен на {{one}}%."
 msgid "Critical Chance increased to 25%.<br>Dodge Chance increased to 25%."
 msgstr "Критический рейтинг увеличен на 25%.<br>Шанс уворота увеличен на 25%."
 
-#: public/js/controllers/InventoryInfoController.js:216
+#: public/js/controllers/InventoryInfoController.js:217
 #: template/partials/abilitiesInfo.ejs:203 template/partials/charInfo.ejs:138
 #: template/partials/inventoryInfo.ejs:109
 #: template/partials/inventoryInfo.ejs:402
@@ -995,7 +995,7 @@ msgstr "Удаление команды"
 msgid "Dexterity"
 msgstr "Ловкость"
 
-#: public/js/controllers/InventoryInfoController.js:215
+#: public/js/controllers/InventoryInfoController.js:216
 #: template/partials/abilitiesInfo.ejs:193 template/partials/charInfo.ejs:128
 #: template/partials/inventoryInfo.ejs:105
 #: template/partials/inventoryInfo.ejs:392
@@ -1034,7 +1034,7 @@ msgstr ""
 msgid "Dodge Chance increased to {{one}}%."
 msgstr "Шанс уворота увеличен на {{one}}%."
 
-#: public/js/controllers/InventoryInfoController.js:219
+#: public/js/controllers/InventoryInfoController.js:220
 #: template/partials/abilitiesInfo.ejs:233 template/partials/charInfo.ejs:168
 #: template/partials/inventoryInfo.ejs:121
 #: template/partials/inventoryInfo.ejs:432
@@ -1112,7 +1112,7 @@ msgstr "Стоимость энергии: {{interestingAbility.energyCost()}}"
 msgid "energy with"
 msgstr "энергии при помощи"
 
-#: public/js/controllers/InventoryInfoController.js:217
+#: public/js/controllers/InventoryInfoController.js:218
 #: template/partials/abilitiesInfo.ejs:213 template/partials/charInfo.ejs:148
 #: template/partials/inventoryInfo.ejs:113
 #: template/partials/inventoryInfo.ejs:412
@@ -1256,10 +1256,6 @@ msgstr ""
 msgid "Gender"
 msgstr "Пол"
 
-#: template/partials/inventoryInfo.ejs:302
-msgid "Get Gem"
-msgstr "Камень"
-
 #: public/js/controllers/CreateTeamController.js:18
 msgid "Give a name for your team"
 msgstr "Дайте название своей команде"
@@ -1324,7 +1320,7 @@ msgstr ""
 "Исцеляет союзника на {{one}}. Или наносит {{two}} магического урона "
 "вражеской цели."
 
-#: public/js/controllers/InventoryInfoController.js:212
+#: public/js/controllers/InventoryInfoController.js:213
 #: template/partials/abilitiesInfo.ejs:157 template/partials/charInfo.ejs:92
 #: template/partials/inventoryInfo.ejs:356
 #: template/partials/inventoryInfo.ejs:92
@@ -1340,7 +1336,7 @@ msgstr "Регенерация здоровья увеличивается на 
 msgid "Health Regeneration increased to {{one}}%."
 msgstr "Регенерация здоровья увеличена на {{one}}%."
 
-#: public/js/controllers/InventoryInfoController.js:211
+#: public/js/controllers/InventoryInfoController.js:212
 #: template/partials/abilitiesInfo.ejs:147 template/partials/charInfo.ejs:82
 #: template/partials/inventoryInfo.ejs:346
 #: template/partials/inventoryInfo.ejs:88
@@ -1377,7 +1373,7 @@ msgstr ""
 msgid "Hit Chance increased to {{one}}%."
 msgstr "Шанс попадания увеличен на {{one}}%."
 
-#: public/js/controllers/InventoryInfoController.js:218
+#: public/js/controllers/InventoryInfoController.js:219
 #: template/partials/abilitiesInfo.ejs:223 template/partials/charInfo.ejs:158
 #: template/partials/inventoryInfo.ejs:117
 #: template/partials/inventoryInfo.ejs:422
@@ -1503,7 +1499,7 @@ msgstr "Инициатива снижена на {{one}}%."
 msgid "Initiative increased to {{one}}%."
 msgstr "Инициатива увеличена на {{one}}%."
 
-#: public/js/controllers/InventoryInfoController.js:226
+#: public/js/controllers/InventoryInfoController.js:227
 #: template/partials/abilitiesInfo.ejs:309 template/partials/charInfo.ejs:244
 #: template/partials/inventoryInfo.ejs:150
 #: template/partials/inventoryInfo.ejs:508
@@ -1520,7 +1516,7 @@ msgstr "Ввести яд"
 msgid "Intellect"
 msgstr "Интеллект"
 
-#: public/js/controllers/InventoryInfoController.js:221
+#: public/js/controllers/InventoryInfoController.js:222
 #: template/partials/abilitiesInfo.ejs:259 template/partials/charInfo.ejs:194
 #: template/partials/inventoryInfo.ejs:130
 #: template/partials/inventoryInfo.ejs:458
@@ -1560,7 +1556,7 @@ msgstr "очень удачлив и сохраняет энергию"
 msgid "Jawbreaker"
 msgstr "Ломающий челюсти"
 
-#: public/js/controllers/CityController.js:34
+#: public/js/controllers/CityController.js:32
 msgid "Join Battle"
 msgstr "Вступить в бой"
 
@@ -1671,7 +1667,7 @@ msgstr "Необходимо ввести логин"
 msgid "Luck increased to {{one}}%."
 msgstr "Удача увеличена на {{one}}%."
 
-#: public/js/controllers/InventoryInfoController.js:220
+#: public/js/controllers/InventoryInfoController.js:221
 #: template/partials/abilitiesInfo.ejs:243 template/partials/charInfo.ejs:178
 #: template/partials/inventoryInfo.ejs:125
 #: template/partials/inventoryInfo.ejs:442
@@ -1684,7 +1680,7 @@ msgstr "Удача:"
 msgid "Made In Hell"
 msgstr "Сделано в аду"
 
-#: public/js/controllers/InventoryInfoController.js:225
+#: public/js/controllers/InventoryInfoController.js:226
 #: template/partials/abilitiesInfo.ejs:299 template/partials/charInfo.ejs:234
 #: template/partials/inventoryInfo.ejs:146
 #: template/partials/inventoryInfo.ejs:498
@@ -1757,7 +1753,7 @@ msgstr "Молот ведьм"
 msgid "Mana cost: {{interestingAbility.manaCost()}}"
 msgstr "Стоимость маны: {{interestingAbility.manaCost()}}"
 
-#: public/js/controllers/InventoryInfoController.js:224
+#: public/js/controllers/InventoryInfoController.js:225
 #: template/partials/abilitiesInfo.ejs:289 template/partials/charInfo.ejs:224
 #: template/partials/inventoryInfo.ejs:142
 #: template/partials/inventoryInfo.ejs:488
@@ -1776,7 +1772,7 @@ msgstr "Регенерация маны увеличена на {{one}}%."
 msgid "mana with"
 msgstr "маны при помощи"
 
-#: public/js/controllers/InventoryInfoController.js:223
+#: public/js/controllers/InventoryInfoController.js:224
 #: template/partials/abilitiesInfo.ejs:279 template/partials/charInfo.ejs:214
 #: template/partials/inventoryInfo.ejs:138
 #: template/partials/inventoryInfo.ejs:478
@@ -1917,7 +1913,7 @@ msgstr ""
 "Пароль должен содержать одну маленькую и одну заглавную буквы,<br>и один не "
 "буквенный символ (число или знак пунктуации)."
 
-#: public/js/controllers/InventoryInfoController.js:213
+#: public/js/controllers/InventoryInfoController.js:214
 #: template/partials/abilitiesInfo.ejs:167 template/partials/charInfo.ejs:102
 #: template/partials/inventoryInfo.ejs:366
 #: template/partials/inventoryInfo.ejs:96
@@ -2022,7 +2018,7 @@ msgstr "Бродяга"
 msgid "Purgatory"
 msgstr "Чистилище"
 
-#: public/js/controllers/InventoryInfoController.js:230
+#: public/js/controllers/InventoryInfoController.js:231
 msgid "Quality: {{one}}%"
 msgstr "Качество: {{one}}%"
 
@@ -2189,8 +2185,8 @@ msgstr "Информация о роли"
 msgid "Role: {{getCharRole()}}"
 msgstr "Роль: {{getCharRole()}}"
 
-#: public/js/controllers/CityController.js:177
-#: public/js/controllers/CityController.js:275 template/partials/city.ejs:110
+#: public/js/controllers/CityController.js:175
+#: public/js/controllers/CityController.js:272 template/partials/city.ejs:110
 msgid "Roll Dices"
 msgstr "Кинуть кости"
 
@@ -2214,15 +2210,15 @@ msgstr "Святилище"
 msgid "Search Team..."
 msgstr "Поиск команды..."
 
-#: public/js/controllers/CityController.js:38
+#: public/js/controllers/CityController.js:36
 msgid "searching."
 msgstr "поиск."
 
-#: public/js/controllers/CityController.js:39
+#: public/js/controllers/CityController.js:37
 msgid "searching.."
 msgstr "поиск.."
 
-#: public/js/controllers/CityController.js:40
+#: public/js/controllers/CityController.js:38
 msgid "searching..."
 msgstr "поиск..."
 
@@ -2410,7 +2406,7 @@ msgstr "Сила заклинаний увеличена на {{one}}%."
 msgid "Spell Power increased to 25%.<br>Hit Chance increased to 25%."
 msgstr "Сила заклинаний увеличен на 25%.<br>Шанс попадания увеличен на 25%."
 
-#: public/js/controllers/InventoryInfoController.js:222
+#: public/js/controllers/InventoryInfoController.js:223
 #: template/partials/abilitiesInfo.ejs:269 template/partials/charInfo.ejs:204
 #: template/partials/inventoryInfo.ejs:134
 #: template/partials/inventoryInfo.ejs:468
@@ -2451,7 +2447,7 @@ msgstr "Состояние благодати"
 msgid "Steals 1 random positive effect from enemy to caster."
 msgstr "Крадёт 1 случайный позитивный эффект у противника."
 
-#: public/js/controllers/CityController.js:272
+#: public/js/controllers/CityController.js:269
 msgid "Stop"
 msgstr "Стоп"
 
@@ -2459,7 +2455,7 @@ msgstr "Стоп"
 msgid "Strength"
 msgstr "Сила"
 
-#: public/js/controllers/InventoryInfoController.js:209
+#: public/js/controllers/InventoryInfoController.js:210
 #: template/partials/abilitiesInfo.ejs:127 template/partials/charInfo.ejs:62
 #: template/partials/inventoryInfo.ejs:326
 #: template/partials/inventoryInfo.ejs:80
@@ -2783,7 +2779,7 @@ msgstr "Ты всё же ангел"
 msgid "You gain:"
 msgstr "Вы получаете:"
 
-#: public/js/controllers/ArenaController.js:628
+#: public/js/controllers/ArenaController.js:627
 msgid "You lose"
 msgstr "Паражение"
 
@@ -2796,16 +2792,16 @@ msgstr "Получено:"
 msgid "You will get random role of available for chosen race."
 msgstr "Вы получите случайную роль из доступных для выбранной расы."
 
-#: public/js/controllers/ArenaController.js:679
+#: public/js/controllers/ArenaController.js:678
 msgid "You win"
 msgstr "Победа"
 
-#: public/js/controllers/ArenaController.js:707
+#: public/js/controllers/ArenaController.js:706
 msgid "Your enemy not ready to battle"
 msgstr "Ваш противник не готов к битве"
 
-#: public/js/controllers/ArenaController.js:782
-#: public/js/controllers/ArenaController.js:787
+#: public/js/controllers/ArenaController.js:781
+#: public/js/controllers/ArenaController.js:786
 msgid "Your enemy was disconnected"
 msgstr "Ваш противник отключился"
 
@@ -2820,6 +2816,9 @@ msgstr "Ваш рейтинг: {{battleEnd.rating}} ({{battleEnd.ratingChange}})
 #: public/js/controllers/InventoryInfoController.js:105
 msgid "Zaqqum Branch"
 msgstr "Ветвь Закуума"
+
+#~ msgid "Get Gem"
+#~ msgstr "Камень"
 
 #~ msgid "Win Rate: {{wins}}-{{loses}}"
 #~ msgstr "Статистика: {{wins}}-{{loses}}"
