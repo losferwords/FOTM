@@ -257,6 +257,11 @@ body .tooltip {
   margin: 0 auto;
 }
 
+.city .roll-btn {
+  height: 30px;
+  min-width: 70px;
+}
+
 .shards-dices {
   margin-bottom: 5px;
 }
