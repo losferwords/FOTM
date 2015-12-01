@@ -16,6 +16,7 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
         case 1: $rootScope.battleAmbience = ngAudio.load("sounds/music/desert.mp3").play(); break;
         case 2: $rootScope.battleAmbience = ngAudio.load("sounds/music/snow.mp3").play(); break;
     }
+    $rootScope.battleAmbience.loop=true;
 
     //Возвращает процентные показатели ресурсов при наведении мышки
     $scope.calculateInPercent = function(cur, max) {
