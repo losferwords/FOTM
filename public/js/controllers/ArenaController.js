@@ -12,9 +12,9 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
     //Музыка
     $rootScope.cityAmbience.stop();
     switch($rootScope.currentBattle.groundType){
-        case 0: $rootScope.battleAmbience.load("sounds/music/grass.mp3").play(); break;
-        case 1: $rootScope.battleAmbience.load("sounds/music/desert.mp3").play(); break;
-        case 2: $rootScope.battleAmbience.load("sounds/music/snow.mp3").play(); break;
+        case 0: $rootScope.battleAmbience = ngAudio.load("sounds/music/grass.mp3").play(); break;
+        case 1: $rootScope.battleAmbience = ngAudio.load("sounds/music/desert.mp3").play(); break;
+        case 2: $rootScope.battleAmbience = ngAudio.load("sounds/music/snow.mp3").play(); break;
     }
 
     //Возвращает процентные показатели ресурсов при наведении мышки
