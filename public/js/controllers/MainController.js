@@ -13,8 +13,6 @@ function MainController($scope, $rootScope, $window, $location, gettextCatalog, 
     $rootScope.cityAmbience.volume=0.2;
 
     $rootScope.battleAmbience = ngAudio.load("sounds/music/grass.mp3");
-    $rootScope.battleAmbience.loop = true;
-    $rootScope.battleAmbience.volume=0.2;
 
     //Блок обработки нажатия на кнопку <- в браузере
     $rootScope.$on('$locationChangeSuccess', function() {
