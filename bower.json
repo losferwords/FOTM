@@ -18,7 +18,7 @@
     "angular-bootstrap": "~0.14.3",
     "angular-audio": "~1.7.1",
     "angular-gettext": "~2.1.2",
-    "angular-dnd-module": "latest",
+    "angular-dnd-module": "https://github.com/Tuch/angular-dnd.git#57fdd62",
     "angular-socket-io": "~0.7.0",
     "bootstrap": "~3.3.6",
     "angular-route": "~1.4.8",
