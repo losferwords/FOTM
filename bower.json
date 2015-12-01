@@ -27,7 +27,7 @@
     "angular": "~1.4.8",
     "jquery": "~2.1.4",
     "angular-hotkeys": "chieffancypants/angular-hotkeys#~1.6.0",
-    "angular-audio": "latest"
+    "angular-audio": "https://github.com/danielstern/ngAudio.git#41b02f1"
   },
   "resolutions": {
     "angular": "~1.4.8",
