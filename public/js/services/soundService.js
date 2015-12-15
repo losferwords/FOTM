@@ -1,5 +1,5 @@
 //Сервис звуков в игре
-angular.module('fotm').register.service('soundService', ["ngAudio" , "getWatchCount", function(ngAudio, getWatchCount) {
+angular.module('fotm').register.service('soundService', ["ngAudio" , "getWatchCount", "$timeout", function(ngAudio, getWatchCount, $timeout) {
     var loadedSounds = [];
     return {
         playSound: function(name){
@@ -8,7 +8,7 @@ angular.module('fotm').register.service('soundService', ["ngAudio" , "getWatchCo
             var newSound = ngAudio.load(loadedSounds[name]);
             newSound.volume=0.4;
             newSound.play();
-            newSound.destroy();
+            $timeout(newSound.destroy(),100);
             console.log("Watchers after 1: "+getWatchCount());
         },
         loadSounds: function(){
