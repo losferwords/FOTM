@@ -1,7 +1,7 @@
-angular.module('fotm').register.controller("ArenaController", ["$scope", '$rootScope', '$location', '$interval', 'character', 'arenaService', 'hotkeys', 'mainSocket', 'gettextCatalog', 'ngAudio', 'soundService', ArenaController]);
+angular.module('fotm').register.controller("ArenaController", ["$scope", '$rootScope', '$location', '$interval', 'character', 'arenaService', 'hotkeys', 'mainSocket', 'gettextCatalog', 'ngAudio', 'soundService', 'countWatchersFactory', ArenaController]);
 
 //Контроллер выбора пати
-function ArenaController($scope, $rootScope, $location, $interval, character, arenaService, hotkeys, mainSocket, gettextCatalog, ngAudio, soundService) {
+function ArenaController($scope, $rootScope, $location, $interval, character, arenaService, hotkeys, mainSocket, gettextCatalog, ngAudio, soundService, countWatchersFactory) {
     $scope.map = arenaService.fillMap($rootScope.currentBattle.groundType); //Карта - двумерный массив на стороне клиента
     $scope.CombatLog = []; //Массив сообщений с информацией
     $scope.myTurn = false; //переменная, показывающая, мой ли сейчас игрок ходит
@@ -798,6 +798,7 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
 
     mainSocket.on('updateActiveTeamResult', function(chars){
         $scope.waitServ = false;
+        console.log("Watchers before: "+countWatchersFactory.getWatchCount());
         //Обновим методы
         for(var i=0;i<chars.length;i++){
             chars[i] = new character(chars[i]);
@@ -812,6 +813,7 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
         showLogs(); //выводим сообщения персонажей
         playSounds(); //Проигрываем звуки
         checkForWin();
+        console.log("Watchers after: "+countWatchersFactory.getWatchCount());
     });
 
     mainSocket.on('updateTeamsResult', function(chars1, chars2){

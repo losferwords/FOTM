@@ -134,6 +134,7 @@
                 templateUrl : 'partials/arena.ejs',
                 resolve: {deps: fotmApp.resolveScriptDeps([
                     'js/controllers/ArenaController.js',
+                    'js/factories/countWatchersFactory.js',
                     'js/services/randomService.js',
                     'js/services/effectService.js',
                     'js/services/abilityService.js',
