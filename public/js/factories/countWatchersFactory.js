@@ -29,15 +29,6 @@ angular.module('fotm').register.factory(
             );
             return( total );
         }
-        // For convenience, let's serialize the above method and convert it to
-        // a bookmarklet that can easily be run on ANY AngularJS page.
-        getWatchCount.bookmarklet = (
-        "javascript:alert('Watchers:'+(" +
-        getWatchCount.toString()
-            .replace( /\/\/.*/g, " " )
-            .replace( /\s+/g, " " ) +
-        ")());void(0);"
-        );
         return( getWatchCount );
     }
 );
