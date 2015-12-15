@@ -19,12 +19,12 @@ msgid "'s grinder looking for meat!"
 msgstr " со своей мясорубкой снова ищут мяса!"
 
 #: public/js/controllers/AbilitiesInfoController.js:103
-#: public/js/controllers/ArenaController.js:43
+#: public/js/controllers/ArenaController.js:45
 msgid "<p class='tooltip-need-weapon'>Need weapon</p>"
 msgstr "<p class='tooltip-need-weapon'>Необходимо оружие</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:104
-#: public/js/controllers/ArenaController.js:44
+#: public/js/controllers/ArenaController.js:46
 msgid "<p class='tooltip-spell'>Spell</p>"
 msgstr "<p class='tooltip-spell'>Заклинание</p>"
 
@@ -237,7 +237,7 @@ msgstr ""
 "p><p>Итого: {{four}}</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:107
-#: public/js/controllers/ArenaController.js:47
+#: public/js/controllers/ArenaController.js:49
 msgid "<p>Cooldown: {{one}}</p>"
 msgstr "<p>Восстановление: {{one}}</p>"
 
@@ -262,35 +262,35 @@ msgid "<p>Create red soul gem</p><p>Cost: 4 red shards</p>"
 msgstr "<p>Создать красный камень душ</p><p>Стоимость: 4 красных осколка</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:108
-#: public/js/controllers/ArenaController.js:48
+#: public/js/controllers/ArenaController.js:50
 msgid "<p>Duration: {{one}}</p>"
 msgstr "<p>Длительность: {{one}}</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:109
-#: public/js/controllers/ArenaController.js:49
+#: public/js/controllers/ArenaController.js:51
 msgid "<p>Energy Cost: {{one}}</p>"
 msgstr "<p>Стоимость энергии: {{one}}</p>"
 
-#: public/js/controllers/ArenaController.js:33
+#: public/js/controllers/ArenaController.js:35
 msgid "<p>Left: {{one}}</p>"
 msgstr "<p>Осталось: {{one}}</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:110
-#: public/js/controllers/ArenaController.js:50
+#: public/js/controllers/ArenaController.js:52
 msgid "<p>Mana Cost: {{one}}</p>"
 msgstr "<p>Стоимость маны: {{one}}</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:105
-#: public/js/controllers/ArenaController.js:45
+#: public/js/controllers/ArenaController.js:47
 msgid "<p>Range: {{one}}</p>"
 msgstr "<p>Дальность: {{one}}</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:106
-#: public/js/controllers/ArenaController.js:46
+#: public/js/controllers/ArenaController.js:48
 msgid "<p>Range: Self</p>"
 msgstr "<p>Дальность: на себя</p>"
 
-#: public/js/controllers/ArenaController.js:31
+#: public/js/controllers/ArenaController.js:33
 msgid "<p>Stacks: {{one}}/{{two}}</p>"
 msgstr "<p>Сумма: {{one}}/{{two}}</p>"
 
@@ -822,7 +822,7 @@ msgstr ""
 "Клерики призваны нести свет и исцеление на поле боя. Их молитвы и "
 "благословления защищают союзников от страшной участи."
 
-#: template/partials/city.ejs:130
+#: template/partials/city.ejs:131
 msgid "Close"
 msgstr "Закрыть"
 
@@ -1843,7 +1843,7 @@ msgstr "Больше ни слова"
 msgid "New Faith"
 msgstr "Новая вера"
 
-#: template/partials/city.ejs:104
+#: template/partials/city.ejs:105
 msgid "No"
 msgstr "Нет"
 
@@ -1893,7 +1893,7 @@ msgstr "Настройка"
 msgid "Password"
 msgstr "Пароль"
 
-#: public/js/controllers/FormController.js:42
+#: public/js/controllers/FormController.js:35
 msgid "Password incorrect"
 msgstr "Пароль неверен"
 
@@ -2078,7 +2078,7 @@ msgstr "Зарегистрироваться"
 msgid "Registration"
 msgstr "Регистрация"
 
-#: public/js/controllers/FormController.js:63
+#: public/js/controllers/FormController.js:56
 msgid "Registration successful"
 msgstr "Регистрация успешно завершена"
 
@@ -2186,7 +2186,7 @@ msgid "Role: {{getCharRole()}}"
 msgstr "Роль: {{getCharRole()}}"
 
 #: public/js/controllers/CityController.js:175
-#: public/js/controllers/CityController.js:272 template/partials/city.ejs:110
+#: public/js/controllers/CityController.js:278 template/partials/city.ejs:111
 msgid "Roll Dices"
 msgstr "Кинуть кости"
 
@@ -2447,7 +2447,7 @@ msgstr "Состояние благодати"
 msgid "Steals 1 random positive effect from enemy to caster."
 msgstr "Крадёт 1 случайный позитивный эффект у противника."
 
-#: public/js/controllers/CityController.js:269
+#: public/js/controllers/CityController.js:275
 msgid "Stop"
 msgstr "Стоп"
 
@@ -2655,6 +2655,14 @@ msgstr ""
 "Эта способность не снимает эффекты контроля, которые уже действуют на "
 "персонажа."
 
+#: template/partials/city.ejs:101
+msgid ""
+"This action delete this team, reset your rank and win statistics, you will "
+"have only 8 shards of each color."
+msgstr ""
+"Это действие удалит эту команду, сбросит ваш рейтинг и статистику побед, у "
+"вас останется только 8 осколков каждого цвета."
+
 #: template/partials/arena.ejs:195
 msgid "This character hasn't any effects"
 msgstr "У персонажа нет эффектов"
@@ -2668,7 +2676,7 @@ msgstr ""
 "Этот персонаж невидим для противника. Эффект спадает, если персонаж получит "
 "или нанесёт урон."
 
-#: public/js/controllers/FormController.js:76
+#: public/js/controllers/FormController.js:69
 msgid "This e-mail is in use"
 msgstr "Этот e-mail уже используется"
 
@@ -2704,11 +2712,11 @@ msgstr "Взмывает в воздух и становится невоспр�
 msgid "used by"
 msgstr "использованной"
 
-#: public/js/controllers/FormController.js:45
+#: public/js/controllers/FormController.js:38
 msgid "User {{username}} not found"
 msgstr "Пользователь {{username}} не найден"
 
-#: public/js/controllers/FormController.js:73
+#: public/js/controllers/FormController.js:66
 msgid "User is already created"
 msgstr "Такой пользователь уже существует"
 
@@ -2735,7 +2743,7 @@ msgstr "был исцелён"
 msgid "Welcome to FOTM"
 msgstr "Добро пожаловать в FOTM"
 
-#: public/js/controllers/FormController.js:32
+#: public/js/controllers/FormController.js:26
 msgid "Welcome!"
 msgstr "Добро пожаловать!"
 
@@ -2765,7 +2773,7 @@ msgstr "Статистика: {{team.wins}}-{{team.loses}}"
 msgid "with"
 msgstr "использовав"
 
-#: template/partials/city.ejs:103
+#: template/partials/city.ejs:104
 msgid "Yes"
 msgstr "Да"
 
@@ -2779,7 +2787,7 @@ msgstr "Ты всё же ангел"
 msgid "You gain:"
 msgstr "Вы получаете:"
 
-#: public/js/controllers/ArenaController.js:627
+#: public/js/controllers/ArenaController.js:628
 msgid "You lose"
 msgstr "Паражение"
 
@@ -2792,22 +2800,18 @@ msgstr "Получено:"
 msgid "You will get random role of available for chosen race."
 msgstr "Вы получите случайную роль из доступных для выбранной расы."
 
-#: public/js/controllers/ArenaController.js:678
+#: public/js/controllers/ArenaController.js:679
 msgid "You win"
 msgstr "Победа"
 
-#: public/js/controllers/ArenaController.js:706
+#: public/js/controllers/ArenaController.js:707
 msgid "Your enemy not ready to battle"
 msgstr "Ваш противник не готов к битве"
 
-#: public/js/controllers/ArenaController.js:781
-#: public/js/controllers/ArenaController.js:786
+#: public/js/controllers/ArenaController.js:782
+#: public/js/controllers/ArenaController.js:787
 msgid "Your enemy was disconnected"
 msgstr "Ваш противник отключился"
-
-#: public/js/controllers/FormController.js:27
-msgid "Your local date or time is incorrect!"
-msgstr "Ваши локальные время или дата неверны!"
 
 #: template/partials/arena.ejs:104
 msgid "Your rating now: {{battleEnd.rating}} ({{battleEnd.ratingChange}})"
@@ -2816,6 +2820,9 @@ msgstr "Ваш рейтинг: {{battleEnd.rating}} ({{battleEnd.ratingChange}})
 #: public/js/controllers/InventoryInfoController.js:105
 msgid "Zaqqum Branch"
 msgstr "Ветвь Закуума"
+
+#~ msgid "Your local date or time is incorrect!"
+#~ msgstr "Ваши локальные время или дата неверны!"
 
 #~ msgid "Get Gem"
 #~ msgstr "Камень"

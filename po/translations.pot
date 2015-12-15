@@ -9,12 +9,12 @@ msgid "'s grinder looking for meat!"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:103
-#: public/js/controllers/ArenaController.js:43
+#: public/js/controllers/ArenaController.js:45
 msgid "<p class='tooltip-need-weapon'>Need weapon</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:104
-#: public/js/controllers/ArenaController.js:44
+#: public/js/controllers/ArenaController.js:46
 msgid "<p class='tooltip-spell'>Spell</p>"
 msgstr ""
 
@@ -91,7 +91,7 @@ msgid "<p>Amount of <strong>health</strong> determines how long you can fight. I
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:107
-#: public/js/controllers/ArenaController.js:47
+#: public/js/controllers/ArenaController.js:49
 msgid "<p>Cooldown: {{one}}</p>"
 msgstr ""
 
@@ -112,35 +112,35 @@ msgid "<p>Create red soul gem</p><p>Cost: 4 red shards</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:108
-#: public/js/controllers/ArenaController.js:48
+#: public/js/controllers/ArenaController.js:50
 msgid "<p>Duration: {{one}}</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:109
-#: public/js/controllers/ArenaController.js:49
+#: public/js/controllers/ArenaController.js:51
 msgid "<p>Energy Cost: {{one}}</p>"
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:33
+#: public/js/controllers/ArenaController.js:35
 msgid "<p>Left: {{one}}</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:110
-#: public/js/controllers/ArenaController.js:50
+#: public/js/controllers/ArenaController.js:52
 msgid "<p>Mana Cost: {{one}}</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:105
-#: public/js/controllers/ArenaController.js:45
+#: public/js/controllers/ArenaController.js:47
 msgid "<p>Range: {{one}}</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:106
-#: public/js/controllers/ArenaController.js:46
+#: public/js/controllers/ArenaController.js:48
 msgid "<p>Range: Self</p>"
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:31
+#: public/js/controllers/ArenaController.js:33
 msgid "<p>Stacks: {{one}}/{{two}}</p>"
 msgstr ""
 
@@ -557,7 +557,7 @@ msgstr ""
 msgid "Clerics are called to bring the light of healing into battlefield. Their prayers and blessings protect allies from a terrible fate."
 msgstr ""
 
-#: template/partials/city.ejs:130
+#: template/partials/city.ejs:131
 msgid "Close"
 msgstr ""
 
@@ -1514,7 +1514,7 @@ msgstr ""
 msgid "New Faith"
 msgstr ""
 
-#: template/partials/city.ejs:104
+#: template/partials/city.ejs:105
 msgid "No"
 msgstr ""
 
@@ -1565,7 +1565,7 @@ msgstr ""
 msgid "Password"
 msgstr ""
 
-#: public/js/controllers/FormController.js:42
+#: public/js/controllers/FormController.js:35
 msgid "Password incorrect"
 msgstr ""
 
@@ -1731,7 +1731,7 @@ msgstr ""
 msgid "Registration"
 msgstr ""
 
-#: public/js/controllers/FormController.js:63
+#: public/js/controllers/FormController.js:56
 msgid "Registration successful"
 msgstr ""
 
@@ -1833,8 +1833,8 @@ msgid "Role: {{getCharRole()}}"
 msgstr ""
 
 #: public/js/controllers/CityController.js:175
-#: public/js/controllers/CityController.js:272
-#: template/partials/city.ejs:110
+#: public/js/controllers/CityController.js:278
+#: template/partials/city.ejs:111
 msgid "Roll Dices"
 msgstr ""
 
@@ -2078,7 +2078,7 @@ msgstr ""
 msgid "Steals 1 random positive effect from enemy to caster."
 msgstr ""
 
-#: public/js/controllers/CityController.js:269
+#: public/js/controllers/CityController.js:275
 msgid "Stop"
 msgstr ""
 
@@ -2231,6 +2231,10 @@ msgstr ""
 msgid "This ability doesn't remove control effects, which is already on character."
 msgstr ""
 
+#: template/partials/city.ejs:101
+msgid "This action delete this team, reset your rank and win statistics, you will have only 8 shards of each color."
+msgstr ""
+
 #: template/partials/arena.ejs:195
 msgid "This character hasn't any effects"
 msgstr ""
@@ -2240,7 +2244,7 @@ msgstr ""
 msgid "This character is invisible for enemy. Effect fades if character takes or deals damage."
 msgstr ""
 
-#: public/js/controllers/FormController.js:76
+#: public/js/controllers/FormController.js:69
 msgid "This e-mail is in use"
 msgstr ""
 
@@ -2271,11 +2275,11 @@ msgstr ""
 msgid "used by"
 msgstr ""
 
-#: public/js/controllers/FormController.js:45
+#: public/js/controllers/FormController.js:38
 msgid "User {{username}} not found"
 msgstr ""
 
-#: public/js/controllers/FormController.js:73
+#: public/js/controllers/FormController.js:66
 msgid "User is already created"
 msgstr ""
 
@@ -2302,7 +2306,7 @@ msgstr ""
 msgid "Welcome to FOTM"
 msgstr ""
 
-#: public/js/controllers/FormController.js:32
+#: public/js/controllers/FormController.js:26
 msgid "Welcome!"
 msgstr ""
 
@@ -2324,7 +2328,7 @@ msgstr ""
 msgid "with"
 msgstr ""
 
-#: template/partials/city.ejs:103
+#: template/partials/city.ejs:104
 msgid "Yes"
 msgstr ""
 
@@ -2338,7 +2342,7 @@ msgstr ""
 msgid "You gain:"
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:627
+#: public/js/controllers/ArenaController.js:628
 msgid "You lose"
 msgstr ""
 
@@ -2351,21 +2355,17 @@ msgstr ""
 msgid "You will get random role of available for chosen race."
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:678
+#: public/js/controllers/ArenaController.js:679
 msgid "You win"
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:706
+#: public/js/controllers/ArenaController.js:707
 msgid "Your enemy not ready to battle"
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:781
-#: public/js/controllers/ArenaController.js:786
+#: public/js/controllers/ArenaController.js:782
+#: public/js/controllers/ArenaController.js:787
 msgid "Your enemy was disconnected"
-msgstr ""
-
-#: public/js/controllers/FormController.js:27
-msgid "Your local date or time is incorrect!"
 msgstr ""
 
 #: template/partials/arena.ejs:104
