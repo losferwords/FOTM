@@ -207,9 +207,17 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
             $rootScope.interestingTeam = $scope.team;
             $scope.rank = rank;
 
+            var left = new Date(3600000-(nextRollLeft));
+            if(nextRollLeft<3600000) { //Если не прошло достаточно времени
+                $scope.nextRollLeft=leftTimeFormat(left);
+            }
+            else { // уже можно ролить
+                $scope.nextRollLeft=0;
+            }
+
             rollDiceTimer = $interval(function(){
                 nextRollLeft+=1000;
-                var left = new Date(3600000-(nextRollLeft));
+                left = new Date(3600000-(nextRollLeft));
                 if(nextRollLeft<3600000) { //Если не прошло достаточно времени
                     $scope.nextRollLeft=leftTimeFormat(left);
                 }
