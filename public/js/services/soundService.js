@@ -1,10 +1,14 @@
 //Сервис звуков в игре
-angular.module('fotm').register.service('soundService', ["ngAudio", function(ngAudio) {
+angular.module('fotm').register.service('soundService', ["ngAudio" , "getWatchCount", function(ngAudio, getWatchCount) {
     var loadedSounds = [];
     return {
         playSound: function(name){
             //loadedSounds[name].play();
-            ngAudio.play(loadedSounds[name]).volume=0.4;
+            console.log("Watchers before: "+getWatchCount());
+            var newSound = ngAudio.play(loadedSounds[name]).volume=0.4;
+            newSound.unbind();
+            newSound=undefined;
+            console.log("Watchers after 1: "+getWatchCount());
         },
         loadSounds: function(){
             var fxNames = [

@@ -798,29 +798,21 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
 
     mainSocket.on('updateActiveTeamResult', function(chars){
         $scope.waitServ = false;
-        console.log("Watchers before: "+getWatchCount());
+
         //Обновим методы
         for(var i=0;i<chars.length;i++){
             chars[i] = new character(chars[i]);
             chars[i].calcChar();
         }
-        console.log("Watchers after 1: "+getWatchCount());
 
         $scope.enemyTeam.characters = arenaService.convertEnemyTeam(chars);
-        console.log("Watchers after 2: "+getWatchCount());
         $scope.queue = arenaService.calcQueue($scope.myTeam.characters, $scope.enemyTeam.characters); //вычисляем очередь хода
-        console.log("Watchers after 3: "+getWatchCount());
         $scope.myTurn = arenaService.checkTurn($scope.myTeam.characters, $scope.queue[0]); //проверка, мой ли сейчас ход
-        console.log("Watchers after 4: "+getWatchCount());
         $scope.activeChar = $scope.queue[0]; //назначаем активного персонажа
-        console.log("Watchers after 5: "+getWatchCount());
 
         showLogs(); //выводим сообщения персонажей
-        console.log("Watchers after 6: "+getWatchCount());
         playSounds(); //Проигрываем звуки
-        console.log("Watchers after 7: "+getWatchCount());
         checkForWin();
-        console.log("Watchers after 8: "+getWatchCount());
     });
 
     mainSocket.on('updateTeamsResult', function(chars1, chars2){
