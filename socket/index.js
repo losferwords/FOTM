@@ -100,7 +100,7 @@ module.exports = function (server) {
         //количества человек на сервере
         var serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom]).length;
         io.sockets.in(serverRoom).emit('join', serverOnlineUsers);
-        log.info("User "+username+" is joining in");
+        log.info("User "+username+" join game");
         //На всякий случай удаляем dummy команды
         deleteDummies(socket);
 
@@ -108,6 +108,7 @@ module.exports = function (server) {
             if(io.nsps["/"].adapter.rooms[serverRoom]) { //Проверка на то, что я последний человек на сервере
                 serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom]).length;
                 socket.broadcast.to(serverRoom).emit('leave', serverOnlineUsers); //Покидаем сервер
+                log.info("User "+username+" leave game");
                 //И выкидываем из боя оппонента, если сами вышли
                 if (battleRoom) {
 

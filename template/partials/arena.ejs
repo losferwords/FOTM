@@ -1,6 +1,6 @@
 <div ng-controller="SocketController">
     <%- partial('../partials/toolbars/header') %>
-    <div class="row" ng-controller="ArenaController">
+    <div class="row" ng-controller="ArenaController" ng-cloak>
         <div class="col-md-12 well bs-component header-overlay" ng-if="!enemyTeamLoaded"></div>
         <div class="col-md-12 well bs-component" ng-if="opponentWaiting"><legend translate>Waiting For Enemy...</legend></div>
         <div class="col-md-12 well bs-component battleScreen" ng-if="!opponentWaiting">

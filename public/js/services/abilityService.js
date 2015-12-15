@@ -2231,7 +2231,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     desc: function() {
                         var str = gettextCatalog.getString(
                             "Cast on ally target. Every turn restores {{one}} health. Stacks up 3 times.",{
-                                one: (100+this.variant*15).toFixed(0)
+                                one: (50+this.variant*10).toFixed(0)
                             });
                         str+=" ";
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});

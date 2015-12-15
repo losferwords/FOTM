@@ -1077,7 +1077,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     desc: function() {
                         return gettextCatalog.getString(
                             "Every turn restores {{one}} health.",{
-                                one: ((100+this.variant*15)*this.stacks).toFixed(0)
+                                one: ((50+this.variant*10)*this.stacks).toFixed(0)
                             });
                     },
                     icon : function(){ return "url(../images/icons/abilities/MercyfulFate.svg)"},
@@ -1086,7 +1086,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                         for(var i=0;i<myTeam.length;i++){
                             if(myTeam[i].charName===this.caster) buffer=myTeam[i];
                         }
-                        var heal = (100+this.variant*15)*(1+buffer.spellPower)*this.stacks;
+                        var heal = (50+this.variant*10)*(1+buffer.spellPower)*this.stacks;
                         var critical = buffer.checkCrit();
                         if(critical){
                             heal=buffer.applyCrit(heal);
