@@ -99,14 +99,18 @@ function CreateCharacterController($scope, $rootScope, $location, $interval, mai
         //На сервер отправили 2 сообщения, так что переход будет успешным только когда ответ придёт от обоих
     });
     mainSocket.on("setTeamResult", function () {
-        if(charSetFlag) {
-            if($rootScope.interestingChar){
-                $location.path('/city');
+        $scope.changeInfoCSS("success"); //применяем ng-class
+        $scope.info=gettextCatalog.getString("Successful");
+        $interval(function(){
+            if(charSetFlag) {
+                if($rootScope.interestingChar){
+                    $location.path('/city');
+                }
+                else{
+                    $location.path('/createTeam');
+                }
             }
-            else{
-                $location.path('/createTeam');
-            }
-        }
+        }, 10);
     });
 
     $scope.$on('$routeChangeSuccess', function () {
