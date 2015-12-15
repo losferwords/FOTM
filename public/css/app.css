@@ -1554,7 +1554,7 @@ canvas {
   margin-bottom: 0;
   display: inline-block;
   vertical-align: top;
-  height: 300px;
+  height: 320px;
 }
 
 .abilitiesInfo .portrait {
@@ -1580,7 +1580,7 @@ canvas {
 
 .abilitiesInfo .ability-tune {
   width: 48%;
-  height: 300px;
+  height: 320px;
   display: inline-block;
   vertical-align: top;
   position: relative;
@@ -2298,7 +2298,7 @@ canvas {
   .abilitiesInfo .ability-tune {
     width: 100%;
     display: block;
-    height: 280px;
+    height: 300px;
   }
 
   .abilitiesInfo .ability-tune .description span {

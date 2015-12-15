@@ -591,6 +591,9 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
 
         if(myDeaths==3){
 
+            //Играем музыку
+            ngAudio.play("sounds/music/lose.mp3").volume=0.4;
+
             stopTurnTimer();
 
             if($scope.myTeam.rating>$scope.enemyTeam.rating){
@@ -649,6 +652,9 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
         }
 
         else if(enemyDeaths==3){
+
+            //Играем музыку
+            ngAudio.play("sounds/music/win.mp3").volume=0.4;
 
             stopTurnTimer();
 
