@@ -10,14 +10,8 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
     $scope.enemyTeamLoaded=false; //Ждём загрузки команды оппонента
 
     //Музыка
-    $rootScope.cityAmbience.stop();
-    switch($rootScope.currentBattle.groundType){
-        case 0: $rootScope.battleAmbience = ngAudio.load("sounds/music/grass.mp3").play(); break;
-        case 1: $rootScope.battleAmbience = ngAudio.load("sounds/music/desert.mp3").play(); break;
-        case 2: $rootScope.battleAmbience = ngAudio.load("sounds/music/snow.mp3").play(); break;
-    }
-    $rootScope.battleAmbience.loop=true;
-    $rootScope.battleAmbience.volume=0.1;
+    soundService.getMusicObj().cityAmbience.stop();
+    soundService.chooseAmbient($rootScope.currentBattle.groundType);
 
     //Возвращает процентные показатели ресурсов при наведении мышки
     $scope.calculateInPercent = function(cur, max) {
@@ -592,7 +586,7 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
         if(myDeaths==3){
 
             //Играем музыку
-            ngAudio.play("sounds/music/lose.mp3").volume=0.4;
+            soundService.getMusicObj().loseMusic.play();
 
             stopTurnTimer();
 
@@ -654,7 +648,7 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
         else if(enemyDeaths==3){
 
             //Играем музыку
-            ngAudio.play("sounds/music/win.mp3").volume=0.4;
+            soundService.getMusicObj().winMusic.play();
 
             stopTurnTimer();
 

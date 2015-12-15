@@ -1,7 +1,7 @@
-angular.module('fotm').register.controller("CityController", ["$scope", '$rootScope', '$location', '$interval', '$uibModal', '$route', 'characterService', 'mainSocket', 'gettextCatalog', CityController]);
+angular.module('fotm').register.controller("CityController", ["$scope", '$rootScope', '$location', '$interval', '$uibModal', '$route', 'characterService', 'mainSocket', 'gettextCatalog', 'soundService', CityController]);
 
 //Контроллер выбора пати
-function CityController($scope, $rootScope, $location, $interval, $uibModal, $route, characterService, mainSocket, gettextCatalog) {
+function CityController($scope, $rootScope, $location, $interval, $uibModal, $route, characterService, mainSocket, gettextCatalog, soundService) {
     var searchTimer;
     var searchProcessStep=0;
     var charSetFlag;
@@ -10,8 +10,8 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
 
     $scope.searchBattle = false;
 
-    $rootScope.cityAmbience.play();
-    $rootScope.battleAmbience.stop();
+    soundService.getMusicObj.cityAmbience.play();
+    soundService.getMusicObj.battleAmbience.stop();
 
     //Кнопка "Встать в очередь на арену"
     $scope.joinArenaClick = function () {
