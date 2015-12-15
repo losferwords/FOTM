@@ -5,9 +5,11 @@ angular.module('fotm').register.service('soundService', ["ngAudio" , "getWatchCo
         playSound: function(name){
             //loadedSounds[name].play();
             console.log("Watchers before: "+getWatchCount());
-            var newSound = ngAudio.play(loadedSounds[name]).volume=0.4;
+            var newSound = ngAudio.load(loadedSounds[name]);
+            newSound.volume=0.4;
+            newSound.play();
             newSound.unbind();
-            newSound=undefined;
+            newSound.destroy();
             console.log("Watchers after 1: "+getWatchCount());
         },
         loadSounds: function(){
