@@ -100,6 +100,7 @@ module.exports = function (server) {
         //количества человек на сервере
         var serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom]).length;
         io.sockets.in(serverRoom).emit('join', serverOnlineUsers);
+        log.info("User "+username+" is joining in");
         //На всякий случай удаляем dummy команды
         deleteDummies(socket);
 
@@ -252,7 +253,6 @@ module.exports = function (server) {
         socket.on('deleteTeam', function(teamId){
             Team.deleteTeam(teamId, function(err){
                 if (err) {
-                    console.log("deleteTEam err:"+JSON.stringify(err));
                     socket.emit("customError", err);
                 }
             });
