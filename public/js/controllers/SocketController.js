@@ -56,16 +56,8 @@ function SocketController($scope, $window, $location, $rootScope, $timeout, main
     $scope.$on('$routeChangeSuccess', function () {
         mainSocket.emit("getUserName");
     });
-    mainSocket.on("getUserNameResult", function(name, time){
+    mainSocket.on("getUserNameResult", function(name){
         $scope.userName = name;
-
-        var serverTime=new Date(time);
-        var localTime=new Date();
-
-        if(Math.abs(serverTime-localTime)>900000){
-            mainSocket.disconnect();
-            $window.location.href="/";
-        }
     });
 
     //Показ информации

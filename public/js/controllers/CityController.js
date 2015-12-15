@@ -198,7 +198,7 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
     $scope.$on('$routeChangeSuccess', function () {
         mainSocket.emit("getUserTeam");
     });
-    mainSocket.on('getUserTeamResult', function(team, rank){
+    mainSocket.on('getUserTeamResult', function(team, rank, nextRollLeft){
         if(team){
             $scope.team = team;
             $scope.team.characters[0].battleColor="#2a9fd6";
@@ -207,12 +207,10 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
             $rootScope.interestingTeam = $scope.team;
             $scope.rank = rank;
 
-            var rollTime = new Date($scope.team.lastRoll);
             rollDiceTimer = $interval(function(){
-                var nowTime = new Date();
-                var left = new Date(3600000-(nowTime-rollTime));
-
-                if((nowTime-rollTime)<3600000) { //Если не прошло достаточно времени
+                nextRollLeft+=1000;
+                var left = new Date(3600000-(nextRollLeft));
+                if(nextRollLeft<3600000) { //Если не прошло достаточно времени
                     $scope.nextRollLeft=leftTimeFormat(left);
                 }
                 else { // уже можно ролить

@@ -41,8 +41,6 @@ module.exports = function (server) {
 
     var io = require('socket.io').listen(server);
 
-    //io.set('origins', 'http://node.test:*');
-
     io.use(function (socket, next) {
         var handshakeData = socket.request;
 
@@ -152,7 +150,7 @@ module.exports = function (server) {
         });
 
         socket.on('getUserName', function () {
-            socket.emit("getUserNameResult", socket.handshake.user.username, new Date());
+            socket.emit("getUserNameResult", socket.handshake.user.username);
         });
 
         socket.on('createChar', function(){
@@ -287,7 +285,11 @@ module.exports = function (server) {
                 if (err) socket.emit("customError", err);
                 Team.findRank(team._id, function(err, rank){
                     if (err) socket.emit("customError", err);
-                    socket.emit("getUserTeamResult", team, rank);
+
+                    //Отправим (текущее время на сервере - время последнего рола)
+                    var nowTime = new Date();
+
+                    socket.emit("getUserTeamResult", team, rank, (nowTime-team.lastRoll));
                 });
             });
         });

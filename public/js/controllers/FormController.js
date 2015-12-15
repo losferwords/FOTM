@@ -22,18 +22,11 @@ function FormController($scope, $http, $location, $timeout, formLinkService, get
             var serverTime=new Date(data.serverTime);
             var localTime=new Date();
 
-            if(Math.abs(serverTime-localTime)>900000){
-                $scope.changeInfoCSS("error"); //применяем ng-class
-                $scope.info=gettextCatalog.getString("Your local date or time is incorrect!");
-                $scope.loginForm.$submitted=false;
-            }
-            else {
-                $scope.changeInfoCSS("success"); //применяем ng-class
-                $scope.info=gettextCatalog.getString("Welcome!");
-                $timeout(function(){
-                    $location.path('/searchTeam');
-                }, 10);
-            }
+            $scope.changeInfoCSS("success"); //применяем ng-class
+            $scope.info=gettextCatalog.getString("Welcome!");
+            $timeout(function(){
+                $location.path('/searchTeam');
+            }, 10);
         });
         response.error(function(data, status, headers, config) {
             $scope.changeInfoCSS("error"); //применяем ng-class
