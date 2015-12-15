@@ -86,6 +86,7 @@
                 templateUrl : 'partials/city.ejs',
                 resolve: {deps: fotmApp.resolveScriptDeps([
                     'js/controllers/CityController.js',
+                    'js/factories/getWatchCount.js',
                     'js/services/soundService.js',
                     'js/services/randomService.js',
                     'js/services/characterService.js'])}

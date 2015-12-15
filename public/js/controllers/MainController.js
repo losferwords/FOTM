@@ -1,12 +1,10 @@
 //Главный контроллер
-angular.module('fotm').controller("MainController", ["$scope", '$rootScope', '$window', '$location', 'gettextCatalog', 'soundService', MainController]);
+angular.module('fotm').controller("MainController", ["$scope", '$rootScope', '$window', '$location', 'gettextCatalog', 'ngAudio', MainController]);
 
-function MainController($scope, $rootScope, $window, $location, gettextCatalog, soundService) {
+function MainController($scope, $rootScope, $window, $location, gettextCatalog, ngAudio) {
     gettextCatalog.setCurrentLanguage('en');
     $rootScope.soundEnabled=true;
     ngAudio.performance=1000;
-
-    soundService.getMusicObj.cityAmbience.play();
 
     //Блок обработки нажатия на кнопку <- в браузере
     $rootScope.$on('$locationChangeSuccess', function() {

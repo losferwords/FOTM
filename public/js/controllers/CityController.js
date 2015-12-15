@@ -10,9 +10,6 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
 
     $scope.searchBattle = false;
 
-    soundService.getMusicObj.cityAmbience.play();
-    soundService.getMusicObj.battleAmbience.stop();
-
     //Кнопка "Встать в очередь на арену"
     $scope.joinArenaClick = function () {
         searchTimer = $interval(function(){
@@ -196,6 +193,10 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
     });
 
     $scope.$on('$routeChangeSuccess', function () {
+        soundService.getMusicObj().cityAmbience.play();
+        if(soundService.getMusicObj().battleAmbience){
+            soundService.getMusicObj().battleAmbience.pause();
+        }
         mainSocket.emit("getUserTeam");
     });
     mainSocket.on('getUserTeamResult', function(team, rank, nextRollLeft){

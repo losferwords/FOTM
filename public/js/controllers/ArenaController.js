@@ -9,10 +9,6 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
     $scope.opponentWaiting=true; //Ждём загрузки контроллера оппонента
     $scope.enemyTeamLoaded=false; //Ждём загрузки команды оппонента
 
-    //Музыка
-    soundService.getMusicObj().cityAmbience.stop();
-    soundService.chooseAmbient($rootScope.currentBattle.groundType);
-
     //Возвращает процентные показатели ресурсов при наведении мышки
     $scope.calculateInPercent = function(cur, max) {
       return Math.ceil(cur/max*100);
@@ -694,10 +690,14 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
 
     //После загрузки контроллера проверяем, загрузился ли контроллер у противника
     $scope.$on('$routeChangeSuccess', function () {
+        //Музыка
+        soundService.getMusicObj().cityAmbience.pause();
+        soundService.chooseAmbient($rootScope.currentBattle.groundType);
+        soundService.loadSounds(); //Загружаем все необходимые для боя звуки
+
         $scope.opponentWaiting=true;
 
         var timerCount = 0;
-        soundService.loadSounds(); //Загружаем все необходимые для боя звуки
         $scope.waitOpponentTimer=$interval(function(){
             mainSocket.emit("checkOpponent", $rootScope.currentBattle.room);
             timerCount++;
