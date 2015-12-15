@@ -8,11 +8,9 @@ angular.module('fotm').register.service('soundService', ["ngAudio" , "getWatchCo
             var newSound = ngAudio.load(loadedSounds[name]);
             newSound.volume=0.4;
             newSound.play();
-            console.log("Watchers after 1: "+getWatchCount());
             $timeout(function(){
                 newSound.destroy();
-                console.log("Watchers after 2: "+getWatchCount());
-            },1000);
+            },500);
         },
         loadSounds: function(){
             var fxNames = [
