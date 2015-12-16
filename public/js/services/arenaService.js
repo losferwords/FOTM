@@ -1,15 +1,17 @@
 //Сервис для работы арены
-angular.module('fotm').register.service('arenaService', ["gettextCatalog", function(gettextCatalog) {
-
+angular.module('fotm').register.service('arenaService', ["gettextCatalog", "randomService", function(gettextCatalog, randomService) {
+    var map=[];
     return {
         //Заполнение карты DIV-ами
-        fillMap: function(groundType) {
-            var map=[];
+        fillMap: function(groundType, walls) {
             for (var i = 0; i < 100; i++) {
-                map[i] = {
-                    x: i%10,
-                    y: (i/10 | 0),
-                    image: function () {
+                map[i]={};
+                map[i].x = i%10;
+                map[i].y = (i/10 | 0);
+                map[i].move=false;
+                if(walls.indexOf(i)===-1){
+                    map[i].wall=false;
+                    map[i].image= function() {
                         var ground;
                         switch (groundType) {
                             case(0):
@@ -23,10 +25,32 @@ angular.module('fotm').register.service('arenaService', ["gettextCatalog", funct
                                 break;
                         }
                         return ground;
-                    }(),
-                    move: false
-                };
+                    }();
+                }
+                else {
+                    map[i].wall=true;
+                    map[i].image= function() {
+                        var ground;
+                        switch (groundType) {
+                            case(0):
+                                ground = "url(./images/tiles/grass_wall.jpg)";
+                                break;
+                            case(1):
+                                ground = "url(./images/tiles/sand_wall.jpg)";
+                                break;
+                            case(2):
+                                ground = "url(./images/tiles/snow_wall.jpg)";
+                                break;
+                        }
+                        return ground;
+                    }();
+                }
+
             }
+
+            return map;
+        },
+        getMap: function(){
             return map;
         },
         //Функция определяет начальные позиции игроков
@@ -180,6 +204,40 @@ angular.module('fotm').register.service('arenaService', ["gettextCatalog", funct
         //преобразование карты к двумерному массиву
         map1Dto2D: function(map1D) {
             return { x: map1D%10, y: (map1D/10 | 0)}
+        },
+        //Функция трассировки для нахождения препятствий между двумя точками
+        rayTrace: function(startCoordinates, endCoordinates) {
+            var coordinatesArray = [];
+            // Translate coordinates
+            var x1 = startCoordinates.x;
+            var y1 = startCoordinates.y;
+            var x2 = endCoordinates.x;
+            var y2 = endCoordinates.y;
+            // Define differences and error check
+            var dx = Math.abs(x2 - x1);
+            var dy = Math.abs(y2 - y1);
+            var sx = (x1 < x2) ? 1 : -1;
+            var sy = (y1 < y2) ? 1 : -1;
+            var err = dx - dy;
+            // Set first coordinates
+            coordinatesArray.push({x:x1,y:y1});
+            // Main loop
+            while (!((x1 == x2) && (y1 == y2))) {
+                var e2 = err << 1;
+                if (e2 > -dy) {
+                    err -= dy;
+                    x1 += sx;
+                }
+                if (e2 < dx) {
+                    err += dx;
+                    y1 += sy;
+                }
+                // Set coordinates
+                coordinatesArray.push({x:x1,y:y1});
+            }
+
+            console.log("coordinatesArray:"+JSON.stringify(coordinatesArray));
+            //Список всех пикселей по пути
         },
         //Функция отвечает за перевод сообщений в логе
         localizeMessage: function(message) {

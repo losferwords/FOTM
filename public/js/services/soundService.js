@@ -118,7 +118,6 @@ angular.module('fotm').register.service('soundService', ["ngAudio" , "$timeout",
 
         },
         chooseAmbient: function(type) {
-            console.log("Before: "+getWatchCount());
             if(musicObj.battleAmbience){
                 musicObj.battleAmbience.destroy();
             }
@@ -130,7 +129,6 @@ angular.module('fotm').register.service('soundService', ["ngAudio" , "$timeout",
             musicObj.battleAmbience.loop=true;
             musicObj.battleAmbience.volume=0.1;
             musicObj.battleAmbience.play();
-            console.log("After: "+getWatchCount());
         },
         getMusicObj: function () {
             return musicObj;

@@ -187,7 +187,8 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
             room: data.battleRoom,
             groundType: data.groundType,
             allyPositions: data.allyPartyPositions,
-            enemyPositions: data.enemyPartyPositions
+            enemyPositions: data.enemyPartyPositions,
+            wallPositions: data.wallPositions
         };
         $location.path("/arena");
     });

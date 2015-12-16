@@ -307,19 +307,39 @@ module.exports = function (server) {
                     var availablePositions = [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]]; //Все варианты расстановок группы
                     var allyPositions = availablePositions[Math.floor(Math.random() * 6)];
                     var enemyPositions = availablePositions[Math.floor(Math.random() * 6)];
+
+                    //Препятствия на карте
+                    var availableWallPos=[];
+                    for(var i=0;i<100;i++){
+                        if(!(i<=10 || i%10===0 || i%10===9 || i>=90 || i===18 || i===81)){
+                            availableWallPos.push(i);
+                        }
+                    }
+                    var shuffledWallPos= shuffle(availableWallPos);
+                    var allyWallPositions = [];
+                    var enemyWallPositions = [];
+                    for(i=0;i<10;i++) {
+                        allyWallPositions.push(shuffledWallPos[i]);
+                        //для противника меняем местами координаты препятствий
+                        var reversedIndex=""+Math.floor(shuffledWallPos[i]%10)+Math.floor(shuffledWallPos[i]/10);
+                        enemyWallPositions.push(+reversedIndex);
+                    }
+
                     //Изначальные данные для битвы
                     var allyBattleData = {
                         battleRoom: battleRoom,
                         groundType: groundType,
                         allyPartyPositions: allyPositions,
-                        enemyPartyPositions: enemyPositions
+                        enemyPartyPositions: enemyPositions,
+                        wallPositions: allyWallPositions
                     };
                     //Для НЕорганизатора боя места меняются местами
                     var enemyBattleData = {
                         battleRoom: battleRoom,
                         groundType: groundType,
                         allyPartyPositions: enemyPositions,
-                        enemyPartyPositions: allyPositions
+                        enemyPartyPositions: allyPositions,
+                        wallPositions: enemyWallPositions
                     };
 
                     io.sockets.connected[queue[0]].emit('startBattle', allyBattleData);
@@ -429,6 +449,27 @@ module.exports = function (server) {
             }
         });
     }
+
+    //Функция перемешивания
+    function shuffle (array) {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            // And swap it with the current element.
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+
+        return array;
+    }
+
 
     return io;
 };

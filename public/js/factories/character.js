@@ -1,5 +1,5 @@
 //Фабрика, которая по сути является "классом" character
-angular.module('fotm').register.factory('character', ["abilityService", "effectService", "randomService", "gettextCatalog", "ngAudio", "soundService", function(abilityService, effectService, randomService, gettextCatalog, ngAudio, soundService) {
+angular.module('fotm').register.factory('character', ["abilityService", "effectService", "randomService", "gettextCatalog", "soundService", "arenaService", function(abilityService, effectService, randomService, gettextCatalog, soundService, arenaService) {
 
     //Конструктор
     var Character = function(char) {
@@ -1297,9 +1297,10 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         return points;
     };
 
-    //Проверка на наличие персонажа на этом тайле
+    //Проверка на наличие персонажа или препятствия на этом тайле
     Character.prototype.checkTile = function(position, myTeam, enemyTeam, skipInvisible) {
         var queue = myTeam.concat(enemyTeam);
+        var map = arenaService.getMap();
         for(var i=0;i<queue.length;i++){
             if(queue[i].position.x==position.x &&
                 queue[i].position.y==position.y &&
@@ -1313,6 +1314,8 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 }
             }
         }
+
+        if(map[Math.floor(position.x+position.y*10)].wall) return true; //Проверяем на препятствие
         return false;
     };
 
@@ -1359,6 +1362,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 if(points[i].x==myTeam[j].position.x &&
                     points[i].y==myTeam[j].position.y &&
                     !myTeam[j].isDead){
+                    arenaService.rayTrace({x: self.position.x*32+16, y: self.position.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16});
                     allies[allies.length]=myTeam[j];
                 }
             }
