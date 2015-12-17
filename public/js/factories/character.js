@@ -80,6 +80,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         var self = this;
         self.logBuffer = []; //Массив сообщений для комбат-лога
         self.soundBuffer = []; //Массив сообщений для звуков
+        self.battleTextBuffer = []; //Массив всплывающего текста
         self.buffs = []; //Массив положительных эффектов
         self.debuffs = []; //Массив отрицательных эффектов
 
@@ -991,15 +992,19 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         if(self.curHealth+value>=self.maxHealth) self.curHealth=self.maxHealth;
         else self.curHealth += value;
 
+        //battleText
+        console.log("Take Heal сработал");
+        self.battleTextBuffer.push({type: "heal", icon: ability.icon, color: getAbilityColor(ability.role), text: value, crit: isCritical});
+
         if(self.charName===caster.charName){
             str+=self.charName + " healed for "+value;
             if(isCritical) str+= " (CRITICAL)";
-            str+=" with '"+ability+"'";
+            str+=" with '"+ability.name+"'";
         }
         else {
             str+=self.charName + " was healed by "+caster.charName+" for "+value;
             if(isCritical) str+= " (CRITICAL)";
-            str+=" with '"+ability+"'";
+            str+=" with '"+ability.name+"'";
         }
         self.logBuffer.push(str);
     };
@@ -1544,6 +1549,36 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
             case "malefic" : return '#f05800';break;
             case "cleric" : return '#ffc520';break;
             case "heretic" : return '#862197';break;
+        }
+    };
+
+    //Функция выбирает цвет для способности по её роли
+    function getAbilityColor (role) {
+        switch (role) {
+            case "sentinel":
+                return "#f7f7f7";
+                break;
+            case "slayer":
+                return "#ff0906";
+                break;
+            case "redeemer":
+                return "#0055AF";
+                break;
+            case "ripper":
+                return "#61dd45";
+                break;
+            case "prophet":
+                return "#00b3ee";
+                break;
+            case "malefic":
+                return "#f05800";
+                break;
+            case "cleric":
+                return "#ffc520";
+                break;
+            case "heretic":
+                return "#862197";
+                break;
         }
     };
 

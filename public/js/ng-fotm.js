@@ -101,7 +101,8 @@
                     'js/services/effectService.js',
                     'js/services/abilityService.js',
                     'js/services/soundService.js',
-                    'js/factories/character.js'
+                    'js/factories/character.js',
+                    'js/services/arenaService.js'
                 ])}
             })
 
@@ -114,7 +115,8 @@
                     'js/services/effectService.js',
                     'js/services/abilityService.js',
                     'js/services/soundService.js',
-                    'js/factories/character.js'
+                    'js/factories/character.js',
+                    'js/services/arenaService.js'
                 ])}
             })
 
@@ -127,7 +129,8 @@
                     'js/services/effectService.js',
                     'js/services/abilityService.js',
                     'js/services/soundService.js',
-                    'js/factories/character.js'
+                    'js/factories/character.js',
+                    'js/services/arenaService.js'
                 ])}
             })
 

@@ -199,7 +199,7 @@ function CreateCharacterController($scope, $rootScope, $location, $interval, mai
     //Функция динамически загружает портреты
     function getPortraits(){
         var portraits=[];
-        for(var i=1;i<=3;i++){
+        for(var i=1;i<=4;i++){
             portraits.push({image: "./images/portraits/"+$scope.currentRace.name+"/"+$scope.gender+"/"+$scope.currentRace.name+"_"+$scope.gender+"_"+i+".jpg"});
         }
         return portraits;

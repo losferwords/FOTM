@@ -664,6 +664,33 @@ body .tooltip {
   background-color: #770906;
 }
 
+.char_tile .battle-text-cont {
+  position: absolute;
+  font-size: 14px;
+  width: 65px;
+  color: #000;
+  top: 0;
+  left: 0;
+  opacity: 1;
+  -webkit-transition: top 2s ease-out, left 2s ease-in, opacity 4s cubic-bezier(1.000, 0.010, 1.000, 0.010);
+  transition: top 2s ease-out, left 2s ease-in, opacity 4s cubic-bezier(1.000, 0.010, 1.000, 0.010);
+}
+
+.char_tile .battle-text-cont .battle-text-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 20px;
+  height: 20px;
+  margin-right: 2px;
+}
+
+.char_tile .battle-text-cont span {
+  display: inline-block;
+  vertical-align: middle;
+  width: 40px;
+  text-align: left;
+}
+
 .control_btns {
   width: 100%;
   margin-bottom: 10px;

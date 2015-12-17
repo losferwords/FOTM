@@ -400,7 +400,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         if (critical) {
                             heal = caster.applyCrit(heal);
                         }
-                        target.takeHeal(heal, caster, this.name, critical);
+                        target.takeHeal(heal, caster, {name: this.name, icon: this.icon(), role: this.role()}, critical);
 
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -716,7 +716,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         if (critical) {
                             heal = caster.applyCrit(heal);
                         }
-                        caster.takeHeal(heal, caster, this.name, critical);
+                        caster.takeHeal(heal, caster, {name: this.name, icon: this.icon(), role: this.role()}, critical);
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
                     targetType : function() { return "self"},
@@ -2292,7 +2292,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         }
 
                         caster.playSound(this.name);
-                        target.takeHeal(heal, caster, this.name, critical);
+                        target.takeHeal(heal, caster, {name: this.name, icon: this.icon(), role: this.role()}, critical);
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
                     targetType : function() { return "ally"},
@@ -2334,7 +2334,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                                 heal = caster.applyCrit(heal);
                             }
                             caster.playSound(this.name);
-                            target.takeHeal(heal, caster, this.name, critical);
+                            target.takeHeal(heal, caster, {name: this.name, icon: this.icon(), role: this.role()}, critical);
                         }
                         else {
                             if(caster.checkHit()){
@@ -2482,7 +2482,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             if (critical) {
                                 heal = caster.applyCrit(heal);
                             }
-                            nearbyAllies[i].takeHeal(heal, caster, this.name, critical);
+                            nearbyAllies[i].takeHeal(heal, caster, {name: this.name, icon: this.icon(), role: this.role()}, critical);
                         }
 
                         caster.afterCast(this.name, myTeam, enemyTeam);
@@ -2569,7 +2569,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             var totalDamage = physDamage+magicDamage;
 
                             if(target.takeDamage(totalDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
-                                caster.takeHeal(totalDamage, caster, this.name, critical);
+                                caster.takeHeal(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, critical);
                             }
                         }
                         else {

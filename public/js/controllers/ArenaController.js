@@ -520,6 +520,28 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
         }
     }
 
+    //Функция выводит весь боевой текст из буферов персонажей
+    /*
+    function showBattleText(){
+        for(var i=0;i<$scope.myTeam.characters.length;i++){
+            if ($scope.myTeam.characters[i].battleTextBuffer.length>0) {
+                for (var j = 0; j < $scope.myTeam.characters[i].battleTextBuffer.length; j++) {
+                    //log($scope.myTeam.characters[i].battleTextBuffer[j]);
+                }
+                $scope.myTeam.characters[i].battleTextBuffer = [];
+            }
+        }
+
+        for(i=0;i<$scope.enemyTeam.characters.length;i++){
+            if ($scope.enemyTeam.characters[i].battleTextBuffer.length>0) {
+                for (j = 0; j < $scope.enemyTeam.characters[i].battleTextBuffer.length; j++) {
+                    //log($scope.enemyTeam.characters[i].battleTextBuffer[j]);
+                }
+                $scope.enemyTeam.characters[i].battleTextBuffer = [];
+            }
+        }
+    }*/
+
     //Функция проигрывает звуки, пришедшие от противника
     function playSounds(){
         for(var i=0;i<$scope.enemyTeam.characters.length;i++){
@@ -1042,3 +1064,81 @@ angular.module('fotm').register.directive("arrows", function(){
         }
     };
 });
+
+//Директива, отвечающая за рисование стрелок
+angular.module('fotm').register.directive("battleText", ['$interval', '$timeout', function($interval, $timeout){
+    return {
+        restrict: "C",
+        scope: {
+            buffer: '='
+        },
+        link: function(scope, element, attrs){
+            //следим за изменением буфера
+            scope.$watchCollection('buffer', function(newValue, oldValue) {
+                var buf = [];
+                if(newValue.length!==oldValue.length && newValue.length>0) {
+                    var childCount=0;
+                    buf = newValue.slice(0);
+                    console.log("buf: "+JSON.stringify(newValue));
+
+                    createBattleText();
+                    if(buf.length>0){
+                        var textInterval = $interval(createBattleText,3000);
+                    }
+                    else {
+                        $timeout(function(){
+                            console.log("buf.length=0: "+JSON.stringify(buf));
+                            scope.buffer=[];
+                            element.find('.battle-text-cont').remove();
+                            childCount=0;
+                        },3000);
+                    }
+
+                    function createBattleText(){
+                        if(buf.length>0){
+                            console.log("buf.length>0: "+JSON.stringify(buf));
+                            element.append("<div class='battle-text-cont child_"+childCount+"'><div class='battle-text-icon' style='background-image: "+buf[buf.length-1].icon+"; background-color: "+buf[buf.length-1].color+"'></div><span style='color: "+getTextTypeColor(buf[buf.length-1].type)+"'>"+buf[buf.length-1].text+"</span></div>");
+                            $timeout(function(){
+                                var childName='.battle-text-cont.child_'+childCount;
+                                element.find(childName).css('opacity', 0);
+                                element.find(childName).css('top', -64);
+                                if((buf.length-1)%2===0) {
+                                    element.find(childName).css('left', -32);
+                                }
+                                else {
+                                    element.find(childName).css('left', 32);
+                                }
+                                childCount++;
+                            },100);
+
+                            buf.pop();
+                        }
+                        else {
+                            console.log("buf.length=0: "+JSON.stringify(buf));
+
+                            scope.buffer=[];
+                            element.find('.battle-text-cont').remove();
+                            childCount=0;
+                            $interval.cancel(textInterval);
+                        }
+                    }
+                }
+            });
+
+            function getTextTypeColor(type) {
+                switch (type) {
+                    case "heal":
+                        return "#0055AF";
+                        break;
+                    case "damage":
+                        return "#ff0906";
+                        break;
+                    case "other":
+                        return "#ffc520";
+                        break;
+                }
+            }
+
+        }
+    };
+}]);

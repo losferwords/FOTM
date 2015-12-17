@@ -434,7 +434,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                         if(critical){
                             heal=buffer.applyCrit(heal);
                         }
-                        owner.takeHeal(heal, buffer, this.name, critical);
+                        owner.takeHeal(heal, buffer, {name: this.name, icon: this.icon(), role: this.role()}, critical);
                         owner.takeMana(mana, buffer, this.name, false);
                     },
                     duration: function(){return 7},
@@ -468,7 +468,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                         if(critical){
                             heal=buffer.applyCrit(heal);
                         }
-                        owner.takeHeal(heal, buffer, this.name, critical);
+                        owner.takeHeal(heal, buffer, {name: this.name, icon: this.icon(), role: this.role()}, critical);
                     },
                     duration: function(){return 10-this.variant},
                     left : 0,
@@ -999,7 +999,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                         if (critical) {
                             heal = buffer.applyCrit(heal);
                         }
-                        owner.takeHeal(heal, buffer, this.name, critical);
+                        owner.takeHeal(heal, buffer, {name: this.name, icon: this.icon(), role: this.role()}, critical);
                         owner.spendMana(manaSpend);
                     },
                     duration: function(){return 4+this.variant},
@@ -1091,7 +1091,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                         if(critical){
                             heal=buffer.applyCrit(heal);
                         }
-                        owner.takeHeal(heal, buffer, this.name, critical);
+                        owner.takeHeal(heal, buffer, {name: this.name, icon: this.icon(), role: this.role()}, critical);
                     },
                     duration: function(){return 12-this.variant},
                     left : 0,
