@@ -1343,7 +1343,9 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
             for(j=0;j<enemyTeam.length;j++){
                 if(points[i].x==enemyTeam[j].position.x &&
                     points[i].y==enemyTeam[j].position.y &&
-                    !enemyTeam[j].isDead){
+                    !enemyTeam[j].isDead &&
+                    !arenaService.rayTrace({x: self.position.x*32+16, y: self.position.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16})
+                ){
                     enemies[enemies.length]=enemyTeam[j];
                 }
             }
@@ -1361,8 +1363,9 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
             for(j=0;j<myTeam.length;j++){
                 if(points[i].x==myTeam[j].position.x &&
                     points[i].y==myTeam[j].position.y &&
-                    !myTeam[j].isDead){
-                    arenaService.rayTrace({x: self.position.x*32+16, y: self.position.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16});
+                    !myTeam[j].isDead &&
+                    !arenaService.rayTrace({x: self.position.x*32+16, y: self.position.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16})
+                ){
                     allies[allies.length]=myTeam[j];
                 }
             }

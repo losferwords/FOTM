@@ -629,7 +629,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         str+=" ";
                         str+= gettextCatalog.getString(
                             "Mana Regeneration increased to {{one}} %.",{
-                                one: (this.variant*10).toFixed(0)
+                                one: (this.variant*60).toFixed(0)
                             });
                         return str;
                     },
@@ -972,7 +972,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         str+=" ";
                         str+= gettextCatalog.getString(
                             "Health Regeneration increased to {{one}} %.",{
-                                one: (this.variant*15).toFixed(0)
+                                one: (this.variant*60).toFixed(0)
                             });
                         return str;
                     },

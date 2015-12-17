@@ -205,23 +205,23 @@ angular.module('fotm').register.service('arenaService', ["gettextCatalog", "rand
         map1Dto2D: function(map1D) {
             return { x: map1D%10, y: (map1D/10 | 0)}
         },
-        //Функция трассировки для нахождения препятствий между двумя точками
+        //Функция трассировки для нахождения препятствий между двумя точками (алгоритм Брезенхема)
         rayTrace: function(startCoordinates, endCoordinates) {
             var coordinatesArray = [];
-            // Translate coordinates
+            //Получаем координаты
             var x1 = startCoordinates.x;
             var y1 = startCoordinates.y;
             var x2 = endCoordinates.x;
             var y2 = endCoordinates.y;
-            // Define differences and error check
+            // Определяем разницы и ошибку
             var dx = Math.abs(x2 - x1);
             var dy = Math.abs(y2 - y1);
             var sx = (x1 < x2) ? 1 : -1;
             var sy = (y1 < y2) ? 1 : -1;
             var err = dx - dy;
-            // Set first coordinates
+            // Устанавливаем начальные координаты
             coordinatesArray.push({x:x1,y:y1});
-            // Main loop
+            // Основной цикл
             while (!((x1 == x2) && (y1 == y2))) {
                 var e2 = err << 1;
                 if (e2 > -dy) {
@@ -232,12 +232,30 @@ angular.module('fotm').register.service('arenaService', ["gettextCatalog", "rand
                     err += dx;
                     y1 += sy;
                 }
-                // Set coordinates
+                //Устанавливаем координаты
+                //Список всех пикселей по пути
                 coordinatesArray.push({x:x1,y:y1});
             }
 
-            console.log("coordinatesArray:"+JSON.stringify(coordinatesArray));
-            //Список всех пикселей по пути
+            for(var i=0;i<coordinatesArray.length;i++){
+                //определяем клетку на карте, которой принадлежит эта точка
+                var x=coordinatesArray[i].x;
+                var y=coordinatesArray[i].y;
+                var map = this.getMap();
+
+                //Исключаем варианты, когда точка находится ровно в уголке тайла, чтобы исключить диагонали
+                if(x%32===0 && y%32===0) continue;
+
+                var tile={
+                    x:Math.floor(x/32),
+                    y:Math.floor(y/32)
+                };
+                var mapIndex=this.map2Dto1D(tile);
+
+                if(map[mapIndex].wall) return true;
+            }
+            //Если стенок не встретилось
+            return false;
         },
         //Функция отвечает за перевод сообщений в логе
         localizeMessage: function(message) {

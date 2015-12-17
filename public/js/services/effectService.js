@@ -233,14 +233,14 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                         str+=" ";
                         str+=gettextCatalog.getString(
                             "Mana Regeneration increased to {{one}}%.",{
-                                one: (this.variant*15).toFixed(0)
+                                one: (this.variant*60).toFixed(0)
                             });
                         return str;
                     },
                     icon : function(){ return "url(../images/icons/abilities/MadeInHell.svg)"},
                     apply : function (owner, myTeam, enemyTeam) {
                         owner.magicImmune=true;
-                        owner.manaRegMod+=this.variant*0.1;
+                        owner.manaRegMod+=this.variant*0.6;
                     },
                     duration: function(){return 4+this.variant*2},
                     left : 0,
@@ -392,14 +392,14 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                         str+=" ";
                         str+=gettextCatalog.getString(
                             "Health Regeneration increased to {{one}}%.",{
-                                one: (this.variant*15).toFixed(0)
+                                one: (this.variant*60).toFixed(0)
                             });
                         return str;
                     },
                     icon : function(){ return "url(../images/icons/abilities/YouAintNoAngel.svg)"},
                     apply : function (owner, myTeam, enemyTeam) {
                         owner.physImmune=true;
-                        owner.healthRegMod+=this.variant*0.15;
+                        owner.healthRegMod+=this.variant*0.6;
                     },
                     duration: function(){return 4+this.variant*2},
                     left : 0,
