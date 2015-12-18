@@ -454,6 +454,8 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         var buffsForRemove = [];
         var debuffsForRemove = [];
 
+        self.battleTextBuffer = []; //Очистим буфер, т.к. в нём должно быть пусто перед применением бафов
+
         for(var i=0; i<self.buffs.length; i++){
             if(!self.buffs[i].infinite()) {
                 self.buffs[i].left--;
@@ -901,14 +903,16 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         var str = "";
 
         if(value===0) {
-            self.logBuffer.push(self.charName + " didn't take damage from '" + ability + "' of " + caster.charName + ", because immunity.");
+            self.logBuffer.push(self.charName + " didn't take damage from '" + ability.name + "' of " + caster.charName + ", because immunity.");
+            self.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: "Immune", crit: false});
             return false;
         }
 
         if(canDodge){
             if(self.checkDodge()){
-                self.logBuffer.push(self.charName + " dodged from '"+ability+"' of "+caster.charName);
+                self.logBuffer.push(self.charName + " dodged from '"+ability.name+"' of "+caster.charName);
                 self.playSound("dodge");
+                self.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: "Dodge", crit: false});
                 return false;
             }
         }
@@ -922,14 +926,14 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 for(var j=0;j<enemyTeam.length;j++){
                     if(enemyTeam[j].charName===sanctBuff.caster && !enemyTeam[j].isDead && enemyTeam[j].findEffect("Sanctuary")===-1) { //Во избежание бесконечной рекурсии нельзя переводить дамаг на того, у кого тоже есть Sanctuary
                         var sanctCaster = enemyTeam[j];
-                        sanctCaster.takeDamage(sanctValue, caster, ability+" (Sanctuary)", canBlock, canDodge, isCritical, myTeam, enemyTeam);
+                        sanctCaster.takeDamage(sanctValue, caster, {name: ability.name+" (Sanctuary)", icon: ability.icon, role: ability.role}, canBlock, canDodge, isCritical, myTeam, enemyTeam);
                     }
                 }
                 //На всякий случай проверяем, вдруг баф был украден
                 for(j=0;j<myTeam.length;j++){
                     if(myTeam[j].charName===sanctBuff.caster && !myTeam[j].isDead && myTeam[j].findEffect("Sanctuary")===-1) { //Во избежание бесконечной рекурсии нельзя переводить дамаг на того, у кого тоже есть Sanctuary
                         sanctCaster = myTeam[j];
-                        sanctCaster.takeDamage(sanctValue, caster, ability+" (Sanctuary)", canBlock, canDodge, isCritical, enemyTeam, myTeam);
+                        sanctCaster.takeDamage(sanctValue, caster, {name: ability.name+" (Sanctuary)", icon: ability.icon, role: ability.role}, canBlock, canDodge, isCritical, enemyTeam, myTeam);
                     }
                 }
             }
@@ -943,7 +947,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 //value-=fffValue; дамаг не уменьшается, а только возвращается атакующему
                 fffValue = fffValue*(1+self.spellPower);
                 if(!caster.isDead && caster.findEffect("Fight Fire With Fire")===-1) { //Во избежание бесконечной рекурсии нельзя переводить дамаг на того, у кого тоже есть Fight Fire With Fire
-                    caster.takeDamage(fffValue, self, "Fight Fire With Fire", true, true, isCritical, enemyTeam, myTeam);
+                    caster.takeDamage(fffValue, self, {name: "Fight Fire With Fire", icon: "url(../images/icons/abilities/FightFireWithFire.svg)", role: "malefic"}, true, true, isCritical, enemyTeam, myTeam);
                 }
             }
         }
@@ -960,11 +964,13 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
 
         self.curHealth -= value;
 
+        self.battleTextBuffer.push({type: "damage", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: value, crit: isCritical});
+
         str+=self.charName + " got "+value;
 
         if(blockedDamage>0) str+=" ("+blockedDamage+" blocked)";
         if(isCritical) str+= " CRITICAL";
-        str+=" damage from '"+ability+"' of "+caster.charName;
+        str+=" damage from '"+ability.name+"' of "+caster.charName;
         self.logBuffer.push(str);
 
         caster.afterDealingDamage(enemyTeam, myTeam); //У кастера срабатывает событие после нанесения урона
@@ -993,8 +999,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         else self.curHealth += value;
 
         //battleText
-        console.log("Take Heal сработал");
-        self.battleTextBuffer.push({type: "heal", icon: ability.icon, color: getAbilityColor(ability.role), text: value, crit: isCritical});
+        self.battleTextBuffer.push({type: "heal", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: value, crit: isCritical});
 
         if(self.charName===caster.charName){
             str+=self.charName + " healed for "+value;
@@ -1139,13 +1144,15 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
     };
 
     //Функция выполняет некие действия, если персонаж промазал
-    Character.prototype.afterMiss = function (myTeam, enemyTeam) {
+    Character.prototype.afterMiss = function (target, ability, myTeam, enemyTeam, doNotLog) {
         var self=this;
         var buffsForRemove=[];
         var debuffsForRemove=[];
         var currentEffect;
 
         self.playSound("miss");
+        if(!doNotLog) self.logBuffer.push(self.charName+" miss against "+target+" with '"+ability.name+"'");
+        self.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: self.charName, text: "Miss", crit: false});
 
         currentEffect = self.findEffect("Reign In Blood");
         if(currentEffect>-1){

@@ -185,7 +185,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                             physicalDamage=debuffer.applyCrit(physicalDamage);
                         }
                         physicalDamage=owner.applyResistance(physicalDamage, false);
-                        owner.takeDamage(physicalDamage, debuffer, this.name +" (DOT effect)", false, false, critical, myTeam, enemyTeam);
+                        owner.takeDamage(physicalDamage, debuffer, {name: this.name +" (DOT effect)", icon: this.icon(), role: this.role()}, false, false, critical, myTeam, enemyTeam);
                     },
                     duration: function(){return 4+this.variant},
                     left : 0,
@@ -504,7 +504,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                             magicDamage=debuffer.applyCrit(magicDamage);
                         }
                         magicDamage=owner.applyResistance(magicDamage, true);
-                        owner.takeDamage(magicDamage, debuffer, this.name +" (DOT effect)", false, false, critical, myTeam, enemyTeam);
+                        owner.takeDamage(magicDamage, debuffer, {name: this.name +" (DOT effect)", icon: this.icon(), role: this.role()}, false, false, critical, myTeam, enemyTeam);
                     },
                     duration: function(){return 12-this.variant},
                     left : 0,
@@ -824,7 +824,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                             magicDamage=debuffer.applyCrit(magicDamage);
                         }
                         magicDamage=owner.applyResistance(magicDamage, true);
-                        owner.takeDamage(magicDamage, debuffer, this.name, false, false, critical, myTeam, enemyTeam);
+                        owner.takeDamage(magicDamage, debuffer, {name: this.name, icon: this.icon(), role: this.role()}, false, false, critical, myTeam, enemyTeam);
                     },
                     duration: function(){return 12-this.variant},
                     left : 0,
@@ -888,7 +888,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                                 magicDamage = debuffer.applyCrit(magicDamage);
                             }
                             magicDamage = owner.applyResistance(magicDamage, true);
-                            owner.takeDamage(magicDamage, debuffer, this.name + " (DOT effect)", false, false, critical, myTeam, enemyTeam);
+                            owner.takeDamage(magicDamage, debuffer, {name: this.name +" (DOT effect)", icon: this.icon(), role: this.role()}, false, false, critical, myTeam, enemyTeam);
                         }
                         else {
                             magicDamage = (this.variant * 300) * (1 + debuffer.spellPower);
@@ -901,7 +901,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                                     magicDamage = debuffer.applyCrit(magicDamage);
                                 }
                                 magicDamage = nearbyAllies[i].applyResistance(magicDamage, true);
-                                if(nearbyAllies[i].takeDamage(magicDamage, debuffer, this.name+" (explosion)", true, true, critical, myTeam, enemyTeam)){
+                                if(nearbyAllies[i].takeDamage(magicDamage, debuffer, {name: this.name +" (explosion)", icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                     if(nearbyAllies[i].controlImmune) {
                                         owner.logBuffer.push(nearbyAllies[i].charName+" has immunity to control effects!");
                                     }
@@ -1204,7 +1204,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                             magicDamage=debuffer.applyCrit(magicDamage);
                         }
                         magicDamage=owner.applyResistance(magicDamage, true);
-                        owner.takeDamage(magicDamage, debuffer, this.name +" (DOT effect)", false, false, critical, myTeam, enemyTeam);
+                        owner.takeDamage(magicDamage, debuffer, {name: this.name +" (DOT effect)", icon: this.icon(), role: this.role()}, false, false, critical, myTeam, enemyTeam);
                     },
                     duration: function(){return 12-this.variant},
                     left : 0,
@@ -1238,7 +1238,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                             magicDamage=debuffer.applyCrit(magicDamage);
                         }
                         magicDamage=owner.applyResistance(magicDamage, true);
-                        owner.takeDamage(magicDamage, debuffer, this.name, false, false, critical, myTeam, enemyTeam);
+                        owner.takeDamage(magicDamage, debuffer, {name: this.name, icon: this.icon(), role: this.role()}, false, false, critical, myTeam, enemyTeam);
                     },
                     duration: function(){return 12-this.variant},
                     left : 0,
@@ -1291,7 +1291,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                             magicDamage=debuffer.applyCrit(magicDamage);
                         }
                         magicDamage=owner.applyResistance(magicDamage, true);
-                        owner.takeDamage(magicDamage, debuffer, this.name, false, false, critical, myTeam, enemyTeam);
+                        owner.takeDamage(magicDamage, debuffer, {name: this.name, icon: this.icon(), role: this.role()}, false, false, critical, myTeam, enemyTeam);
 
                         owner.attackPowerMod-=this.variant*0.01*this.stacks;
                         owner.spellPowerMod-=this.variant*0.01*this.stacks;

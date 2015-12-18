@@ -87,7 +87,7 @@
                         <div ng-repeat="char in myTeam.characters track by $index" class="char_tile battle-text" buffer="char.battleTextBuffer" ng-style="{'left' : char.position.x*32, 'top' : char.position.y*32, 'border-color' : char.battleColor, 'background-image' : 'url('+char.portrait+')'}" ng-if="!char.isDead" >
                             <div class="overlay" ng-class="{'myAbility': char.underAbility}" ng-mouseenter="setCharForArrow(char)" ng-mouseleave="resetArrow()" ng-click="castAbility(char)" ng-disabled="waitServ"></div>
                         </div>
-                        <div ng-repeat="char in enemyTeam.characters track by $index" class="char_tile" ng-style="{'left' : char.position.x*32, 'top' : char.position.y*32, 'border-color' : char.battleColor, 'background-image' : 'url('+char.portrait+')'}" ng-if="!(char.isDead || char.invisible)" >
+                        <div ng-repeat="char in enemyTeam.characters track by $index" class="char_tile battle-text" buffer="char.battleTextBuffer" ng-style="{'left' : char.position.x*32, 'top' : char.position.y*32, 'border-color' : char.battleColor, 'background-image' : 'url('+char.portrait+')'}" ng-if="!(char.isDead || char.invisible)" >
                             <div class="overlay" ng-class="{'enemyAbility': char.underAbility}" ng-mouseenter="setCharForArrow(char)" ng-mouseleave="resetArrow()" ng-click="castAbility(char)" ng-disabled="waitServ"></div>
                         </div>
                     </div>

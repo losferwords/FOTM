@@ -263,7 +263,7 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
                     for (var i = 0; i < enemies.length; i++) {
                         for (var j = 0; j < $scope.enemyTeam.characters.length; j++) {
                             if($scope.preparedAbility.name == "My Last Words") {
-                                if ($scope.enemyTeam.characters[j]._id == enemies[i]._id && (enemies[i].curHealth/enemies[i].maxHealth)<=0.3) {
+                                if ($scope.enemyTeam.characters[j]._id == enemies[i]._id && (enemies[i].curHealth/enemies[i].maxHealth)<=0.5) {
                                     $scope.enemyTeam.characters[j].underAbility = true;
                                 }
                             }
@@ -337,7 +337,7 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
         if ($scope.myTurn) {
             if(char._id == $scope.activeChar._id){ //Абилка доступна только тому, кто сейчас ходит
                 if(ability.name==="Void") return false;
-                if(ability.name==="Dyers Eve" && ($scope.activeChar.curHealth/$scope.activeChar.maxHealth)>0.3) return false;
+                if(ability.name==="Dyers Eve" && ($scope.activeChar.curHealth/$scope.activeChar.maxHealth)>0.5) return false;
                 if(ability.targetType()==="move" && char.immobilized) return false;
                 if(ability.cd==0){ //если она не на кулдауне
                     if(char.curEnergy-ability.energyCost()>0){ //на неё есть энергия
@@ -519,28 +519,6 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
             }
         }
     }
-
-    //Функция выводит весь боевой текст из буферов персонажей
-    /*
-    function showBattleText(){
-        for(var i=0;i<$scope.myTeam.characters.length;i++){
-            if ($scope.myTeam.characters[i].battleTextBuffer.length>0) {
-                for (var j = 0; j < $scope.myTeam.characters[i].battleTextBuffer.length; j++) {
-                    //log($scope.myTeam.characters[i].battleTextBuffer[j]);
-                }
-                $scope.myTeam.characters[i].battleTextBuffer = [];
-            }
-        }
-
-        for(i=0;i<$scope.enemyTeam.characters.length;i++){
-            if ($scope.enemyTeam.characters[i].battleTextBuffer.length>0) {
-                for (j = 0; j < $scope.enemyTeam.characters[i].battleTextBuffer.length; j++) {
-                    //log($scope.enemyTeam.characters[i].battleTextBuffer[j]);
-                }
-                $scope.enemyTeam.characters[i].battleTextBuffer = [];
-            }
-        }
-    }*/
 
     //Функция проигрывает звуки, пришедшие от противника
     function playSounds(){
@@ -971,18 +949,6 @@ angular.module('fotm').register.directive('autoscroll', function () {
     };
 });
 
-//Директива расположения надписи на полосках
-/*
-angular.module('fotm').register.directive('progressText', function () {
-    return function(scope, element, attr) {
-        var sp = element.find('span');
-        sp.css({
-            width: element[0].offsetWidth + 'px'
-        });
-    };
-});
-*/
-
 //Директива, отвечающая за рисование стрелок
 angular.module('fotm').register.directive("arrows", function(){
     return {
@@ -1073,53 +1039,93 @@ angular.module('fotm').register.directive("battleText", ['$interval', '$timeout'
             buffer: '='
         },
         link: function(scope, element, attrs){
+            var childCount=1; //Счётчик вылетевших сообщений
+            var createdElementsCount=0; //Количество созданных элементов
             //следим за изменением буфера
             scope.$watchCollection('buffer', function(newValue, oldValue) {
                 var buf = [];
-                if(newValue.length!==oldValue.length && newValue.length>0) {
-                    var childCount=0;
-                    buf = newValue.slice(0);
-                    console.log("buf: "+JSON.stringify(newValue));
+                var createdElements = [];
+                if(newValue.length===0){
+                    childCount=1;
+                    var childs=element.find('.battle-text-cont');
+                    if(childs.length>createdElementsCount){
+                        childs.remove();
+                    }
+                }
+                if(newValue.length>oldValue.length && newValue.length>0) {
+                    buf = newValue.slice();
+                    //Если старый массив ещё не очищен
+                    if(oldValue.length>0){
+                        for(var i=0;i<oldValue.length;i++){
+                            for(var j=0;j<newValue.length;j++){
+                                if(oldValue[i].caster===newValue[j].caster &&
+                                    oldValue[i].text===newValue[j].text &&
+                                    oldValue[i].icon===newValue[j].icon){
+                                    buf.splice(j,1);
+                                }
+                            }
+                        }
+                    }
 
                     createBattleText();
+
                     if(buf.length>0){
-                        var textInterval = $interval(createBattleText,3000);
+                        var textInterval = $interval(createBattleText,1000);
                     }
                     else {
                         $timeout(function(){
-                            console.log("buf.length=0: "+JSON.stringify(buf));
+                            for(var i=0;i<createdElements.length;i++){
+                                createdElements[i].remove();
+                                if(createdElementsCount>0) createdElementsCount--;
+                            }
                             scope.buffer=[];
-                            element.find('.battle-text-cont').remove();
-                            childCount=0;
                         },3000);
                     }
 
                     function createBattleText(){
                         if(buf.length>0){
-                            console.log("buf.length>0: "+JSON.stringify(buf));
-                            element.append("<div class='battle-text-cont child_"+childCount+"'><div class='battle-text-icon' style='background-image: "+buf[buf.length-1].icon+"; background-color: "+buf[buf.length-1].color+"'></div><span style='color: "+getTextTypeColor(buf[buf.length-1].type)+"'>"+buf[buf.length-1].text+"</span></div>");
+                            var isCritical = "";
+                            if(buf[buf.length-1].crit) isCritical="crit";
+
+                            element.append("<div class='battle-text-cont child_"+childCount+" "+isCritical+"'><div class='battle-text-icon' style='background-image: "+buf[buf.length-1].icon+"; background-color: "+buf[buf.length-1].color+"'></div><span style='color: "+getTextTypeColor(buf[buf.length-1].type)+"'>"+buf[buf.length-1].text+"</span></div>");
                             $timeout(function(){
                                 var childName='.battle-text-cont.child_'+childCount;
+                                createdElements.push(element.find(childName));
+                                createdElementsCount++;
                                 element.find(childName).css('opacity', 0);
-                                element.find(childName).css('top', -64);
-                                if((buf.length-1)%2===0) {
+                                var round=4*Math.floor(childCount/4);
+                                if((childCount-round)%4===0) {
+                                    element.find(childName).css('top', -32);
                                     element.find(childName).css('left', -32);
                                 }
-                                else {
+                                else if ((childCount-round)%3===0){
+                                    element.find(childName).css('top', 32);
+                                    element.find(childName).css('left', -32);
+                                }
+                                else if((childCount-round)%2===0) {
+                                    element.find(childName).css('top', 32);
                                     element.find(childName).css('left', 32);
                                 }
+                                else {
+                                    element.find(childName).css('top', -32);
+                                    element.find(childName).css('left', 32);
+                                }
+
                                 childCount++;
                             },100);
 
                             buf.pop();
                         }
                         else {
-                            console.log("buf.length=0: "+JSON.stringify(buf));
-
-                            scope.buffer=[];
-                            element.find('.battle-text-cont').remove();
-                            childCount=0;
-                            $interval.cancel(textInterval);
+                            $timeout(function(){
+                                scope.buffer=[];
+                                for(var i=0;i<createdElements.length;i++){
+                                    createdElements[i].remove();
+                                    if(createdElementsCount>0) createdElementsCount--;
+                                }
+                                textShow=false;
+                                $interval.cancel(textInterval);
+                            },3000);
                         }
                     }
                 }
@@ -1134,7 +1140,7 @@ angular.module('fotm').register.directive("battleText", ['$interval', '$timeout'
                         return "#ff0906";
                         break;
                     case "other":
-                        return "#ffc520";
+                        return "#000";
                         break;
                 }
             }

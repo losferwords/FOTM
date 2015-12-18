@@ -53,13 +53,12 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             }
                             physDamage=target.applyResistance(physDamage, false);
                             caster.playSound(this.name);
-                            if(target.takeDamage(physDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 caster.addBuff(effectService.effect("Strong Arm Of The Law", this.variant), caster.charName, myTeam, enemyTeam);
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -164,8 +163,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -207,7 +205,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             physDamage=target.applyResistance(physDamage, false);
 
                             caster.playSound(this.name);
-                            if(target.takeDamage(physDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 if(target.controlImmune) {
                                     caster.logBuffer.push(target.charName+" has immunity to control effects!");
                                 }
@@ -218,8 +216,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -297,15 +294,14 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             physDamage=target.applyResistance(physDamage, false);
 
                             caster.playSound(this.name);
-                            if(target.takeDamage(physDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 var newEffect=effectService.effect("The Punishment Due", this.variant);
                                 newEffect.bleedDamage=physDamage*this.variant*0.1;
                                 target.addDebuff(newEffect, caster.charName, myTeam, enemyTeam);
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -344,7 +340,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             physDamage=target.applyResistance(physDamage, false);
 
                             caster.playSound(this.name);
-                            if(target.takeDamage(physDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 if(target.controlImmune) {
                                     caster.logBuffer.push(target.charName+" has immunity to control effects!");
                                 }
@@ -354,7 +350,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                             caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
@@ -441,11 +437,10 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             physDamage=target.applyResistance(physDamage, false);
 
                             caster.playSound(this.name);
-                            target.takeDamage(physDamage, caster, this.name, true, true, critical, myTeam, enemyTeam);
+                            target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -485,13 +480,12 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             physDamage=target.applyResistance(physDamage, false);
 
                             caster.playSound(this.name);
-                            if(target.takeDamage(physDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 caster.addBuff(effectService.effect("Reign In Blood", this.variant), caster.charName, myTeam, enemyTeam);
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -540,11 +534,10 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                                     physDamage=caster.applyCrit(physDamage);
                                 }
                                 physDamage=nearbyEnemies[i].applyResistance(physDamage, false);
-                                nearbyEnemies[i].takeDamage(physDamage, caster, this.name, true, true, critical, myTeam, enemyTeam);
+                                nearbyEnemies[i].takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                             }
                             else {
-                                caster.afterMiss(myTeam, enemyTeam);
-                                caster.logBuffer.push(caster.charName+" miss against "+nearbyEnemies[i].charName+" with '"+this.name+"'");
+                                caster.afterMiss(nearbyEnemies[i].charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                             }
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
@@ -575,13 +568,13 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
 
                         if(caster.immobilized){
                             caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
-                            caster.afterMiss(myTeam, enemyTeam);
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
                             return;
                         }
                         //Пробуем сделать чардж, если не удалось, пишем в лог
                         if(!caster.charge(target, myTeam, enemyTeam)) {
                             caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
-                            caster.afterMiss(myTeam, enemyTeam);
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
                             return;
                         }
 
@@ -598,11 +591,10 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             physDamage=target.applyResistance(physDamage, false);
 
                             caster.playSound(this.name);
-                            target.takeDamage(physDamage, caster, this.name, true, true, critical, myTeam, enemyTeam);
+                            target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -695,7 +687,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     role : function() {return "slayer"},
                     desc: function() {
                         var str = gettextCatalog.getString(
-                            "Ability can be used only if character health is less than 30%. Heals up caster for {{one}} and increases Critical Chance for {{two}}%.",{
+                            "Ability can be used only if character health is less than 50%. Heals up caster for {{one}} and increases Critical Chance for {{two}}%.",{
                                 one: (300+this.variant*200).toFixed(0),
                                 two: (this.variant*20).toFixed(0)
                             });
@@ -803,11 +795,10 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             var totalDamage = physDamage+magicDamage;
 
                             caster.playSound(this.name);
-                            target.takeDamage(totalDamage, caster, this.name, true, true, critical, myTeam, enemyTeam);
+                            target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -852,11 +843,10 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             var totalDamage = physDamage+magicDamage;
 
                             caster.playSound(this.name);
-                            target.takeDamage(totalDamage, caster, this.name, true, true, critical, myTeam, enemyTeam);
+                            target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -934,7 +924,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             magicDamage=target.applyResistance(magicDamage, true);
 
                             caster.playSound(this.name);
-                            if(target.takeDamage(magicDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 if(target.controlImmune) {
                                     caster.logBuffer.push(target.charName+" has immunity to control effects!");
                                 }
@@ -944,8 +934,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -1039,7 +1028,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     role : function() {return "redeemer"},
                     desc: function() {
                         return gettextCatalog.getString(
-                            "This ability can be used only against characters with less than 30% health. Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage.",{
+                            "This ability can be used only against characters with less than 50% health. Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage.",{
                                 one: (this.variant*20+100).toFixed(0),
                                 two: (400+this.variant*100).toFixed(0)
                             });
@@ -1063,11 +1052,10 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             var totalDamage = physDamage+magicDamage;
 
                             caster.playSound(this.name);
-                            target.takeDamage(totalDamage, caster, this.name, true, true, critical, myTeam, enemyTeam);
+                            target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -1147,13 +1135,12 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             physDamage=target.applyResistance(physDamage, false);
 
                             caster.playSound(this.name);
-                            if(target.takeDamage(physDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 target.addDebuff(effectService.effect("Inject The Venom", this.variant), caster.charName, myTeam, enemyTeam);
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -1229,7 +1216,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             physDamage=target.applyResistance(physDamage, false);
 
                             caster.playSound(this.name);
-                            if(target.takeDamage(physDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 if(target.controlImmune) {
                                     caster.logBuffer.push(target.charName+" has immunity to control effects!");
                                 }
@@ -1239,8 +1226,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -1273,13 +1259,13 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
 
                         if(caster.immobilized){
                             caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
-                            caster.afterMiss(myTeam, enemyTeam);
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
                             return;
                         }
                         //Пробуем сделать чардж, если не удалось, пишем в лог
                         if(!caster.charge(target, myTeam, enemyTeam)) {
                             caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
-                            caster.afterMiss(myTeam, enemyTeam);
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
                             return;
                         }
 
@@ -1295,7 +1281,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             physDamage=target.applyResistance(physDamage, false);
 
                             caster.playSound(this.name);
-                            if(target.takeDamage(physDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 if(target.controlImmune) {
                                     caster.logBuffer.push(target.charName+" has immunity to control effects!");
                                 }
@@ -1305,8 +1291,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -1418,7 +1403,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             physDamage=target.applyResistance(physDamage, false);
 
                             caster.playSound(this.name);
-                            if(target.takeDamage(physDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 if(target.controlImmune) {
                                     caster.logBuffer.push(target.charName+" has immunity to control effects!");
                                 }
@@ -1428,8 +1413,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -1516,13 +1500,12 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             var totalDamage = physDamage+magicDamage;
 
                             caster.playSound(this.name);
-                            if(target.takeDamage(totalDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 caster.addBuff(effectService.effect("Stargazer", this.variant), caster.charName, myTeam, enemyTeam);
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -1596,14 +1579,12 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                                     }
                                 }
                                 else {
-                                    caster.afterMiss(myTeam, enemyTeam);
-                                    caster.logBuffer.push(caster.charName + " miss against " + nearbyEnemies[i].charName + " with '" + this.name+"'");
+                                    caster.afterMiss(nearbyEnemies[i].charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                                 }
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -1642,8 +1623,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             target.addDebuff(effectService.effect("Prophecy", this.variant), caster.charName, myTeam, enemyTeam);
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -1723,11 +1703,10 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             magicDamage=target.applyResistance(magicDamage, true);
 
                             caster.playSound(this.name);
-                            target.takeDamage(magicDamage, caster, this.name, true, true, critical, myTeam, enemyTeam);
+                            target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -1805,8 +1784,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             target.addDebuff(effectService.effect("Caught Somewhere In Time", this.variant), caster.charName, myTeam, enemyTeam);
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -1857,11 +1835,10 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                                 magicDamage=nearbyEnemies[i].applyResistance(magicDamage, true);
 
                                 var totalDamage = physDamage+magicDamage;
-                                nearbyEnemies[i].takeDamage(totalDamage, caster, this.name, true, true, critical, myTeam, enemyTeam);
+                                nearbyEnemies[i].takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                             }
                             else {
-                                caster.afterMiss(myTeam, enemyTeam);
-                                caster.logBuffer.push(caster.charName+" miss against "+nearbyEnemies[i].charName+" with '"+this.name+"'");
+                                caster.afterMiss(nearbyEnemies[i].charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                             }
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
@@ -1904,7 +1881,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             magicDamage=target.applyResistance(magicDamage, true);
 
                             caster.playSound(this.name);
-                            if(target.takeDamage(magicDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 if(target.controlImmune) {
                                     caster.logBuffer.push(target.charName+" has immunity to control effects!");
                                 }
@@ -1914,8 +1891,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -1956,7 +1932,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             magicDamage = target.applyResistance(magicDamage, true);
 
                             caster.playSound(this.name);
-                            target.takeDamage(magicDamage, caster, this.name, true, true, critical, myTeam, enemyTeam);
+                            target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
 
                             //АОЕ
                             magicDamage = (1250 - this.variant * 150) * (1 + caster.spellPower);
@@ -1970,18 +1946,16 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                                             magicDamage = caster.applyCrit(magicDamage);
                                         }
                                         magicDamage = nearbyEnemies[i].applyResistance(magicDamage, true);
-                                        nearbyEnemies[i].takeDamage(magicDamage, caster, this.name + " (area effect)", true, true, critical, myTeam, enemyTeam);
+                                        nearbyEnemies[i].takeDamage(magicDamage, caster, {name: this.name + " (area effect)", icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                                     }
                                     else {
-                                        caster.afterMiss(myTeam, enemyTeam);
-                                        caster.logBuffer.push(caster.charName + " miss against " + nearbyEnemies[i].charName + " with '" + this.name+"'");
+                                        caster.afterMiss(nearbyEnemies[i].charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                                     }
                                 }
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -2025,8 +1999,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             target.addDebuff(effectService.effect("Thank God For The Bomb", this.variant), caster.charName, myTeam, enemyTeam);
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -2203,13 +2176,12 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             var totalDamage = physDamage+magicDamage;
 
                             caster.playSound(this.name);
-                            if(target.takeDamage(totalDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 caster.takeMana(totalDamage, caster, this.name, critical);
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -2346,11 +2318,10 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                                 magicDamage=target.applyResistance(magicDamage, true);
 
                                 caster.playSound(this.name);
-                                target.takeDamage(magicDamage, caster, this.name, true, true, critical, myTeam, enemyTeam);
+                                target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                             }
                             else {
-                                caster.afterMiss(myTeam, enemyTeam);
-                                caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                             }
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
@@ -2467,11 +2438,10 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                                 }
                                 magicDamage=nearbyEnemies[i].applyResistance(magicDamage, true);
 
-                                nearbyEnemies[i].takeDamage(magicDamage, caster, this.name, true, true, critical, myTeam, enemyTeam);
+                                nearbyEnemies[i].takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                             }
                             else {
-                                caster.afterMiss(myTeam, enemyTeam);
-                                caster.logBuffer.push(caster.charName+" miss against "+nearbyEnemies[i].charName+" with '"+this.name+"'");
+                                caster.afterMiss(nearbyEnemies[i].charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                             }
                         }
 
@@ -2568,13 +2538,12 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             caster.playSound(this.name);
                             var totalDamage = physDamage+magicDamage;
 
-                            if(target.takeDamage(totalDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 caster.takeHeal(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, critical);
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -2617,13 +2586,12 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             magicDamage = target.applyResistance(magicDamage, true);
 
                             caster.playSound(this.name);
-                            if(target.takeDamage(magicDamage, caster, this.name, true, true, critical, myTeam, enemyTeam)){
+                            if(target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                                 target.addDebuff(effectService.effect("Fear Of The Dark", this.variant), caster.charName, myTeam, enemyTeam);
                             }
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -2664,8 +2632,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             target.addDebuff(effectService.effect("Creeping Death", this.variant), caster.charName, myTeam, enemyTeam);
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -2707,8 +2674,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             target.addDebuff(effectService.effect("Spreading The Disease", this.variant), caster.charName, myTeam, enemyTeam);
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -2786,8 +2752,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             target.addDebuff(effectService.effect("Children Of The Damned", this.variant), caster.charName, myTeam, enemyTeam);
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -2831,8 +2796,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                                 target.addDebuff(effectService.effect("Locked And Loaded", this.variant), caster.charName, myTeam, enemyTeam);
                             }
                             else {
-                                caster.afterMiss(myTeam, enemyTeam);
-                                caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                             }
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
@@ -2878,10 +2842,6 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             var physDamage = randomService.randomInt(caster.minDamage*(0.1+this.variant*0.06)*totalEffects, caster.maxDamage*(0.1+this.variant*0.06)*totalEffects);
                             var magicDamage = (40+this.variant*25)*(1+caster.spellPower)*totalEffects;
 
-                            console.log("totalEffects="+totalEffects);
-                            console.log("physDamage="+physDamage);
-                            console.log("magicDamage="+magicDamage);
-
                             var critical = caster.checkCrit();
                             if(critical){
                                 physDamage=caster.applyCrit(physDamage);
@@ -2893,11 +2853,10 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             caster.playSound(this.name);
                             var totalDamage = physDamage+magicDamage;
 
-                            target.takeDamage(totalDamage, caster, this.name, true, true, critical, myTeam, enemyTeam);
+                            target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                         }
                         else {
-                            caster.afterMiss(myTeam, enemyTeam);
-                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
+                            caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },

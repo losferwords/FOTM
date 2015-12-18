@@ -606,7 +606,6 @@ body .tooltip {
 
 .map_tile {
   position: absolute;
-  z-index: 1000;
   width: 32px;
   height: 32px;
   background-size: 100% 100%;
@@ -615,7 +614,6 @@ body .tooltip {
 
 .char_tile {
   position: absolute;
-  z-index: 1001;
   width: 32px;
   height: 32px;
   border: 3px solid #000;
@@ -633,7 +631,6 @@ body .tooltip {
   right: 0;
   opacity: 0.5;
   background-color: transparent;
-  z-index: 1002;
 }
 
 .overlay:hover {
@@ -666,14 +663,15 @@ body .tooltip {
 
 .char_tile .battle-text-cont {
   position: absolute;
-  font-size: 14px;
   width: 65px;
   color: #000;
   top: 0;
   left: 0;
   opacity: 1;
-  -webkit-transition: top 2s ease-out, left 2s ease-in, opacity 4s cubic-bezier(1.000, 0.010, 1.000, 0.010);
-  transition: top 2s ease-out, left 2s ease-in, opacity 4s cubic-bezier(1.000, 0.010, 1.000, 0.010);
+  pointer-events: none;
+  z-index: 1;
+  -webkit-transition: top 2s ease-out, left 2s ease-in, opacity 3s cubic-bezier(1.000, 0.010, 1.000, 0.010);
+  transition: top 2s ease-out, left 2s ease-in, opacity 3s cubic-bezier(1.000, 0.010, 1.000, 0.010);
 }
 
 .char_tile .battle-text-cont .battle-text-icon {
@@ -689,6 +687,21 @@ body .tooltip {
   vertical-align: middle;
   width: 40px;
   text-align: left;
+  font-size: 14px;
+}
+
+.char_tile .battle-text-cont.crit {
+  width: 75px;
+}
+
+.char_tile .battle-text-cont.crit .battle-text-icon {
+  width: 25px;
+  height: 25px;
+}
+
+.char_tile .battle-text-cont.crit span {
+  width: 45px;
+  font-size: 16px;
 }
 
 .control_btns {
