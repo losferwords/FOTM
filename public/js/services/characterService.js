@@ -268,7 +268,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 maxDamage: 800,
                 basicHitChance: 0.05,
                 basicMaxEnergy: 50,
-                basicDodgeChance: 0.45,
+                basicDodgeChance: 0.045,
                 basicSpellPower: 0.05,
                 range: 3,
                 sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"},{gem: "Void"},{gem: "Void"},{gem: "Void"}]
