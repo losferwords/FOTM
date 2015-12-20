@@ -249,11 +249,11 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
             //активируем новую после проверки
             if($scope.checkAbilityForUse($scope.activeChar.abilities[index],$scope.activeChar)) {
                 $scope.preparedAbility = $scope.activeChar.abilities[index];
+                resetCharOverlays();
+                mapUpdate();
                 if ($scope.preparedAbility.targetType() == "self") {
                     $scope.preparedAbility.cast($scope.activeChar, $scope.activeChar, $scope.myTeam.characters, $scope.enemyTeam.characters);
                     $scope.preparedAbility = undefined;
-                    resetCharOverlays();
-                    mapUpdate();
                     mainSocket.emit("updateTeams", $rootScope.currentBattle.room, $scope.myTeam.characters, $scope.enemyTeam.characters);
                     $scope.waitServ = true;
                 }
@@ -407,20 +407,22 @@ function ArenaController($scope, $rootScope, $location, $interval, character, ar
 
     //Функция очищает карту и находит точки для передвижения
     function mapUpdate () {
-        //сбрасываем окраску overlay для карты
-        for(var j=0;j<$scope.map.length;j++){
-            $scope.map[j].move=false;
-        }
+        $timeout(function(){
+            //сбрасываем окраску overlay для карты
+            for(var j=0;j<$scope.map.length;j++){
+                $scope.map[j].move=false;
+            }
 
-        if($scope.myTurn) {
-            if($scope.activeChar.canMove()) {
-                //Находим точки для движения
-                var movePoints = $scope.activeChar.findMoves($scope.myTeam.characters, $scope.enemyTeam.characters, 1);
-                for (var i = 0; i < movePoints.length; i++) {
-                    $scope.map[arenaService.map2Dto1D(movePoints[i])].move = true;
+            if($scope.myTurn) {
+                if($scope.activeChar.canMove()) {
+                    //Находим точки для движения
+                    var movePoints = $scope.activeChar.findMoves($scope.myTeam.characters, $scope.enemyTeam.characters, 1);
+                    for (var i = 0; i < movePoints.length; i++) {
+                        $scope.map[arenaService.map2Dto1D(movePoints[i])].move = true;
+                    }
                 }
             }
-        }
+        },10);
     }
 
     //таймер хода для игрока

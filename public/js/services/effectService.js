@@ -372,7 +372,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     apply : function (owner, myTeam, enemyTeam) {
                         owner.stunned=true;
                     },
-                    duration: function(){return 3+this.variant},
+                    duration: function(){return 2+this.variant},
                     left : 0,
                     stacks: 0,
                     stacked: function() {return false},
@@ -1158,12 +1158,13 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     variant: variant,
                     role : function(){ return "cleric"},
                     desc: function() {
-                        return gettextCatalog.getString("Immune to physical and magical attacks.");
+                        return gettextCatalog.getString("Immune to all damage and control.");
                     },
                     icon : function(){ return "url(../images/icons/abilities/HeavenCanWait.svg)"},
                     apply : function (owner, myTeam, enemyTeam) {
                         owner.physImmune=true;
                         owner.magicImmune=true;
+                        owner.controlImmune=true;
                     },
                     duration: function(){return 4+this.variant},
                     left : 0,

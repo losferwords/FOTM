@@ -615,7 +615,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     role : function() {return "slayer"},
                     desc: function() {
                         var str = gettextCatalog.getString(
-                            "Calls to hell and becomes immune to magical attacks");
+                            "Calls to hell and becomes immune to magical damage");
                         str+=" ";
                         str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
                         str+=" ";
@@ -734,7 +734,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         str+=" ";
                         str+= gettextCatalog.getString(
                             "Restores {{one}} energy.",{
-                                one: (100+this.variant*100).toFixed(0)
+                                one: (100+this.variant*150).toFixed(0)
                             });
                         str+=" ";
                         str+= gettextCatalog.getString(
@@ -748,7 +748,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         this.cd=this.cooldown();
                         caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
                         caster.playSound(this.name);
-                        caster.takeEnergy(100+this.variant*100, caster, this.name, false);
+                        caster.takeEnergy(100+this.variant*150, caster, this.name, false);
                         caster.addBuff(effectService.effect("I Dont Wanna Stop", this.variant), caster.charName, myTeam, enemyTeam);
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -772,8 +772,8 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     desc: function() {
                         return gettextCatalog.getString(
                             "Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage.",{
-                                one: ((6-this.variant)*10+80).toFixed(0),
-                                two: (600+this.variant*70).toFixed(0)
+                                one: ((6-this.variant)*10+60).toFixed(0),
+                                two: (400+this.variant*50).toFixed(0)
                             });
                     },
                     icon : function() { return "url(../images/icons/abilities/ShotDownInFlames.svg)"},
@@ -782,8 +782,8 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         caster.spendMana(this.manaCost());
                         this.cd=this.cooldown();
                         if(caster.checkHit()){
-                            var physDamage = randomService.randomInt(caster.minDamage*(0.8+(6-this.variant)*0.1), caster.maxDamage*(0.8+(6-this.variant)*0.1));
-                            var magicDamage = (600+this.variant*70)*(1+caster.spellPower);
+                            var physDamage = randomService.randomInt(caster.minDamage*(0.6+(6-this.variant)*0.1), caster.maxDamage*(0.6+(6-this.variant)*0.1));
+                            var magicDamage = (400+this.variant*50)*(1+caster.spellPower);
                             var critical = caster.checkCrit();
                             if(critical){
                                 physDamage=caster.applyCrit(physDamage);
@@ -821,7 +821,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         return gettextCatalog.getString(
                             "Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage.",{
                                 one: (this.variant*10+90).toFixed(0),
-                                two: (400+this.variant*60).toFixed(0)
+                                two: (300+this.variant*50).toFixed(0)
                             });
                     },
                     icon : function() { return "url(../images/icons/abilities/ElectricEye.svg)"},
@@ -831,7 +831,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         this.cd=this.cooldown();
                         if(caster.checkHit()){
                             var physDamage = randomService.randomInt(caster.minDamage*(0.9+this.variant*0.1), caster.maxDamage*(0.9+this.variant*0.1));
-                            var magicDamage = (400+this.variant*60)*(1+caster.spellPower);
+                            var magicDamage = (300+this.variant*50)*(1+caster.spellPower);
                             var critical = caster.checkCrit();
                             if(critical){
                                 physDamage=caster.applyCrit(physDamage);
@@ -940,7 +940,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     },
                     targetType : function() { return "enemy"},
                     range : function(){return 3},
-                    duration: function(){return 3+this.variant},
+                    duration: function(){return 2+this.variant},
                     energyCost : function(){return 150+this.variant*100},
                     manaCost : function(){return 200+this.variant*100},
                     cooldown : function(){return 6+this.variant*2},
@@ -955,7 +955,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     role : function() {return "redeemer"},
                     desc: function() {
                         var str = gettextCatalog.getString(
-                            "Up in the air and becomes immune to physical attacks");
+                            "Up in the air and becomes immune to physical damage");
                         str+=" ";
                         str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
                         str+=" ";
@@ -2474,7 +2474,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     role : function() {return "cleric"},
                     desc: function() {
                         var str = gettextCatalog.getString(
-                            "Cast on ally target. Removes all debuffs from target and makes it immune to physical and magical attacks.");
+                            "Cast on ally target. Removes all debuffs from target and makes it immune to all damage and control.");
                         str+=" ";
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
