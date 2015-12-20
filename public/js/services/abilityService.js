@@ -371,7 +371,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     variant: 3,
                     role : function() {return "sentinel"},
                     desc: function() {
-                        return gettextCatalog.getString("Cast on ally target. Removes 3 random negative effects, that cause periodic damage. Restore {{one}} health.",{one: (100+this.variant*100).toFixed(0)});
+                        return gettextCatalog.getString("Cast on ally target. Removes 3 random negative effects, that cause periodic damage. Restore {{one}} health.",{one: (100+this.variant*150).toFixed(0)});
                     },
                     icon : function() { return "url(../images/icons/abilities/NewFaith.svg)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
@@ -391,7 +391,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             }
                         }
 
-                        var heal=(100+this.variant*100)*(1+caster.spellPower);
+                        var heal=(100+this.variant*150)*(1+caster.spellPower);
                         var critical = caster.checkCrit();
                         if (critical) {
                             heal = caster.applyCrit(heal);
@@ -2474,7 +2474,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     role : function() {return "cleric"},
                     desc: function() {
                         var str = gettextCatalog.getString(
-                            "Cast on ally target. Removes all debuffs from target and makes it immune to physical and magical attacks. This ability also stuns this target.");
+                            "Cast on ally target. Removes all debuffs from target and makes it immune to physical and magical attacks.");
                         str+=" ";
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
@@ -2803,10 +2803,10 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     },
                     targetType : function() { return "ally&enemy"},
                     range : function(){return 3},
-                    duration: function(){return 4+this.variant*3},
+                    duration: function(){return 4+this.variant*2},
                     energyCost : function(){return 50+this.variant*50},
                     manaCost : function(){return 100+this.variant*50},
-                    cooldown : function(){return 16-this.variant*2},
+                    cooldown : function(){return 20+this.variant*2},
                     needWeapon : function() {return false},
                     cd : 0
                 };break;

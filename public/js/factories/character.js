@@ -190,7 +190,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         }
 
         self.basicHealth = 10000;
-        self.basicHitChance = 0.7; //ВАЖНО ПОТОМ УБРАТЬ
+        self.basicHitChance = 0.8; //ВАЖНО ПОТОМ УБРАТЬ
         self.basicEnergy = 1000;
         self.basicMana = 9000;
 

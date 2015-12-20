@@ -1158,17 +1158,12 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     variant: variant,
                     role : function(){ return "cleric"},
                     desc: function() {
-                        var str = gettextCatalog.getString(
-                            "Immune to physical and magical attacks.");
-                        str += "<br>";
-                        str += gettextCatalog.getString("Stunned. Skip next turn.");
-                        return str;
+                        return gettextCatalog.getString("Immune to physical and magical attacks.");
                     },
                     icon : function(){ return "url(../images/icons/abilities/HeavenCanWait.svg)"},
                     apply : function (owner, myTeam, enemyTeam) {
                         owner.physImmune=true;
                         owner.magicImmune=true;
-                        owner.stunned=true;
                     },
                     duration: function(){return 4+this.variant},
                     left : 0,
@@ -1376,7 +1371,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     icon : function(){ return "url(../images/icons/abilities/LockedAndLoaded.svg)"},
                     apply : function (owner, myTeam, enemyTeam) {
                     },
-                    duration: function(){return 4+this.variant*3},
+                    duration: function(){return 4+this.variant*2},
                     left : 0,
                     stacks: 0,
                     stacked: function() {return false},
