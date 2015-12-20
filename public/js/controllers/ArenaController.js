@@ -245,14 +245,13 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
                     mapUpdate();
                     return false;
                 }
+                //Сбросим передвижение, если была выбрана абилка Speed Of Light
+                if($scope.preparedAbility.name == "Speed Of Light") {
+                    mapUpdate();
+                }
             }
             //активируем новую после проверки
             if($scope.checkAbilityForUse($scope.activeChar.abilities[index],$scope.activeChar)) {
-                //Сбросим передвижение, если была выбрана абилка Speed Of Light
-                if($scope.preparedAbility.name == "Speed Of Light") {
-                    resetCharOverlays();
-                    mapUpdate();
-                }
                 $scope.preparedAbility = $scope.activeChar.abilities[index];
                 if ($scope.preparedAbility.targetType() == "self") {
                     $scope.preparedAbility.cast($scope.activeChar, $scope.activeChar, $scope.myTeam.characters, $scope.enemyTeam.characters);
