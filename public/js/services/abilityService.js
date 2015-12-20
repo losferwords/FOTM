@@ -2678,7 +2678,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     },
                     targetType : function() { return "enemy"},
                     range : function(){return 3},
-                    duration: function(){return 12+this.variant},
+                    duration: function(){return 6+this.variant},
                     energyCost : function(){return 150+this.variant*50},
                     manaCost : function(){return 300+this.variant*100},
                     cooldown : function(){return  8-this.variant},

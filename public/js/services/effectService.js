@@ -1301,7 +1301,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                             }
                         }
                     },
-                    duration: function(){return 12+this.variant},
+                    duration: function(){return 6+this.variant},
                     left : 0,
                     stacks: 0,
                     stacked: function() {return true},

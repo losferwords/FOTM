@@ -65,7 +65,7 @@ schema.statics.create = function(userId, callback){
         },
         function (deletedTeam, callback) {
             //создадим новую dummy-тиму
-            var dummyTeam = new Team({teamName: "newTeam_"+userId, _user: userId, souls: {red: 8, green: 8, blue: 8}});
+            var dummyTeam = new Team({teamName: "newTeam_"+userId, _user: userId, souls: {red: 16, green: 16, blue: 16}});
             dummyTeam.save(function (err) {
                 if (err) return callback(err);
                 callback(null, dummyTeam);
