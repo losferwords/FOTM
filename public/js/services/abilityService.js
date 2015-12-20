@@ -405,7 +405,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     duration: function(){return 0},
                     energyCost : function(){return 100+this.variant*50},
                     manaCost : function(){return 150+this.variant*100},
-                    cooldown : function(){return 12+this.variant},
+                    cooldown : function(){return 8+this.variant},
                     needWeapon : function() {return false},
                     cd : 0
                 };break;
@@ -1297,7 +1297,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     },
                     targetType : function() { return "enemy"},
                     range : function(){return 2},
-                    duration: function(){return 5+this.variant*2},
+                    duration: function(){return 7+this.variant},
                     energyCost : function(){return 150+this.variant*100},
                     manaCost : function(){return 100+this.variant*100},
                     cooldown : function(){return 15+this.variant*2},
@@ -1420,9 +1420,9 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     targetType : function() { return "enemy"},
                     range : function(){return 1},
                     duration: function(){return 4+this.variant},
-                    energyCost : function(){return 150+this.variant*150},
-                    manaCost : function(){return 200+this.variant*75},
-                    cooldown : function(){return 15+this.variant*2},
+                    energyCost : function(){return 100+this.variant*100},
+                    manaCost : function(){return 150+this.variant*75},
+                    cooldown : function(){return 12+this.variant*2},
                     needWeapon : function() {return true},
                     cd : 0
                 };break;
@@ -1807,9 +1807,9 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     role : function() {return "malefic"},
                     desc: function() {
                         return gettextCatalog.getString(
-                            "Malefic staff transforms into the burning tree. Deals {{one}}% of weapon damage and {{two}} magical damage to all enemies in 1 cell radius.",{
-                                one: (this.variant*10+70).toFixed(0),
-                                two: (100+this.variant*70).toFixed(0)
+                            "Malefic staff transforms into the burning tree. Deals {{one}}% of weapon damage and {{two}} magical damage to all enemies in 2 cell radius.",{
+                                one: (this.variant*10+80).toFixed(0),
+                                two: (150+this.variant*70).toFixed(0)
                             });
                     },
                     icon : function() { return "url(../images/icons/abilities/FamilyTree.svg)"},
@@ -1819,11 +1819,11 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         this.cd=this.cooldown();
                         caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
 
-                        var physDamage = randomService.randomInt(caster.minDamage*(this.variant*0.1+0.7), caster.maxDamage*(this.variant*0.1+0.7));
-                        var magicDamage = (100+this.variant*70)*(1+caster.spellPower);
+                        var physDamage = randomService.randomInt(caster.minDamage*(this.variant*0.1+0.8), caster.maxDamage*(this.variant*0.1+0.8));
+                        var magicDamage = (150+this.variant*70)*(1+caster.spellPower);
 
                         caster.playSound(this.name);
-                        var nearbyEnemies = caster.findEnemies(enemyTeam, 1);
+                        var nearbyEnemies = caster.findEnemies(enemyTeam, 2);
                         for (var i = 0; i < nearbyEnemies.length; i++) {
                             if(caster.checkHit()){
                                 var critical = caster.checkCrit();
@@ -2132,10 +2132,10 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         target.addBuff(effectService.effect("Fight Fire With Fire", this.variant), caster.charName, myTeam, enemyTeam);
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
-                    targetType : function() { return "self"},
-                    range : function(){return 0},
-                    duration: function(){return 7+this.variant},
-                    energyCost : function(){return 125+this.variant*75},
+                    targetType : function() { return "ally"},
+                    range : function(){return 3},
+                    duration: function(){return 10+this.variant},
+                    energyCost : function(){return 125+this.variant*50},
                     manaCost : function(){return 150+this.variant*50},
                     cooldown : function(){return 13+this.variant},
                     needWeapon : function() {return false},
@@ -2487,9 +2487,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
                         caster.playSound(this.name);
 
-                        for(var i=0;i<this.variant;i++) {
-                            target.removeAllDebuffs(myTeam, enemyTeam);
-                        }
+                        target.removeAllDebuffs(myTeam, enemyTeam);
 
                         target.addBuff(effectService.effect("Heaven Can Wait", this.variant), caster.charName, myTeam, enemyTeam);
                         caster.afterCast(this.name, myTeam, enemyTeam);

@@ -577,7 +577,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     apply : function (owner, myTeam, enemyTeam) {
                         owner.immobilized=true;
                     },
-                    duration: function(){return 5+this.variant*2},
+                    duration: function(){return 7+this.variant},
                     left : 0,
                     stacks: 0,
                     stacked: function() {return false},
@@ -1058,7 +1058,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     icon : function(){ return "url(../images/icons/abilities/FightFireWithFire.svg)"},
                     apply : function (owner, myTeam, enemyTeam) {
                     },
-                    duration: function(){return 7+this.variant},
+                    duration: function(){return 10+this.variant},
                     left : 0,
                     stacks: 0,
                     stacked: function() {return false},
