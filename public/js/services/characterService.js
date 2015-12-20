@@ -859,7 +859,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                     case 'prophet' : totalAbilities=abilities['sentinel'].concat(abilities['slayer'],abilities['redeemer'],abilities['ripper'],abilities['malefic'],abilities['cleric'],abilities['heretic']); break;
                     case 'malefic' : totalAbilities=abilities['sentinel'].concat(abilities['slayer'],abilities['redeemer'],abilities['ripper'],abilities['prophet'],abilities['cleric'],abilities['heretic']); break;
                     case 'cleric' : totalAbilities=abilities['sentinel'].concat(abilities['slayer'],abilities['redeemer'],abilities['ripper'],abilities['prophet'],abilities['malefic'],abilities['heretic']); break;
-                    case 'heretic' : totalAbilities=abilities['slayer'].concat(abilities['slayer'],abilities['redeemer'],abilities['ripper'],abilities['prophet'],abilities['malefic'],abilities['cleric']); break;
+                    case 'heretic' : totalAbilities=abilities['sentinel'].concat(abilities['slayer'],abilities['redeemer'],abilities['ripper'],abilities['prophet'],abilities['malefic'],abilities['cleric']); break;
                 } break;
             case 'cambion' :
                 switch(role) {
