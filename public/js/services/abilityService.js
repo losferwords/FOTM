@@ -2051,8 +2051,8 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     role : function() {return "malefic"},
                     desc: function() {
                         var str = gettextCatalog.getString("Cast on ally target. Every turn restores {{one}} health and burns {{two}} mana.", {
-                            one: (this.variant*100).toFixed(0),
-                            two: (this.variant*75).toFixed(0)
+                            one: (this.variant*80).toFixed(0),
+                            two: (this.variant*60).toFixed(0)
                     });
                     str+=" ";
                     str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});

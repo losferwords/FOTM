@@ -981,8 +981,8 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     role : function(){ return "malefic"},
                     desc: function() {
                         return gettextCatalog.getString("Every turn restores {{one}} health and burns {{two}} mana.", {
-                            one: (this.variant*100).toFixed(0),
-                            two: (this.variant*75).toFixed(0)
+                            one: (this.variant*80).toFixed(0),
+                            two: (this.variant*60).toFixed(0)
                         });
                     },
                     icon : function(){ return "url(../images/icons/abilities/Cauterization.svg)"},
@@ -992,8 +992,8 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                             if (myTeam[i].charName === this.caster) buffer = myTeam[i];
                         }
 
-                        var heal = (this.variant*100)*(1+buffer.spellPower);
-                        var manaSpend = (this.variant*75).toFixed(0);
+                        var heal = (this.variant*80)*(1+buffer.spellPower);
+                        var manaSpend = (this.variant*60).toFixed(0);
 
                         var critical = buffer.checkCrit();
                         if (critical) {
