@@ -248,11 +248,16 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
             }
             //активируем новую после проверки
             if($scope.checkAbilityForUse($scope.activeChar.abilities[index],$scope.activeChar)) {
+                //Сбросим передвижение, если была выбрана абилка Speed Of Light
+                if($scope.preparedAbility.name == "Speed Of Light") {
+                    resetCharOverlays();
+                    mapUpdate();
+                }
                 $scope.preparedAbility = $scope.activeChar.abilities[index];
-                resetCharOverlays();
-                mapUpdate();
                 if ($scope.preparedAbility.targetType() == "self") {
                     $scope.preparedAbility.cast($scope.activeChar, $scope.activeChar, $scope.myTeam.characters, $scope.enemyTeam.characters);
+                    resetCharOverlays();
+                    mapUpdate();
                     $scope.preparedAbility = undefined;
                     mainSocket.emit("updateTeams", $rootScope.currentBattle.room, $scope.myTeam.characters, $scope.enemyTeam.characters);
                     $scope.waitServ = true;
