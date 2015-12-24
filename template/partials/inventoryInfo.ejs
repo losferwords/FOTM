@@ -158,7 +158,7 @@
                                     <div class="socket"
                                          ng-repeat="socket in interestingItem.sockets track by $index"
                                          ng-class="{'dropable': dragGem}"
-                                         ng-style="{'background-image': getSocketImage(socket)}"
+                                         ng-style="{'background-image': getSocketImage(socket), 'border-color': getSocketBorder(socket)}"
                                          ng-disabled="socket.gem=='Void'"
                                          dnd-droppable="true"
                                          dnd-droppable-opts = "{layer: 'layer1'}"

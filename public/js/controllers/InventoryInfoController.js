@@ -147,6 +147,15 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
         return socket.gem.image;
     };
 
+    //Функция устанавливает цвет границы для сокета
+    $scope.getSocketBorder = function(socket) {
+        switch(socket.type){
+            case 'red' : return "#cc0000";
+            case 'green' : return "#77b300";
+            case 'blue' : return "#2a9fd6";
+        }
+    };
+
     //Функция возвращает камни нужного цвета для инвентаря
     $scope.getGems = function(color) {
         var gems = [];

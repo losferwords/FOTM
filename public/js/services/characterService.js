@@ -66,7 +66,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/black-knight-helm.svg)"},
                 basicPhysRes: function(){return 0.0075},
                 basicMagicRes: function(){return 0.001875},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
             },
             chest: {
                 name: function(){return "Breastplate"},
@@ -74,7 +74,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return"url(./images/icons/inventory/breastplate.svg)"},
                 basicPhysRes: function(){return 0.015},
                 basicMagicRes: function(){return 0.00375},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
             },
             hands: {
                 name: function(){return "Plate gloves"},
@@ -82,7 +82,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/forearm.svg)"},
                 basicPhysRes: function(){return 0.0075},
                 basicMagicRes: function(){return 0.001875},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
             },
             legs: {
                 name: function(){return "Plate greaves"},
@@ -90,7 +90,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/trousers.svg)"},
                 basicPhysRes: function(){return 0.0075},
                 basicMagicRes: function(){return 0.001875},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
             },
             boots: {
                 name: function(){return "Plate sabatons"},
@@ -98,7 +98,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return"url(./images/icons/inventory/boots.svg)"},
                 basicPhysRes: function(){return 0.0075},
                 basicMagicRes: function(){return 0.001875},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
             },
             mainHandWeapon: {
                 name: function(){return "Seraph Spear"},
@@ -109,7 +109,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 basicMagicRes: function(){return 0.015},
                 basicMaxHealth: function(){return 500},
                 range: function(){return 2},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
             },
             offHandWeapon: {
                 name: function(){return "Sentinel Shield"},
@@ -119,25 +119,25 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 basicBlockChance: function(){return 0.025},
                 minDamage: function(){return 0},
                 maxDamage: function(){return 0},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
             },
             leftRing: {
                 name: function(){return "Ring"},
                 slot: function(){return "leftRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             rightRing: {
                 name: function(){return "Ring"},
                 slot: function(){return "rightRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             amulet: {
                 name: function(){return "Amulet"},
                 slot: function(){return "amulet"},
                 image: function(){return "url(./images/icons/inventory/gem-pendant.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             }
         },
         slayer:
@@ -148,7 +148,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/brutal-helm.svg)"},
                 basicPhysRes: function(){return 0.0075},
                 basicMagicRes: function(){return 0.001875},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
             },
             chest: {
                 name: function(){return "Breastplate"},
@@ -156,7 +156,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/lamellar.svg)"},
                 basicPhysRes: function(){return 0.015},
                 basicMagicRes: function(){return 0.00375},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
             },
             hands: {
                 name: function(){return "Plate gloves"},
@@ -164,7 +164,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/forearm.svg)"},
                 basicPhysRes: function(){return 0.0075},
                 basicMagicRes: function(){return 0.001875},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             legs: {
                 name: function(){return "Plate greaves"},
@@ -172,7 +172,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/trousers.svg)"},
                 basicPhysRes: function(){return 0.0075},
                 basicMagicRes: function(){return 0.001875},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
             },
             boots: {
                 name: function(){return "Plate sabatons"},
@@ -180,7 +180,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/boots.svg)"},
                 basicPhysRes: function(){return 0.0075},
                 basicMagicRes: function(){return 0.001875},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
             },
             mainHandWeapon: {
                 name: function(){return "Abaddon Blade"},
@@ -193,7 +193,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 basicPhysRes: function(){return 0.015},
                 basicHealthReg: function(){return 0.002},
                 range: function(){return 1},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"},{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             offHandWeapon: {
                 name: function(){return "Void"},
@@ -203,19 +203,19 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 name: function(){return "Ring"},
                 slot: function(){return "leftRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             rightRing: {
                 name: function(){return "Ring"},
                 slot: function(){return "rightRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             amulet: {
                 name: function(){return "Amulet"},
                 slot: function(){return "amulet"},
                 image: function(){return "url(./images/icons/inventory/gem-pendant.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
             }
         },
         redeemer:
@@ -226,7 +226,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/hood.svg)"},
                 basicPhysRes: function(){return 0.00375},
                 basicMagicRes: function(){return 0.005625},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             chest: {
                 name: function(){return "Leather vest"},
@@ -234,7 +234,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/leather-vest.svg)"},
                 basicPhysRes: function(){return 0.0075},
                 basicMagicRes: function(){return 0.01125},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             hands: {
                 name: function(){return "Leather gloves"},
@@ -242,7 +242,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/forearm.svg)"},
                 basicPhysRes: function(){return 0.00375},
                 basicMagicRes: function(){return 0.005625},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             legs: {
                 name: function(){return "Leather pants"},
@@ -250,7 +250,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/trousers.svg)"},
                 basicPhysRes: function(){return 0.00375},
                 basicMagicRes: function(){return 0.005625},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             boots: {
                 name: function(){return "Leather boots"},
@@ -258,7 +258,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/boots.svg)"},
                 basicPhysRes: function(){return 0.00375},
                 basicMagicRes: function(){return 0.005625},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
             },
             mainHandWeapon: {
                 name: function(){return "Best Faith Gun"},
@@ -271,7 +271,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 basicDodgeChance: function(){return 0.045},
                 basicSpellPower: function(){return 0.05},
                 range: function(){return 3},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"},{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             offHandWeapon: {
                 name: function(){return "Void"},
@@ -281,19 +281,19 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 name: function(){return "Ring"},
                 slot: function(){return "leftRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             rightRing: {
                 name: function(){return "Ring"},
                 slot: function(){return "rightRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             amulet: {
                 name: function(){return "Amulet"},
                 slot: function(){return "amulet"},
                 image: function(){return "url(./images/icons/inventory/gem-pendant.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
             }
         },
         ripper:
@@ -304,7 +304,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/hood.svg)"},
                 basicPhysRes: function(){return 0.00375},
                 basicMagicRes: function(){return 0.005625},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             chest: {
                 name: function(){return "Leather cloak"},
@@ -312,7 +312,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/cloak-dagger.svg)"},
                 basicPhysRes: function(){return 0.0075},
                 basicMagicRes: function(){return 0.01125},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
             },
             hands: {
                 name: function(){return "Leather gloves"},
@@ -320,7 +320,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/forearm.svg)"},
                 basicPhysRes: function(){return 0.00375},
                 basicMagicRes: function(){return 0.005625},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             legs: {
                 name: function(){return "Leather pants"},
@@ -328,7 +328,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/trousers.svg)"},
                 basicPhysRes: function(){return 0.00375},
                 basicMagicRes: function(){return 0.005625},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
             },
             boots: {
                 name: function(){return "Leather boots"},
@@ -336,7 +336,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/boots.svg)"},
                 basicPhysRes: function(){return 0.00375},
                 basicMagicRes: function(){return 0.005625},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
             },
             mainHandWeapon: {
                 name: function(){return "Tormentor Dagger"},
@@ -347,7 +347,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 basicHitChance: function(){return 0.025},
                 basicCritChance: function(){return 0.025},
                 range: function(){return 1},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "red"}]
             },
             offHandWeapon: {
                 name: function(){return "Slaughter Dagger"},
@@ -358,25 +358,25 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 basicAttackPower: function(){return 0.05},
                 basicLuck: function(){return 0.0125},
                 range: function(){return 1},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
             },
             leftRing: {
                 name: function(){return "Ring"},
                 slot: function(){return "leftRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
             },
             rightRing: {
                 name: function(){return "Ring"},
                 slot: function(){return "rightRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             amulet: {
                 name: function(){return "Amulet"},
                 slot: function(){return "amulet"},
                 image: function(){return "url(./images/icons/inventory/gem-pendant.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             }
         },
         prophet:
@@ -387,7 +387,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/pointy-hat.svg)"},
                 basicPhysRes: function(){return 0.001875},
                 basicMagicRes: function(){return 0.0075},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             chest: {
                 name: function(){return "Cloth robe"},
@@ -395,7 +395,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/robe.svg)"},
                 basicPhysRes: function(){return 0.00375},
                 basicMagicRes: function(){return 0.015},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             hands: {
                 name: function(){return "Cloth gloves"},
@@ -403,7 +403,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/forearm.svg)"},
                 basicPhysRes: function(){return 0.001875},
                 basicMagicRes: function(){return 0.0075},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             legs: {
                 name: function(){return "Cloth pants"},
@@ -411,7 +411,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/trousers.svg)"},
                 basicPhysRes: function(){return 0.001875},
                 basicMagicRes: function(){return 0.0075},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             boots: {
                 name: function(){return "Cloth boots"},
@@ -419,7 +419,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/boots.svg)"},
                 basicPhysRes: function(){return 0.001875},
                 basicMagicRes: function(){return 0.0075},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             mainHandWeapon: {
                 name: function(){return "Clairvoyant Wand"},
@@ -430,7 +430,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 basicSpellPower: function(){return 0.05},
                 basicHitChance: function(){return 0.025},
                 range: function(){return 3},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             offHandWeapon: {
                 name: function(){return "Book Of Souls"},
@@ -440,25 +440,25 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 maxDamage: function(){return 0},
                 basicMagicRes: function(){return 0.015},
                 basicManaReg: function(){return 0.005},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             leftRing: {
                 name: function(){return "Ring"},
                 slot: function(){return "leftRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             rightRing: {
                 name: function(){return "Ring"},
                 slot: function(){return "rightRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
             },
             amulet: {
                 name: function(){return "Amulet"},
                 slot: function(){return "amulet"},
                 image: function(){return "url(./images/icons/inventory/gem-pendant.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             }
         },
         malefic:
@@ -469,7 +469,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/imp-laugh.svg)"},
                 basicPhysRes: function(){return 0.001875},
                 basicMagicRes: function(){return 0.0075},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
             },
             chest: {
                 name: function(){return "Cloth robe"},
@@ -477,7 +477,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/robe.svg)"},
                 basicPhysRes: function(){return 0.00375},
                 basicMagicRes: function(){return 0.015},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             hands: {
                 name: function(){return "Cloth gloves"},
@@ -485,7 +485,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/forearm.svg)"},
                 basicPhysRes: function(){return 0.001875},
                 basicMagicRes: function(){return 0.0075},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
             },
             legs: {
                 name: function(){return "Cloth pants"},
@@ -493,7 +493,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/trousers.svg)"},
                 basicPhysRes: function(){return 0.001875},
                 basicMagicRes: function(){return 0.0075},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             boots: {
                 name: function(){return "Cloth boots"},
@@ -501,7 +501,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/boots.svg)"},
                 basicPhysRes: function(){return 0.001875},
                 basicMagicRes: function(){return 0.0075},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             mainHandWeapon: {
                 name: function(){return "Zaqqum Branch"},
@@ -514,7 +514,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 basicMaxMana: function(){return 400},
                 basicInitiative: function(){return 17},
                 range: function(){return 1},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"},{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             offHandWeapon: {
                 name: function(){return "Void"},
@@ -524,19 +524,19 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 name: function(){return "Ring"},
                 slot: function(){return "leftRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             rightRing: {
                 name: function(){return "Ring"},
                 slot: function(){return "rightRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
             },
             amulet: {
                 name: function(){return "Amulet"},
                 slot: function(){return "amulet"},
                 image: function(){return "url(./images/icons/inventory/gem-pendant.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             }
         },
         cleric:
@@ -547,7 +547,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/pope-crown.svg)"},
                 basicPhysRes: function(){return 0.005625},
                 basicMagicRes: function(){return 0.00375},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             chest: {
                 name: function(){return "Mail plastron"},
@@ -555,7 +555,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/plastron.svg)"},
                 basicPhysRes: function(){return 0.01125},
                 basicMagicRes: function(){return 0.0075},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
             },
             hands: {
                 name: function(){return "Mail gloves"},
@@ -563,7 +563,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/forearm.svg)"},
                 basicPhysRes: function(){return 0.005625},
                 basicMagicRes: function(){return 0.00375},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             legs: {
                 name: function(){return "Mail pants"},
@@ -571,7 +571,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/trousers.svg)"},
                 basicPhysRes: function(){return 0.005625},
                 basicMagicRes: function(){return 0.00375},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             boots: {
                 name: function(){return "Mail boots"},
@@ -579,7 +579,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/boots.svg)"},
                 basicPhysRes: function(){return 0.005625},
                 basicMagicRes: function(){return 0.00375},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             mainHandWeapon: {
                 name: function(){return "Malleus Maleficarum"},
@@ -590,7 +590,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 basicAttackPower: function(){return 0.075},
                 basicLuck: function(){return 0.0125},
                 range: function(){return 1},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
             },
             offHandWeapon: {
                 name: function(){return "Salvation Crucifix"},
@@ -600,25 +600,25 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 maxDamage: function(){return 0},
                 basicSpellPower: function(){return 0.075},
                 basicManaReg: function(){return 0.0025},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             leftRing: {
                 name: function(){return "Ring"},
                 slot: function(){return "leftRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
             },
             rightRing: {
                 name: function(){return "Ring"},
                 slot: function(){return "rightRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             amulet: {
                 name: function(){return "Amulet"},
                 slot: function(){return "amulet"},
                 image: function(){return "url(./images/icons/inventory/gem-pendant.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             }
         },
         heretic:
@@ -629,7 +629,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/crowned-skull.svg)"},
                 basicPhysRes: function(){return 0.005625},
                 basicMagicRes: function(){return 0.00375},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             chest: {
                 name: function(){return "Rib armor"},
@@ -637,7 +637,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/ribcage.svg)"},
                 basicPhysRes: function(){return 0.01125},
                 basicMagicRes: function(){return 0.0075},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             hands: {
                 name: function(){return "Mail gloves"},
@@ -645,7 +645,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/forearm.svg)"},
                 basicPhysRes: function(){return 0.005625},
                 basicMagicRes: function(){return 0.00375},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             },
             legs: {
                 name: function(){return "Mail pants"},
@@ -653,7 +653,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/trousers.svg)"},
                 basicPhysRes: function(){return 0.005625},
                 basicMagicRes: function(){return 0.00375},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
             },
             boots: {
                 name: function(){return "Mail boots"},
@@ -661,7 +661,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 image: function(){return "url(./images/icons/inventory/boots.svg)"},
                 basicPhysRes: function(){return 0.005625},
                 basicMagicRes: function(){return 0.00375},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
             },
             mainHandWeapon: {
                 name: function(){return "Incubus Dagger"},
@@ -672,7 +672,7 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 basicSpellPower: function(){return 0.075},
                 basicMaxMana: function(){return 400},
                 range: function(){return 1},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
             },
             offHandWeapon: {
                 name: function(){return "Succubus Shield"},
@@ -682,25 +682,25 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
                 basicBlockChance: function(){return 0.01875},
                 minDamage: function(){return 0},
                 maxDamage: function(){return 0},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
             },
             leftRing: {
                 name: function(){return "Ring"},
                 slot: function(){return "leftRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
             },
             rightRing: {
                 name: function(){return "Ring"},
                 slot: function(){return "rightRing"},
                 image: function(){return "url(./images/icons/inventory/ring.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
             },
             amulet: {
                 name: function(){return "Amulet"},
                 slot: function(){return "amulet"},
                 image: function(){return "url(./images/icons/inventory/gem-pendant.svg)"},
-                sockets: [{gem: "Void"},{gem: "Void"},{gem: "Void"}]
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
             }
         }
     };

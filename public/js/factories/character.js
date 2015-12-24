@@ -371,13 +371,13 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
     Character.prototype.calcItem = function(item) {
         if(item.name()==="Void") return;
 
-        item.str=calcSockets(item.sockets, 'str');
+        item.str=Math.floor(calcSockets(item.sockets, 'str'));
 
         if(item.hasOwnProperty('basicAttackPower')) item.attackPower = item.basicAttackPower()+calcSockets(item.sockets, 'attackPower');
         else item.attackPower=calcSockets(item.sockets, 'attackPower');
 
-        if(item.hasOwnProperty('basicMaxHealth')) item.maxHealth = item.basicMaxHealth()+calcSockets(item.sockets, 'maxHealth');
-        else item.maxHealth=calcSockets(item.sockets, 'maxHealth');
+        if(item.hasOwnProperty('basicMaxHealth')) item.maxHealth = Math.floor(item.basicMaxHealth()+calcSockets(item.sockets, 'maxHealth'));
+        else item.maxHealth=Math.floor(calcSockets(item.sockets, 'maxHealth'));
 
         if(item.hasOwnProperty('basicHealthReg')) item.healthReg = item.basicHealthReg()+calcSockets(item.sockets, 'healthReg');
         else item.healthReg=calcSockets(item.sockets, 'healthReg');
@@ -388,12 +388,12 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         if(item.hasOwnProperty('basicBlockChance')) item.blockChance = item.basicBlockChance()+calcSockets(item.sockets, 'blockChance');
         else item.blockChance=calcSockets(item.sockets, 'blockChance');
 
-        item.dxt=calcSockets(item.sockets, 'dxt');
+        item.dxt=Math.floor(calcSockets(item.sockets, 'dxt'));
 
         if(item.hasOwnProperty('basicHitChance')) item.hitChance = item.basicHitChance()+calcSockets(item.sockets, 'hitChance');
         else item.hitChance=calcSockets(item.sockets, 'hitChance');
 
-        if(item.hasOwnProperty('basicMaxEnergy')) item.maxEnergy = item.basicMaxEnergy()+calcSockets(item.sockets, 'maxEnergy');
+        if(item.hasOwnProperty('basicMaxEnergy')) item.maxEnergy = Math.floor(item.basicMaxEnergy()+calcSockets(item.sockets, 'maxEnergy'));
         else item.maxEnergy=calcSockets(item.sockets, 'maxEnergy');
 
         if(item.hasOwnProperty('basicCritChance')) item.critChance = item.basicCritChance()+calcSockets(item.sockets, 'critChance');
@@ -405,13 +405,13 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         if(item.hasOwnProperty('basicLuck')) item.luck = item.basicLuck()+calcSockets(item.sockets, 'luck');
         else item.luck=calcSockets(item.sockets, 'luck');
 
-        item.int=calcSockets(item.sockets, 'int');
+        item.int=Math.floor(calcSockets(item.sockets, 'int'));
 
         if(item.hasOwnProperty('basicSpellPower')) item.spellPower = item.basicSpellPower()+calcSockets(item.sockets, 'spellPower');
         else item.spellPower=calcSockets(item.sockets, 'spellPower');
 
-        if(item.hasOwnProperty('basicMaxMana')) item.maxMana = item.basicMaxMana()+calcSockets(item.sockets, 'maxMana');
-        else item.maxMana=calcSockets(item.sockets, 'maxMana');
+        if(item.hasOwnProperty('basicMaxMana')) item.maxMana = Math.floor(item.basicMaxMana()+calcSockets(item.sockets, 'maxMana'));
+        else item.maxMana=Math.floor(calcSockets(item.sockets, 'maxMana'));
 
         if(item.hasOwnProperty('basicManaReg')) item.manaReg = item.basicManaReg()+calcSockets(item.sockets, 'manaReg');
         else item.manaReg=calcSockets(item.sockets, 'manaReg');
@@ -419,15 +419,20 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         if(item.hasOwnProperty('basicMagicRes')) item.magicRes = item.basicMagicRes()+calcSockets(item.sockets, 'magicRes');
         else item.magicRes=calcSockets(item.sockets, 'magicRes');
 
-        if(item.hasOwnProperty('basicInitiative')) item.initiative = item.basicInitiative()+calcSockets(item.sockets, 'initiative');
-        else item.initiative=calcSockets(item.sockets, 'initiative');
+        if(item.hasOwnProperty('basicInitiative')) item.initiative = Math.floor(item.basicInitiative()+calcSockets(item.sockets, 'initiative'));
+        else item.initiative=Math.floor(calcSockets(item.sockets, 'initiative'));
 
         //Функция подсчитывает параметры в сокетах
         function calcSockets(sockets, key){
             var value=0; //итоговая сумма параметра
             for(var i=0;i<sockets.length;i++){
+                var bonusValue=0; //бонусная прибавка от соотвествия цвета
                 if(sockets[i].gem.hasOwnProperty(key)){
-                    value += Number(sockets[i].gem[key]);
+                    //Если цвет камня совпал с цветом сокета
+                    if(sockets[i].gem.color===sockets[i].type){
+                        bonusValue=Number(sockets[i].gem[key])*0.5;
+                    }
+                    value += Number(sockets[i].gem[key])+bonusValue;
                 }
             }
             return value;
