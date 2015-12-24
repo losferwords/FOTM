@@ -110,7 +110,7 @@ function CreateCharacterController($scope, $rootScope, $location, $interval, mai
                     $location.path('/createTeam');
                 }
             }
-        }, 10);
+        }, 100);
     });
 
     $scope.$on('$routeChangeSuccess', function () {

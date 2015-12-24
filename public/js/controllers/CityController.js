@@ -206,7 +206,7 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
             $scope.team.characters[0].battleColor="#2a9fd6";
             $scope.team.characters[1].battleColor="#0055AF";
             $scope.team.characters[2].battleColor="#9933cc";
-            $rootScope.interestingTeam = $scope.team;
+            $rootScope.interestingTeam = team;
             $scope.rank = rank;
 
             var left = new Date(3600000-(nextRollLeft));
@@ -215,6 +215,7 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
             }
             else { // уже можно ролить
                 $scope.nextRollLeft=0;
+                rollDiceTimer=undefined;
             }
 
             rollDiceTimer = $interval(function(){

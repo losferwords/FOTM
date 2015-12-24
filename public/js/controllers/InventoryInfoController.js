@@ -10,6 +10,26 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
         $scope.char = new character($rootScope.interestingChar);
         $scope.char.initChar();
         $scope.inventory = $rootScope.interestingTeam.inventory;
+        $scope.interestingItem = undefined;
+
+        for(var i=0; i<$scope.inventory.length;i++){ //наделяем камни инвентаря функциями
+            if($scope.inventory[i].name!=="Void"){
+                switch($scope.inventory[i].color){
+                    case "red":
+                        $scope.inventory[i].image = function() { return 'url(../images/icons/inventory/rupee.svg)'};
+                        $scope.inventory[i].bgColor = function() {return "#cc0000"};
+                        break;
+                    case "green":
+                        $scope.inventory[i].image = function() { return 'url(../images/icons/inventory/emerald.svg)'};
+                        $scope.inventory[i].bgColor = function() {return "#77b300"};
+                        break;
+                    case "blue":
+                        $scope.inventory[i].image = function() { return 'url(../images/icons/inventory/saphir.svg)'};
+                        $scope.inventory[i].bgColor = function() {return "#2a9fd6"};
+                        break;
+                }
+            }
+        }
         $scope.souls = $rootScope.interestingTeam.souls;
     });
 
@@ -36,13 +56,13 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
 
     //Функция берёт картинку для ылотов инвентаря
     $scope.getSlotImage = function(slot) {
-        if($scope.char.equip[slot].name!="Void") return $scope.char.equip[slot].image;
+        if($scope.char.equip[slot].name()!=="Void") return $scope.char.equip[slot].image();
     };
 
     //Функция выбирает предмет, чтобы показать информацию о нём
     $scope.chooseSlot = function(slot) {
         if($scope.interestingItem) {
-            if ($scope.interestingItem.slot === slot) {
+            if ($scope.interestingItem.slot() === slot) {
                 $scope.interestingItem = undefined;
                 return;
             }
@@ -206,25 +226,28 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
     }
 
     function transformTooltip(gem) {
-        if(!gem.tootip) return "";
-        if(gem.tootip.indexOf("Strength:")!=-1) return gem.tootip.replace("Strength:",gettextCatalog.getString("Strength:"));
-        else if(gem.tootip.indexOf("Attack Power:")!=-1) return gem.tootip.replace("Attack Power:",gettextCatalog.getString("Attack Power:"));
-        else if(gem.tootip.indexOf("Health:")!=-1) return gem.tootip.replace("Health:",gettextCatalog.getString("Health:"));
-        else if(gem.tootip.indexOf("Health Reg.:")!=-1) return gem.tootip.replace("Health Reg.:",gettextCatalog.getString("Health Reg.:"));
-        else if(gem.tootip.indexOf("Physical Resist.:")!=-1) return gem.tootip.replace("Physical Resist.:",gettextCatalog.getString("Physical Resist.:"));
-        else if(gem.tootip.indexOf("Block Chance:")!=-1) return gem.tootip.replace("Block Chance:",gettextCatalog.getString("Block Chance:"));
-        else if(gem.tootip.indexOf("Dexterity:")!=-1) return gem.tootip.replace("Dexterity:",gettextCatalog.getString("Dexterity:"));
-        else if(gem.tootip.indexOf("Critical Rating:")!=-1) return gem.tootip.replace("Critical Rating:",gettextCatalog.getString("Critical Rating:"));
-        else if(gem.tootip.indexOf("Energy:")!=-1) return gem.tootip.replace("Energy:",gettextCatalog.getString("Energy:"));
-        else if(gem.tootip.indexOf("Hit Chance:")!=-1) return gem.tootip.replace("Hit Chance:",gettextCatalog.getString("Hit Chance:"));
-        else if(gem.tootip.indexOf("Dodge Chance:")!=-1) return gem.tootip.replace("Dodge Chance:",gettextCatalog.getString("Dodge Chance:"));
-        else if(gem.tootip.indexOf("Luck:")!=-1) return gem.tootip.replace("Luck:",gettextCatalog.getString("Luck:"));
-        else if(gem.tootip.indexOf("Intellect:")!=-1) return gem.tootip.replace("Intellect:",gettextCatalog.getString("Intellect:"));
-        else if(gem.tootip.indexOf("Spell Power:")!=-1) return gem.tootip.replace("Spell Power:",gettextCatalog.getString("Spell Power:"));
-        else if(gem.tootip.indexOf("Mana:")!=-1) return gem.tootip.replace("Mana:",gettextCatalog.getString("Mana:"));
-        else if(gem.tootip.indexOf("Mana Reg.:")!=-1) return gem.tootip.replace("Mana Reg.:",gettextCatalog.getString("Mana Reg.:"));
-        else if(gem.tootip.indexOf("Magic Resist.:")!=-1) return gem.tootip.replace("Magic Resist.:",gettextCatalog.getString("Magic Resist.:"));
-        else if(gem.tootip.indexOf("Initiative:")!=-1) return gem.tootip.replace("Initiative:",gettextCatalog.getString("Initiative:"));
+        if(gem.name==="Void") return "";
+
+        switch(gem.name){
+            case "Soul Of Strength": return gettextCatalog.getString("Strength: + {{one}}",{one: gem.str});
+            case "Soul Of Power": return gettextCatalog.getString("Attack Power: + {{one}}%",{one: (gem.attackPower*100).toFixed(2)});
+            case "Soul Of Vitality": return gettextCatalog.getString("Health: + {{one}}",{one: gem.maxHealth});
+            case "Soul Of Regeneration": return gettextCatalog.getString("Health Reg.: + {{one}}%",{one: (gem.healthReg*100).toFixed(2)});
+            case "Soul Of Stone": return gettextCatalog.getString("Physical Resist.: + {{one}}%",{one: (gem.physRes*100).toFixed(2)});
+            case "Soul Of Wall": return gettextCatalog.getString("Block Chance: + {{one}}%",{one: (gem.blockChance*100).toFixed(2)});
+            case "Soul Of Dexterity": return gettextCatalog.getString("Dexterity: + {{one}}",{one: gem.dxt});
+            case "Soul Of Extremum": return gettextCatalog.getString("Critical Rating: + {{one}}%",{one: (gem.critChance*100).toFixed(2)});
+            case "Soul Of Energy": return gettextCatalog.getString("Energy: + {{one}}",{one: gem.maxEnergy});
+            case "Soul Of Accuracy": return gettextCatalog.getString("Hit Chance: + {{one}}%",{one: (gem.hitChance*100).toFixed(2)});
+            case "Soul Of Swiftness": return gettextCatalog.getString("Dodge Chance: + {{one}}%",{one: (gem.dodgeChance*100).toFixed(2)});
+            case "Soul Of Destiny": return gettextCatalog.getString("Luck: + {{one}}%",{one: (gem.luck*100).toFixed(2)});
+            case "Soul Of Intellect": return gettextCatalog.getString("Intellect: + {{one}}",{one: gem.int});
+            case "Soul Of Magic": return gettextCatalog.getString("Spell Power: + {{one}}%",{one: (gem.spellPower*100).toFixed(2)});
+            case "Soul Of Wisdom": return gettextCatalog.getString("Mana: + {{one}}",{one: gem.maxMana});
+            case "Soul Of Meditation": return gettextCatalog.getString("Mana Reg.: + {{one}}%",{one: (gem.manaReg*100).toFixed(2)});
+            case "Soul Of Will": return gettextCatalog.getString("Magic Resist.: + {{one}}%",{one: (gem.magicRes*100).toFixed(2)});
+            case "Soul Of Tactic": return gettextCatalog.getString("Initiative: + {{one}}",{one: gem.initiative});
+        }
     }
 
     function transformQuality(gem) {
@@ -262,6 +285,7 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
             $scope.inventory.push(socket.gem);
         }
         socket.gem = $scope.dragGem;
+        delete socket.gem.index; //удаляем свойство index для камня, который попал в сокет
         $scope.dragGem = undefined;
         $scope.interestingItem = $scope.char.calcItem($scope.interestingItem);
         $scope.char.initChar();
@@ -401,9 +425,10 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
                 }
                 break;
         }
-        if($rootScope.interestingTeam.characters[prevCharIndex])
-        $rootScope.interestingChar=$rootScope.interestingTeam.characters[prevCharIndex];
-        $route.reload();
+        if($rootScope.interestingTeam.characters[prevCharIndex]){
+            $rootScope.interestingChar = $rootScope.interestingTeam.characters[prevCharIndex];
+            $route.reload();
+        }
     };
 
     //Функция переносит нас на следующего персонажа
@@ -442,8 +467,10 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
                 }
                 break;
         }
-        $rootScope.interestingChar=$rootScope.interestingTeam.characters[nextCharIndex];
-        $route.reload();
+        if($rootScope.interestingTeam.characters[nextCharIndex]){
+            $rootScope.interestingChar=$rootScope.interestingTeam.characters[nextCharIndex];
+            $route.reload();
+        }
     };
 
     //Функция проверяет, живы ли другие участники команды
@@ -478,128 +505,110 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
 
         switch(newGem.color){
             case 'red':
-            newGem.image = 'url(../images/icons/inventory/rupee.svg)';
-            newGem.bgColor="#cc0000";
+            newGem.image = function() { return 'url(../images/icons/inventory/rupee.svg)'};
+            newGem.bgColor=function() { return "#cc0000"};
             switch(Math.floor(Math.random() * 6)){
                 case 0:
                     newGem.str=randomService.randomInt(5, 10);
                     newGem.quality=newGem.str/10;
                     newGem.name="Soul Of Strength";
-                    newGem.tootip="Strength: + "+newGem.str;
                     break;
                 case 1:
                     newGem.attackPower=randomService.randomFloat(0.025, 0.05, 4);
                     newGem.quality=newGem.attackPower/0.05;
                     newGem.name="Soul Of Power";
-                    newGem.tootip="Attack Power: + "+(newGem.attackPower*100).toFixed(2)+"%";
                     break;
                 case 2:
                     newGem.maxHealth=randomService.randomInt(250, 500);
                     newGem.quality=newGem.maxHealth/500;
                     newGem.name="Soul Of Vitality";
-                    newGem.tootip="Health: + "+newGem.maxHealth;
                     break;
                 case 3:
                     newGem.healthReg=randomService.randomFloat(0.001, 0.002, 4);
                     newGem.quality=newGem.healthReg/0.002;
                     newGem.name="Soul Of Regeneration";
-                    newGem.tootip="Health Reg.: + "+(newGem.healthReg*100).toFixed(2)+"%";
                     break;
                 case 4:
                     newGem.physRes=randomService.randomFloat(0.0075, 0.015, 4);
                     newGem.quality=newGem.physRes/0.015;
                     newGem.name="Soul Of Stone";
-                    newGem.tootip="Physical Resist.: + "+(newGem.physRes*100).toFixed(2)+"%";
                     break;
                 case 5:
                     newGem.blockChance=randomService.randomFloat(0.00625, 0.0125, 4);
                     newGem.quality=newGem.blockChance/0.0125;
                     newGem.name="Soul Of Wall";
-                    newGem.tootip="Block Chance: + "+(newGem.blockChance*100).toFixed(2)+"%";
                     break;
             }
             break;
             case 'green':
-                newGem.image = 'url(../images/icons/inventory/emerald.svg)';
-                newGem.bgColor="#77b300";
+                newGem.image = function() { return 'url(../images/icons/inventory/emerald.svg)'};
+                newGem.bgColor=function() { return "#77b300"};
                 switch(Math.floor(Math.random() * 6)){
                     case 0:
                         newGem.dxt=randomService.randomInt(5, 10);
                         newGem.quality=newGem.dxt/10;
                         newGem.name="Soul Of Dexterity";
-                        newGem.tootip="Dexterity: + "+newGem.dxt;
                         break;
                     case 1:
                         newGem.critChance=randomService.randomFloat(0.00625, 0.0125, 4);
                         newGem.quality=newGem.critChance/0.0125;
                         newGem.name="Soul Of Extremum";
-                        newGem.tootip="Critical Rating: + "+(newGem.critChance*100).toFixed(2)+"%";
                         break;
                     case 2:
                         newGem.maxEnergy=randomService.randomInt(25, 50);
                         newGem.quality=newGem.maxEnergy/100;
                         newGem.name="Soul Of Energy";
-                        newGem.tootip="Energy: + "+newGem.maxEnergy;
                         break;
                     case 3:
                         newGem.hitChance=randomService.randomFloat(0.0125, 0.025, 4);
                         newGem.quality=newGem.hitChance/0.025;
                         newGem.name="Soul Of Accuracy";
-                        newGem.tootip="Hit Chance: + "+(newGem.hitChance*100).toFixed(2)+"%";
                         break;
                     case 4:
                         newGem.dodgeChance=randomService.randomFloat(0.0075, 0.015, 4);
                         newGem.quality=newGem.dodgeChance/0.015;
                         newGem.name="Soul Of Swiftness";
-                        newGem.tootip="Dodge Chance: + "+(newGem.dodgeChance*100).toFixed(2)+"%";
                         break;
                     case 5:
                         newGem.luck=randomService.randomFloat(0.00625, 0.0125, 4);
                         newGem.quality=newGem.luck/0.0125;
                         newGem.name="Soul Of Destiny";
-                        newGem.tootip="Luck: + "+(newGem.luck*100).toFixed(2)+"%";
                         break;
                 }
                 break;
             case 'blue':
-                newGem.image = 'url(../images/icons/inventory/saphir.svg)';
-                newGem.bgColor="#2a9fd6";
+                newGem.image = function() { return 'url(../images/icons/inventory/saphir.svg)'};
+                newGem.bgColor= function() {return "#2a9fd6"};
                 switch(Math.floor(Math.random() * 6)){
                     case 0:
                         newGem.int=randomService.randomInt(5, 10);
                         newGem.quality=newGem.int/10;
                         newGem.name="Soul Of Intellect";
-                        newGem.tootip="Intellect: + "+newGem.int;
                         break;
                     case 1:
                         newGem.spellPower=randomService.randomFloat(0.025, 0.05, 4);
                         newGem.quality=newGem.spellPower/0.05;
                         newGem.name="Soul Of Magic";
-                        newGem.tootip="Spell Power: + "+(newGem.spellPower*100).toFixed(2)+"%";
                         break;
                     case 2:
                         newGem.maxMana=randomService.randomInt(200, 400);
                         newGem.quality=newGem.maxMana/400;
                         newGem.name="Soul Of Wisdom";
-                        newGem.tootip="Mana: + "+newGem.maxMana;
                         break;
                     case 3:
                         newGem.manaReg=randomService.randomFloat(0.00125, 0.0025, 4);
                         newGem.quality=newGem.manaReg/0.0025;
                         newGem.name="Soul Of Meditation";
-                        newGem.tootip="Mana Reg.: + "+(newGem.manaReg*100).toFixed(2)+"%";
                         break;
                     case 4:
                         newGem.magicRes=randomService.randomFloat(0.0075, 0.015, 4);
                         newGem.quality=newGem.magicRes/0.015;
                         newGem.name="Soul Of Will";
-                        newGem.tootip="Magic Resist.: + "+(newGem.magicRes*100).toFixed(2)+"%";
                         break;
                     case 5:
                         newGem.initiative=randomService.randomInt(9, 17);
                         newGem.quality=newGem.initiative/17;
                         newGem.name="Soul Of Tactic";
-                        newGem.tootip="Initiative: + "+newGem.initiative;
                         break;
                 }
                 break;
@@ -624,128 +633,110 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
 
         switch(newGem.color){
             case 'red':
-                newGem.image = 'url(../images/icons/inventory/rupee.svg)';
-                newGem.bgColor="#cc0000";
+                newGem.image = function(){return 'url(../images/icons/inventory/rupee.svg)'};
+                newGem.bgColor=function(){return "#cc0000"};
                 switch(Math.floor(Math.random() * 6)){
                     case 0:
                         newGem.str=10;
                         newGem.quality=newGem.str/10;
                         newGem.name="Soul Of Strength";
-                        newGem.tootip="Strength: + "+newGem.str;
                         break;
                     case 1:
                         newGem.attackPower=0.05;
                         newGem.quality=newGem.attackPower/0.05;
                         newGem.name="Soul Of Power";
-                        newGem.tootip="Attack Power: + "+(newGem.attackPower*100).toFixed(2)+"%";
                         break;
                     case 2:
                         newGem.maxHealth=500;
                         newGem.quality=newGem.maxHealth/500;
                         newGem.name="Soul Of Vitality";
-                        newGem.tootip="Health: + "+newGem.maxHealth;
                         break;
                     case 3:
                         newGem.healthReg=0.002;
                         newGem.quality=newGem.healthReg/0.002;
                         newGem.name="Soul Of Regeneration";
-                        newGem.tootip="Health Reg.: + "+(newGem.healthReg*100).toFixed(2)+"%";
                         break;
                     case 4:
                         newGem.physRes=0.015;
                         newGem.quality=newGem.physRes/0.015;
                         newGem.name="Soul Of Stone";
-                        newGem.tootip="Physical Resist.: + "+(newGem.physRes*100).toFixed(2)+"%";
                         break;
                     case 5:
                         newGem.blockChance=0.0125;
                         newGem.quality=newGem.blockChance/0.0125;
                         newGem.name="Soul Of Wall";
-                        newGem.tootip="Block Chance: + "+(newGem.blockChance*100).toFixed(2)+"%";
                         break;
                 }
                 break;
             case 'green':
-                newGem.image = 'url(../images/icons/inventory/emerald.svg)';
-                newGem.bgColor="#77b300";
+                newGem.image = function(){return 'url(../images/icons/inventory/emerald.svg)'};
+                newGem.bgColor=function(){return "#77b300"};
                 switch(Math.floor(Math.random() * 6)){
                     case 0:
                         newGem.dxt=10;
                         newGem.quality=newGem.dxt/10;
                         newGem.name="Soul Of Dexterity";
-                        newGem.tootip="Dexterity: + "+newGem.dxt;
                         break;
                     case 1:
                         newGem.critChance=0.0125;
                         newGem.quality=newGem.critChance/0.0125;
                         newGem.name="Soul Of Extremum";
-                        newGem.tootip="Critical Rating: + "+(newGem.critChance*100).toFixed(2)+"%";
                         break;
                     case 2:
                         newGem.maxEnergy=50;
                         newGem.quality=newGem.maxEnergy/100;
                         newGem.name="Soul Of Energy";
-                        newGem.tootip="Energy: + "+newGem.maxEnergy;
                         break;
                     case 3:
                         newGem.hitChance=0.025;
                         newGem.quality=newGem.hitChance/0.025;
                         newGem.name="Soul Of Accuracy";
-                        newGem.tootip="Hit Chance: + "+(newGem.hitChance*100).toFixed(2)+"%";
                         break;
                     case 4:
                         newGem.dodgeChance=0.015;
                         newGem.quality=newGem.dodgeChance/0.015;
                         newGem.name="Soul Of Swiftness";
-                        newGem.tootip="Dodge Chance: + "+(newGem.dodgeChance*100).toFixed(2)+"%";
                         break;
                     case 5:
                         newGem.luck=0.0125;
                         newGem.quality=newGem.luck/0.0125;
                         newGem.name="Soul Of Destiny";
-                        newGem.tootip="Luck: + "+(newGem.luck*100).toFixed(2)+"%";
                         break;
                 }
                 break;
             case 'blue':
-                newGem.image = 'url(../images/icons/inventory/saphir.svg)';
-                newGem.bgColor="#2a9fd6";
+                newGem.image = function(){return 'url(../images/icons/inventory/saphir.svg)'};
+                newGem.bgColor=function(){return "#2a9fd6"};
                 switch(Math.floor(Math.random() * 6)){
                     case 0:
                         newGem.int=10;
                         newGem.quality=newGem.int/10;
                         newGem.name="Soul Of Intellect";
-                        newGem.tootip="Intellect: + "+newGem.int;
                         break;
                     case 1:
                         newGem.spellPower=0.05;
                         newGem.quality=newGem.spellPower/0.05;
                         newGem.name="Soul Of Magic";
-                        newGem.tootip="Spell Power: + "+(newGem.spellPower*100).toFixed(2)+"%";
                         break;
                     case 2:
                         newGem.maxMana=400;
                         newGem.quality=newGem.maxMana/400;
                         newGem.name="Soul Of Wisdom";
-                        newGem.tootip="Mana: + "+newGem.maxMana;
                         break;
                     case 3:
                         newGem.manaReg=0.0025;
                         newGem.quality=newGem.manaReg/0.0025;
                         newGem.name="Soul Of Meditation";
-                        newGem.tootip="Mana Reg.: + "+(newGem.manaReg*100).toFixed(2)+"%";
                         break;
                     case 4:
                         newGem.magicRes=0.015;
                         newGem.quality=newGem.magicRes/0.015;
                         newGem.name="Soul Of Will";
-                        newGem.tootip="Magic Resist.: + "+(newGem.magicRes*100).toFixed(2)+"%";
                         break;
                     case 5:
                         newGem.initiative=17;
                         newGem.quality=newGem.initiative/17;
                         newGem.name="Soul Of Tactic";
-                        newGem.tootip="Initiative: + "+newGem.initiative;
                         break;
                 }
                 break;

@@ -1,5 +1,5 @@
 //Фабрика, которая по сути является "классом" character
-angular.module('fotm').register.factory('character', ["abilityService", "effectService", "randomService", "gettextCatalog", "soundService", "arenaService", function(abilityService, effectService, randomService, gettextCatalog, soundService, arenaService) {
+angular.module('fotm').register.factory('character', ["abilityService", "effectService", "randomService", "characterService", "gettextCatalog", "soundService", "arenaService", function(abilityService, effectService, randomService, characterService, gettextCatalog, soundService, arenaService) {
 
     //Конструктор
     var Character = function(char) {
@@ -49,6 +49,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                         this.buffs[i].infinite = buff.infinite;
                         this.buffs[i].maxStacks = buff.maxStacks;
                         this.buffs[i].onlyStat = buff.onlyStat;
+                        this.buffs[i].magicEffect = buff.magicEffect;
                     }
                 }
             }
@@ -69,6 +70,57 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                         this.debuffs[i].infinite = debuff.infinite;
                         this.debuffs[i].maxStacks = debuff.maxStacks;
                         this.debuffs[i].onlyStat = debuff.onlyStat;
+                        this.debuffs[i].magicEffect = debuff.magicEffect;
+                    }
+                }
+            }
+        }
+
+        //Обновляем инвентарь, если он потерялся после сервера
+        if(this.equip) {
+            if (!("name" in this.equip['head'])) {
+                var equip = characterService.getEquip(this.role); //Берём стандартный инвентарь для этой роли
+                for (var slot in equip) {
+                    if (equip.hasOwnProperty(slot)) {
+                        if(!this.equip[slot]) {
+                            //Если такого нет, значит это оффхэнд
+                            this.equip[slot]={};
+                            this.equip[slot].name=function(){return "Void"};
+                            this.equip[slot].slot=function(){return "offHandWeapon"};
+                            continue;
+                        }
+                        //наделяем функциями
+                        for(var slotKey in equip[slot]){
+                            if (equip[slot].hasOwnProperty(slotKey)) {
+                                if(slotKey!=="sockets"){
+                                    this.equip[slot][slotKey]=equip[slot][slotKey];
+                                }
+                            }
+                        }
+                        if(!this.equip[slot].sockets) {
+                            //На оффхэнде нет сокетов
+                            continue;
+                        }
+                        var socketArray = this.equip[slot].sockets;
+                        //наделяем сокеты функциями
+                        for(i=0; i<socketArray.length;i++){
+                            if(socketArray[i].gem.name!=="Void"){
+                                switch(socketArray[i].gem.color){
+                                    case "red":
+                                        socketArray[i].gem.image = function() { return 'url(../images/icons/inventory/rupee.svg)'};
+                                        socketArray[i].gem.bgColor = function() {return "#cc0000"};
+                                        break;
+                                    case "green":
+                                        socketArray[i].gem.image = function() { return 'url(../images/icons/inventory/emerald.svg)'};
+                                        socketArray[i].gem.bgColor = function() {return "#77b300"};
+                                        break;
+                                    case "blue":
+                                        socketArray[i].gem.image = function() { return 'url(../images/icons/inventory/saphir.svg)'};
+                                        socketArray[i].gem.bgColor = function() {return "#2a9fd6"};
+                                        break;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -91,6 +143,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.curEnergy=self.maxEnergy;
         self.curMana=self.maxMana;
 
+        //this.getSize();
     };
 
     //Обновление персонажа в бою
@@ -189,10 +242,10 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
             }
         }
 
-        self.basicHealth = 10000;
-        self.basicHitChance = 0.8; //ВАЖНО ПОТОМ УБРАТЬ
-        self.basicEnergy = 1000;
-        self.basicMana = 9000;
+        self.basicHealth = function(){return 10000};
+        self.basicHitChance = function(){return 0.8};
+        self.basicEnergy = function(){return 1000};
+        self.basicMana = function(){return 9000};
 
         //Проверки на отрицательные модификаторы
         if(self.attackPowerMod<0) self.attackPowerMod = 0;
@@ -218,7 +271,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.attackPowerFromEq = paramFromEquip('attackPower');
         self.attackPower = (self.attackPowerFromStr+self.attackPowerFromEq)*self.attackPowerMod;
 
-        self.maxHealthFromStr = self.str*10+self.basicHealth;
+        self.maxHealthFromStr = self.str*10+self.basicHealth();
         self.maxHealthFromEq = paramFromEquip('maxHealth');
         self.maxHealth = Math.floor(self.maxHealthFromStr+self.maxHealthFromEq);
 
@@ -246,11 +299,11 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.critChance = (self.critChanceFromDxt+self.critChanceFromEq)*self.critChanceMod;
         if(self.critChance>0.5) self.critChance=0.5;
 
-        self.maxEnergyFromDxt = self.dxt+self.basicEnergy;
+        self.maxEnergyFromDxt = self.dxt+self.basicEnergy();
         self.maxEnergyFromEq = paramFromEquip('maxEnergy');
         self.maxEnergy = Math.floor(self.maxEnergyFromDxt+self.maxEnergyFromEq);
 
-        self.hitChanceFromDxt = self.basicHitChance+self.dxt*0.0003;
+        self.hitChanceFromDxt = self.basicHitChance()+self.dxt*0.0003;
         self.hitChanceFromEq = paramFromEquip('hitChance');
         self.hitChance = (self.hitChanceFromDxt+self.hitChanceFromEq)*self.hitChanceMod;
         if(self.hitChance>1) self.hitChance=1;
@@ -273,7 +326,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.spellPowerFromEq = paramFromEquip('spellPower');
         self.spellPower = (self.spellPowerFromInt+self.spellPowerFromEq)*self.spellPowerMod;
 
-        self.maxManaFromInt = self.int*10+self.basicMana;
+        self.maxManaFromInt = self.int*10+self.basicMana();
         self.maxManaFromEq = paramFromEquip('maxMana');
         self.maxMana = Math.floor(self.maxManaFromInt+self.maxManaFromEq);
 
@@ -291,13 +344,13 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.initiativeFromEq = paramFromEquip('initiative');
         self.initiative = Math.floor((self.initiativeFromInt+self.initiativeFromEq)*self.initiativeMod);
 
-        if(self.equip.offHandWeapon.name!=="Void"){
-            self.minDamage=Math.floor((self.equip.mainHandWeapon.minDamage+self.equip.offHandWeapon.minDamage)*(1+self.attackPower));
-            self.maxDamage=Math.floor((self.equip.mainHandWeapon.maxDamage+self.equip.offHandWeapon.maxDamage)*(1+self.attackPower));
+        if(self.equip.offHandWeapon.name()!=="Void"){
+            self.minDamage=Math.floor((self.equip.mainHandWeapon.minDamage()+self.equip.offHandWeapon.minDamage())*(1+self.attackPower));
+            self.maxDamage=Math.floor((self.equip.mainHandWeapon.maxDamage()+self.equip.offHandWeapon.maxDamage())*(1+self.attackPower));
         }
         else {
-            self.minDamage=Math.floor(self.equip.mainHandWeapon.minDamage*(1+self.attackPower));
-            self.maxDamage=Math.floor(self.equip.mainHandWeapon.maxDamage*(1+self.attackPower));
+            self.minDamage=Math.floor(self.equip.mainHandWeapon.minDamage()*(1+self.attackPower));
+            self.maxDamage=Math.floor(self.equip.mainHandWeapon.maxDamage()*(1+self.attackPower));
         }
 
         //Функция складывает все значения какого либо параметра с equip'а
@@ -316,58 +369,57 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
 
     //Пересчёт всех характерситик оружия
     Character.prototype.calcItem = function(item) {
-        if(item.hasOwnProperty('basicStr')) item.str = item.basicStr+calcSockets(item.sockets, 'str');
-        else item.str=calcSockets(item.sockets, 'str');
+        if(item.name()==="Void") return;
 
-        if(item.hasOwnProperty('basicAttackPower')) item.attackPower = item.basicAttackPower+calcSockets(item.sockets, 'attackPower');
+        item.str=calcSockets(item.sockets, 'str');
+
+        if(item.hasOwnProperty('basicAttackPower')) item.attackPower = item.basicAttackPower()+calcSockets(item.sockets, 'attackPower');
         else item.attackPower=calcSockets(item.sockets, 'attackPower');
 
-        if(item.hasOwnProperty('basicMaxHealth')) item.maxHealth = item.basicMaxHealth+calcSockets(item.sockets, 'maxHealth');
+        if(item.hasOwnProperty('basicMaxHealth')) item.maxHealth = item.basicMaxHealth()+calcSockets(item.sockets, 'maxHealth');
         else item.maxHealth=calcSockets(item.sockets, 'maxHealth');
 
-        if(item.hasOwnProperty('basicHealthReg')) item.healthReg = item.basicHealthReg+calcSockets(item.sockets, 'healthReg');
+        if(item.hasOwnProperty('basicHealthReg')) item.healthReg = item.basicHealthReg()+calcSockets(item.sockets, 'healthReg');
         else item.healthReg=calcSockets(item.sockets, 'healthReg');
 
-        if(item.hasOwnProperty('basicPhysRes')) item.physRes = item.basicPhysRes+calcSockets(item.sockets, 'physRes');
+        if(item.hasOwnProperty('basicPhysRes')) item.physRes = item.basicPhysRes()+calcSockets(item.sockets, 'physRes');
         else item.physRes=calcSockets(item.sockets, 'physRes');
 
-        if(item.hasOwnProperty('basicBlockChance')) item.blockChance = item.basicBlockChance+calcSockets(item.sockets, 'blockChance');
+        if(item.hasOwnProperty('basicBlockChance')) item.blockChance = item.basicBlockChance()+calcSockets(item.sockets, 'blockChance');
         else item.blockChance=calcSockets(item.sockets, 'blockChance');
 
-        if(item.hasOwnProperty('basicDxt')) item.dxt = item.basicDxt+calcSockets(item.sockets, 'dxt');
-        else item.dxt=calcSockets(item.sockets, 'dxt');
+        item.dxt=calcSockets(item.sockets, 'dxt');
 
-        if(item.hasOwnProperty('basicHitChance')) item.hitChance = item.basicHitChance+calcSockets(item.sockets, 'hitChance');
+        if(item.hasOwnProperty('basicHitChance')) item.hitChance = item.basicHitChance()+calcSockets(item.sockets, 'hitChance');
         else item.hitChance=calcSockets(item.sockets, 'hitChance');
 
-        if(item.hasOwnProperty('basicMaxEnergy')) item.maxEnergy = item.basicMaxEnergy+calcSockets(item.sockets, 'maxEnergy');
+        if(item.hasOwnProperty('basicMaxEnergy')) item.maxEnergy = item.basicMaxEnergy()+calcSockets(item.sockets, 'maxEnergy');
         else item.maxEnergy=calcSockets(item.sockets, 'maxEnergy');
 
-        if(item.hasOwnProperty('basicCritChance')) item.critChance = item.basicCritChance+calcSockets(item.sockets, 'critChance');
+        if(item.hasOwnProperty('basicCritChance')) item.critChance = item.basicCritChance()+calcSockets(item.sockets, 'critChance');
         else item.critChance=calcSockets(item.sockets, 'critChance');
 
-        if(item.hasOwnProperty('basicDodgeChance')) item.dodgeChance = item.basicDodgeChance+calcSockets(item.sockets, 'dodgeChance');
+        if(item.hasOwnProperty('basicDodgeChance')) item.dodgeChance = item.basicDodgeChance()+calcSockets(item.sockets, 'dodgeChance');
         else item.dodgeChance=calcSockets(item.sockets, 'dodgeChance');
 
-        if(item.hasOwnProperty('basicLuck')) item.luck = item.basicLuck+calcSockets(item.sockets, 'luck');
+        if(item.hasOwnProperty('basicLuck')) item.luck = item.basicLuck()+calcSockets(item.sockets, 'luck');
         else item.luck=calcSockets(item.sockets, 'luck');
 
-        if(item.hasOwnProperty('basicInt')) item.int = item.basicInt+calcSockets(item.sockets, 'int');
-        else item.int=calcSockets(item.sockets, 'int');
+        item.int=calcSockets(item.sockets, 'int');
 
-        if(item.hasOwnProperty('basicSpellPower')) item.spellPower = item.basicSpellPower+calcSockets(item.sockets, 'spellPower');
+        if(item.hasOwnProperty('basicSpellPower')) item.spellPower = item.basicSpellPower()+calcSockets(item.sockets, 'spellPower');
         else item.spellPower=calcSockets(item.sockets, 'spellPower');
 
-        if(item.hasOwnProperty('basicMaxMana')) item.maxMana = item.basicMaxMana+calcSockets(item.sockets, 'maxMana');
+        if(item.hasOwnProperty('basicMaxMana')) item.maxMana = item.basicMaxMana()+calcSockets(item.sockets, 'maxMana');
         else item.maxMana=calcSockets(item.sockets, 'maxMana');
 
-        if(item.hasOwnProperty('basicManaReg')) item.manaReg = item.basicManaReg+calcSockets(item.sockets, 'manaReg');
+        if(item.hasOwnProperty('basicManaReg')) item.manaReg = item.basicManaReg()+calcSockets(item.sockets, 'manaReg');
         else item.manaReg=calcSockets(item.sockets, 'manaReg');
 
-        if(item.hasOwnProperty('basicMagicRes')) item.magicRes = item.basicMagicRes+calcSockets(item.sockets, 'magicRes');
+        if(item.hasOwnProperty('basicMagicRes')) item.magicRes = item.basicMagicRes()+calcSockets(item.sockets, 'magicRes');
         else item.magicRes=calcSockets(item.sockets, 'magicRes');
 
-        if(item.hasOwnProperty('basicInitiative')) item.initiative = item.basicInitiative+calcSockets(item.sockets, 'initiative');
+        if(item.hasOwnProperty('basicInitiative')) item.initiative = item.basicInitiative()+calcSockets(item.sockets, 'initiative');
         else item.initiative=calcSockets(item.sockets, 'initiative');
 
         //Функция подсчитывает параметры в сокетах
@@ -412,6 +464,12 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         var self=this;
 
         if(self.isDead) return;
+        if(self.checkImmune(debuff.magicEffect())){
+            self.logBuffer.push(self.charName + " didn't get effect '" + debuff.name + "' because immunity.");
+            self.battleTextBuffer.push({type: "other", icon: debuff.icon(), color: getAbilityColor(debuff.role()), caster: caster, text: "Immune", crit: false});
+            self.playSound("dodge");
+            return;
+        }
 
         if(debuff.stacked()) debuff.stacks=1;
         debuff.caster=caster;
@@ -675,8 +733,8 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 "<p>From items: {{three}}</p>"+
                 "<p>Total: {{four}}</p>",
                 {
-                    one: self.basicHealth,
-                    two: (self.maxHealthFromStr-self.basicHealth),
+                    one: self.basicHealth(),
+                    two: (self.maxHealthFromStr-self.basicHealth()),
                     three: self.maxHealthFromEq,
                     four: self.maxHealth
                 }); break;
@@ -759,8 +817,8 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 "<p>From items: {{three}}</p>"+
                 "<p>Total: {{four}}</p>",
                 {
-                    one: self.basicEnergy,
-                    two: (self.maxEnergyFromDxt-self.basicEnergy),
+                    one: self.basicEnergy(),
+                    two: (self.maxEnergyFromDxt-self.basicEnergy()),
                     three: self.maxEnergyFromEq,
                     four: self.maxEnergy
                 }); break;
@@ -773,8 +831,8 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 "<p>Total: {{four}}%</p>"+
                 "<p>Limit: 100%</p>",
                 {
-                    one: (self.basicHitChance*100).toFixed(0),
-                    two: ((self.hitChanceFromDxt-self.basicHitChance)*100).toFixed(2),
+                    one: (self.basicHitChance()*100).toFixed(0),
+                    two: ((self.hitChanceFromDxt-self.basicHitChance())*100).toFixed(2),
                     three: (self.hitChanceFromEq*100).toFixed(2),
                     four: (self.hitChance*100).toFixed(2)
                 }); break;
@@ -837,8 +895,8 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 "<p>From items: {{three}}</p>"+
                 "<p>Total: {{four}}</p>",
                 {
-                    one: self.basicMana,
-                    two: (self.maxManaFromInt-self.basicMana),
+                    one: self.basicMana(),
+                    two: (self.maxManaFromInt-self.basicMana()),
                     three: self.maxManaFromEq,
                     four: self.maxMana
                 }); break;
@@ -905,6 +963,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         if(value===0) {
             self.logBuffer.push(self.charName + " didn't take damage from '" + ability.name + "' of " + caster.charName + ", because immunity.");
             self.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: "Immune", crit: false});
+            self.playSound("dodge");
             return false;
         }
 
@@ -1252,6 +1311,12 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         return (Math.random()<=self.blockChance);
     };
 
+    //Функция проверки на иммунитет
+    Character.prototype.checkImmune = function (magicEffect) {
+        var self=this;
+        return (!magicEffect && self.physImmune) || (magicEffect && self.magicImmune);
+    };
+
     //Функция проверки хита
     Character.prototype.checkHit = function () {
         var self=this;
@@ -1319,7 +1384,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 !queue[i].isDead)
             {
                 if(skipInvisible){ //Невидимые персонажи будут считаться клетками, доступными для хода
-                    if(!queue[i].invisible) return true;
+                    if(!queue[i].invisible && queue[i].charName!==self.charName) return true;
                 }
                 else {
                     return true;
@@ -1543,7 +1608,6 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.soundBuffer.push(sound);
     };
 
-
     //Функция возвращает цвет согласно классу
     Character.prototype.getRoleColor = function() {
         var self = this;
@@ -1587,7 +1651,35 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 return "#862197";
                 break;
         }
+    }
+
+    var byteLength = function(str){
+        var length = str.length, count = 0, i = 0, ch = 0;
+        for(i; i < length; i++){
+            ch = str.charCodeAt(i);
+            if(ch <= 127){
+                count++;
+            }else if(ch <= 2047){
+                count += 2;
+            }else if(ch <= 65535){
+                count += 3;
+            }else if(ch <= 2097151){
+                count += 4;
+            }else if(ch <= 67108863){
+                count += 5;
+            }else{
+                count += 6;
+            }
+        }
+        return count;
     };
+
+
+    Character.prototype.getSize = function() {
+        var self = this;
+        console.log("Character "+self.charName+" length: "+byteLength(JSON.stringify(self))+" bytes");
+    };
+
 
     return Character;
 }]);

@@ -307,6 +307,10 @@ angular.module('fotm').register.service('arenaService', ["gettextCatalog", "rand
                 message=message.replace("of", gettextCatalog.getString("of"));
                 message=message.replace("because immunity", gettextCatalog.getString("because immunity"));
             }
+            if(message.indexOf("didn't get effect")!=-1) {
+                message=message.replace("didn't get effect", gettextCatalog.getString("didn't get effect"));
+                message=message.replace("because immunity", gettextCatalog.getString("because immunity"));
+            }
             if(message.indexOf("dodged from")!=-1) {
                 message=message.replace("dodged from", gettextCatalog.getString("dodged from"));
                 message=message.replace("of", gettextCatalog.getString("of"));

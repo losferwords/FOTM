@@ -159,9 +159,14 @@ module.exports = function (server) {
             var userId = socket.handshake.user._id;
             Team.findOne({teamName: "newTeam_"+userId}, function(err, team){
                 if(err) socket.emit("customError", err);
-                Character.create(team._id, function(err, char){
-                    if (err) socket.emit("customError", err);
-                });
+                if(team!=null){
+                    Character.create(team._id, function(err, char){
+                        if (err) socket.emit("customError", err);
+                    });
+                }
+                else {
+                    socket.emit("customError", "Team not found");
+                }
             });
         });
 

@@ -8,48 +8,48 @@
                     <div class="panel doll-panel">
                         <div class="panel-body">
                             <div class="btn btn-default slot slot-md head"
-                                 ng-class="{'active': interestingItem.slot=='head'}"
+                                 ng-class="{'active': interestingItem.slot()=='head'}"
                                  ng-style="{'background-image': getSlotImage('head'), 'background-color': char.getRoleColor()}"
                                  ng-click="chooseSlot('head')"></div>
                             <div class="btn btn-default slot slot-md chest"
-                                 ng-class="{'active': interestingItem.slot=='chest'}"
+                                 ng-class="{'active': interestingItem.slot()=='chest'}"
                                  ng-style="{'background-image': getSlotImage('chest'), 'background-color': char.getRoleColor()}"
                                  ng-click="chooseSlot('chest')"></div>
                             <div class="btn btn-default slot slot-md hands left"
-                                 ng-class="{'active': interestingItem.slot=='hands'}"
+                                 ng-class="{'active': interestingItem.slot()=='hands'}"
                                  ng-style="{'background-image': getSlotImage('hands'), 'background-color': char.getRoleColor()}"
                                  ng-click="chooseSlot('hands')"></div>
                             <div class="btn btn-default slot slot-md hands right"
-                                 ng-class="{'active': interestingItem.slot=='hands'}"
+                                 ng-class="{'active': interestingItem.slot()=='hands'}"
                                  ng-style="{'background-image': getSlotImage('hands'), 'background-color': char.getRoleColor()}"
                                  ng-click="chooseSlot('hands')"></div>
                             <div class="btn btn-default slot slot-md legs"
-                                 ng-class="{'active': interestingItem.slot=='legs'}"
+                                 ng-class="{'active': interestingItem.slot()=='legs'}"
                                  ng-style="{'background-image': getSlotImage('legs'), 'background-color': char.getRoleColor()}"
                                  ng-click="chooseSlot('legs')"></div>
                             <div class="btn btn-default slot slot-md boots"
-                                 ng-class="{'active': interestingItem.slot=='boots'}"
+                                 ng-class="{'active': interestingItem.slot()=='boots'}"
                                  ng-style="{'background-image': getSlotImage('boots'), 'background-color': char.getRoleColor()}"
                                  ng-click="chooseSlot('boots')"></div>
                             <div class="btn btn-default slot slot-lg mainHandWeapon"
-                                 ng-class="{'active': interestingItem.slot=='mainHandWeapon'}"
+                                 ng-class="{'active': interestingItem.slot()=='mainHandWeapon'}"
                                  ng-style="{'background-image': getSlotImage('mainHandWeapon'), 'background-color': char.getRoleColor()}"
                                  ng-click="chooseSlot('mainHandWeapon')"></div>
                             <div class="btn btn-default slot slot-lg offHandWeapon"
-                                 ng-disabled="char.equip['offHandWeapon'].name == 'Void'"
-                                 ng-class="{'active': interestingItem.slot=='offHandWeapon'}"
+                                 ng-disabled="char.equip['offHandWeapon'].name() == 'Void'"
+                                 ng-class="{'active': interestingItem.slot()=='offHandWeapon'}"
                                  ng-style="{'background-image': getSlotImage('offHandWeapon'), 'background-color': char.getRoleColor()}"
                                  ng-click="chooseSlot('offHandWeapon')"></div>
                             <div class="btn btn-default slot slot-sm amulet"
-                                 ng-class="{'active': interestingItem.slot=='amulet'}"
+                                 ng-class="{'active': interestingItem.slot()=='amulet'}"
                                  ng-style="{'background-image': getSlotImage('amulet'), 'background-color': char.getRoleColor()}"
                                  ng-click="chooseSlot('amulet')"></div>
                             <div class="btn btn-default slot slot-sm leftRing"
-                                 ng-class="{'active': interestingItem.slot=='leftRing'}"
+                                 ng-class="{'active': interestingItem.slot()=='leftRing'}"
                                  ng-style="{'background-image': getSlotImage('leftRing'), 'background-color': char.getRoleColor()}"
                                  ng-click="chooseSlot('leftRing')"></div>
                             <div class="btn btn-default slot slot-sm rightRing"
-                                 ng-class="{'active': interestingItem.slot=='rightRing'}"
+                                 ng-class="{'active': interestingItem.slot()=='rightRing'}"
                                  ng-style="{'background-image': getSlotImage('rightRing'), 'background-color': char.getRoleColor()}"
                                  ng-click="chooseSlot('rightRing')"></div>
                         </div>
@@ -61,18 +61,18 @@
                                     <h4 translate>Choose item slot in left panel</h4>
                                 </div>
                                 <div ng-show="interestingItem">
-                                    <h4>{{formatItemName(interestingItem.name)}}</h4>
-                                    <p>{{formatSlotName(interestingItem.slot)}}</p>
+                                    <h4>{{formatItemName(interestingItem.name())}}</h4>
+                                    <p>{{formatSlotName(interestingItem.slot())}}</p>
                                     <table>
-                                        <tr ng-show="interestingItem.minDamage>0" class="text-danger">
+                                        <tr ng-show="interestingItem.minDamage()>0" class="text-danger">
                                             <td translate>Damage:</td>
-                                            <td>{{interestingItem.minDamage}}-{{interestingItem.maxDamage}}</td>
+                                            <td>{{interestingItem.minDamage()}}-{{interestingItem.maxDamage()}}</td>
                                         </tr>
-                                        <tr ng-show="interestingItem.minDamage>0" class="text-danger">
+                                        <tr ng-show="interestingItem.minDamage()>0" class="text-danger">
                                             <td translate>Range distance:</td>
-                                            <td>{{interestingItem.range}}</td>
+                                            <td>{{interestingItem.range()}}</td>
                                         </tr>
-                                        <tr ng-show="interestingItem.minDamage>0">
+                                        <tr ng-show="interestingItem.minDamage()>0">
                                             <td>&nbsp;</td>
                                         </tr>
 
@@ -166,8 +166,8 @@
 
                                         <div class="gem"
                                              ng-show="socket.gem!='Void'"
-                                             ng-style="{'background-image': socket.gem.image,
-                                                    'background-color': socket.gem.bgColor}"
+                                             ng-style="{'background-image': socket.gem.image(),
+                                                    'background-color': socket.gem.bgColor()}"
                                              uib-tooltip-html="getGemTooltip(socket.gem)"
                                              tooltip-placement="bottom"
                                              tooltip-append-to-body="true"
@@ -198,8 +198,8 @@
                                  dnd-on-drop = "setGemToInventory()">
                                 <div class="gem"
                                      ng-repeat="gem in getGems(gemFilter) track by $index"
-                                     ng-style="{'background-image': gem.image,
-                                                    'background-color': gem.bgColor}"
+                                     ng-style="{'background-image': gem.image(),
+                                                    'background-color': gem.bgColor()}"
                                      uib-tooltip-html="getGemTooltip(gem)"
                                      tooltip-placement="top"
                                      tooltip-append-to-body="true"
@@ -256,7 +256,7 @@
                                                  tooltip-placement="top"
                                                  tooltip-append-to-body="true"
                                                  tooltip-animation="false"
-                                                 ng-style="{'background-image':newGem.image, 'background-color':newGem.bgColor}"></div>
+                                                 ng-style="{'background-image':newGem.image(), 'background-color':newGem.bgColor()}"></div>
                                         </div>
                                     </div>
                                 </div>

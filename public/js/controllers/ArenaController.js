@@ -120,7 +120,7 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
     };
 
     $scope.testFunction =  function(){
-        /*
+
         var str="";
         for(var i=0;i<$scope.myTeam.characters.length;i++){
             str+="-----------------------------------------------------------------------";
@@ -134,7 +134,7 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
                 if (key == 'logBuffer') return undefined;
                 if (key == 'race') return undefined;
                 if (key == 'role') return undefined;
-                if (key == 'equip') return undefined;
+                //if (key == 'equip') return undefined;
                 if (key == 'abilities') return undefined;
                 if (key == 'buffs') return undefined;
                 if (key == 'debuffs') return undefined;
@@ -155,7 +155,7 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
                 if (key == 'logBuffer') return undefined;
                 if (key == 'race') return undefined;
                 if (key == 'role') return undefined;
-                if (key == 'equip') return undefined;
+                //if (key == 'equip') return undefined;
                 if (key == 'abilities') return undefined;
                 if (key == 'buffs') return undefined;
                 if (key == 'debuffs') return undefined;
@@ -165,7 +165,7 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
             },4);
         }
         console.log(str);
-        */
+
     };
 
     //Функция устанавливает клетку карты под курсором конечной точкой для стрелки
