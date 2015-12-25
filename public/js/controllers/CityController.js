@@ -6,7 +6,7 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
     var searchProcessStep=0;
     var charSetFlag;
     var deleteCharInterval;
-    var rollDiceTimer;
+    var rollDiceTimer=undefined;
 
     $scope.searchBattle = false;
 
@@ -168,11 +168,11 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
     };
 
     $scope.rollDicesBtnText = function () {
-        if(!rollDiceTimer) {
-            return gettextCatalog.getString("Roll Dices");
+        if(rollDiceTimer && $scope.nextRollLeft!==0) {
+            return $scope.nextRollLeft;
         }
         else {
-            return $scope.nextRollLeft;
+            return gettextCatalog.getString("Roll Dices");
         }
     };
 
@@ -198,6 +198,8 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
         if(soundService.getMusicObj().battleAmbience){
             soundService.getMusicObj().battleAmbience.pause();
         }
+        $scope.nextRollLeft=0;
+        rollDiceTimer=undefined;
         mainSocket.emit("getUserTeam");
     });
     mainSocket.on('getUserTeamResult', function(team, rank, nextRollLeft){

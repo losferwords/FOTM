@@ -271,7 +271,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.attackPowerFromEq = paramFromEquip('attackPower');
         self.attackPower = (self.attackPowerFromStr+self.attackPowerFromEq)*self.attackPowerMod;
 
-        self.maxHealthFromStr = self.str*10+self.basicHealth();
+        self.maxHealthFromStr = self.str*30+self.basicHealth();
         self.maxHealthFromEq = paramFromEquip('maxHealth');
         self.maxHealth = Math.floor(self.maxHealthFromStr+self.maxHealthFromEq);
 
@@ -299,11 +299,11 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.critChance = (self.critChanceFromDxt+self.critChanceFromEq)*self.critChanceMod;
         if(self.critChance>0.5) self.critChance=0.5;
 
-        self.maxEnergyFromDxt = self.dxt+self.basicEnergy();
+        self.maxEnergyFromDxt = self.dxt*3+self.basicEnergy();
         self.maxEnergyFromEq = paramFromEquip('maxEnergy');
         self.maxEnergy = Math.floor(self.maxEnergyFromDxt+self.maxEnergyFromEq);
 
-        self.hitChanceFromDxt = self.basicHitChance()+self.dxt*0.0003;
+        self.hitChanceFromDxt = self.basicHitChance()+self.dxt*0.00045;
         self.hitChanceFromEq = paramFromEquip('hitChance');
         self.hitChance = (self.hitChanceFromDxt+self.hitChanceFromEq)*self.hitChanceMod;
         if(self.hitChance>1) self.hitChance=1;
@@ -326,7 +326,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.spellPowerFromEq = paramFromEquip('spellPower');
         self.spellPower = (self.spellPowerFromInt+self.spellPowerFromEq)*self.spellPowerMod;
 
-        self.maxManaFromInt = self.int*10+self.basicMana();
+        self.maxManaFromInt = self.int*24+self.basicMana();
         self.maxManaFromEq = paramFromEquip('maxMana');
         self.maxMana = Math.floor(self.maxManaFromInt+self.maxManaFromEq);
 

@@ -175,16 +175,25 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
             if (a.quality < b.quality) {
                 return 1;
             }
-            if (a.quality > b.quality) {
+            else if (a.quality > b.quality) {
                 return -1;
             }
             //если качество одинаковое, тогда сортируем просто по цвету
-            if (a.quality == b.quality) {
+            else {
                 if(a.color > b.color){
                     return -1;
                 }
-                else {
+                else if(a.color < b.color){
                     return 1;
+                }
+                //если цвет одинаковый, тогда сортируем по названию
+                else {
+                    if(a.name > b.name){
+                        return 1;
+                    }
+                    else if(a.name < b.name){
+                        return -1;
+                    }
                 }
             }
             return 0;
@@ -565,12 +574,12 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
                         break;
                     case 2:
                         newGem.maxEnergy=randomService.randomInt(25, 50);
-                        newGem.quality=newGem.maxEnergy/100;
+                        newGem.quality=newGem.maxEnergy/50;
                         newGem.name="Soul Of Energy";
                         break;
                     case 3:
-                        newGem.hitChance=randomService.randomFloat(0.0125, 0.025, 4);
-                        newGem.quality=newGem.hitChance/0.025;
+                        newGem.hitChance=randomService.randomFloat(0.00375, 0.0075, 4);
+                        newGem.quality=newGem.hitChance/0.0075;
                         newGem.name="Soul Of Accuracy";
                         break;
                     case 4:
@@ -693,12 +702,12 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
                         break;
                     case 2:
                         newGem.maxEnergy=50;
-                        newGem.quality=newGem.maxEnergy/100;
+                        newGem.quality=newGem.maxEnergy/50;
                         newGem.name="Soul Of Energy";
                         break;
                     case 3:
-                        newGem.hitChance=0.025;
-                        newGem.quality=newGem.hitChance/0.025;
+                        newGem.hitChance=0.0075;
+                        newGem.quality=newGem.hitChance/0.0075;
                         newGem.name="Soul Of Accuracy";
                         break;
                     case 4:
