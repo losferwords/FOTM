@@ -27,8 +27,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Defender Of The Faith": return {
@@ -83,8 +82,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Disarm": return {
@@ -113,8 +111,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Walk Away": return {
@@ -135,8 +132,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Sanctuary": return {
@@ -163,8 +159,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "The Punishment Due": return {
@@ -198,8 +193,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return false},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return false}
                 };break;
 
                 //SLAYER
@@ -225,8 +219,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return true},
                     infinite: function() {return true},
                     maxStacks: function() {return 5},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Made In Hell": return {
@@ -255,8 +248,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Spill The Blood": return {
@@ -287,8 +279,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Dyers Eve": return {
@@ -312,8 +303,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "I Dont Wanna Stop": return {
@@ -334,8 +324,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 //REDEEMER
@@ -368,8 +357,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Thunderstruck": return {
@@ -390,8 +378,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "You Aint No Angel": return {
@@ -420,8 +407,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "State Of Grace": return {
@@ -457,8 +443,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return false},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return false}
                 };break;
 
                 case "Come Cover Me": return {
@@ -491,8 +476,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return false},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return false}
                 };break;
 
                 //RIPPER
@@ -528,8 +512,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return false},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return false}
                 };break;
 
                 case "Invisible": return {
@@ -558,8 +541,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Jawbreaker": return {
@@ -580,8 +562,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Hog Tied": return {
@@ -602,8 +583,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Running Free": return {
@@ -629,8 +609,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Fast As The Shark": return {
@@ -661,8 +640,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Prowler": return {
@@ -683,8 +661,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Fade To Black": return {
@@ -705,8 +682,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return false}
+                    onlyStat: function() {return true}
                 };break;
 
                 //PROPHET
@@ -732,8 +708,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return true},
                     infinite: function() {return false},
                     maxStacks: function() {return 5},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Never A Word": return {
@@ -754,8 +729,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Prophecy": return {
@@ -789,8 +763,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Infinite Dreams": return {
@@ -801,7 +774,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     desc: function() {
                         var str = gettextCatalog.getString(
                             "Every turn restore {{one}}% mana.",{
-                                one: (this.variant*2).toFixed(0)
+                                one: (this.variant).toFixed(0)
                             });
                         str+="<br>";
                         str+=gettextCatalog.getString(
@@ -812,7 +785,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     },
                     icon : function(){ return "url(../images/icons/abilities/InfiniteDreams.svg)"},
                     apply : function (owner, myTeam, enemyTeam) {
-                        owner.takeMana(owner.maxMana*(this.variant*2)*0.01, owner, this.name, false);
+                        owner.takeMana(owner.maxMana*(this.variant)*0.01, owner, this.name, false);
                         owner.initiativeMod+=this.variant*0.15;
                     },
                     duration: function(){return 5+this.variant},
@@ -821,8 +794,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Caught Somewhere In Time": return {
@@ -860,8 +832,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return false},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return false}
                 };break;
 
                 //MALEFIC
@@ -884,8 +855,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Thank God For The Bomb": return {
@@ -948,8 +918,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return false},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return false}
                 };break;
 
                 case "Thank God For The Bomb (Stun)": return {
@@ -970,8 +939,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Powerslave": return {
@@ -1003,8 +971,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return true},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Cauterization": return {
@@ -1041,8 +1008,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return false},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return false}
                 };break;
 
                 case "Down In Flames": return {
@@ -1053,12 +1019,12 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     desc: function() {
                         var str = gettextCatalog.getString(
                             "Spell Power increased to {{one}}%.",{
-                                one: (this.variant*3*this.stacks).toFixed(0)
+                                one: (this.variant*this.stacks).toFixed(0)
                             });
                         str+="<br>";
                         str+=gettextCatalog.getString(
                             "Critical Chance increased to {{one}}%.",{
-                                one: (this.variant*3*this.stacks).toFixed(0)
+                                one: (this.variant*this.stacks).toFixed(0)
                             });
                         str+="<br>";
                         str+=gettextCatalog.getString(
@@ -1067,13 +1033,8 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     },
                     icon : function(){ return "url(../images/icons/abilities/DownInFlames.svg)"},
                     apply : function (owner, myTeam, enemyTeam) {
-                        //т.к. кд=0, сначала убавим значение у персонажа, а потом прибавим снова
-                        if(this.stacks>1){
-                            owner.spellPowerMod-=0.03*this.variant*(this.stacks-1);
-                            owner.critChanceMod-=0.03*this.variant*(this.stacks-1);
-                        }
-                        owner.spellPowerMod+=0.03*this.variant*this.stacks;
-                        owner.critChanceMod+=0.03*this.variant*this.stacks;
+                        owner.spellPowerMod+=0.01*this.variant*this.stacks;
+                        owner.attackPowerMod+=0.01*this.variant*this.stacks;
                     },
                     duration: function(){return 0},
                     left : 0,
@@ -1081,8 +1042,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return true},
                     infinite: function() {return true},
                     maxStacks: function() {return 10},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Fight Fire With Fire": return {
@@ -1104,8 +1064,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 //CLERIC
@@ -1140,8 +1099,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return true},
                     infinite: function() {return false},
                     maxStacks: function() {return 3},
-                    onlyStat: function() {return false},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return false}
                 };break;
 
                 case "Hallowed Be Thy Name": return {
@@ -1191,8 +1149,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Heaven Can Wait": return {
@@ -1215,8 +1172,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 //HERETIC
@@ -1252,8 +1208,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return false},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return false}
                 };break;
 
                 case "Creeping Death": return {
@@ -1287,8 +1242,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return true},
                     infinite: function() {return false},
                     maxStacks: function() {return 5},
-                    onlyStat: function() {return false},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return false}
                 };break;
 
                 case "Spreading The Disease": return {
@@ -1354,8 +1308,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return true},
                     infinite: function() {return false},
                     maxStacks: function() {return 5},
-                    onlyStat: function() {return false},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return false}
                 };break;
 
                 case "Children Of The Damned": return {
@@ -1405,8 +1358,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
 
                 case "Locked And Loaded": return {
@@ -1426,8 +1378,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     stacked: function() {return false},
                     infinite: function() {return false},
                     maxStacks: function() {return 0},
-                    onlyStat: function() {return true},
-                    magicEffect: function() {return true}
+                    onlyStat: function() {return true}
                 };break;
             }
         }
