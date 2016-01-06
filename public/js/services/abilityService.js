@@ -351,6 +351,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         }
                         else {
                             caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
+                            caster.logBuffer.push(caster.charName+" miss against "+target.charName+" with '"+this.name+"'");
                         }
                         caster.afterCast(this.name, myTeam, enemyTeam);
                     },
@@ -1569,12 +1570,9 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             caster.logBuffer.push(caster.charName + " cast '" + this.name + "' on " + target.charName);
                             caster.playSound(this.name);
 
-                            target.addDebuff(effectService.effect("Never A Word", this.variant), caster.charName, myTeam, enemyTeam);
-
                             var nearbyEnemies = target.findAllies(enemyTeam, 1);
                             for (var i = 0; i < nearbyEnemies.length; i++) {
-                                //Для той же цели не проверяем miss
-                                if (caster.checkHit() || nearbyEnemies[i].charName===target.charName) {
+                                if (caster.checkHit()) {
                                     if(nearbyEnemies[i].controlImmune) {
                                         caster.logBuffer.push(nearbyEnemies[i].charName+" has immunity to control effects!");
                                     }
@@ -2090,7 +2088,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     desc: function() {
                         return gettextCatalog.getString(
                             "Increases Spell Power and Critical Chance for {{one}}%. Effect fades if you miss. Stacks up 10 times.",{
-                                one: (this.variant*3).toFixed(0)
+                                one: (this.variant).toFixed(0)
                             });
                     },
                     icon : function() { return "url(../images/icons/abilities/DownInFlames.svg)"},
@@ -2155,9 +2153,9 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     role : function() {return "cleric"},
                     desc: function() {
                         return gettextCatalog.getString(
-                            "Strikes enemy with hammer, deals {{one}}% of weapon damage, {{two}} magical damage and restores mana equal to 50% of dealing damage.",{
+                            "Strikes enemy with hammer, deals {{one}}% of weapon damage, {{two}} magical damage and restores mana equal to dealing damage.",{
                                 one: (this.variant*15+100).toFixed(0),
-                                two: (400+this.variant*75).toFixed(0)
+                                two: (200+this.variant*25).toFixed(0)
                             });
                     },
                     icon : function() { return "url(../images/icons/abilities/HammerOfTheGods.svg)"},
@@ -2167,7 +2165,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         this.cd=this.cooldown();
                         if(caster.checkHit()){
                             var physDamage = randomService.randomInt(caster.minDamage*(1+this.variant*0.15), caster.maxDamage*(1+this.variant*0.15));
-                            var magicDamage = (400+this.variant*75)*(1+caster.spellPower);
+                            var magicDamage = (200+this.variant*25)*(1+caster.spellPower);
 
                             var critical = caster.checkCrit();
                             if(critical){
@@ -2181,7 +2179,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
 
                             caster.playSound(this.name);
                             if(target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                                caster.takeMana(totalDamage*0.5, caster, this.name, critical);
+                                caster.takeMana(totalDamage, caster, this.name, critical);
                             }
                         }
                         else {
@@ -2194,7 +2192,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     duration: function(){return 0},
                     energyCost : function(){return 100+this.variant*75},
                     manaCost : function(){return 75+this.variant*75},
-                    cooldown : function(){return 5+this.variant},
+                    cooldown : function(){return 7+this.variant},
                     needWeapon : function() {return true},
                     cd : 0
                 };break;
@@ -2435,7 +2433,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         var magicDamage = (775-this.variant*75)*(1+caster.spellPower);
                         var nearbyEnemies = caster.findEnemies(enemyTeam, 2);
                         for (var i = 0; i < nearbyEnemies.length; i++) {
-                            if(caster.checkHit() || nearbyEnemies[i].charName===target.charName){
+                            if(caster.checkHit()){
                                 var critical = caster.checkCrit();
                                 if(critical){
                                     magicDamage=caster.applyCrit(magicDamage);
