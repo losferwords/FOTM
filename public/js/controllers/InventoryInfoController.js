@@ -532,8 +532,8 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
                     newGem.name="Soul Of Strength";
                     break;
                 case 1:
-                    newGem.attackPower=randomService.randomFloat(0.025, 0.05, 4);
-                    newGem.quality=newGem.attackPower/0.05;
+                    newGem.attackPower=randomService.randomFloat(0.0165, 0.0333, 4);
+                    newGem.quality=newGem.attackPower/0.0333;
                     newGem.name="Soul Of Power";
                     break;
                 case 2:
@@ -568,8 +568,8 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
                         newGem.name="Soul Of Dexterity";
                         break;
                     case 1:
-                        newGem.critChance=randomService.randomFloat(0.00625, 0.0125, 4);
-                        newGem.quality=newGem.critChance/0.0125;
+                        newGem.critChance=randomService.randomFloat(0.004165, 0.00833, 4);
+                        newGem.quality=newGem.critChance/0.00833;
                         newGem.name="Soul Of Extremum";
                         break;
                     case 2:
@@ -660,8 +660,8 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
                         newGem.name="Soul Of Strength";
                         break;
                     case 1:
-                        newGem.attackPower=0.05;
-                        newGem.quality=newGem.attackPower/0.05;
+                        newGem.attackPower=0.0333;
+                        newGem.quality=newGem.attackPower/0.0333;
                         newGem.name="Soul Of Power";
                         break;
                     case 2:
@@ -696,8 +696,8 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
                         newGem.name="Soul Of Dexterity";
                         break;
                     case 1:
-                        newGem.critChance=0.0125;
-                        newGem.quality=newGem.critChance/0.0125;
+                        newGem.critChance=0.00833;
+                        newGem.quality=newGem.critChance/0.00833;
                         newGem.name="Soul Of Extremum";
                         break;
                     case 2:

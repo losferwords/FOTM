@@ -267,7 +267,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.strFromEq = paramFromEquip('str');
         self.str = Math.floor((self.params.strMax+self.strFromEq)*self.params.strProc);
 
-        self.attackPowerFromStr = self.str*0.003;
+        self.attackPowerFromStr = self.str*0.002;
         self.attackPowerFromEq = paramFromEquip('attackPower');
         self.attackPower = (self.attackPowerFromStr+self.attackPowerFromEq)*self.attackPowerMod;
 
@@ -278,7 +278,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.healthRegFromStr = self.str*0.00012;
         self.healthRegFromEq = paramFromEquip('healthReg');
         self.healthReg = (self.healthRegFromStr+self.healthRegFromEq)*self.healthRegMod;
-        if(self.healthReg>0.08) self.healthReg=0.08;
+        if(self.healthReg>0.03) self.healthReg=0.03;
 
         self.physResFromStr = self.str*0.0009;
         self.physResFromEq = paramFromEquip('physRes');
@@ -294,7 +294,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.dxtFromEq = paramFromEquip('dxt');
         self.dxt = Math.floor((self.params.dxtMax+self.dxtFromEq)*self.params.dxtProc);
 
-        self.critChanceFromDxt = self.dxt*0.00075;
+        self.critChanceFromDxt = self.dxt*0.0005;
         self.critChanceFromEq = paramFromEquip('critChance');
         self.critChance = (self.critChanceFromDxt+self.critChanceFromEq)*self.critChanceMod;
         if(self.critChance>0.5) self.critChance=0.5;
@@ -333,7 +333,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.manaRegFromInt = self.int*0.00015;
         self.manaRegFromEq = paramFromEquip('manaReg');
         self.manaReg = (self.manaRegFromInt+self.manaRegFromEq)*self.manaRegMod;
-        if(self.manaReg>0.1) self.manaReg=0.1;
+        if(self.manaReg>0.04) self.manaReg=0.04;
 
         self.magicResFromInt = self.int*0.0009;
         self.magicResFromEq = paramFromEquip('magicRes');
@@ -750,7 +750,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 "<p>From items: {{two}}%</p>"+
                 "<p>Total: {{three}}%</p>"+
                 "<p>Every turn you restore {{four}} health</p>"+
-                "<p>Limit: 8%</p>",
+                "<p>Limit: 3%</p>",
                 {
                     one: (self.healthRegFromStr*100).toFixed(2),
                     two: (self.healthRegFromEq*100).toFixed(2),
@@ -912,7 +912,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 "<p>From items: {{two}}%</p>"+
                 "<p>Total: {{three}}%</p>"+
                 "<p>Every turn you restore {{four}} mana</p>"+
-                "<p>Limit: 10%</p>",
+                "<p>Limit: 4%</p>",
                 {
                     one: (self.manaRegFromInt*100).toFixed(2),
                     two: (self.manaRegFromEq*100).toFixed(2),

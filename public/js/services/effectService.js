@@ -13,13 +13,13 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     role : function(){ return "sentinel"},
                     desc: function() {
                         return gettextCatalog.getString(
-                            "Hit Chance increased to {{one}}%.",{
-                                one: (this.variant*10).toFixed(0)
+                            "Hit Chance decreased to {{one}}%.",{
+                                one: (this.variant*7).toFixed(0)
                             });
                     },
                     icon : function(){ return "url(../images/icons/abilities/StrongArmOfTheLaw.svg)"},
                     apply : function (owner, myTeam, enemyTeam) {
-                        owner.hitChanceMod+=this.variant*0.1;
+                        owner.hitChanceMod-=this.variant*0.07;
                     },
                     duration: function(){return 18-this.variant*2},
                     left : 0,
@@ -100,12 +100,18 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                             "Physical Resistance decreased to {{one}}%.",{
                                 one: (this.variant*7).toFixed(0)
                             });
+                        str+=" ";
+                        str+=gettextCatalog.getString(
+                            "Dodge Chance decreased to {{one}}%.",{
+                                one: (this.variant*7).toFixed(0)
+                            });
                         return str;
                     },
                     icon : function(){ return "url(../images/icons/abilities/Disarm.svg)"},
                     apply : function (owner, myTeam, enemyTeam) {
                         owner.disarmed=true;
                         owner.physResMod-=this.variant*0.07;
+                        owner.dodgeChanceMod-=this.variant*0.07;
                     },
                     duration: function(){return 5+this.variant},
                     left : 0,
@@ -801,7 +807,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     desc: function() {
                         var str = gettextCatalog.getString(
                             "Every turn restore {{one}}% mana.",{
-                                one: (this.variant*2).toFixed(0)
+                                one: (this.variant).toFixed(0)
                             });
                         str+="<br>";
                         str+=gettextCatalog.getString(
@@ -1118,7 +1124,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                     desc: function() {
                         return gettextCatalog.getString(
                             "Every turn restores {{one}} health.",{
-                                one: ((50+this.variant*10)*this.stacks).toFixed(0)
+                                one: ((75+this.variant*15)*this.stacks).toFixed(0)
                             });
                     },
                     icon : function(){ return "url(../images/icons/abilities/MercyfulFate.svg)"},
@@ -1127,7 +1133,7 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
                         for(var i=0;i<myTeam.length;i++){
                             if(myTeam[i].charName===this.caster) buffer=myTeam[i];
                         }
-                        var heal = (50+this.variant*10)*(1+buffer.spellPower)*this.stacks;
+                        var heal = (75+this.variant*15)*(1+buffer.spellPower)*this.stacks;
                         var critical = buffer.checkCrit();
                         if(critical){
                             heal=buffer.applyCrit(heal);

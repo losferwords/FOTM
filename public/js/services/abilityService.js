@@ -32,9 +32,9 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     role : function() {return "sentinel"},
                     desc: function() {
                         var str = gettextCatalog.getString(
-                            "Strikes enemy, deals {{one}}% of weapon damage and increases Hit Chance to {{two}}%",{
+                            "Strikes enemy, deals {{one}}% of weapon damage and decreases target Hit Chance to {{two}}%",{
                                 one: (this.variant*20+100).toFixed(0),
-                                two: (this.variant*10)
+                                two: (this.variant*7)
                             });
                         str+=" ";
                         str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
@@ -54,7 +54,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             physDamage=target.applyResistance(physDamage, false);
                             caster.playSound(this.name);
                             if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                                caster.addBuff(effectService.effect("Strong Arm Of The Law", this.variant), caster.charName, myTeam, enemyTeam);
+                                target.addDebuff(effectService.effect("Strong Arm Of The Law", this.variant), caster.charName, myTeam, enemyTeam);
                             }
                         }
                         else {
@@ -139,7 +139,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     role : function() {return "sentinel"},
                     desc: function() {
                         var str = gettextCatalog.getString(
-                            "Takes off target weapon and some armor. Reduces target physical resistance for {{one}}%.",{
+                            "Takes off target weapon and some armor. Reduces target physical resistance and dodge chance for {{one}}%.",{
                                 one: (this.variant*7).toFixed(0)
                             });
                         str+=" ";
@@ -308,9 +308,9 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     targetType : function() { return "enemy"},
                     range : function(){return 2},
                     duration: function(){return 4+this.variant},
-                    energyCost : function(){return 150+this.variant*100},
-                    manaCost : function(){return 100+this.variant*100},
-                    cooldown : function(){return 11+this.variant},
+                    energyCost : function(){return 100+this.variant*75},
+                    manaCost : function(){return 150+this.variant*50},
+                    cooldown : function(){return 7+this.variant},
                     needWeapon : function() {return true},
                     cd : 0
                 };break;
@@ -357,8 +357,8 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     targetType : function() { return "enemy"},
                     range : function(){return 3},
                     duration: function(){return 0},
-                    energyCost : function(){return 150+this.variant*75},
-                    manaCost : function(){return 200+this.variant*100},
+                    energyCost : function(){return 100+this.variant*75},
+                    manaCost : function(){return 100+this.variant*50},
                     cooldown : function(){return 11+this.variant},
                     needWeapon : function() {return true},
                     cd : 0
@@ -370,7 +370,8 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     variant: 3,
                     role : function() {return "sentinel"},
                     desc: function() {
-                        return gettextCatalog.getString("Cast on ally target. Removes 3 random negative effects, that cause periodic damage. Restore {{one}} health.",{one: (100+this.variant*150).toFixed(0)});
+                        return gettextCatalog.getString("Cast on ally target. Removes 3 random negative effects, that cause periodic damage. Restore {{one}} health.",
+                            {one: (200+this.variant*175).toFixed(0)});
                     },
                     icon : function() { return "url(../images/icons/abilities/NewFaith.svg)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
@@ -390,7 +391,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             }
                         }
 
-                        var heal=(100+this.variant*150)*(1+caster.spellPower);
+                        var heal=(200+this.variant*175)*(1+caster.spellPower);
                         var critical = caster.checkCrit();
                         if (critical) {
                             heal = caster.applyCrit(heal);
@@ -404,7 +405,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     duration: function(){return 0},
                     energyCost : function(){return 100+this.variant*50},
                     manaCost : function(){return 150+this.variant*100},
-                    cooldown : function(){return 8+this.variant},
+                    cooldown : function(){return 5+this.variant},
                     needWeapon : function() {return false},
                     cd : 0
                 };break;
@@ -506,7 +507,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     desc: function() {
                         return gettextCatalog.getString(
                             "Strikes all enemies in 1 cell radius, deals {{one}}% of weapon damage. Ability has {{two}}% chance to restore it's cooldown immediately.",{
-                                one: (this.variant*10+50).toFixed(0),
+                                one: (this.variant*20+50).toFixed(0),
                                 two: (36-this.variant*6)
                             });
                     },
@@ -527,7 +528,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         for (var i = 0; i < nearbyEnemies.length; i++) {
                             //Для той же цели не проверяем miss
                             if(caster.checkHit() || nearbyEnemies[i].charName===target.charName){
-                                var physDamage = randomService.randomInt(caster.minDamage*(0.5+this.variant*0.1), caster.maxDamage*(0.5+this.variant*0.1));
+                                var physDamage = randomService.randomInt(caster.minDamage*(0.5+this.variant*0.2), caster.maxDamage*(0.5+this.variant*0.2));
 
                                 var critical = caster.checkCrit();
                                 if(critical){
@@ -560,7 +561,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     desc: function() {
                         return gettextCatalog.getString(
                             "Charges to enemy and deals {{one}}% of weapon damage.",{
-                                one: (this.variant*30+70).toFixed(0)
+                                one: (this.variant*30+50).toFixed(0)
                             });
                     },
                     icon : function() { return "url(../images/icons/abilities/FollowTheTears.svg)"},
@@ -583,7 +584,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         this.cd=this.cooldown();
 
                         if(caster.checkHit()){
-                            var physDamage = randomService.randomInt(caster.minDamage*(0.7+this.variant*0.3), caster.maxDamage*(0.7+this.variant*0.3));
+                            var physDamage = randomService.randomInt(caster.minDamage*(0.5+this.variant*0.3), caster.maxDamage*(0.5+this.variant*0.3));
                             var critical = caster.checkCrit();
                             if(critical){
                                 physDamage=caster.applyCrit(physDamage);
@@ -688,7 +689,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     desc: function() {
                         var str = gettextCatalog.getString(
                             "Ability can be used only if character health is less than 50%. Heals up caster for {{one}} and increases Critical Chance for {{two}}%.",{
-                                one: (300+this.variant*200).toFixed(0),
+                                one: (500+this.variant*500).toFixed(0),
                                 two: (this.variant*20).toFixed(0)
                             });
                         str+=" ";
@@ -703,7 +704,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
                         caster.playSound(this.name);
                         caster.addBuff(effectService.effect("Dyers Eve", this.variant), caster.charName, myTeam, enemyTeam);
-                        var heal=(300+this.variant*200)*(1+caster.spellPower);
+                        var heal=(500+this.variant*500)*(1+caster.spellPower);
                         var critical = caster.checkCrit();
                         if (critical) {
                             heal = caster.applyCrit(heal);
@@ -1568,6 +1569,8 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             caster.logBuffer.push(caster.charName + " cast '" + this.name + "' on " + target.charName);
                             caster.playSound(this.name);
 
+                            target.addDebuff(effectService.effect("Never A Word", this.variant), caster.charName, myTeam, enemyTeam);
+
                             var nearbyEnemies = target.findAllies(enemyTeam, 1);
                             for (var i = 0; i < nearbyEnemies.length; i++) {
                                 //Для той же цели не проверяем miss
@@ -1682,7 +1685,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     desc: function() {
                         return gettextCatalog.getString(
                             "Deals {{one}} magical damage for every turn, that lefts for every target ability.",{
-                                one: (this.variant*10).toFixed(0)
+                                one: (this.variant*20).toFixed(0)
                             });
                     },
                     icon : function() { return "url(../images/icons/abilities/BrainDamage.svg)"},
@@ -1695,7 +1698,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             for(var i=0;i<target.abilities.length;i++){
                                 magicDamage+=target.abilities[i].cd;
                             }
-                            magicDamage = magicDamage*this.variant*10*(1+caster.spellPower);
+                            magicDamage = magicDamage*this.variant*20*(1+caster.spellPower);
 
                             var critical = caster.checkCrit();
                             if(critical){
@@ -1730,7 +1733,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         var str = gettextCatalog.getString(
                             "Cast on ally target. Increases Initiative for {{one}}%. Every turn restores {{two}}% mana.",{
                                 one: (this.variant*15).toFixed(0),
-                                two: (this.variant*2).toFixed(0)
+                                two: (this.variant).toFixed(0)
                             });
                         str+=" ";
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
@@ -2204,7 +2207,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     desc: function() {
                         var str = gettextCatalog.getString(
                             "Cast on ally target. Every turn restores {{one}} health. Stacks up 3 times.",{
-                                one: (50+this.variant*10).toFixed(0)
+                                one: (75+this.variant*15).toFixed(0)
                             });
                         str+=" ";
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
@@ -2286,8 +2289,8 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     desc: function() {
                         return gettextCatalog.getString(
                             "Heals up ally target for {{one}}. Or deals {{two}} magical damage to enemy target.",{
-                                one: (250+this.variant*200).toFixed(0),
-                                two: (150+this.variant*100).toFixed(0)
+                                one: (250+this.variant*250).toFixed(0),
+                                two: (150+this.variant*150).toFixed(0)
                             });
                     },
                     icon : function() { return "url(../images/icons/abilities/HolySmoke.svg)"},
@@ -2301,7 +2304,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             if(myTeam[i].charName===target.charName) targetIsAlly=true;
                         }
                         if(targetIsAlly) {
-                            var heal=(250+this.variant*200)*(1+caster.spellPower);
+                            var heal=(250+this.variant*250)*(1+caster.spellPower);
                             var critical = caster.checkCrit();
                             if (critical) {
                                 heal = caster.applyCrit(heal);
@@ -2311,7 +2314,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         }
                         else {
                             if(caster.checkHit()){
-                                var magicDamage = (150+this.variant*100)*(1+caster.spellPower);
+                                var magicDamage = (150+this.variant*150)*(1+caster.spellPower);
                                 critical = caster.checkCrit();
                                 if(critical){
                                     magicDamage=caster.applyCrit(magicDamage);

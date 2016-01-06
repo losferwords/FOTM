@@ -68,6 +68,7 @@ schema.statics.create = function(teamId, callback){
             //Добавляем созданного персонажа в массив персонажей команды
             dummyChar.populate('_team', function(err, char){
                 if (err) return callback(err);
+                if(!char._team) callback(new CustomError("Team Not Found"));
                 char._team.characters.push(char._id);
                 char._team.save(function(err, team){
                     if (err) return callback(err);

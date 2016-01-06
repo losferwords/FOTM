@@ -347,6 +347,7 @@ module.exports = function (server) {
                         wallPositions: enemyWallPositions
                     };
 
+                    log.info("User "+io.sockets.connected[queue[0]].handshake.user.username+" start battle with "+io.sockets.connected[queue[1]].handshake.user.username);
                     io.sockets.connected[queue[0]].emit('startBattle', allyBattleData);
                     io.sockets.connected[queue[1]].emit('startBattle', enemyBattleData);
                     io.sockets.connected[queue[0]].leave(arenaLobby);

@@ -1,3 +1,3 @@
 exports.get = function (req, res) {
-    res.render('frontpage.ejs');
+    res.render('layout/page.ejs');
 };

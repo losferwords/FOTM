@@ -6,7 +6,7 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
     var searchProcessStep=0;
     var charSetFlag;
     var deleteCharInterval;
-    var rollDiceTimer=undefined;
+    var rollDiceTimer;
 
     $scope.searchBattle = false;
 
@@ -198,8 +198,6 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
         if(soundService.getMusicObj().battleAmbience){
             soundService.getMusicObj().battleAmbience.pause();
         }
-        $scope.nextRollLeft=0;
-        rollDiceTimer=undefined;
         mainSocket.emit("getUserTeam");
     });
     mainSocket.on('getUserTeamResult', function(team, rank, nextRollLeft){

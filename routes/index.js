@@ -1,6 +1,5 @@
 var User = require('models/user').User;
 var HttpError = require('error').HttpError;
-var checkAuth = require('middleware/checkAuth');
 
 module.exports = function (app) {
     app.get('/partials/:filename', partials);
