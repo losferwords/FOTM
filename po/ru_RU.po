@@ -294,7 +294,7 @@ msgstr "<p>Дальность: на себя</p>"
 msgid "<p>Stacks: {{one}}/{{two}}</p>"
 msgstr "<p>Сумма: {{one}}/{{two}}</p>"
 
-#: public/js/services/abilityService.js:2818
+#: public/js/services/abilityService.js:2815
 #: public/js/services/arenaService.js:562
 msgid "A Touch Of Evil"
 msgstr "Прикосновение зла"
@@ -334,7 +334,7 @@ msgstr "Все цели в радиусе 1 клетки получают нем
 msgid "Amulet"
 msgstr "Амулет"
 
-#: template/partials/city.ejs:100
+#: template/partials/city.ejs:101
 msgid "Are you sure?"
 msgstr "Вы уверены?"
 
@@ -447,7 +447,7 @@ msgstr "Шанс блока: + {{one}}%"
 msgid "blocked"
 msgstr "блокировано"
 
-#: public/js/services/abilityService.js:2513
+#: public/js/services/abilityService.js:2510
 #: public/js/services/arenaService.js:541
 msgid "Bloodsucker"
 msgstr "Кровосос"
@@ -460,7 +460,7 @@ msgstr "Книга Душ"
 msgid "Boots"
 msgstr "Ботинки"
 
-#: public/js/services/abilityService.js:1682
+#: public/js/services/abilityService.js:1679
 #: public/js/services/arenaService.js:484
 msgid "Brain Damage"
 msgstr "Повреждение мозга"
@@ -491,17 +491,17 @@ msgstr ""
 msgid "Buffs:"
 msgstr "Бафы:"
 
-#: template/partials/city.ejs:68
+#: template/partials/city.ejs:41 template/partials/city.ejs:69
 msgid "Burn"
 msgstr "Сжечь"
 
-#: public/js/services/abilityService.js:1862
+#: public/js/services/abilityService.js:1859
 #: public/js/services/arenaService.js:496
 #: public/js/services/effectService.js:877
 msgid "Burning Ambition"
 msgstr "Сжигание амбиций"
 
-#: public/js/services/abilityService.js:1866
+#: public/js/services/abilityService.js:1863
 msgid "Burns target weapon and deals {{one}} magical damage."
 msgstr "Сжигает оружие врага и наносит {{one}} магического урона."
 
@@ -555,7 +555,7 @@ msgstr ""
 "Используется на дружественную цель. Притягивает цель к заклинателю. Каждый "
 "ход восстанавливает цели {{one}} здоровья."
 
-#: public/js/services/abilityService.js:2057
+#: public/js/services/abilityService.js:2054
 msgid ""
 "Cast on ally target. Every turn restores {{one}} health and burns {{two}} "
 "mana."
@@ -563,14 +563,14 @@ msgstr ""
 "Используется на дружественную цель. Каждый ход восстанавливает {{one}} "
 "здоровья и сжигает {{two}} маны."
 
-#: public/js/services/abilityService.js:2208
+#: public/js/services/abilityService.js:2205
 msgid ""
 "Cast on ally target. Every turn restores {{one}} health. Stacks up 3 times."
 msgstr ""
 "Используется на дружественную цель. Каждый ход восстанавливает {{one}} "
 "здоровья. Суммируется до 3 раз."
 
-#: public/js/services/abilityService.js:2387
+#: public/js/services/abilityService.js:2384
 msgid "Cast on ally target. Increases Attack Power and Block Chance for 25%."
 msgstr ""
 "Используется на дружественную цель. Увеличивает Силу атаки и Шанс блока на "
@@ -600,7 +600,7 @@ msgstr ""
 "Используется на дружественную цель. Увеличивает Шанс блока, Магическую и "
 "Физическую защиты на 40%."
 
-#: public/js/services/abilityService.js:2388
+#: public/js/services/abilityService.js:2385
 msgid ""
 "Cast on ally target. Increases Critical Chance and Dodge Chance for 25%."
 msgstr ""
@@ -615,7 +615,7 @@ msgstr ""
 "Используется на дружественную цель. Увеличивает Шанс попадания на {{one}}% и "
 "Критический рейтинг на {{two}}%."
 
-#: public/js/services/abilityService.js:1733
+#: public/js/services/abilityService.js:1730
 msgid ""
 "Cast on ally target. Increases Initiative for {{one}}%. Every turn restores "
 "{{two}}% mana."
@@ -623,7 +623,7 @@ msgstr ""
 "Используется на дружественную цель. Увеличивает Инициативу на {{one}}%. "
 "Каждый ход восстанавливает {{two}}% маны."
 
-#: public/js/services/abilityService.js:2391
+#: public/js/services/abilityService.js:2388
 msgid ""
 "Cast on ally target. Increases Magical Resistance and Mana Regeneration for "
 "25%."
@@ -631,7 +631,7 @@ msgstr ""
 "Используется на дружественную цель. Увеличивает Магическую защиту и "
 "Регенерацию маны на 25%."
 
-#: public/js/services/abilityService.js:2390
+#: public/js/services/abilityService.js:2387
 msgid ""
 "Cast on ally target. Increases Physical Resistance and Health Regeneration "
 "for 25%."
@@ -639,7 +639,7 @@ msgstr ""
 "Используется на дружественную цель. Увеличивает Физическую защиту и "
 "Регенерацию здоровья на 25%."
 
-#: public/js/services/abilityService.js:2389
+#: public/js/services/abilityService.js:2386
 msgid "Cast on ally target. Increases Spell Power and Hit Chance for 25%."
 msgstr ""
 "Используется на дружественную цель. Увеличивает Силу заклинаний и Шанс "
@@ -653,7 +653,7 @@ msgstr ""
 "Используется на дружественную цель. Убирает 3 случайных негативных эффекта, "
 "которые наносят периодический урон. Восстанавливает {{one}} здоровья."
 
-#: public/js/services/abilityService.js:2480
+#: public/js/services/abilityService.js:2477
 msgid ""
 "Cast on ally target. Removes all debuffs from target and makes it immune to "
 "all damage and control."
@@ -665,7 +665,7 @@ msgstr ""
 msgid "Cast on ally target. Target becomes invisible"
 msgstr "Используется на дружественную цель. Цель становится невидимой"
 
-#: public/js/services/abilityService.js:2777
+#: public/js/services/abilityService.js:2774
 msgid ""
 "Cast on any target. While this effect active, owner's buffs and debuffs "
 "can't be dispelled or stolen."
@@ -673,18 +673,18 @@ msgstr ""
 "Используется на любую цель. Пока этот эффект активен, бафы и дебафы "
 "персонажа не могут быть сняты или украдены."
 
-#: public/js/services/abilityService.js:2737
+#: public/js/services/abilityService.js:2734
 msgid "Cast on enemy target. Decreases Attack Power and Block Chance for 25%."
 msgstr "Используется на противника. Уменьшает Силу атаки и Шанс блока на 25%."
 
-#: public/js/services/abilityService.js:2738
+#: public/js/services/abilityService.js:2735
 msgid ""
 "Cast on enemy target. Decreases Critical Chance and Dodge Chance for 25%."
 msgstr ""
 "Используется на противника. Уменьшает Критический рейтинг и Шанс уклонения "
 "на 25%."
 
-#: public/js/services/abilityService.js:2741
+#: public/js/services/abilityService.js:2738
 msgid ""
 "Cast on enemy target. Decreases Magical Resistance and Mana Regeneration for "
 "25%."
@@ -692,7 +692,7 @@ msgstr ""
 "Используется на противника. Уменьшает Магическую защиту и Регенерацию маны "
 "на 25%."
 
-#: public/js/services/abilityService.js:2740
+#: public/js/services/abilityService.js:2737
 msgid ""
 "Cast on enemy target. Decreases Physical Resistance and Health Regeneration "
 "for 25%."
@@ -700,19 +700,19 @@ msgstr ""
 "Используется на противника. Уменьшает Физическую защиту и Регенерацию "
 "здоровья на 25%."
 
-#: public/js/services/abilityService.js:2739
+#: public/js/services/abilityService.js:2736
 msgid "Cast on enemy target. Decreases Spell Power and Hit Chance for 25%."
 msgstr ""
 "Используется на противника. Уменьшает Силу заклинаний и Шанс попадания на "
 "25%."
 
-#: public/js/services/abilityService.js:1764
+#: public/js/services/abilityService.js:1761
 #: public/js/services/arenaService.js:490
 #: public/js/services/effectService.js:836
 msgid "Caught Somewhere In Time"
 msgstr "Пойман где-то во времени"
 
-#: public/js/services/abilityService.js:2053
+#: public/js/services/abilityService.js:2050
 #: public/js/services/arenaService.js:508
 #: public/js/services/effectService.js:1018
 msgid "Cauterization"
@@ -770,7 +770,7 @@ msgstr ""
 msgid "Chest"
 msgstr "Доспех"
 
-#: public/js/services/abilityService.js:2732
+#: public/js/services/abilityService.js:2729
 #: public/js/services/arenaService.js:556
 #: public/js/services/effectService.js:1369
 msgid "Children Of The Damned"
@@ -792,7 +792,7 @@ msgstr "Город"
 msgid "Clairvoyant Wand"
 msgstr "Жезл Предсказателя"
 
-#: public/js/services/abilityService.js:2345
+#: public/js/services/abilityService.js:2342
 #: public/js/services/arenaService.js:529
 msgid "Cleanse The Soul"
 msgstr "Очищение души"
@@ -812,7 +812,7 @@ msgstr "Клерик"
 msgid "Cleric crown"
 msgstr "Тиара Клерика"
 
-#: public/js/services/abilityService.js:2421
+#: public/js/services/abilityService.js:2418
 msgid ""
 "Cleric shines on all targets in 2 cell radius. Deals {{one}} magical damage "
 "to all enemies. And heals up allies for {{two}}."
@@ -828,7 +828,7 @@ msgstr ""
 "Клерики призваны нести свет и исцеление на поле боя. Их молитвы и "
 "благословления защищают союзников от страшной участи."
 
-#: template/partials/city.ejs:139
+#: template/partials/city.ejs:140
 msgid "Close"
 msgstr "Закрыть"
 
@@ -892,7 +892,7 @@ msgstr "Создание персонажа"
 msgid "Create Team"
 msgstr "Создание команды"
 
-#: public/js/services/abilityService.js:2612
+#: public/js/services/abilityService.js:2609
 #: public/js/services/arenaService.js:547
 #: public/js/services/effectService.js:1267
 msgid "Creeping Death"
@@ -940,7 +940,7 @@ msgstr "урона от"
 msgid "Damage:"
 msgstr "Урон:"
 
-#: public/js/services/abilityService.js:2568
+#: public/js/services/abilityService.js:2565
 msgid ""
 "Deals {{one}} magical damage and infects target with Fear Of The Dark, which "
 "deals {{two}} magical damage"
@@ -948,7 +948,7 @@ msgstr ""
 "Наносит {{one}} магического урона и накладывает на противника Страх темноты, "
 "который наносит {{two}} магического урона"
 
-#: public/js/services/abilityService.js:1686
+#: public/js/services/abilityService.js:1683
 msgid ""
 "Deals {{one}} magical damage for every turn, that lefts for every target "
 "ability."
@@ -956,7 +956,7 @@ msgstr ""
 "Наносит {{one}} магического урона за каждый ход времени восстановления, "
 "которое осталось у всех способностей цели."
 
-#: public/js/services/abilityService.js:1918
+#: public/js/services/abilityService.js:1915
 msgid ""
 "Deals {{one}} magical damage to target and {{two}} magical damage to all "
 "enemy targets in 1 cell radius."
@@ -992,11 +992,11 @@ msgstr ""
 msgid "Defender Of The Faith"
 msgstr "Защитник веры"
 
-#: template/partials/city.ejs:81
+#: template/partials/city.ejs:82
 msgid "Delete Team"
 msgstr "Удалить команду"
 
-#: template/partials/city.ejs:97
+#: template/partials/city.ejs:98
 msgid "Deleting team"
 msgstr "Удаление команды"
 
@@ -1033,7 +1033,7 @@ msgstr "Умри от меча"
 msgid "Disarm"
 msgstr "Разоружение"
 
-#: public/js/services/abilityService.js:1871
+#: public/js/services/abilityService.js:1868
 msgid "Disarm lasts {{$count}} turn."
 msgid_plural "Disarm lasts {{$count}} turns."
 msgstr[0] "Обезруживание длится {{$count}} ход."
@@ -1072,7 +1072,7 @@ msgstr "увернулся от"
 msgid "DOT effect"
 msgstr "периодический эффект"
 
-#: public/js/services/abilityService.js:2087
+#: public/js/services/abilityService.js:2084
 #: public/js/services/arenaService.js:511
 #: public/js/services/effectService.js:1056
 msgid "Down In Flames"
@@ -1087,9 +1087,9 @@ msgid "Duration: {{interestingAbility.duration()}}"
 msgstr "Длительность: {{interestingAbility.duration()}}"
 
 #: public/js/services/abilityService.js:1122
-#: public/js/services/abilityService.js:1773
-#: public/js/services/abilityService.js:2574
-#: public/js/services/abilityService.js:2621
+#: public/js/services/abilityService.js:1770
+#: public/js/services/abilityService.js:2571
+#: public/js/services/abilityService.js:2618
 msgid "during next turn"
 msgid_plural "during next {{$count}} turns"
 msgstr[0] "в течении следующего {{$count}} хода."
@@ -1149,8 +1149,8 @@ msgstr "Энергия: + {{one}}"
 msgid "Enter"
 msgstr "Войти"
 
-#: public/js/services/abilityService.js:1768
-#: public/js/services/abilityService.js:2616
+#: public/js/services/abilityService.js:1765
+#: public/js/services/abilityService.js:2613
 msgid "Every turn deals {{one}} magical damage"
 msgstr "Каждый ход наносит {{one}} магического урона"
 
@@ -1163,7 +1163,7 @@ msgstr "Каждый ход наносит {{one}} магического уро
 msgid "Every turn deals {{one}} magical damage."
 msgstr "Каждый ход наносит {{one}} магического урона."
 
-#: public/js/services/abilityService.js:2657
+#: public/js/services/abilityService.js:2654
 msgid ""
 "Every turn deals {{one}} magical damage. Decreases target's Attack Power, "
 "Spell Power and Critical Chance to {{two}}%. This effect spreads on all "
@@ -1208,7 +1208,7 @@ msgstr "взрыв"
 msgid "Fade To Black"
 msgstr "Угасание"
 
-#: public/js/services/abilityService.js:1809
+#: public/js/services/abilityService.js:1806
 #: public/js/services/arenaService.js:493
 msgid "Family Tree"
 msgstr "Семейное древо"
@@ -1219,7 +1219,7 @@ msgstr "Семейное древо"
 msgid "Fast As The Shark"
 msgstr "Быстрый как акула"
 
-#: public/js/services/abilityService.js:2564
+#: public/js/services/abilityService.js:2561
 #: public/js/services/arenaService.js:544
 #: public/js/services/effectService.js:1232
 msgid "Fear Of The Dark"
@@ -1229,13 +1229,13 @@ msgstr "Страх темноты"
 msgid "Female"
 msgstr "Женский"
 
-#: public/js/services/abilityService.js:2118
+#: public/js/services/abilityService.js:2115
 #: public/js/services/arenaService.js:514
 #: public/js/services/effectService.js:1096
 msgid "Fight Fire With Fire"
 msgstr "Игра с огнём"
 
-#: public/js/services/abilityService.js:1914
+#: public/js/services/abilityService.js:1911
 #: public/js/services/arenaService.js:499
 msgid "Fireball"
 msgstr "Огненный шар"
@@ -1258,7 +1258,7 @@ msgstr "на"
 #: public/js/services/abilityService.js:1479
 #: public/js/services/abilityService.js:1559
 #: public/js/services/abilityService.js:191
-#: public/js/services/abilityService.js:1987
+#: public/js/services/abilityService.js:1984
 #: public/js/services/abilityService.js:280
 #: public/js/services/abilityService.js:40
 #: public/js/services/abilityService.js:621
@@ -1299,13 +1299,13 @@ msgstr "получает"
 msgid "Grinder"
 msgstr "Мясорубка"
 
-#: public/js/services/abilityService.js:2382
+#: public/js/services/abilityService.js:2379
 #: public/js/services/arenaService.js:532
 #: public/js/services/effectService.js:1155
 msgid "Hallowed Be Thy Name"
 msgstr "Да святится имя Твое"
 
-#: public/js/services/abilityService.js:2153
+#: public/js/services/abilityService.js:2150
 #: public/js/services/arenaService.js:517
 msgid "Hammer Of The Gods"
 msgstr "Молот Богов"
@@ -1326,23 +1326,23 @@ msgstr "Голова"
 msgid "healed for"
 msgstr "исцелился на"
 
-#: public/js/services/abilityService.js:2244
+#: public/js/services/abilityService.js:2241
 msgid "Heals 1000 health for one target"
 msgstr "Исцеляет 1000 здоровья одной цели"
 
-#: public/js/services/abilityService.js:2245
+#: public/js/services/abilityService.js:2242
 msgid "Heals 2000 health for one target"
 msgstr "Исцеляет 2000 здоровья одной цели"
 
-#: public/js/services/abilityService.js:2243
+#: public/js/services/abilityService.js:2240
 msgid "Heals 500 health for one target"
 msgstr "Исцеляет 500 здоровья одной цели"
 
-#: public/js/services/abilityService.js:2246
+#: public/js/services/abilityService.js:2243
 msgid "Heals 5000 health for one target"
 msgstr "Исцеляет 5000 здоровья одной цели"
 
-#: public/js/services/abilityService.js:2290
+#: public/js/services/abilityService.js:2287
 msgid ""
 "Heals up ally target for {{one}}. Or deals {{two}} magical damage to enemy "
 "target."
@@ -1379,7 +1379,7 @@ msgstr "Здоровье:"
 msgid "Health: + {{one}}"
 msgstr "Здоровье: + {{one}}"
 
-#: public/js/services/abilityService.js:2476
+#: public/js/services/abilityService.js:2473
 #: public/js/services/arenaService.js:538
 #: public/js/services/effectService.js:1206
 msgid "Heaven Can Wait"
@@ -1422,7 +1422,7 @@ msgstr "Шанс попадания:"
 msgid "Hit Chance: + {{one}}%"
 msgstr "Шанс попадания: + {{one}}%"
 
-#: public/js/services/abilityService.js:2417
+#: public/js/services/abilityService.js:2414
 #: public/js/services/arenaService.js:535
 msgid "Hit The Lights"
 msgstr "Да будет свет"
@@ -1433,7 +1433,7 @@ msgstr "Да будет свет"
 msgid "Hog Tied"
 msgstr "Связанный"
 
-#: public/js/services/abilityService.js:2286
+#: public/js/services/abilityService.js:2283
 #: public/js/services/arenaService.js:526
 msgid "Holy Smoke"
 msgstr "Святой дым"
@@ -1459,7 +1459,7 @@ msgstr ""
 msgid "I Dont Wanna Stop"
 msgstr "Я не хочу останавливаться"
 
-#: public/js/services/abilityService.js:1775
+#: public/js/services/abilityService.js:1772
 msgid ""
 "Immobilize target. Every turn damage from this effect rise up for {{one}}%."
 msgstr "Обездвиживает цель. Каждый ход урон от эффекта растёт на {{one}}%."
@@ -1505,7 +1505,7 @@ msgstr ""
 msgid "Increases Luck for {{one}}% and Dodge Chance for {{two}}%"
 msgstr "Увеличивает Удачу на {{one}}% и Шанс уклонения на {{two}}%"
 
-#: public/js/services/abilityService.js:2091
+#: public/js/services/abilityService.js:2088
 msgid ""
 "Increases Spell Power and Critical Chance for {{one}}%. Effect fades if you "
 "miss. Stacks up 10 times."
@@ -1513,7 +1513,7 @@ msgstr ""
 "Увеличивает Силу заклинаний и Критический рейтинг на {{one}}%. Эффект "
 "спадёт, если персонаж промахнётся. Суммируется до 10 раз."
 
-#: public/js/services/abilityService.js:2026
+#: public/js/services/abilityService.js:2023
 msgid ""
 "Increases Spell Power for {{one}}%. Brings you in clearcasting state. In "
 "this state you doesn't need mana for abilities. This effect is active until "
@@ -1527,7 +1527,7 @@ msgstr ""
 msgid "Incubus Dagger"
 msgstr "Кинжал инкуба"
 
-#: public/js/services/abilityService.js:1729
+#: public/js/services/abilityService.js:1726
 #: public/js/services/arenaService.js:487
 #: public/js/services/effectService.js:804
 msgid "Infinite Dreams"
@@ -1612,14 +1612,14 @@ msgstr "Вступить в бой"
 #: public/js/services/abilityService.js:1169
 #: public/js/services/abilityService.js:1320
 #: public/js/services/abilityService.js:146
-#: public/js/services/abilityService.js:1616
-#: public/js/services/abilityService.js:1739
-#: public/js/services/abilityService.js:2062
-#: public/js/services/abilityService.js:2126
-#: public/js/services/abilityService.js:2213
+#: public/js/services/abilityService.js:1613
+#: public/js/services/abilityService.js:1736
+#: public/js/services/abilityService.js:2059
+#: public/js/services/abilityService.js:2123
+#: public/js/services/abilityService.js:2210
 #: public/js/services/abilityService.js:244
-#: public/js/services/abilityService.js:2483
-#: public/js/services/abilityService.js:2663
+#: public/js/services/abilityService.js:2480
+#: public/js/services/abilityService.js:2660
 #: public/js/services/abilityService.js:661
 #: public/js/services/abilityService.js:696
 #: public/js/services/abilityService.js:876
@@ -1629,7 +1629,7 @@ msgstr[0] "Эффект длится {{$count}} ход."
 msgstr[1] "Эффект длится {{$count}} хода."
 msgstr[2] "Эффект длится {{$count}} ходов."
 
-#: public/js/services/abilityService.js:2238
+#: public/js/services/abilityService.js:2235
 #: public/js/services/arenaService.js:523
 msgid "Laying On Hands"
 msgstr "Возложение рук"
@@ -1658,7 +1658,7 @@ msgstr "Кожанные штаны"
 msgid "Leather vest"
 msgstr "Кожанная куртка"
 
-#: template/partials/city.ejs:77
+#: template/partials/city.ejs:78
 msgid "Leave Queue"
 msgstr "Покинуть очередь"
 
@@ -1674,7 +1674,7 @@ msgstr "Левое кольцо"
 msgid "Legs"
 msgstr "Ноги"
 
-#: public/js/services/abilityService.js:1646
+#: public/js/services/abilityService.js:1643
 #: public/js/services/arenaService.js:481
 msgid "Lets Me Take It"
 msgstr "Позволь я возьму это"
@@ -1685,7 +1685,7 @@ msgstr "Позволь я возьму это"
 msgid "Lights In The Sky"
 msgstr "Огни в небе"
 
-#: public/js/services/abilityService.js:2773
+#: public/js/services/abilityService.js:2770
 #: public/js/services/arenaService.js:559
 #: public/js/services/effectService.js:1420
 msgid "Locked And Loaded"
@@ -1783,7 +1783,7 @@ msgstr "Мужской"
 msgid "Malefic"
 msgstr "Малефик"
 
-#: public/js/services/abilityService.js:1813
+#: public/js/services/abilityService.js:1810
 msgid ""
 "Malefic staff transforms into the burning tree. Deals {{one}}% of weapon "
 "damage and {{two}} magical damage to all enemies in 2 cell radius."
@@ -1839,7 +1839,7 @@ msgstr "Мана:"
 msgid "Mana: + {{one}}"
 msgstr "Мана: + {{one}}"
 
-#: public/js/services/abilityService.js:2204
+#: public/js/services/abilityService.js:2201
 #: public/js/services/arenaService.js:520
 #: public/js/services/effectService.js:1121
 msgid "Mercyful Fate"
@@ -1903,7 +1903,7 @@ msgstr "Больше ни слова"
 msgid "New Faith"
 msgstr "Новая вера"
 
-#: template/partials/city.ejs:105
+#: template/partials/city.ejs:106
 msgid "No"
 msgstr "Нет"
 
@@ -2043,13 +2043,13 @@ msgstr "Пожалуйста, заполните эту форму"
 msgid "Portrait"
 msgstr "Портрет"
 
-#: public/js/services/abilityService.js:2022
+#: public/js/services/abilityService.js:2019
 #: public/js/services/arenaService.js:505
 #: public/js/services/effectService.js:985
 msgid "Powerslave"
 msgstr "Раб власти"
 
-#: public/js/services/abilityService.js:1607
+#: public/js/services/abilityService.js:1604
 #: public/js/services/arenaService.js:478
 #: public/js/services/effectService.js:769
 msgid "Prophecy"
@@ -2076,7 +2076,7 @@ msgstr ""
 msgid "Prowler"
 msgstr "Бродяга"
 
-#: public/js/services/abilityService.js:2695
+#: public/js/services/abilityService.js:2692
 #: public/js/services/arenaService.js:553
 msgid "Purgatory"
 msgstr "Чистилище"
@@ -2114,7 +2114,7 @@ msgstr "Дальность: {{interestingAbility.range()}}"
 msgid "Range: Self"
 msgstr "Дальность: на себя"
 
-#: template/partials/city.ejs:87
+#: template/partials/city.ejs:88
 msgid "Rating: {{team.rating}} (Rank {{rank}})"
 msgstr "Рейтинг: {{team.rating}} (Ранг {{rank}})"
 
@@ -2151,14 +2151,14 @@ msgstr "Регистрация успешно завершена"
 msgid "Reign In Blood"
 msgstr "Царствие в крови"
 
-#: public/js/services/abilityService.js:2349
+#: public/js/services/abilityService.js:2346
 msgid "Removes {{$count}} random negative effects from ally."
 msgid_plural "Removes {{$count}} random negative effect from ally."
 msgstr[0] "Снимает {{$count}} случайный негативный эффект у союзника."
 msgstr[1] "Снимает {{$count}} случайных негативных эффекта у союзника."
 msgstr[2] "Снимает {{$count}} случайных негативных эффектов у союзника."
 
-#: public/js/services/abilityService.js:2699
+#: public/js/services/abilityService.js:2696
 msgid "Removes {{$count}} random positive effects from enemy."
 msgid_plural "Removes {{$count}} random positive effect from enemy."
 msgstr[0] "Снимает {{$count}} случайный позитивный эффект у противника."
@@ -2170,7 +2170,7 @@ msgstr[2] "Снимает {{$count}} случайных позитивных э�
 msgid "restore"
 msgstr "восстанавливает"
 
-#: public/js/services/abilityService.js:2247
+#: public/js/services/abilityService.js:2244
 msgid "Restore full health for one target"
 msgstr "Полностью восстанавливает здоровье одной цели"
 
@@ -2178,11 +2178,11 @@ msgstr "Полностью восстанавливает здоровье од�
 msgid "Restores {{one}} energy."
 msgstr "Восстанавливает {{one}} энергии."
 
-#: template/partials/city.ejs:62
+#: template/partials/city.ejs:63
 msgid "Resurrect"
 msgstr "Воскресить"
 
-#: template/partials/city.ejs:44
+#: template/partials/city.ejs:45
 msgid "Resurrection cost:"
 msgstr "Стоимость воскрешения:"
 
@@ -2194,7 +2194,7 @@ msgstr "Сдаться"
 msgid "retreats"
 msgstr "отступает"
 
-#: public/js/services/abilityService.js:2122
+#: public/js/services/abilityService.js:2119
 #: public/js/services/effectService.js:1100
 msgid "Returns {{one}}% of damage back to the attacker."
 msgstr "Возвращает {{one}}% урона обратно атакующему."
@@ -2248,8 +2248,8 @@ msgstr "Информация о роли"
 msgid "Role: {{getCharRole()}}"
 msgstr "Роль: {{getCharRole()}}"
 
-#: public/js/controllers/CityController.js:175
-#: public/js/controllers/CityController.js:281 template/partials/city.ejs:119
+#: public/js/controllers/CityController.js:177
+#: public/js/controllers/CityController.js:286 template/partials/city.ejs:120
 msgid "Roll Dices"
 msgstr "Кинуть кости"
 
@@ -2329,7 +2329,7 @@ msgstr ""
 msgid "Shot Down In Flames"
 msgstr "Испепеление"
 
-#: public/js/services/abilityService.js:1611
+#: public/js/services/abilityService.js:1608
 msgid ""
 "Shows current spells of the target. Decreases Magical Resistance and "
 "Initiative of the target to {{one}}%."
@@ -2485,15 +2485,15 @@ msgstr "Сила заклинаний: + {{one}}%"
 msgid "Spill The Blood"
 msgstr "Да прольётся кровь"
 
-#: public/js/services/abilityService.js:2653
+#: public/js/services/abilityService.js:2650
 #: public/js/services/arenaService.js:550
 #: public/js/services/effectService.js:1302
 msgid "Spreading The Disease"
 msgstr "Распространение заразы"
 
 #: public/js/services/abilityService.js:1481
-#: public/js/services/abilityService.js:2623
-#: public/js/services/abilityService.js:2665
+#: public/js/services/abilityService.js:2620
+#: public/js/services/abilityService.js:2662
 msgid "Stacks up 5 times."
 msgstr "Суммируется до 5 раз."
 
@@ -2509,11 +2509,11 @@ msgstr "Звездочёт"
 msgid "State Of Grace"
 msgstr "Состояние благодати"
 
-#: public/js/services/abilityService.js:1650
+#: public/js/services/abilityService.js:1647
 msgid "Steals 1 random positive effect from enemy to caster."
 msgstr "Крадёт 1 случайный позитивный эффект у противника."
 
-#: public/js/controllers/CityController.js:278
+#: public/js/controllers/CityController.js:283
 msgid "Stop"
 msgstr "Стоп"
 
@@ -2540,7 +2540,7 @@ msgstr ""
 "Способность имеет {{two}}% шанс сбросить своё время восстановления сразу же "
 "после применения."
 
-#: public/js/services/abilityService.js:2822
+#: public/js/services/abilityService.js:2819
 msgid ""
 "Strikes enemy with dagger, deals {{one}}% of weapon damage and {{two}} "
 "magical damage for each effect on target."
@@ -2548,7 +2548,7 @@ msgstr ""
 "Бьёт противника кинжалом, наносит {{one}}% урона от оружия и {{two}} "
 "магического урона за каждый эффект на цели."
 
-#: public/js/services/abilityService.js:2517
+#: public/js/services/abilityService.js:2514
 msgid ""
 "Strikes enemy with dagger, deals {{one}}% of weapon damage, {{two}} magical "
 "damage and restores health equal to dealing damage."
@@ -2556,14 +2556,14 @@ msgstr ""
 "Бьёт противника кинжалом, наносит {{one}}% урона от оружия, {{two}} "
 "магического урона и восстанавливает здоровье, равное нанесённому урону."
 
-#: public/js/services/abilityService.js:2157
+#: public/js/services/abilityService.js:2154
 msgid ""
 "Strikes enemy with hammer, deals {{one}}% of weapon damage, {{two}} magical "
-"damage and restores mana equal to 50% of dealing damage."
+"damage and restores mana equal to dealing damage."
 msgstr ""
 "Бьёт противника молотом, наносит {{one}}% урона от оружия, {{two}} "
-"магического урона и восстанавливает количество маны, равное 50% от "
-"нанесённого урона."
+"магического урона и восстанавливает количество маны, равное нанесённому "
+"урону."
 
 #: public/js/services/abilityService.js:186
 msgid ""
@@ -2652,7 +2652,7 @@ msgstr ""
 "Вырывает оружие из рук врага и частично повреждает доспехи. Снижает "
 "Физическую защиту и Шанс уворота цели на {{one}}%."
 
-#: public/js/services/abilityService.js:1982
+#: public/js/services/abilityService.js:1979
 msgid "Target becomes living bomb and every turn gets {{one}} magical damage"
 msgstr ""
 "Цель становится живой бомбой и каждый ход получает {{one}} магич. урона"
@@ -2691,7 +2691,7 @@ msgstr[1] ""
 msgstr[2] ""
 "Телепортирует персонажа на любую клетку в радиусе {{$count}} клеток."
 
-#: public/js/services/abilityService.js:1978
+#: public/js/services/abilityService.js:1975
 #: public/js/services/arenaService.js:502
 #: public/js/services/effectService.js:899
 msgid "Thank God For The Bomb"
@@ -2723,13 +2723,13 @@ msgstr ""
 "Эта способность не снимает эффекты контроля, которые уже действуют на "
 "персонажа."
 
-#: template/partials/city.ejs:101
+#: template/partials/city.ejs:102
 msgid ""
 "This action delete this team, reset your rank and win statistics, you will "
-"have only 8 shards of each color."
+"have only 16 shards of each color."
 msgstr ""
 "Это действие удалит эту команду, сбросит ваш рейтинг и статистику побед, у "
-"вас останется только 8 осколков каждого цвета."
+"вас останется только 16 осколков каждого цвета."
 
 #: template/partials/arena.ejs:199
 msgid "This character hasn't any effects"
@@ -2823,7 +2823,7 @@ msgstr ""
 "Когда эффект спадает, все союзники в радиусе одной клетки получают {{one}} "
 "магич. урона и становятся оглушёнными на 3 хода."
 
-#: public/js/services/abilityService.js:1989
+#: public/js/services/abilityService.js:1986
 msgid ""
 "When this effect ends, all enemies in one cell radius around target gets "
 "{{one}} magical damage and becomes stunned for 3 turns."
@@ -2831,7 +2831,7 @@ msgstr ""
 "Когда эффект заканчивается, противники в радиусе 1 клетки вокруг цели "
 "получают {{one}} магич.  урона и становятся оглушёнными на 3 хода."
 
-#: template/partials/city.ejs:88
+#: template/partials/city.ejs:89
 msgid "Win Rate: {{team.wins}}-{{team.loses}}"
 msgstr "Статистика: {{team.wins}}-{{team.loses}}"
 
@@ -2841,7 +2841,7 @@ msgstr "Статистика: {{team.wins}}-{{team.loses}}"
 msgid "with"
 msgstr "использовав"
 
-#: template/partials/city.ejs:104
+#: template/partials/city.ejs:105
 msgid "Yes"
 msgstr "Да"
 
@@ -2890,6 +2890,21 @@ msgid "Zaqqum Branch"
 msgstr "Ветвь Закуума"
 
 #~ msgid ""
+#~ "Strikes enemy with hammer, deals {{one}}% of weapon damage, {{two}} "
+#~ "magical damage and restores mana equal to 50% of dealing damage."
+#~ msgstr ""
+#~ "Бьёт противника молотом, наносит {{one}}% урона от оружия, {{two}} "
+#~ "магического урона и восстанавливает количество маны, равное 50% от "
+#~ "нанесённого урона."
+
+#~ msgid ""
+#~ "This action delete this team, reset your rank and win statistics, you "
+#~ "will have only 8 shards of each color."
+#~ msgstr ""
+#~ "Это действие удалит эту команду, сбросит ваш рейтинг и статистику побед, "
+#~ "у вас останется только 8 осколков каждого цвета."
+
+#~ msgid ""
 #~ "<p><strong>Health Regeneration</strong> is a percent from maximum health, "
 #~ "which you restore every turn.</p><p>From strength: {{one}}%</p><p>From "
 #~ "items: {{two}}%</p><p>Total: {{three}}%</p><p>Every turn you restore "
@@ -2924,14 +2939,6 @@ msgstr "Ветвь Закуума"
 #~ msgstr ""
 #~ "Вырывает оружие из рук врага и частично повреждает доспехи. Снижает "
 #~ "Физическую защиту цели на {{one}}%."
-
-#~ msgid ""
-#~ "Strikes enemy with hammer, deals {{one}}% of weapon damage, {{two}} "
-#~ "magical damage and restores mana equal to dealing damage."
-#~ msgstr ""
-#~ "Бьёт противника молотом, наносит {{one}}% урона от оружия, {{two}} "
-#~ "магического урона и восстанавливает количество маны, равное нанесённому "
-#~ "урону."
 
 #~ msgid "didn't get"
 #~ msgstr "не получает"

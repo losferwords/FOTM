@@ -137,38 +137,48 @@ schema.statics.register = function (username, password, email, callback) {
 //Удаление недоделанных команд и персонажей
 schema.statics.deleteDummies = function(team, callback){
     var User = this;
-        //Сперва удалим персонажей
-        team.populate('characters', function(err, popTeam){
-            if (err) {
-                return callback(err);
-            }
-            for(var j=0;j<popTeam.characters.length;j++) {
-                popTeam.characters[j].remove(function (err, chars) {
+    async.waterfall([
+        function (callback) {
+            //Сперва удалим персонажей
+            team.populate('characters', function(err, popTeam){
+                if (err) {
+                    return callback(err);
+                }
+                for(var j=0;j<popTeam.characters.length;j++) {
+                    popTeam.characters[j].remove(function (err, chars) {
+                        if (err) {
+                            callback(err);
+                        }
+                    });
+                }
+                callback(null, popTeam);
+            });
+        },
+        function (popTeam, callback) {
+            //Затем удалим записи о созданных тимах у юзера
+            popTeam.populate('_user', function(err, popUserTeam){
+                if (err) {
+                    return callback(err);
+                }
+                popUserTeam._user.team=undefined;
+                popUserTeam._user.save(function(err, user){
                     if (err) {
                         callback(err);
                     }
+                    callback(null, popUserTeam);
                 });
-            }
-        });
-        //Затем удалим записи о созданных тимах у юзера
-        team.populate('_user', function(err, team){
-            if (err) {
-                return callback(err);
-            }
-            team._user.team=undefined;
-            team._user.save(function(err, user){
-                if (err) {
-                    callback(err);
-                }
             });
-        });
-        //затем удалим сами тимы
-        team.remove(function(err){
-            if (err) {
-                return callback(err);
-            }
-            callback(null);
-        });
+        },
+        function (team, callback) {
+            //затем удалим сами тимы
+            team.remove(function(err){
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+            });
+        }
+    ], callback);
 };
 
 //Получение заполненной активной команды со всеми персонажами
@@ -181,14 +191,25 @@ schema.statics.getTeam = function(userId, callback){
         function (user, callback) {
             Team.findById(user.team, function(err, team){
                 if (err) return callback(err);
-                callback(null, team);
+                if(team!==null){
+                    callback(null, team);
+                }
+                else {
+                    callback(null, null);
+                }
             });
         },
         function (team, callback) {
-            team.populate('characters', function(err, popTeam){ //заполняем команду персонажами
-                if (err) return callback(err);
-                callback(null, popTeam);
-            });
+            if(team){
+                team.populate('characters', function(err, popTeam){ //заполняем команду персонажами
+                    if (err) return callback(err);
+                    callback(null, popTeam);
+                });
+            }
+            else {
+                callback(null, null);
+            }
+
         }
     ], callback);
 };

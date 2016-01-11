@@ -101,8 +101,6 @@ module.exports = function (server) {
         var serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom]).length;
         io.sockets.in(serverRoom).emit('join', serverOnlineUsers);
         log.info("User "+username+" join game");
-        //На всякий случай удаляем dummy команды
-        deleteDummies(socket);
 
         socket.on('disconnect', function () {
             if(io.nsps["/"].adapter.rooms[serverRoom]) { //Проверка на то, что я последний человек на сервере
@@ -265,17 +263,19 @@ module.exports = function (server) {
         });
 
         socket.on('checkUserTeam', function(){
-            deleteDummies(socket);
-            var userId = socket.handshake.user._id;
-            Team.getPopTeam({_user: userId}, function(err, team){
-                if (err) socket.emit("customError", err);
+            deleteDummiesSync(socket, function(err, result){
+                if(err) socket.emit("customError", err);
 
-                if(team) {
-                    socket.emit("checkUserTeamResult", team);
-                }
-                else {
-                    socket.emit("checkUserTeamResult");
-                }
+                var userId = socket.handshake.user._id;
+                User.findById(userId, function(err, findedUser) {
+                    if (err) socket.emit("customError", err);
+                    if(findedUser.team) {
+                        socket.emit("checkUserTeamResult", findedUser.team);
+                    }
+                    else {
+                        socket.emit("checkUserTeamResult");
+                    }
+                });
             });
         });
 
@@ -289,14 +289,23 @@ module.exports = function (server) {
             var userId = socket.handshake.user._id;
             User.getTeam(userId, function(err, team){
                 if (err) socket.emit("customError", err);
-                Team.findRank(team._id, function(err, rank){
-                    if (err) socket.emit("customError", err);
+                if(!team) {
+                    //Если тима не найдена, значит она была удалена, а ссылка на неё осталась
+                    User.findByIdAndUpdate(userId, {$set: {team: undefined}}, {upsert: true}, function(err, user){
+                        if (err) socket.emit("customError", err);
+                        socket.emit("getUserTeamResult", null);
+                    });
+                }
+                else {
+                    Team.findRank(team._id, function(err, rank){
+                        if (err) socket.emit("customError", err);
 
-                    //Отправим (текущее время на сервере - время последнего рола)
-                    var nowTime = new Date();
+                        //Отправим (текущее время на сервере - время последнего рола)
+                        var nowTime = new Date();
 
-                    socket.emit("getUserTeamResult", team, rank, (nowTime-team.lastRoll));
-                });
+                        socket.emit("getUserTeamResult", team, rank, (nowTime-team.lastRoll));
+                    });
+                }
             });
         });
 
@@ -437,6 +446,40 @@ module.exports = function (server) {
             io.sockets.in(room).emit('updateTeamsResult', chars1, chars2);
         });
     });
+
+    //Функция удаляет несохранённые team и character с callback
+    function deleteDummiesSync(socket, callback) {
+        async.waterfall([
+            function (callback) {
+                var userId = socket.handshake.user._id;
+                Team.findOne({teamName: "newTeam_"+userId}, function(err, team){
+                    if(err) {
+                        return callback(err);
+                    }
+                    //Если найдена хоть одна dummy тима, удалим её
+                    if(team){
+                        return callback(null, team);
+                    }
+                    else {
+                        return callback(null, null);
+                    }
+                });
+            },
+            function (team, callback) {
+                if(team) {
+                    User.deleteDummies(team, function (err, data) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        return callback(null,null);
+                    });
+                }
+                else {
+                    return callback(null,null);
+                }
+            }
+        ], callback);
+    }
 
     //Функция удаляет несохранённые team и character
     function deleteDummies(socket) {

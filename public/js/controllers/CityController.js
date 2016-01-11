@@ -119,9 +119,11 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
     $scope.burnClick = function(char){
         //Эта метка нужна для того, чтобы не удалять пока персонажа из базы, а просто пометить его, как сожжённого
         char.charName=char._id;
+        char.lose=true;
         mainSocket.emit('setChar', {
             _id: char._id,
-            charName: char._id
+            charName: char._id,
+            lose: true
         });
     };
 
@@ -230,6 +232,9 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
                     rollDiceTimer=undefined;
                 }
             }, 1000);
+        }
+        else {
+            $location.path("/searchTeam");
         }
     });
 

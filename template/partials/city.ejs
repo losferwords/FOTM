@@ -38,6 +38,7 @@
                                     <button class="btn btn-default btn-sm" ng-click="characterClick(char)" ng-disabled="searchBattle" translate>Character</button>
                                     <button class="btn btn-info btn-sm" ng-click="abilitiesClick(char)" ng-disabled="searchBattle" translate>Abilities</button>
                                     <button class="btn btn-success btn-sm" ng-click="inventoryClick(char)" ng-disabled="searchBattle" translate>Inventory</button>
+                                    <button class="btn btn-danger btn-sm" ng-click="burnClick(char)" ng-disabled="searchBattle" translate>Burn</button>
                                 </div>
 
                                 <div class="resurrect-shards" ng-if="(char.lose && char.charName!==char._id)">
@@ -98,7 +99,7 @@
         </div>
         <div class="modal-body">
             <h6 translate>Are you sure?</h6>
-            <p translate>This action delete this team, reset your rank and win statistics, you will have only 8 shards of each color.</p>
+            <p translate>This action delete this team, reset your rank and win statistics, you will have only 16 shards of each color.</p>
         </div>
         <div class="modal-footer">
             <button class="btn btn-success" type="button" ng-click="deleteYes()" translate>Yes</button>
