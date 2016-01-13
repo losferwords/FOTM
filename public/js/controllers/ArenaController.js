@@ -323,8 +323,7 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
                     }
                 }
                 else if ($scope.preparedAbility.targetType() == "move") {
-                    //находим клетки для перемещения
-                    if($scope.activeChar.canMove()) {
+                    if(!$scope.activeChar.immobilized) {
                         //Находим точки для движения
                         var movePoints = $scope.activeChar.findMoves($scope.myTeam.characters, $scope.enemyTeam.characters, $scope.preparedAbility.range());
                         for (i = 0; i < movePoints.length; i++) {
@@ -668,9 +667,9 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
 
             $scope.myTeam.rating+=ratingChange;
 
-            gainedSouls.red+=2;
-            gainedSouls.green+=2;
-            gainedSouls.blue+=2;
+            gainedSouls.red+=4;
+            gainedSouls.green+=4;
+            gainedSouls.blue+=4;
 
             $scope.myTeam.souls.red+=gainedSouls.red;
             $scope.myTeam.souls.green+=gainedSouls.green;

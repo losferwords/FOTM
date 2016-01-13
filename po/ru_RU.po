@@ -2067,7 +2067,7 @@ msgid ""
 "Prophets know a lot about the future. They use this knowledge as a weapon to "
 "control the fate of their enemies."
 msgstr ""
-"Оракулы знают многое о будующем. Они используют это знание как оружие для "
+"Оракулы знают многое о будущем. Они используют это знание как оружие для "
 "контроля судеб своих врагов."
 
 #: public/js/services/abilityService.js:1381

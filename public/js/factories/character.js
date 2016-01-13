@@ -142,8 +142,6 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         self.curHealth=self.maxHealth;
         self.curEnergy=self.maxEnergy;
         self.curMana=self.maxMana;
-
-        //this.getSize();
     };
 
     //Обновление персонажа в бою
@@ -1381,6 +1379,7 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
 
     //Проверка на наличие персонажа или препятствия на этом тайле
     Character.prototype.checkTile = function(position, myTeam, enemyTeam, skipInvisible) {
+        var self = this;
         var queue = myTeam.concat(enemyTeam);
         var map = arenaService.getMap();
         for(var i=0;i<queue.length;i++){
@@ -1389,7 +1388,13 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
                 !queue[i].isDead)
             {
                 if(skipInvisible){ //Невидимые персонажи будут считаться клетками, доступными для хода
-                    if(!queue[i].invisible && queue[i].charName!==self.charName) return true;
+                    //Все
+                    if(!queue[i].invisible){
+                       return true;
+                    }
+                    else if(queue[i].invisible && queue[i].charName===self.charName){
+                        return true;
+                    }
                 }
                 else {
                     return true;
