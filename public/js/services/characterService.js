@@ -995,6 +995,9 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
             var raceAbilities = getRandomExtraAbilities(raceAvailableAbilities(role, race));
             return roleAbilities.concat(raceAbilities);
         },
+        getRoleAbilities: function (role) {
+            return roleAvailableAbilities[role];
+        },
         //стартовые способности
         getStartAbilities: function (role) {
             return startAbilities[role];

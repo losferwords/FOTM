@@ -178,6 +178,10 @@ function CityController($scope, $rootScope, $location, $interval, $uibModal, $ro
         }
     };
 
+    $scope.openAdmin = function () {
+        $location.path("/admin");
+    };
+
     $scope.$on('$destroy', function (event) {
         $interval.cancel(deleteCharInterval);
         $interval.cancel(rollDiceTimer);

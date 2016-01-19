@@ -16,6 +16,14 @@ function MainController($scope, $rootScope, $window, $location, gettextCatalog, 
         }
     });
 
+    //Запрет на пользование строкой браузера
+    $rootScope.$on("$routeChangeStart", function (event, next, current) {
+        if(!current && $location.path()!=="/")
+        {
+            $window.location.href="/"; //выкидываем на логин скрин
+        }
+    });
+
     $rootScope.changeLanguage = function (lang) {
         switch (lang) {
             case 'ru': gettextCatalog.setCurrentLanguage('ru');break;

@@ -1,7 +1,7 @@
-angular.module('fotm').register.controller("ArenaController", ["$scope", '$rootScope', '$location', '$timeout', '$interval', 'character', 'arenaService', 'hotkeys', 'mainSocket', 'gettextCatalog', 'ngAudio', 'soundService', 'getWatchCount', ArenaController]);
+angular.module('fotm').register.controller("ArenaController", ["$scope", '$rootScope', '$location', '$timeout', '$interval', 'character', 'arenaService', 'hotkeys', 'mainSocket', 'gettextCatalog', 'soundService', ArenaController]);
 
 //Контроллер выбора пати
-function ArenaController($scope, $rootScope, $location, $timeout, $interval, character, arenaService, hotkeys, mainSocket, gettextCatalog, ngAudio, soundService, getWatchCount) {
+function ArenaController($scope, $rootScope, $location, $timeout, $interval, character, arenaService, hotkeys, mainSocket, gettextCatalog, soundService) {
     $scope.map = arenaService.fillMap($rootScope.currentBattle.groundType, $rootScope.currentBattle.wallPositions); //Карта - двумерный массив на стороне клиента
     $scope.CombatLog = []; //Массив сообщений с информацией
     $scope.myTurn = false; //переменная, показывающая, мой ли сейчас игрок ходит

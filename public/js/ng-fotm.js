@@ -9,7 +9,10 @@
         'cfp.hotkeys',
         'dnd',
         'gettext',
-        'ngAudio']);
+        'ngAudio',
+        'chart.js',
+        'angulartics',
+        'angulartics.google.analytics']);
 
     // МАРШРУТИЗАЦИЯ
     fotmApp.config(['$locationProvider', '$routeProvider', '$controllerProvider', '$compileProvider','$filterProvider','$provide', function($locationProvider, $routeProvider, $controllerProvider, $compileProvider, $filterProvider, $provide) {
@@ -86,7 +89,6 @@
                 templateUrl : 'partials/city.ejs',
                 resolve: {deps: fotmApp.resolveScriptDeps([
                     'js/controllers/CityController.js',
-                    'js/factories/getWatchCount.js',
                     'js/services/soundService.js',
                     'js/services/randomService.js',
                     'js/services/characterService.js'])}
@@ -139,7 +141,6 @@
                 templateUrl : 'partials/arena.ejs',
                 resolve: {deps: fotmApp.resolveScriptDeps([
                     'js/controllers/ArenaController.js',
-                    'js/factories/getWatchCount.js',
                     'js/services/randomService.js',
                     'js/services/effectService.js',
                     'js/services/abilityService.js',
@@ -147,6 +148,20 @@
                     'js/factories/character.js',
                     'js/services/arenaService.js'
                     ])}
+            })
+
+            // маршрут для арены
+            .when('/admin', {
+                templateUrl : 'partials/admin.ejs',
+                resolve: {deps: fotmApp.resolveScriptDeps([
+                    'js/controllers/AdminController.js',
+                    'js/services/randomService.js',
+                    'js/services/effectService.js',
+                    'js/services/abilityService.js',
+                    'js/services/soundService.js',
+                    'js/factories/character.js',
+                    'js/services/arenaService.js'
+                ])}
             });
 
         $routeProvider.otherwise({redirectTo: '/'});

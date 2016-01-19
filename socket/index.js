@@ -279,14 +279,24 @@ module.exports = function (server) {
             });
         });
 
-        socket.on('getUserTeam', function(){
-            //ОЧИСТКА БОЕВЫХ КОМНАТ
-            if(battleRoom) {
-                socket.leave(battleRoom);
-                battleRoom=undefined;
+        socket.on('getUserTeam', function(definedUser, all, username){
+            //all true, когда админ хочет получить все команды
+            //username только когда all true, чтобы для найденной команды сохранить имя игрока, для которого она искалась
+            var userId=0;
+
+            //Если есть definedUser, значит это админу нужна конкретная тима, если нет, то это просто тима игрока
+            if(definedUser){
+                userId = definedUser;
+            }
+            else {
+                //ОЧИСТКА БОЕВЫХ КОМНАТ
+                if(battleRoom) {
+                    socket.leave(battleRoom);
+                    battleRoom=undefined;
+                }
+                userId = socket.handshake.user._id;
             }
 
-            var userId = socket.handshake.user._id;
             User.getTeam(userId, function(err, team){
                 if (err) socket.emit("customError", err);
                 if(!team) {
@@ -297,14 +307,27 @@ module.exports = function (server) {
                     });
                 }
                 else {
-                    Team.findRank(team._id, function(err, rank){
-                        if (err) socket.emit("customError", err);
+                    //Для игрока - только его юзер
+                    if(!definedUser) {
+                        Team.findRank(team._id, function (err, rank) {
+                            if (err) socket.emit("customError", err);
 
-                        //Отправим (текущее время на сервере - время последнего рола)
-                        var nowTime = new Date();
+                            //Отправим (текущее время на сервере - время последнего рола)
+                            var nowTime = new Date();
 
-                        socket.emit("getUserTeamResult", team, rank, (nowTime-team.lastRoll));
-                    });
+                            socket.emit("getUserTeamResult", team, rank, (nowTime - team.lastRoll));
+                        });
+                    }
+                    else {
+                        //Для админки - все User'ы
+                        if(all){
+                            socket.emit("getUserTeamResult", team, true, username);
+                        }
+                        //Для админки - конкретный User
+                        else {
+                            socket.emit("getUserTeamResult", team);
+                        }
+                    }
                 }
             });
         });
@@ -445,6 +468,39 @@ module.exports = function (server) {
         socket.on('updateTeams', function(room, chars1, chars2) {
             io.sockets.in(room).emit('updateTeamsResult', chars1, chars2);
         });
+
+        socket.on('getUsersList', function() {
+            var userArray=[];
+            //Ищем всех юзеров
+            User.find({}, function (err, users) {
+                if (err) socket.emit("customError", err);
+
+                //Формируем свои объекты для передачи
+                for(var i=0;i<users.length;i++) {
+                    var user={};
+                    user['id']=users[i].id;
+                    user['username']=users[i].username;
+                    user['team']=users[i].team;
+                    user['isOnline']=false;
+                    userArray[i]=user;
+                }
+
+                //Ищем онлайн игроков
+                var serverSockets = io.of('/').in(serverRoom).connected;
+                for (var socketId in io.nsps["/"].adapter.rooms[serverRoom]) {
+                    if(io.nsps["/"].adapter.rooms[serverRoom].hasOwnProperty(socketId)){
+                        var socket = serverSockets[socketId];
+                        for(i=0;i<userArray.length;i++) {
+                            if (userArray[i].id === socket.handshake.user.id) {
+                                userArray[i].isOnline=true;
+                            }
+                        }
+                    }
+                }
+                socket.emit('getUsersListResult', userArray);
+            });
+        });
+
     });
 
     //Функция удаляет несохранённые team и character с callback
