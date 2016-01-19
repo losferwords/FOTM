@@ -9,11 +9,13 @@ msgid "'s grinder looking for meat!"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:103
+#: public/js/controllers/AdminController.js:250
 #: public/js/controllers/ArenaController.js:35
 msgid "<p class='tooltip-need-weapon'>Need weapon</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:104
+#: public/js/controllers/AdminController.js:251
 #: public/js/controllers/ArenaController.js:36
 msgid "<p class='tooltip-spell'>Spell</p>"
 msgstr ""
@@ -91,6 +93,7 @@ msgid "<p>Amount of <strong>health</strong> determines how long you can fight. I
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:107
+#: public/js/controllers/AdminController.js:254
 #: public/js/controllers/ArenaController.js:39
 msgid "<p>Cooldown: {{one}}</p>"
 msgstr ""
@@ -112,11 +115,13 @@ msgid "<p>Create red soul gem</p><p>Cost: 4 red shards</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:108
+#: public/js/controllers/AdminController.js:255
 #: public/js/controllers/ArenaController.js:40
 msgid "<p>Duration: {{one}}</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:109
+#: public/js/controllers/AdminController.js:256
 #: public/js/controllers/ArenaController.js:41
 msgid "<p>Energy Cost: {{one}}</p>"
 msgstr ""
@@ -126,16 +131,19 @@ msgid "<p>Left: {{one}}</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:110
+#: public/js/controllers/AdminController.js:257
 #: public/js/controllers/ArenaController.js:42
 msgid "<p>Mana Cost: {{one}}</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:105
+#: public/js/controllers/AdminController.js:252
 #: public/js/controllers/ArenaController.js:37
 msgid "<p>Range: {{one}}</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:106
+#: public/js/controllers/AdminController.js:253
 #: public/js/controllers/ArenaController.js:38
 msgid "<p>Range: Self</p>"
 msgstr ""
@@ -181,7 +189,7 @@ msgstr ""
 msgid "Amulet"
 msgstr ""
 
-#: template/partials/city.ejs:101
+#: template/partials/city.ejs:102
 msgid "Are you sure?"
 msgstr ""
 
@@ -565,7 +573,7 @@ msgstr ""
 msgid "Clerics are called to bring the light of healing into battlefield. Their prayers and blessings protect allies from a terrible fate."
 msgstr ""
 
-#: template/partials/city.ejs:140
+#: template/partials/city.ejs:141
 msgid "Close"
 msgstr ""
 
@@ -718,7 +726,7 @@ msgstr ""
 msgid "Delete Team"
 msgstr ""
 
-#: template/partials/city.ejs:98
+#: template/partials/city.ejs:99
 msgid "Deleting team"
 msgstr ""
 
@@ -1572,7 +1580,7 @@ msgstr ""
 msgid "New Faith"
 msgstr ""
 
-#: template/partials/city.ejs:106
+#: template/partials/city.ejs:107
 msgid "No"
 msgstr ""
 
@@ -1894,8 +1902,8 @@ msgid "Role: {{getCharRole()}}"
 msgstr ""
 
 #: public/js/controllers/CityController.js:177
-#: public/js/controllers/CityController.js:286
-#: template/partials/city.ejs:120
+#: public/js/controllers/CityController.js:290
+#: template/partials/city.ejs:121
 msgid "Roll Dices"
 msgstr ""
 
@@ -2142,7 +2150,7 @@ msgstr ""
 msgid "Steals 1 random positive effect from enemy to caster."
 msgstr ""
 
-#: public/js/controllers/CityController.js:283
+#: public/js/controllers/CityController.js:287
 msgid "Stop"
 msgstr ""
 
@@ -2297,7 +2305,7 @@ msgstr ""
 msgid "This ability doesn't remove control effects, which is already on character."
 msgstr ""
 
-#: template/partials/city.ejs:102
+#: template/partials/city.ejs:103
 msgid "This action delete this team, reset your rank and win statistics, you will have only 16 shards of each color."
 msgstr ""
 
@@ -2394,7 +2402,7 @@ msgstr ""
 msgid "with"
 msgstr ""
 
-#: template/partials/city.ejs:105
+#: template/partials/city.ejs:106
 msgid "Yes"
 msgstr ""
 
