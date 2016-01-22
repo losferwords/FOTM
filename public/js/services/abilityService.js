@@ -2236,32 +2236,19 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     variant: 3,
                     role : function() {return "cleric"},
                     desc: function() {
-                        switch(this.variant){
-                            case 1: return gettextCatalog.getString("Heals 500 health for one target"); break;
-                            case 2: return gettextCatalog.getString("Heals 1000 health for one target"); break;
-                            case 3: return gettextCatalog.getString("Heals 2000 health for one target"); break;
-                            case 4: return gettextCatalog.getString("Heals 5000 health for one target"); break;
-                            case 5: return gettextCatalog.getString("Restore full health for one target"); break;
-                        }
+                            return gettextCatalog.getString("Restore {{one}}% health for one target.", {
+                            one: (10+this.variant*15).toFixed(0)
+                        });
                     },
                     icon : function() { return "url(../images/icons/abilities/LayingOnHands.svg)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
                         this.cd=this.cooldown();
-                        var heal=0;
-                        switch(this.variant){
-                            case 1: heal=500*(1+caster.spellPower); break;
-                            case 2: heal=1000*(1+caster.spellPower); break;
-                            case 3: heal=2000*(1+caster.spellPower); break;
-                            case 4: heal=5000*(1+caster.spellPower); break;
-                            case 5: heal=target.maxHealth; break;
-                        }
-                        if(this.variant<5) {
-                            var critical = caster.checkCrit();
-                            if (critical) {
-                                heal = caster.applyCrit(heal);
-                            }
+                        var heal= target.maxHealth*(0.1+this.variant*0.15)*(1+caster.spellPower);
+                        var critical = caster.checkCrit();
+                        if (critical) {
+                            heal = caster.applyCrit(heal);
                         }
 
                         caster.playSound(this.name);
@@ -2273,7 +2260,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     duration: function(){return 0},
                     energyCost : function(){return 50+this.variant*150},
                     manaCost : function(){return 150+this.variant*150},
-                    cooldown : function(){return 18+this.variant*4},
+                    cooldown : function(){return 15+this.variant*3},
                     needWeapon : function() {return false},
                     cd : 0
                 };break;
