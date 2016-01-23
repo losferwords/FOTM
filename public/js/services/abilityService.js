@@ -1682,7 +1682,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     desc: function() {
                         return gettextCatalog.getString(
                             "Deals {{one}} magical damage for every turn, that lefts for every target ability.",{
-                                one: (this.variant*20).toFixed(0)
+                                one: (this.variant*12).toFixed(0)
                             });
                     },
                     icon : function() { return "url(../images/icons/abilities/BrainDamage.svg)"},
@@ -1695,7 +1695,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             for(var i=0;i<target.abilities.length;i++){
                                 magicDamage+=target.abilities[i].cd;
                             }
-                            magicDamage = magicDamage*this.variant*20*(1+caster.spellPower);
+                            magicDamage = magicDamage*this.variant*12*(1+caster.spellPower);
 
                             var critical = caster.checkCrit();
                             if(critical){
@@ -1716,7 +1716,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     duration: function(){return 0},
                     energyCost : function(){return 125+this.variant*50},
                     manaCost : function(){return 150+this.variant*100},
-                    cooldown : function(){return 7+this.variant},
+                    cooldown : function(){return 10+this.variant},
                     needWeapon : function() {return false},
                     cd : 0
                 };break;
