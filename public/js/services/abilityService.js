@@ -1714,9 +1714,9 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     targetType : function() { return "enemy"},
                     range : function(){return 3},
                     duration: function(){return 0},
-                    energyCost : function(){return 125+this.variant*50},
-                    manaCost : function(){return 150+this.variant*100},
-                    cooldown : function(){return 10+this.variant},
+                    energyCost : function(){return 125+this.variant*100},
+                    manaCost : function(){return 150+this.variant*150},
+                    cooldown : function(){return 8+this.variant*2},
                     needWeapon : function() {return false},
                     cd : 0
                 };break;
@@ -1914,8 +1914,8 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                     desc: function() {
                         return gettextCatalog.getString(
                             "Deals {{one}} magical damage to target and {{two}} magical damage to all enemy targets in 1 cell radius.",{
-                                one: (1000+this.variant*150).toFixed(0),
-                                two: (1250-this.variant*150).toFixed(0)
+                                one: (1250+this.variant*200).toFixed(0),
+                                two: (1500-this.variant*200).toFixed(0)
                             });
                     },
                     icon : function() { return "url(../images/icons/abilities/Fireball.svg)"},
