@@ -1125,7 +1125,14 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
             self.logBuffer.push(self.charName+" is very lucky and save his energy");
             self.playSound("luck");
         }
-        else self.curEnergy-=value;
+        else {
+            if(self.curEnergy-value>0) {
+                self.curEnergy-=value;
+            }
+            else {
+                self.curEnergy = 0;
+            }
+        }
     };
 
     //Функция траты маны
@@ -1134,7 +1141,14 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         if(self.clearCast){
             self.logBuffer.push(self.charName+" is in clearcasting state and save mana");
         }
-        else self.curMana-=value;
+        else {
+            if(self.curMana-value>0) {
+                self.curMana-=value;
+            }
+            else {
+                self.curMana = 0;
+            }
+        }
     };
 
     //Функция расчёта критического урона

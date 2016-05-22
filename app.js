@@ -79,7 +79,7 @@ if(process.env.NODE_ENV==="production"){
 //local
 else {
     var server = http.createServer(app);
-    server.listen(3000, '192.168.0.114', function () {
+    server.listen(3000, 'localhost', function () {
         log.info('Express server listening on port ' + 3000);
     });
 }
