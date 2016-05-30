@@ -98,6 +98,7 @@ module.exports = function (server) {
 
         //Отправляем всем игрокам на сервере сообщение об изменении
         //количества человек на сервере
+        log.info(io.nsps["/"].adapter.rooms[serverRoom]);
         var serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom].sockets).length;
         io.sockets.in(serverRoom).emit('join', serverOnlineUsers);
         log.info("User "+username+" join game");
