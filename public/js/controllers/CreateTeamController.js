@@ -8,8 +8,11 @@ function CreateTeamController($scope, $rootScope, $location, $window, $timeout, 
     //Кнопка создания персонажа на экране команды
     $scope.createCharClick = function() {
         mainSocket.emit("createChar");
-        $location.path('/createChar');
     };
+
+    mainSocket.on("createCharResult", function() {
+        $location.path('/createChar');
+    });
 
     //Количество персонажей
     $scope.moreChars = function() {

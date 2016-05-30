@@ -54,12 +54,6 @@ form input {
   margin-top: 0;
 }
 
-body .tooltip {
-  display: none;
-  top: -9999px;
-  left: -9999px;
-}
-
 .navbar-text .badge {
   margin-right: 5px;
   margin-left: 5px;

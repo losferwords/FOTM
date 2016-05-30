@@ -8,6 +8,7 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
     $scope.battleEnd={ended: false};
     $scope.opponentWaiting=true; //Ждём загрузки контроллера оппонента
     $scope.enemyTeamLoaded=false; //Ждём загрузки команды оппонента
+    $scope.turnsSpended=0; //Количество ходов, потраченное с начала боя
 
     //Возвращает процентные показатели ресурсов при наведении мышки
     $scope.calculateInPercent = function(cur, max) {
@@ -91,7 +92,7 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
         $scope.preparedAbility = undefined;
         resetCharOverlays();
         $scope.activeChar.turnEnded=true;
-        mainSocket.emit("turnEnded", $rootScope.currentBattle.room, $scope.activeChar);
+        mainSocket.emit("turnEnded", $rootScope.currentBattle.room, $scope.activeChar, $scope.turnsSpended);
         $scope.waitServ = true;
     };
 
@@ -691,6 +692,35 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
                 souls: $scope.myTeam.souls
             });
         }
+        //ничья
+        else if($scope.turnsSpended>=100){
+            //Играем музыку
+            soundService.getMusicObj().winMusic.play();
+
+            stopTurnTimer();
+
+            gainedSouls.red+=1;
+            gainedSouls.green+=1;
+            gainedSouls.blue+=1;
+
+            $scope.myTeam.souls.red+=gainedSouls.red;
+            $scope.myTeam.souls.green+=gainedSouls.green;
+            $scope.myTeam.souls.blue+=gainedSouls.blue;
+
+            $scope.battleEnd={
+                ended: true,
+                title: gettextCatalog.getString("Draw"),
+                rating: $scope.myTeam.rating,
+                ratingChange: ratingChange,
+                souls: gainedSouls
+            };
+
+            mainSocket.emit('setTeam',
+                {
+                    _id: $scope.myTeam._id,
+                    souls: $scope.myTeam.souls
+                });
+        }
     }
 
     //После загрузки контроллера проверяем, загрузился ли контроллер у противника
@@ -852,7 +882,8 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
         }
     });
 
-    mainSocket.on('turnEndedResult', function(char){
+    mainSocket.on('turnEndedResult', function(char, turnsSpended){
+        $scope.turnsSpended=turnsSpended;
         startTurnTimer(); //Сразу включаем таймер, чтобы рассинхрон был небольшой
         $scope.waitServ = false;
 
@@ -889,6 +920,10 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
 
         //объявление о начале боя
         log("Now is turn of "+$scope.activeChar.charName+".", $scope.activeChar.battleColor);
+        //объявление об исходе боя в ничью
+        if($scope.turnsSpended>=90){
+            log("The battle ends in a draw after "+(100-$scope.turnsSpended)+" turns.");
+        }
     });
 
     //Назначения горячих клавиш

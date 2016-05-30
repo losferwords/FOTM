@@ -6,6 +6,8 @@ function CreateCharacterController($scope, $rootScope, $location, $interval, mai
     var teamId;
     var charSetFlag=false;
 
+    $scope.activePortrait = 0;
+
     //Кнопка сохранения персонажа на экране создания персонажа
     $scope.submitCharClick = function() {
         characterObj.charName = $scope.charName;
@@ -77,7 +79,7 @@ function CreateCharacterController($scope, $rootScope, $location, $interval, mai
                 gender: $scope.gender,
                 race: $scope.currentRace.name,
                 role: $scope.role,
-                portrait: $scope.getActivePortrait(),
+                portrait: $scope.portraits[$scope.activePortrait].image,
                 params: $scope.params,
                 equip: characterService.getEquip($scope.role),
                 abilities: abilitiesObjectsArr,
@@ -204,10 +206,4 @@ function CreateCharacterController($scope, $rootScope, $location, $interval, mai
         }
         return portraits;
     }
-
-    $scope.getActivePortrait = function () {
-        var portraitObj;
-        portraitObj = $scope.portraits.filter(function (p) { return p.active; })[0];
-        return portraitObj.image;
-    };
 }

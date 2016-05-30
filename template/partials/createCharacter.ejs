@@ -90,9 +90,9 @@
                                 <div class="form-group">
                                     <label class="control-label text-success form-left" translate>Portrait</label>
                                     <div class="form-right">
-                                        <uib-carousel interval="0" class="carousel portrait-carousel">
-                                            <uib-slide ng-repeat="portrait in portraits" active="portrait.active">
-                                                <img ng-src="{{portrait.image}}" style="margin:auto">
+                                        <uib-carousel active="activePortrait" interval="0" class="carousel portrait-carousel">
+                                            <uib-slide ng-repeat="portrait in portraits track by $index" index="$index">
+                                                <img ng-src="{{portrait.image}}" style="margin:auto;">
                                             </uib-slide>
                                         </uib-carousel>
                                     </div>

@@ -165,33 +165,6 @@
             });
 
         $routeProvider.otherwise({redirectTo: '/'});
-
-        //Декоратор для правильной работы полосок здоровья
-        var progressDecorator = function($delegate) {
-            var directive = $delegate[0];
-            var compile = directive.compile;
-            var link = directive.link;
-
-            directive.compile = function() {
-                compile.apply(this, arguments);
-
-                return function(scope, elem, attr, ctrl) {
-                    link.apply(this, arguments);
-
-                    if(angular.isDefined(attr.dynamicMax)) {
-                        attr.$observe('dynamicMax', function(max) {
-                            scope.max = max;
-                            scope.percent = +(100 * scope.value / max).toFixed(2);
-                        });
-                    }
-
-                };
-            };
-
-            return $delegate;
-        };
-        $provide.decorator('progressbarDirective', progressDecorator);
-        $provide.decorator('barDirective', progressDecorator);
     }]);
 })();
 

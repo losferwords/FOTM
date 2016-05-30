@@ -98,13 +98,13 @@ module.exports = function (server) {
 
         //Отправляем всем игрокам на сервере сообщение об изменении
         //количества человек на сервере
-        var serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom]).length;
+        var serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom].sockets).length;
         io.sockets.in(serverRoom).emit('join', serverOnlineUsers);
         log.info("User "+username+" join game");
 
         socket.on('disconnect', function () {
             if(io.nsps["/"].adapter.rooms[serverRoom]) { //Проверка на то, что я последний человек на сервере
-                serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom]).length;
+                serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom].sockets).length;
                 socket.broadcast.to(serverRoom).emit('leave', serverOnlineUsers); //Покидаем сервер
                 log.info("User "+username+" leave game");
                 //И выкидываем из боя оппонента, если сами вышли
@@ -139,7 +139,9 @@ module.exports = function (server) {
 
 
                     //Выкидываем оппонента
-                    var battleSockets = Object.keys(io.nsps["/"].adapter.rooms[battleRoom]);
+                    if(io.nsps["/"].adapter.rooms[battleRoom]){
+                        var battleSockets = Object.keys(io.nsps["/"].adapter.rooms[battleRoom]);
+                    }
                     if (battleSockets) {
                         socket.broadcast.to(battleRoom).emit('enemyLeave');
                         io.sockets.connected[battleSockets[0]].leave(battleRoom);
@@ -160,6 +162,8 @@ module.exports = function (server) {
                 if(team!=null){
                     Character.create(team._id, function(err, char){
                         if (err) socket.emit("customError", err);
+                        if(char) socket.emit("createCharResult");
+                        else log.error("Can create character");
                     });
                 }
                 else {
@@ -194,11 +198,17 @@ module.exports = function (server) {
                 if(err) socket.emit("customError", err);
                 Character.findOne({charName: "newChar_"+team._id}, function(err, char){
                     if (err) socket.emit("customError", err);
-                    char.populate('_team', function(err, popChar) {
-                        if (err) socket.emit("customError", err);
-                        socket.emit("getDummyCharResult", popChar);
-                    });
-
+                    if(char){
+                        char.populate('_team', function(err, popChar) {
+                            if (err) socket.emit("customError", err);
+                            socket.emit("getDummyCharResult", popChar);
+                        });
+                    }
+                    else {
+                        log.error("Can't populate null dummy character.");
+                        if(userId) { log.error("userId: "+userId)};
+                        if(team) { log.error("newChar: newChar_"+team._id)};
+                    }
                 });
             });
         });
@@ -334,7 +344,8 @@ module.exports = function (server) {
 
         socket.on('joinArenaLobby', function(){
             socket.join(arenaLobby);
-            var queue = Object.keys(io.nsps["/"].adapter.rooms[arenaLobby]);
+            log.info("User "+username+" join arena");
+            var queue = Object.keys(io.nsps["/"].adapter.rooms[arenaLobby].sockets);
             //Если найдено 2 человека в очереди
             if(queue.length>1){
                 //Формируем уникальный ключ комнаты для боя
@@ -391,6 +402,7 @@ module.exports = function (server) {
         });
 
         socket.on('leaveArenaLobby', function(){
+            log.info("User "+username+" leave arena");
             socket.leave(arenaLobby);
         });
 
@@ -407,7 +419,7 @@ module.exports = function (server) {
                 battleRoom = room; //присваивание battleRoom Для второго сокета
             }
             if(!room || !battleRoom) return;
-            var battleSocket=Object.keys(io.nsps["/"].adapter.rooms[room]);
+            var battleSocket=Object.keys(io.nsps["/"].adapter.rooms[room].sockets);
             var allyUserId;
             var enemyUserId;
             var allyTeam ={};
@@ -457,8 +469,8 @@ module.exports = function (server) {
             socket.broadcast.to(room).emit('combatLogUpdateSend', message);
         });
 
-        socket.on('turnEnded', function(room, char) {
-            io.sockets.in(room).emit('turnEndedResult', char);
+        socket.on('turnEnded', function(room, char, turnsSpended) {
+            io.sockets.in(room).emit('turnEndedResult', char, ++turnsSpended);
         });
 
         socket.on('updateActiveTeam', function(room, chars) {

@@ -23,4 +23,5 @@ CHANGELOG
 
 - version 0.5.0 - first open beta, 8 workable roles and 64 spells
 - version 0.6.2 - ready manual and fix lot of bugs
+- version 0.6.4 - fix small bugs after open test
 
