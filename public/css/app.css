@@ -8,6 +8,10 @@ body {
   margin-bottom: 60px;
 }
 
+.btn.disabled, .btn[disabled], fieldset[disabled] .btn {
+  pointer-events: none;
+}
+
 .well {
   border: 2px solid #000000;
   border-radius: 4px;
