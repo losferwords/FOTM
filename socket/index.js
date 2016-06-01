@@ -148,7 +148,7 @@ module.exports = function (server) {
                     }
                 }
             }
-            deleteDummies(socket);
+            deleteDummies(socket.handshake.user._id);
         });
 
         socket.on('getUserName', function () {
@@ -261,7 +261,17 @@ module.exports = function (server) {
         });
 
         socket.on('removeDummyTeam', function(){
-            deleteDummies(socket);
+            deleteDummies(socket.handshake.user._id);
+        });
+
+        socket.on('removeUsersDummies', function() {
+            User.find({}, function (err, users) {
+                if (err) socket.emit("customError", err);
+
+                for (var i = 0; i < users.length; i++) {
+                    deleteDummies(users[i]._id);
+                }
+            });
         });
 
         socket.on('deleteTeam', function(teamId){
@@ -550,18 +560,19 @@ module.exports = function (server) {
     }
 
     //Функция удаляет несохранённые team и character
-    function deleteDummies(socket) {
-        var userId = socket.handshake.user._id;
+    function deleteDummies(userId) {
         Team.findOne({teamName: "newTeam_"+userId}, function(err, team){
             if(err) {
-                socket.emit("customError", err);
+                log.error(err);
             }
             //Если найдена хоть одна dummy тима, удалим её
             if(team) {
-                User.deleteDummies(team, function (err, data) {
+                var teamName = team.teamName;
+                User.deleteDummies(team, function (err) {
                     if (err) {
-                        socket.emit("customError", err);
+                        log.error(err);
                     }
+                    log.info("Team "+teamName+" was deleted");
                 });
             }
         });

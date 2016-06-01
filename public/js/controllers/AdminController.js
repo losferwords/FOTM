@@ -66,6 +66,11 @@ function AdminController($scope, $location, $timeout, mainSocket, character, cha
         }
     };
 
+    $scope.clearDummies = function() {
+        if(!teamsLoad) return;
+        mainSocket.emit("removeUsersDummies");
+    };
+
     $scope.chooseRole = function chooseRole(event){
         $scope.chosenRole=undefined;
         $scope.chosenLevel=undefined;
