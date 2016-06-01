@@ -98,13 +98,13 @@ module.exports = function (server) {
 
         //Отправляем всем игрокам на сервере сообщение об изменении
         //количества человек на сервере
-        var serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom]).length;
+        var serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom].sockets).length;
         io.sockets.in(serverRoom).emit('join', serverOnlineUsers);
         log.info("User "+username+" join game");
 
         socket.on('disconnect', function () {
             if(io.nsps["/"].adapter.rooms[serverRoom]) { //Проверка на то, что я последний человек на сервере
-                serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom]).length;
+                serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom].sockets).length;
                 socket.broadcast.to(serverRoom).emit('leave', serverOnlineUsers); //Покидаем сервер
                 log.info("User "+username+" leave game");
                 //И выкидываем из боя оппонента, если сами вышли
@@ -140,7 +140,7 @@ module.exports = function (server) {
 
                     //Выкидываем оппонента
                     if(io.nsps["/"].adapter.rooms[battleRoom]){
-                        var battleSockets = Object.keys(io.nsps["/"].adapter.rooms[battleRoom]);
+                        var battleSockets = Object.keys(io.nsps["/"].adapter.rooms[battleRoom].sockets);
                     }
                     if (battleSockets) {
                         socket.broadcast.to(battleRoom).emit('enemyLeave');
@@ -345,7 +345,7 @@ module.exports = function (server) {
         socket.on('joinArenaLobby', function(){
             socket.join(arenaLobby);
             log.info("User "+username+" join arena");
-            var queue = Object.keys(io.nsps["/"].adapter.rooms[arenaLobby]);
+            var queue = Object.keys(io.nsps["/"].adapter.rooms[arenaLobby].sockets);
             //Если найдено 2 человека в очереди
             if(queue.length>1){
                 //Формируем уникальный ключ комнаты для боя
@@ -419,7 +419,7 @@ module.exports = function (server) {
                 battleRoom = room; //присваивание battleRoom Для второго сокета
             }
             if(!room || !battleRoom) return;
-            var battleSocket=Object.keys(io.nsps["/"].adapter.rooms[room]);
+            var battleSocket=Object.keys(io.nsps["/"].adapter.rooms[room].sockets);
             var allyUserId;
             var enemyUserId;
             var allyTeam ={};
@@ -499,8 +499,8 @@ module.exports = function (server) {
 
                 //Ищем онлайн игроков
                 var serverSockets = io.of('/').in(serverRoom).connected;
-                for (var socketId in io.nsps["/"].adapter.rooms[serverRoom]) {
-                    if(io.nsps["/"].adapter.rooms[serverRoom].hasOwnProperty(socketId)){
+                for (var socketId in io.nsps["/"].adapter.rooms[serverRoom].sockets) {
+                    if(io.nsps["/"].adapter.rooms[serverRoom].sockets.hasOwnProperty(socketId)){
                         var socket = serverSockets[socketId];
                         for(i=0;i<userArray.length;i++) {
                             if (userArray[i].id === socket.handshake.user.id) {

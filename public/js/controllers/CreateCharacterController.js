@@ -4,7 +4,6 @@ angular.module('fotm').register.controller("CreateCharacterController", ["$scope
 function CreateCharacterController($scope, $rootScope, $location, $interval, mainSocket, characterService, abilityService, randomService, gettextCatalog) {
     var characterObj = {};
     var teamId;
-    var charSetFlag=false;
 
     $scope.activePortrait = 0;
 
@@ -85,34 +84,28 @@ function CreateCharacterController($scope, $rootScope, $location, $interval, mai
                 abilities: abilitiesObjectsArr,
                 availableAbilities: availableAbilitiesArr,
                 lose: false
-            });
-            mainSocket.emit('setTeam', {
-                _id: teamId,
-                souls: {
-                    red: $scope.teamSouls.red-$scope.roleCost.red,
-                    green: $scope.teamSouls.green-$scope.roleCost.green,
-                    blue: $scope.teamSouls.blue-$scope.roleCost.blue
-                }
-            });
+            });            
         }
     });
     mainSocket.on("setCharResult", function () {
-        charSetFlag=true;
-        //На сервер отправили 2 сообщения, так что переход будет успешным только когда ответ придёт от обоих
+        mainSocket.emit('setTeam', {
+            _id: teamId,
+            souls: {
+                red: $scope.teamSouls.red-$scope.roleCost.red,
+                green: $scope.teamSouls.green-$scope.roleCost.green,
+                blue: $scope.teamSouls.blue-$scope.roleCost.blue
+            }
+        });
     });
     mainSocket.on("setTeamResult", function () {
         $scope.changeInfoCSS("success"); //применяем ng-class
         $scope.info=gettextCatalog.getString("Successful");
-        $interval(function(){
-            if(charSetFlag) {
-                if($rootScope.interestingChar){
-                    $location.path('/city');
-                }
-                else{
-                    $location.path('/createTeam');
-                }
-            }
-        }, 500);
+        if($rootScope.interestingChar){
+            $location.path('/city');
+        }
+        else{
+            $location.path('/createTeam');
+        }
     });
 
     $scope.$on('$routeChangeSuccess', function () {
