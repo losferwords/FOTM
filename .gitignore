@@ -6,3 +6,5 @@ $ cat .gitignore
 /.idea
 /data
 run_mongo_server.bat
+/bin
+/obj
