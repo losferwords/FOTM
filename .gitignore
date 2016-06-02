@@ -8,3 +8,4 @@ $ cat .gitignore
 run_mongo_server.bat
 /bin
 /obj
+/.vs
