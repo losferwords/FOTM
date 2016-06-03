@@ -1971,6 +1971,12 @@ canvas {
   margin-right: 0;
 }
 
+.chat-box {
+  position: absolute;
+  bottom: 60px;
+  right: 200px;
+}
+
 
 /* MD------------------------------------------------------*/
 

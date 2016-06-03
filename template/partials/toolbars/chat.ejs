@@ -1,0 +1,19 @@
+<% if(user){ %>
+<div class="chat-box">
+    <button class="btn btn-sm btn-primary chat-btn" ng-click="chatOpened=!chatOpened">Chat</button>
+    <uib-tabset ng-show="chatOpened">
+        <uib-tab heading="Common | translate">
+            <div class="chat-log well customScrollBar" autoscroll>
+                <p ng-repeat="msg in commonChat track by $index" ng-style="{'color' : msg.color}"><span class="text-muted">{{msg.time}} </span> {{msg.text}}</p>
+            </div>
+            <input type="text" class="form-control new-msg" ng-model="newCommonMsg.text" ng-minlength="2" ng-maxlength="150"><button class="btn btn-sm btn-success" translate ng-click="sendMsg('common')">Send</button>
+        </uib-tab>
+        <uib-tab heading="Arena | translate">
+            <div class="chat-log well customScrollBar" autoscroll>
+                <p ng-repeat="msg in arenaChat track by $index" ng-style="{'color' : msg.color}"><span class="text-muted">{{msg.time}} </span> {{msg.text}}</p>
+            </div>
+            <input type="text" class="form-control new-msg" ng-model="newArenaMsg.text" ng-minlength="2" ng-maxlength="150"><button class="btn btn-sm btn-success" translate ng-click="sendMsg('arena')">Send</button>
+        </uib-tab>
+    </uib-tabset>
+</div>    
+<% } %>

@@ -523,6 +523,13 @@ module.exports = function (server) {
             });
         });
 
+        socket.on('sendChatMessage', channel, msg) {
+            switch(channel) {
+                case: 'common' : socket.broadcast.to(serverRoom).emit('newCommonMessage', msg); break;
+                case: 'arena' : if(battleRoom) socket.broadcast.to(battleRoom).emit('newArenaMessage', msg); break;
+            }
+        }
+
     });
 
     //Функция удаляет несохранённые team и character с callback
@@ -597,7 +604,6 @@ module.exports = function (server) {
 
         return array;
     }
-
 
     return io;
 };

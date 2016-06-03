@@ -2,6 +2,15 @@
 angular.module('fotm').controller("SocketController", ["$scope", '$window', '$location', '$rootScope', '$timeout', 'mainSocket', SocketController]);
 
 function SocketController($scope, $window, $location, $rootScope, $timeout, mainSocket) {
+    $scope.chatOpened = false;
+    $scope.commonChat = [];
+    $scope.arenaChat = [];
+    $scope.newCommonMsg = {
+        text: ""
+    };
+    $scope.newArenaMsg = {
+        text: ""
+    };
 
     mainSocket.on("leave", function (serverOnlineUsers) {
         $rootScope.onlineUsers = serverOnlineUsers;
@@ -59,6 +68,44 @@ function SocketController($scope, $window, $location, $rootScope, $timeout, main
     mainSocket.on("getUserNameResult", function(name){
         $scope.userName = name;
     });
+
+    mainSocket.on('newCommonMessage', function(msg){
+        $scope.commonChat.push(msg);
+    });
+
+    $scope.sendMsg = function(channel){
+        //Функция возврщает время в формате hh:mm
+        function currentTime() {
+            var date = new Date();
+            var h = date.getHours();
+            var m = date.getMinutes();
+            if (h < 10) h = '0' + h;
+            if (m < 10) m = '0' + m;
+            return h+":"+m;
+        }
+
+        function processMsg(msgType, msgArray){
+                msgType.time = currentTime();
+                mainSocket.emit('sendChatMessage', channel, msgType);
+                msgType.text="";
+                //Очищаем первый элемент чата, если он переполнен
+                if(msgArray.length==100){
+                    msgArray.splice(0,1);
+                }
+
+                //обновляем чат на клиенте
+                msgArray.push(msgType);
+            }
+
+        switch(channel){
+            case 'common' : 
+                processMsg(newCommonMsg, commonChat);
+                break;
+            case 'arena' : 
+                processMsg(newArenaMsg, arenaChat);
+                break;            
+        }
+    }
 
     //Показ информации
     $rootScope.showInfoMessage = function(message){
