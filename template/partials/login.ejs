@@ -1,22 +1,23 @@
 <div class="row">
+    <img class="main-logo col-lg-2 col-lg-offset-5 col-sm-4 col-sm-offset-4 col-xs-8 col-xs-offset-2 withoutHeader" src="images/logo.png"/>
     <div class="col-lg-4 col-lg-offset-4 col-sm-6 col-sm-offset-3 col-xs-12 well bs-component withoutHeader">
         <form name="loginForm" class="form-horizontal" ng-controller="FormController" novalidate ng-cloak>
             <fieldset>
-                <legend translate>Welcome to FOTM</legend>
+                <legend translate>Welcome to FOTM game</legend>
                 <div class="form-group">
                     <button class="language-btn btn" type="button" ng-click="changeLanguage('ru')"><img src="images/interface/ru.gif" alt=""/></button>
                     <button class="language-btn btn" type="button" ng-click="changeLanguage('en')"><img src="images/interface/gb.gif" alt=""/></button>
                 </div>
                 <p translate>Please login or <a href="/registration">register</a></p>
                 <div class="form-group" ng-class="{'has-error': loginForm.username.$invalid, 'has-success': loginForm.username.$valid}">
-                    <label for="input-username" class="col-xs-3 col-xs-offset-2 control-label" translate>Login</label>
-                    <div class="col-xs-5">
+                    <label for="input-username" class="col-xs-3 control-label" translate>Login</label>
+                    <div class="col-xs-9">
                         <input name="username" type="text" class="form-control" id="input-username" ng-model="username" required>
                     </div>
                 </div>
                 <div class="form-group" ng-class="{'has-error': loginForm.password.$invalid, 'has-success': loginForm.password.$valid}">
-                    <label for="input-password" class="col-xs-3 col-xs-offset-2 control-label" translate>Password</label>
-                    <div class="col-xs-5">
+                    <label for="input-password" class="col-xs-3 control-label" translate>Password</label>
+                    <div class="col-xs-9">
                         <input name="password" type="password" class="form-control" id="input-password" ng-model="password" required>
                     </div>
                 </div>

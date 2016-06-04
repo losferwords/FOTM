@@ -1,7 +1,7 @@
-angular.module('fotm').register.controller("ArenaController", ["$scope", '$rootScope', '$location', '$timeout', '$interval', 'character', 'arenaService', 'hotkeys', 'mainSocket', 'gettextCatalog', 'soundService', ArenaController]);
+angular.module('fotm').register.controller("ArenaController", ["$scope", '$rootScope', '$location', '$timeout', '$interval', 'character', 'arenaService', 'hotkeys', 'mainSocket', 'gettextCatalog', 'soundService', 'chatService', ArenaController]);
 
 //Контроллер выбора пати
-function ArenaController($scope, $rootScope, $location, $timeout, $interval, character, arenaService, hotkeys, mainSocket, gettextCatalog, soundService) {
+function ArenaController($scope, $rootScope, $location, $timeout, $interval, character, arenaService, hotkeys, mainSocket, gettextCatalog, soundService, chatService) {
     $scope.map = arenaService.fillMap($rootScope.currentBattle.groundType, $rootScope.currentBattle.wallPositions); //Карта - двумерный массив на стороне клиента
     $scope.CombatLog = []; //Массив сообщений с информацией
     $scope.myTurn = false; //переменная, показывающая, мой ли сейчас игрок ходит
@@ -586,7 +586,95 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
         }
 
         if(myDeaths==3){
+            makeLose();
+        }
+        else if(enemyDeaths==3){
+            makeWin();
+        }
+        //Вышло время
+        else if($scope.turnsSpended>=100){
+            if(myDeaths>enemyDeaths){
+                makeLose();
+            }
+            else if(myDeaths<enemyDeaths){
+                makeWin();
+            }
+            else {
+                //Играем музыку
+                soundService.getMusicObj().winMusic.play();
 
+                stopTurnTimer();
+
+                gainedSouls.red+=1;
+                gainedSouls.green+=1;
+                gainedSouls.blue+=1;
+
+                $scope.myTeam.souls.red+=gainedSouls.red;
+                $scope.myTeam.souls.green+=gainedSouls.green;
+                $scope.myTeam.souls.blue+=gainedSouls.blue;
+
+                $scope.battleEnd={
+                    ended: true,
+                    title: gettextCatalog.getString("Draw"),
+                    rating: $scope.myTeam.rating,
+                    ratingChange: ratingChange,
+                    souls: gainedSouls
+                };
+
+                mainSocket.emit('setTeam',
+                    {
+                        _id: $scope.myTeam._id,
+                        souls: $scope.myTeam.souls
+                    });
+            }
+        }
+
+        function makeWin(){
+            //Играем музыку
+            soundService.getMusicObj().winMusic.play();
+
+            stopTurnTimer();
+
+            if($scope.myTeam.rating>$scope.enemyTeam.rating){
+                ratingChange = $scope.myTeam.rating-$scope.enemyTeam.rating;
+                if(ratingChange>25) ratingChange=25;
+            }
+            else if ($scope.myTeam.rating<$scope.enemyTeam.rating){
+                ratingChange = ($scope.enemyTeam.rating-$scope.myTeam.rating)*2;
+                if(ratingChange>25) ratingChange=25;
+            }
+            else {
+                ratingChange = 10;
+            }
+
+            $scope.myTeam.rating+=ratingChange;
+
+            gainedSouls.red+=4;
+            gainedSouls.green+=4;
+            gainedSouls.blue+=4;
+
+            $scope.myTeam.souls.red+=gainedSouls.red;
+            $scope.myTeam.souls.green+=gainedSouls.green;
+            $scope.myTeam.souls.blue+=gainedSouls.blue;
+
+            $scope.battleEnd={
+                ended: true,
+                title: gettextCatalog.getString("You win"),
+                rating: $scope.myTeam.rating,
+                ratingChange: "+"+ratingChange,
+                souls: gainedSouls
+            };
+
+            mainSocket.emit('setTeam',
+                {
+                    _id: $scope.myTeam._id,
+                    rating: $scope.myTeam.rating,
+                    wins: $scope.myTeam.wins+1,
+                    souls: $scope.myTeam.souls
+                });
+        }
+
+        function makeLose() {
             //Играем музыку
             soundService.getMusicObj().loseMusic.play();
 
@@ -631,12 +719,12 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
             };
 
             mainSocket.emit('setTeam',
-            {
-                _id: $scope.myTeam._id,
-                rating: $scope.myTeam.rating,
-                loses: $scope.myTeam.loses+1,
-                souls: $scope.myTeam.souls
-            });
+                {
+                    _id: $scope.myTeam._id,
+                    rating: $scope.myTeam.rating,
+                    loses: $scope.myTeam.loses+1,
+                    souls: $scope.myTeam.souls
+                });
 
             //Устанавливаем флаг проигрыша для персонажей
             for(i=0;i<$scope.myTeam.characters.length;i++){
@@ -646,81 +734,6 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
                 });
             }
         }
-
-        else if(enemyDeaths==3){
-
-            //Играем музыку
-            soundService.getMusicObj().winMusic.play();
-
-            stopTurnTimer();
-
-            if($scope.myTeam.rating>$scope.enemyTeam.rating){
-                ratingChange = $scope.myTeam.rating-$scope.enemyTeam.rating;
-                if(ratingChange>25) ratingChange=25;
-            }
-            else if ($scope.myTeam.rating<$scope.enemyTeam.rating){
-                ratingChange = ($scope.enemyTeam.rating-$scope.myTeam.rating)*2;
-                if(ratingChange>25) ratingChange=25;
-            }
-            else {
-                ratingChange = 10;
-            }
-
-            $scope.myTeam.rating+=ratingChange;
-
-            gainedSouls.red+=4;
-            gainedSouls.green+=4;
-            gainedSouls.blue+=4;
-
-            $scope.myTeam.souls.red+=gainedSouls.red;
-            $scope.myTeam.souls.green+=gainedSouls.green;
-            $scope.myTeam.souls.blue+=gainedSouls.blue;
-
-            $scope.battleEnd={
-                ended: true,
-                title: gettextCatalog.getString("You win"),
-                rating: $scope.myTeam.rating,
-                ratingChange: "+"+ratingChange,
-                souls: gainedSouls
-            };
-
-            mainSocket.emit('setTeam',
-            {
-                _id: $scope.myTeam._id,
-                rating: $scope.myTeam.rating,
-                wins: $scope.myTeam.wins+1,
-                souls: $scope.myTeam.souls
-            });
-        }
-        //ничья
-        else if($scope.turnsSpended>=100){
-            //Играем музыку
-            soundService.getMusicObj().winMusic.play();
-
-            stopTurnTimer();
-
-            gainedSouls.red+=1;
-            gainedSouls.green+=1;
-            gainedSouls.blue+=1;
-
-            $scope.myTeam.souls.red+=gainedSouls.red;
-            $scope.myTeam.souls.green+=gainedSouls.green;
-            $scope.myTeam.souls.blue+=gainedSouls.blue;
-
-            $scope.battleEnd={
-                ended: true,
-                title: gettextCatalog.getString("Draw"),
-                rating: $scope.myTeam.rating,
-                ratingChange: ratingChange,
-                souls: gainedSouls
-            };
-
-            mainSocket.emit('setTeam',
-                {
-                    _id: $scope.myTeam._id,
-                    souls: $scope.myTeam.souls
-                });
-        }
     }
 
     //После загрузки контроллера проверяем, загрузился ли контроллер у противника
@@ -729,7 +742,7 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
         soundService.getMusicObj().cityAmbience.pause();
         soundService.chooseAmbient($rootScope.currentBattle.groundType);
         soundService.loadSounds(); //Загружаем все необходимые для боя звуки
-
+        chatService.clearMessages('arena');
         $scope.opponentWaiting=true;
 
         var timerCount = 0;
@@ -841,7 +854,7 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
         }
 
         $scope.enemyTeam.characters = arenaService.convertEnemyTeam(chars);
-        $scope.queue = arenaService.calcQueue($scope.myTeam.characters, $scope.enemyTeam.characters); //вычисляем очередь хода
+        $scope.queue = arenaService.calcQueue($scope.myTeam.characters, $scope.enemyTeam.characters, $scope.activeChar); //вычисляем очередь хода
         $scope.myTurn = arenaService.checkTurn($scope.myTeam.characters, $scope.queue[0]); //проверка, мой ли сейчас ход
         $scope.activeChar = $scope.queue[0]; //назначаем активного персонажа
 
@@ -870,7 +883,7 @@ function ArenaController($scope, $rootScope, $location, $timeout, $interval, cha
             }
         }
         cleanSoundBuffers(); //Звуки были отправлены, так что можно очищать буфер
-        $scope.queue = arenaService.calcQueue($scope.myTeam.characters, $scope.enemyTeam.characters); //вычисляем очередь хода
+        $scope.queue = arenaService.calcQueue($scope.myTeam.characters, $scope.enemyTeam.characters, $scope.activeChar); //вычисляем очередь хода
         $scope.activeChar = $scope.queue[0]; //назначаем активного персонажа
         showLogs(); //выводим сообщения персонажей
         playSounds(); //Проигрываем звуки

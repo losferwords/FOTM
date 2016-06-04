@@ -27,7 +27,7 @@ body {
 }
 
 .withoutHeader {
-  margin-top: 5%;
+  margin-top: 20px;
 }
 
 form input {
@@ -1973,10 +1973,84 @@ canvas {
 
 .chat-box {
   position: absolute;
-  bottom: 60px;
-  right: 200px;
+  bottom: 50px;
+  right: 10%;
+  text-align: right;
+  width: 300px;
 }
 
+.chat-box .chat-tabset  {
+  border: 1px solid #2a9fd6;
+}
+
+.chat-box .chat-btn {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.chat-box .chat-tabset .nav-link {
+  padding: 5px;
+  font-size: 12px;
+  border: 0;
+  border-radius: 0;
+  text-align: center;
+  margin-right: 0;
+}
+
+.chat-box .nav-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.chat-box .chat-tabset .uib-tab {
+  width: 100%;
+  background-color: #000;
+}
+
+.chat-box .chat-tabset .tab-content {
+  background-color: #000;
+}
+
+.chat-box .chat-tabset .nav-link:hover,
+.chat-box .chat-tabset .nav-link:focus {
+  border: 0;
+}
+
+.chat-box .chat-log {
+  height: 300px;
+  margin-bottom: 5px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.chat-box .chat-log p {
+  text-align: left;
+  font-size: 12px;
+  color: #fff;
+  font-weight: normal;
+  margin-bottom: 5px;
+}
+
+.chat-box .form-group {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.chat-box .form-group textarea {
+  width: 90%;
+  font-size: 12px;
+  resize: none;
+  height: 100px;
+  color: #000;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: normal;
+}
+
+.chat-box .form-group button {
+  margin: 5px 0;
+}
 
 /* MD------------------------------------------------------*/
 

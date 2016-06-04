@@ -523,12 +523,14 @@ module.exports = function (server) {
             });
         });
 
-        socket.on('sendChatMessage', channel, msg) {
+        socket.on('sendChatMessage', function (channel, msg) {
+            log.info("User "+msg.sender+" wrote:");
+            log.info(msg.text);
             switch(channel) {
-                case: 'common' : socket.broadcast.to(serverRoom).emit('newCommonMessage', msg); break;
-                case: 'arena' : if(battleRoom) socket.broadcast.to(battleRoom).emit('newArenaMessage', msg); break;
+                case 'common' : io.sockets.in(serverRoom).emit('newMessage', msg, channel); break;
+                case 'arena' : if(battleRoom) io.sockets.in(battleRoom).emit('newMessage', msg, channel); break;
             }
-        }
+        });
 
     });
 

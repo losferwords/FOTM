@@ -14,19 +14,19 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Poedit-Basepath: .\n"
 
-#: public/js/services/arenaService.js:285
+#: public/js/services/arenaService.js:291
 msgid "'s grinder looking for meat!"
 msgstr " со своей мясорубкой снова ищут мяса!"
 
 #: public/js/controllers/AbilitiesInfoController.js:103
-#: public/js/controllers/AdminController.js:250
-#: public/js/controllers/ArenaController.js:35
+#: public/js/controllers/AdminController.js:255
+#: public/js/controllers/ArenaController.js:36
 msgid "<p class='tooltip-need-weapon'>Need weapon</p>"
 msgstr "<p class='tooltip-need-weapon'>Необходимо оружие</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:104
-#: public/js/controllers/AdminController.js:251
-#: public/js/controllers/ArenaController.js:36
+#: public/js/controllers/AdminController.js:256
+#: public/js/controllers/ArenaController.js:37
 msgid "<p class='tooltip-spell'>Spell</p>"
 msgstr "<p class='tooltip-spell'>Заклинание</p>"
 
@@ -239,8 +239,8 @@ msgstr ""
 "p><p>Итого: {{four}}</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:107
-#: public/js/controllers/AdminController.js:254
-#: public/js/controllers/ArenaController.js:39
+#: public/js/controllers/AdminController.js:259
+#: public/js/controllers/ArenaController.js:40
 msgid "<p>Cooldown: {{one}}</p>"
 msgstr "<p>Восстановление: {{one}}</p>"
 
@@ -265,45 +265,45 @@ msgid "<p>Create red soul gem</p><p>Cost: 4 red shards</p>"
 msgstr "<p>Создать красный камень душ</p><p>Стоимость: 4 красных осколка</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:108
-#: public/js/controllers/AdminController.js:255
-#: public/js/controllers/ArenaController.js:40
+#: public/js/controllers/AdminController.js:260
+#: public/js/controllers/ArenaController.js:41
 msgid "<p>Duration: {{one}}</p>"
 msgstr "<p>Длительность: {{one}}</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:109
-#: public/js/controllers/AdminController.js:256
-#: public/js/controllers/ArenaController.js:41
+#: public/js/controllers/AdminController.js:261
+#: public/js/controllers/ArenaController.js:42
 msgid "<p>Energy Cost: {{one}}</p>"
 msgstr "<p>Стоимость энергии: {{one}}</p>"
 
-#: public/js/controllers/ArenaController.js:25
+#: public/js/controllers/ArenaController.js:26
 msgid "<p>Left: {{one}}</p>"
 msgstr "<p>Осталось: {{one}}</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:110
-#: public/js/controllers/AdminController.js:257
-#: public/js/controllers/ArenaController.js:42
+#: public/js/controllers/AdminController.js:262
+#: public/js/controllers/ArenaController.js:43
 msgid "<p>Mana Cost: {{one}}</p>"
 msgstr "<p>Стоимость маны: {{one}}</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:105
-#: public/js/controllers/AdminController.js:252
-#: public/js/controllers/ArenaController.js:37
+#: public/js/controllers/AdminController.js:257
+#: public/js/controllers/ArenaController.js:38
 msgid "<p>Range: {{one}}</p>"
 msgstr "<p>Дальность: {{one}}</p>"
 
 #: public/js/controllers/AbilitiesInfoController.js:106
-#: public/js/controllers/AdminController.js:253
-#: public/js/controllers/ArenaController.js:38
+#: public/js/controllers/AdminController.js:258
+#: public/js/controllers/ArenaController.js:39
 msgid "<p>Range: Self</p>"
 msgstr "<p>Дальность: на себя</p>"
 
-#: public/js/controllers/ArenaController.js:23
+#: public/js/controllers/ArenaController.js:24
 msgid "<p>Stacks: {{one}}/{{two}}</p>"
 msgstr "<p>Сумма: {{one}}/{{two}}</p>"
 
 #: public/js/services/abilityService.js:2802
-#: public/js/services/arenaService.js:562
+#: public/js/services/arenaService.js:568
 msgid "A Touch Of Evil"
 msgstr "Прикосновение зла"
 
@@ -346,9 +346,13 @@ msgstr "Амулет"
 msgid "Are you sure?"
 msgstr "Вы уверены?"
 
-#: public/js/services/arenaService.js:276
+#: public/js/services/arenaService.js:282
 msgid "area effect"
 msgstr "массовый эффект"
+
+#: template/partials/toolbars/chat.ejs:14
+msgid "Arena"
+msgstr "Арена"
 
 #: public/js/services/effectService.js:1311
 msgid "Attack Power decreased to {{one}}%."
@@ -402,12 +406,12 @@ msgstr "Основная информация"
 msgid "Battle"
 msgstr "Битва"
 
-#: public/js/services/arenaService.js:263
+#: public/js/services/arenaService.js:269
 msgid "Battle begins! First move for"
 msgstr "Битва начинается! Первым ходит"
 
-#: public/js/services/arenaService.js:308
-#: public/js/services/arenaService.js:312
+#: public/js/services/arenaService.js:314
+#: public/js/services/arenaService.js:318
 msgid "because immunity"
 msgstr "из-за невосприимчивости"
 
@@ -451,12 +455,12 @@ msgstr "Шанс блока:"
 msgid "Block Chance: + {{one}}%"
 msgstr "Шанс блока: + {{one}}%"
 
-#: public/js/services/arenaService.js:320
+#: public/js/services/arenaService.js:326
 msgid "blocked"
 msgstr "блокировано"
 
 #: public/js/services/abilityService.js:2497
-#: public/js/services/arenaService.js:541
+#: public/js/services/arenaService.js:547
 msgid "Bloodsucker"
 msgstr "Кровосос"
 
@@ -469,7 +473,7 @@ msgid "Boots"
 msgstr "Ботинки"
 
 #: public/js/services/abilityService.js:1679
-#: public/js/services/arenaService.js:484
+#: public/js/services/arenaService.js:490
 msgid "Brain Damage"
 msgstr "Повреждение мозга"
 
@@ -481,14 +485,14 @@ msgstr "Кираса"
 msgid "Buffs and debuffs of this character can't be dispelled or stolen."
 msgstr "Бафы и дебафы этого персонажа не могут быть сняты или украдены."
 
-#: public/js/services/arenaService.js:297
+#: public/js/services/arenaService.js:303
 msgid ""
 "Buffs can't be removed, because target is under 'Locked And Loaded' effect!"
 msgstr ""
 "Бафы не могут быть сняты, потому что цель находится под действием эффекта "
 "'Запечатан и заряжен'!"
 
-#: public/js/services/arenaService.js:291
+#: public/js/services/arenaService.js:297
 msgid ""
 "Buffs can't be stolen, because target is under 'Locked And Loaded' effect!"
 msgstr ""
@@ -504,7 +508,7 @@ msgid "Burn"
 msgstr "Сжечь"
 
 #: public/js/services/abilityService.js:1859
-#: public/js/services/arenaService.js:496
+#: public/js/services/arenaService.js:502
 #: public/js/services/effectService.js:877
 msgid "Burning Ambition"
 msgstr "Сжигание амбиций"
@@ -519,7 +523,7 @@ msgstr "Взывает к силам ада и становится невосп
 
 #: public/js/controllers/AbilitiesInfoController.js:20
 #: public/js/controllers/CharInfoController.js:60
-#: public/js/controllers/CreateCharacterController.js:144
+#: public/js/controllers/CreateCharacterController.js:139
 #: public/js/controllers/InventoryInfoController.js:40
 msgid "Cambion"
 msgstr "Камбион"
@@ -534,17 +538,17 @@ msgstr ""
 "Камбионы получают случайные дополнительные способности от Палача, "
 "Потрошителя, Малефика и Еретика."
 
-#: public/js/services/arenaService.js:288
+#: public/js/services/arenaService.js:294
 msgid "can't calculate the distance and miss with"
 msgstr "не смог рассчитать дистанцию и промахнулся, использовав"
 
 #: template/partials/createCharacter.ejs:146
-#: template/partials/createTeam.ejs:69 template/partials/registration.ejs:33
+#: template/partials/createTeam.ejs:69 template/partials/registration.ejs:34
 msgid "Cancel"
 msgstr "Отмена"
 
-#: public/js/services/arenaService.js:362
-#: public/js/services/arenaService.js:366
+#: public/js/services/arenaService.js:368
+#: public/js/services/arenaService.js:372
 msgid "cast"
 msgstr "использует"
 
@@ -715,13 +719,13 @@ msgstr ""
 "25%."
 
 #: public/js/services/abilityService.js:1761
-#: public/js/services/arenaService.js:490
+#: public/js/services/arenaService.js:496
 #: public/js/services/effectService.js:836
 msgid "Caught Somewhere In Time"
 msgstr "Пойман где-то во времени"
 
 #: public/js/services/abilityService.js:2050
-#: public/js/services/arenaService.js:508
+#: public/js/services/arenaService.js:514
 #: public/js/services/effectService.js:1018
 msgid "Cauterization"
 msgstr "Прижигание"
@@ -774,12 +778,16 @@ msgid ""
 msgstr ""
 "Устремляется к врагу, наносит {{one}}% урона от оружия и обездвиживает цель"
 
+#: template/partials/toolbars/chat.ejs:3
+msgid "Chat"
+msgstr "Чат"
+
 #: public/js/controllers/InventoryInfoController.js:77
 msgid "Chest"
 msgstr "Доспех"
 
 #: public/js/services/abilityService.js:2716
-#: public/js/services/arenaService.js:556
+#: public/js/services/arenaService.js:562
 #: public/js/services/effectService.js:1369
 msgid "Children Of The Damned"
 msgstr "Дитя проклятого"
@@ -801,7 +809,7 @@ msgid "Clairvoyant Wand"
 msgstr "Жезл Предсказателя"
 
 #: public/js/services/abilityService.js:2329
-#: public/js/services/arenaService.js:529
+#: public/js/services/arenaService.js:535
 msgid "Cleanse The Soul"
 msgstr "Очищение души"
 
@@ -865,15 +873,19 @@ msgid "Cloth robe"
 msgstr "Тканевая роба"
 
 #: public/js/services/abilityService.js:320
-#: public/js/services/arenaService.js:391
+#: public/js/services/arenaService.js:397
 msgid "Come And Get It"
 msgstr "Приди и возьми"
 
 #: public/js/services/abilityService.js:1075
-#: public/js/services/arenaService.js:442
+#: public/js/services/arenaService.js:448
 #: public/js/services/effectService.js:472
 msgid "Come Cover Me"
 msgstr "Приди укрыть меня"
+
+#: template/partials/toolbars/chat.ejs:5
+msgid "Common"
+msgstr "Общий"
 
 #: template/partials/abilitiesInfo.ejs:63
 msgid "Cooldown: {{interestingAbility.cooldown()}}"
@@ -885,7 +897,7 @@ msgstr "Восстановление: {{interestingAbility.cooldown()}}"
 msgid "Create"
 msgstr "Создать"
 
-#: public/js/controllers/CreateTeamController.js:21
+#: public/js/controllers/CreateTeamController.js:24
 msgid "Create 1 more member"
 msgid_plural "Create {{$count}} more members"
 msgstr[0] "Создайте ещё {{$count}} персонажа"
@@ -901,14 +913,14 @@ msgid "Create Team"
 msgstr "Создание команды"
 
 #: public/js/services/abilityService.js:2596
-#: public/js/services/arenaService.js:547
+#: public/js/services/arenaService.js:553
 #: public/js/services/effectService.js:1267
 msgid "Creeping Death"
 msgstr "Крадущаяся смерть"
 
-#: public/js/services/arenaService.js:322
-#: public/js/services/arenaService.js:330
+#: public/js/services/arenaService.js:328
 #: public/js/services/arenaService.js:336
+#: public/js/services/arenaService.js:342
 msgid "CRITICAL"
 msgstr "КРИТ."
 
@@ -940,7 +952,7 @@ msgstr "Крит. рейтинг:"
 msgid "Critical Rating: + {{one}}%"
 msgstr "Крит. рейтинг: + {{one}}%"
 
-#: public/js/services/arenaService.js:321
+#: public/js/services/arenaService.js:327
 msgid "damage from"
 msgstr "урона от"
 
@@ -972,7 +984,7 @@ msgstr ""
 "Наносит {{one}} магического урона цели и {{two}} магического урона всем "
 "противникам в радиусе 1 клетки от цели."
 
-#: public/js/services/arenaService.js:294
+#: public/js/services/arenaService.js:300
 msgid ""
 "Debuffs can't be removed, because target is under 'Locked And Loaded' effect!"
 msgstr ""
@@ -995,7 +1007,7 @@ msgstr ""
 "обездвиживающие эффекты. "
 
 #: public/js/services/abilityService.js:77
-#: public/js/services/arenaService.js:376
+#: public/js/services/arenaService.js:382
 #: public/js/services/effectService.js:36
 msgid "Defender Of The Faith"
 msgstr "Защитник веры"
@@ -1022,21 +1034,21 @@ msgstr "Ловкость:"
 msgid "Dexterity: + {{one}}"
 msgstr "Ловкость: + {{one}}"
 
-#: public/js/services/arenaService.js:311
+#: public/js/services/arenaService.js:317
 msgid "didn't get effect"
 msgstr "не получает эффект"
 
-#: public/js/services/arenaService.js:306
+#: public/js/services/arenaService.js:312
 msgid "didn't take damage from"
 msgstr "не получает урона от"
 
 #: public/js/services/abilityService.js:417
-#: public/js/services/arenaService.js:397
+#: public/js/services/arenaService.js:403
 msgid "Die By The Sword"
 msgstr "Умри от меча"
 
 #: public/js/services/abilityService.js:137
-#: public/js/services/arenaService.js:379
+#: public/js/services/arenaService.js:385
 #: public/js/services/effectService.js:92
 msgid "Disarm"
 msgstr "Разоружение"
@@ -1072,21 +1084,25 @@ msgstr "Шанс уворота:"
 msgid "Dodge Chance: + {{one}}%"
 msgstr "Шанс уворота: + {{one}}%"
 
-#: public/js/services/arenaService.js:315
+#: public/js/services/arenaService.js:321
 msgid "dodged from"
 msgstr "увернулся от"
 
-#: public/js/services/arenaService.js:279
+#: public/js/services/arenaService.js:285
 msgid "DOT effect"
 msgstr "периодический эффект"
 
 #: public/js/services/abilityService.js:2084
-#: public/js/services/arenaService.js:511
+#: public/js/services/arenaService.js:517
 #: public/js/services/effectService.js:1056
 msgid "Down In Flames"
 msgstr "Объятый пламенем"
 
-#: public/js/services/arenaService.js:303
+#: public/js/controllers/ArenaController.js:618
+msgid "Draw"
+msgstr "Ничья"
+
+#: public/js/services/arenaService.js:309
 msgid "drop cooldown for"
 msgstr "сбросил время восстановления для"
 
@@ -1105,12 +1121,12 @@ msgstr[1] "в течении следующих {{$count}} ходов."
 msgstr[2] "в течении следующих {{$count}} ходов."
 
 #: public/js/services/abilityService.js:686
-#: public/js/services/arenaService.js:415
+#: public/js/services/arenaService.js:421
 #: public/js/services/effectService.js:302
 msgid "Dyers Eve"
 msgstr "На смертном одре"
 
-#: template/partials/registration.ejs:41
+#: template/partials/registration.ejs:42
 msgid "E-mail is required"
 msgstr "E-mail обязательнен"
 
@@ -1127,7 +1143,7 @@ msgid "Effect fades if you use ability."
 msgstr "Эффект спадает, если вы используете способность."
 
 #: public/js/services/abilityService.js:818
-#: public/js/services/arenaService.js:424
+#: public/js/services/arenaService.js:430
 msgid "Electric Eye"
 msgstr "Всевидящее око"
 
@@ -1139,7 +1155,7 @@ msgstr "Враг может просматривать способности э
 msgid "Energy cost: {{interestingAbility.energyCost()}}"
 msgstr "Стоимость энергии: {{interestingAbility.energyCost()}}"
 
-#: public/js/services/arenaService.js:341
+#: public/js/services/arenaService.js:347
 msgid "energy with"
 msgstr "энергии при помощи"
 
@@ -1153,7 +1169,7 @@ msgstr "Энергия:"
 msgid "Energy: + {{one}}"
 msgstr "Энергия: + {{one}}"
 
-#: template/partials/login.ejs:24
+#: template/partials/login.ejs:25
 msgid "Enter"
 msgstr "Войти"
 
@@ -1206,29 +1222,29 @@ msgstr "Каждый ход восстанавливает {{one}} здоров�
 msgid "Exit"
 msgstr "Выход"
 
-#: public/js/services/arenaService.js:282
+#: public/js/services/arenaService.js:288
 msgid "explosion"
 msgstr "взрыв"
 
 #: public/js/services/abilityService.js:1433
-#: public/js/services/arenaService.js:466
+#: public/js/services/arenaService.js:472
 #: public/js/services/effectService.js:698
 msgid "Fade To Black"
 msgstr "Угасание"
 
 #: public/js/services/abilityService.js:1806
-#: public/js/services/arenaService.js:493
+#: public/js/services/arenaService.js:499
 msgid "Family Tree"
 msgstr "Семейное древо"
 
 #: public/js/services/abilityService.js:1346
-#: public/js/services/arenaService.js:460
+#: public/js/services/arenaService.js:466
 #: public/js/services/effectService.js:644
 msgid "Fast As The Shark"
 msgstr "Быстрый как акула"
 
 #: public/js/services/abilityService.js:2548
-#: public/js/services/arenaService.js:544
+#: public/js/services/arenaService.js:550
 #: public/js/services/effectService.js:1232
 msgid "Fear Of The Dark"
 msgstr "Страх темноты"
@@ -1238,22 +1254,22 @@ msgid "Female"
 msgstr "Женский"
 
 #: public/js/services/abilityService.js:2115
-#: public/js/services/arenaService.js:514
+#: public/js/services/arenaService.js:520
 #: public/js/services/effectService.js:1096
 msgid "Fight Fire With Fire"
 msgstr "Игра с огнём"
 
 #: public/js/services/abilityService.js:1911
-#: public/js/services/arenaService.js:499
+#: public/js/services/arenaService.js:505
 msgid "Fireball"
 msgstr "Огненный шар"
 
 #: public/js/services/abilityService.js:558
-#: public/js/services/arenaService.js:406
+#: public/js/services/arenaService.js:412
 msgid "Follow The Tears"
 msgstr "Путь страданий"
 
-#: public/js/services/arenaService.js:335
+#: public/js/services/arenaService.js:341
 msgid "for"
 msgstr "на"
 
@@ -1290,27 +1306,27 @@ msgstr ""
 msgid "Gender"
 msgstr "Пол"
 
-#: public/js/controllers/CreateTeamController.js:18
+#: public/js/controllers/CreateTeamController.js:21
 msgid "Give a name for your team"
 msgstr "Дайте название своей команде"
 
-#: public/js/services/arenaService.js:319
+#: public/js/services/arenaService.js:325
 msgid "got"
 msgstr "получает"
 
 #: public/js/services/abilityService.js:504
-#: public/js/services/arenaService.js:403
+#: public/js/services/arenaService.js:409
 msgid "Grinder"
 msgstr "Мясорубка"
 
 #: public/js/services/abilityService.js:2366
-#: public/js/services/arenaService.js:532
+#: public/js/services/arenaService.js:538
 #: public/js/services/effectService.js:1155
 msgid "Hallowed Be Thy Name"
 msgstr "Да святится имя Твое"
 
 #: public/js/services/abilityService.js:2150
-#: public/js/services/arenaService.js:517
+#: public/js/services/arenaService.js:523
 msgid "Hammer Of The Gods"
 msgstr "Молот Богов"
 
@@ -1318,7 +1334,7 @@ msgstr "Молот Богов"
 msgid "Hands"
 msgstr "Руки"
 
-#: public/js/services/arenaService.js:300
+#: public/js/services/arenaService.js:306
 msgid "has immunity to control effects!"
 msgstr "невосприимчив к эффектам контроля!"
 
@@ -1326,7 +1342,7 @@ msgstr "невосприимчив к эффектам контроля!"
 msgid "Head"
 msgstr "Голова"
 
-#: public/js/services/arenaService.js:329
+#: public/js/services/arenaService.js:335
 msgid "healed for"
 msgstr "исцелился на"
 
@@ -1368,7 +1384,7 @@ msgid "Health: + {{one}}"
 msgstr "Здоровье: + {{one}}"
 
 #: public/js/services/abilityService.js:2460
-#: public/js/services/arenaService.js:538
+#: public/js/services/arenaService.js:544
 #: public/js/services/effectService.js:1206
 msgid "Heaven Can Wait"
 msgstr "Небеса могут подождать"
@@ -1411,24 +1427,24 @@ msgid "Hit Chance: + {{one}}%"
 msgstr "Шанс попадания: + {{one}}%"
 
 #: public/js/services/abilityService.js:2401
-#: public/js/services/arenaService.js:535
+#: public/js/services/arenaService.js:541
 msgid "Hit The Lights"
 msgstr "Да будет свет"
 
 #: public/js/services/abilityService.js:1246
-#: public/js/services/arenaService.js:454
+#: public/js/services/arenaService.js:460
 #: public/js/services/effectService.js:595
 msgid "Hog Tied"
 msgstr "Связанный"
 
 #: public/js/services/abilityService.js:2270
-#: public/js/services/arenaService.js:526
+#: public/js/services/arenaService.js:532
 msgid "Holy Smoke"
 msgstr "Святой дым"
 
 #: public/js/controllers/AbilitiesInfoController.js:19
 #: public/js/controllers/CharInfoController.js:59
-#: public/js/controllers/CreateCharacterController.js:143
+#: public/js/controllers/CreateCharacterController.js:138
 #: public/js/controllers/InventoryInfoController.js:39
 msgid "Human"
 msgstr "Человек"
@@ -1442,7 +1458,7 @@ msgstr ""
 "способности от всех доступных ролей."
 
 #: public/js/services/abilityService.js:727
-#: public/js/services/arenaService.js:418
+#: public/js/services/arenaService.js:424
 #: public/js/services/effectService.js:327
 msgid "I Dont Wanna Stop"
 msgstr "Я не хочу останавливаться"
@@ -1516,7 +1532,7 @@ msgid "Incubus Dagger"
 msgstr "Кинжал инкуба"
 
 #: public/js/services/abilityService.js:1726
-#: public/js/services/arenaService.js:487
+#: public/js/services/arenaService.js:493
 #: public/js/services/effectService.js:804
 msgid "Infinite Dreams"
 msgstr "Бесконечные сны"
@@ -1540,7 +1556,7 @@ msgid "Initiative: + {{one}}"
 msgstr "Инициатива: + {{one}}"
 
 #: public/js/services/abilityService.js:1112
-#: public/js/services/arenaService.js:445
+#: public/js/services/arenaService.js:451
 #: public/js/services/effectService.js:508
 msgid "Inject The Venom"
 msgstr "Ввести яд"
@@ -1565,29 +1581,29 @@ msgid "Inventory"
 msgstr "Инвентарь"
 
 #: public/js/services/abilityService.js:1160
-#: public/js/services/arenaService.js:448
+#: public/js/services/arenaService.js:454
 #: public/js/services/effectService.js:543
 msgid "Invisible"
 msgstr "Невидимка"
 
-#: public/js/services/arenaService.js:326
+#: public/js/services/arenaService.js:332
 msgid "is dead"
 msgstr "умер"
 
-#: public/js/services/arenaService.js:353
+#: public/js/services/arenaService.js:359
 msgid "is in clearcasting state and save mana"
 msgstr "находится в состоянии чистого разума и сохраняет ману"
 
-#: public/js/services/arenaService.js:359
+#: public/js/services/arenaService.js:365
 msgid "is stunned and skip turn"
 msgstr "оглушён и пропускает ход"
 
-#: public/js/services/arenaService.js:350
+#: public/js/services/arenaService.js:356
 msgid "is very lucky and save his energy"
 msgstr "очень удачлив и сохраняет энергию"
 
 #: public/js/services/abilityService.js:1194
-#: public/js/services/arenaService.js:451
+#: public/js/services/arenaService.js:457
 #: public/js/services/effectService.js:573
 msgid "Jawbreaker"
 msgstr "Ломающий челюсти"
@@ -1618,7 +1634,7 @@ msgstr[1] "Эффект длится {{$count}} хода."
 msgstr[2] "Эффект длится {{$count}} ходов."
 
 #: public/js/services/abilityService.js:2235
-#: public/js/services/arenaService.js:523
+#: public/js/services/arenaService.js:529
 msgid "Laying On Hands"
 msgstr "Возложение рук"
 
@@ -1663,31 +1679,31 @@ msgid "Legs"
 msgstr "Ноги"
 
 #: public/js/services/abilityService.js:1643
-#: public/js/services/arenaService.js:481
+#: public/js/services/arenaService.js:487
 msgid "Lets Me Take It"
 msgstr "Позволь я возьму это"
 
 #: public/js/services/abilityService.js:866
-#: public/js/services/arenaService.js:427
+#: public/js/services/arenaService.js:433
 #: public/js/services/effectService.js:351
 msgid "Lights In The Sky"
 msgstr "Огни в небе"
 
 #: public/js/services/abilityService.js:2757
-#: public/js/services/arenaService.js:559
+#: public/js/services/arenaService.js:565
 #: public/js/services/effectService.js:1420
 msgid "Locked And Loaded"
 msgstr "Запечатан и заряжен"
 
-#: template/partials/login.ejs:12 template/partials/registration.ejs:12
+#: template/partials/login.ejs:13 template/partials/registration.ejs:13
 msgid "Login"
 msgstr "Логин"
 
-#: template/partials/registration.ejs:39
+#: template/partials/registration.ejs:40
 msgid "Login must be between 3 and 20 characters."
 msgstr "Логин должен содержать от 3 до 20 символов"
 
-#: template/partials/registration.ejs:38
+#: template/partials/registration.ejs:39
 msgid ""
 "Login must start with a letter, <br>and contain english letters &amp; "
 "numbers only."
@@ -1695,7 +1711,7 @@ msgstr ""
 "Логин должен начинаться с буквы, <br>и содержать только латинские буквы и "
 "цифры."
 
-#: template/partials/login.ejs:27 template/partials/registration.ejs:37
+#: template/partials/login.ejs:28 template/partials/registration.ejs:38
 msgid "Login name is required"
 msgstr "Необходимо ввести логин"
 
@@ -1714,7 +1730,7 @@ msgid "Luck: + {{one}}%"
 msgstr "Удача: + {{one}}%"
 
 #: public/js/services/abilityService.js:614
-#: public/js/services/arenaService.js:409
+#: public/js/services/arenaService.js:415
 #: public/js/services/effectService.js:240
 msgid "Made In Hell"
 msgstr "Сделано в аду"
@@ -1813,7 +1829,7 @@ msgstr "Регенерация маны увеличивается на {{one}}%
 msgid "Mana Regeneration increased to {{one}}%."
 msgstr "Регенерация маны увеличена на {{one}}%."
 
-#: public/js/services/arenaService.js:346
+#: public/js/services/arenaService.js:352
 msgid "mana with"
 msgstr "маны при помощи"
 
@@ -1828,12 +1844,12 @@ msgid "Mana: + {{one}}"
 msgstr "Мана: + {{one}}"
 
 #: public/js/services/abilityService.js:2201
-#: public/js/services/arenaService.js:520
+#: public/js/services/arenaService.js:526
 #: public/js/services/effectService.js:1121
 msgid "Mercyful Fate"
 msgstr "Милостивая судьба"
 
-#: public/js/services/arenaService.js:272
+#: public/js/services/arenaService.js:278
 msgid "miss against"
 msgstr "промахивается против"
 
@@ -1842,7 +1858,7 @@ msgid "Movement cost decreased to {{one}} energy."
 msgstr "Стоимость передвижения снижена на {{one}} энергии."
 
 #: public/js/services/abilityService.js:1027
-#: public/js/services/arenaService.js:439
+#: public/js/services/arenaService.js:445
 msgid "My Last Words"
 msgstr "Мои последние слова"
 
@@ -1850,7 +1866,7 @@ msgstr "Мои последние слова"
 msgid "Name"
 msgstr "Имя"
 
-#: public/js/controllers/CreateCharacterController.js:32
+#: public/js/controllers/CreateCharacterController.js:33
 msgid "Name {{one}} is already in use"
 msgstr "Имя {{one}} уже занято"
 
@@ -1865,7 +1881,7 @@ msgstr "Необходимо оружие"
 
 #: public/js/controllers/AbilitiesInfoController.js:18
 #: public/js/controllers/CharInfoController.js:58
-#: public/js/controllers/CreateCharacterController.js:142
+#: public/js/controllers/CreateCharacterController.js:137
 #: public/js/controllers/InventoryInfoController.js:38
 msgid "Nephilim"
 msgstr "Нефилим"
@@ -1881,13 +1897,13 @@ msgstr ""
 "Искупителя, Оракула и Клерика."
 
 #: public/js/services/abilityService.js:1552
-#: public/js/services/arenaService.js:475
+#: public/js/services/arenaService.js:481
 #: public/js/services/effectService.js:747
 msgid "Never A Word"
 msgstr "Больше ни слова"
 
 #: public/js/services/abilityService.js:369
-#: public/js/services/arenaService.js:394
+#: public/js/services/arenaService.js:400
 msgid "New Faith"
 msgstr "Новая вера"
 
@@ -1907,7 +1923,7 @@ msgstr "Недостаточно зелёных осколков"
 msgid "Not enough red shards"
 msgstr "Недостаточно красных осколков"
 
-#: public/js/services/arenaService.js:266
+#: public/js/services/arenaService.js:272
 msgid "Now is turn of"
 msgstr "Теперь ходит"
 
@@ -1915,13 +1931,13 @@ msgstr "Теперь ходит"
 msgid "Now you can log in"
 msgstr "Теперь вы можете войти"
 
-#: public/js/services/arenaService.js:307
-#: public/js/services/arenaService.js:316
-#: public/js/services/arenaService.js:323
+#: public/js/services/arenaService.js:313
+#: public/js/services/arenaService.js:322
+#: public/js/services/arenaService.js:329
 msgid "of"
 msgstr "использованной"
 
-#: public/js/services/arenaService.js:363
+#: public/js/services/arenaService.js:369
 msgid "on"
 msgstr "на"
 
@@ -1937,7 +1953,7 @@ msgstr "Параметры"
 msgid "Parameters Tune"
 msgstr "Настройка"
 
-#: template/partials/login.ejs:18 template/partials/registration.ejs:24
+#: template/partials/login.ejs:19 template/partials/registration.ejs:25
 msgid "Password"
 msgstr "Пароль"
 
@@ -1945,15 +1961,15 @@ msgstr "Пароль"
 msgid "Password incorrect"
 msgstr "Пароль неверен"
 
-#: template/partials/login.ejs:28 template/partials/registration.ejs:43
+#: template/partials/login.ejs:29 template/partials/registration.ejs:44
 msgid "Password is required"
 msgstr "Необходимо ввести пароль"
 
-#: template/partials/registration.ejs:44
+#: template/partials/registration.ejs:45
 msgid "Password must be between 5 and 20 characters."
 msgstr "Пароль должен содержать от 5 до 20 символов"
 
-#: template/partials/registration.ejs:45
+#: template/partials/registration.ejs:46
 msgid ""
 "Password Must contain one lower &amp; uppercase letter,<br>and one non-alpha "
 "character (a number or a symbol.)"
@@ -2018,12 +2034,12 @@ msgstr[0] "игрок"
 msgstr[1] "игрока"
 msgstr[2] "игроков"
 
-#: template/partials/login.ejs:10
+#: template/partials/login.ejs:11
 msgid "Please login or <a href=\"/registration\">register</a>"
 msgstr ""
 "Пожалуйста, войдите или <a href=\"/registration\">зарегистрируйтесь</a>"
 
-#: template/partials/registration.ejs:9
+#: template/partials/registration.ejs:10
 msgid "Please, complete this form"
 msgstr "Пожалуйста, заполните эту форму"
 
@@ -2032,13 +2048,13 @@ msgid "Portrait"
 msgstr "Портрет"
 
 #: public/js/services/abilityService.js:2019
-#: public/js/services/arenaService.js:505
+#: public/js/services/arenaService.js:511
 #: public/js/services/effectService.js:985
 msgid "Powerslave"
 msgstr "Раб власти"
 
 #: public/js/services/abilityService.js:1604
-#: public/js/services/arenaService.js:478
+#: public/js/services/arenaService.js:484
 #: public/js/services/effectService.js:769
 msgid "Prophecy"
 msgstr "Пророчество"
@@ -2059,13 +2075,13 @@ msgstr ""
 "контроля судеб своих врагов."
 
 #: public/js/services/abilityService.js:1381
-#: public/js/services/arenaService.js:463
+#: public/js/services/arenaService.js:469
 #: public/js/services/effectService.js:676
 msgid "Prowler"
 msgstr "Бродяга"
 
 #: public/js/services/abilityService.js:2679
-#: public/js/services/arenaService.js:553
+#: public/js/services/arenaService.js:559
 msgid "Purgatory"
 msgstr "Чистилище"
 
@@ -2121,11 +2137,11 @@ msgstr ""
 "Искупители вершат Праведный Суд с большого расстояния. Они используют свои "
 "дальнобойные орудия, чтобы управлять ситуацией на поле боя."
 
-#: template/partials/registration.ejs:30
+#: template/partials/registration.ejs:31
 msgid "Register"
 msgstr "Зарегистрироваться"
 
-#: template/partials/registration.ejs:4
+#: template/partials/registration.ejs:5
 msgid "Registration"
 msgstr "Регистрация"
 
@@ -2134,7 +2150,7 @@ msgid "Registration successful"
 msgstr "Регистрация успешно завершена"
 
 #: public/js/services/abilityService.js:459
-#: public/js/services/arenaService.js:400
+#: public/js/services/arenaService.js:406
 #: public/js/services/effectService.js:215
 msgid "Reign In Blood"
 msgstr "Царствие в крови"
@@ -2153,8 +2169,8 @@ msgstr[0] "Снимает {{$count}} случайный позитивный э�
 msgstr[1] "Снимает {{$count}} случайных позитивных эффекта у противника."
 msgstr[2] "Снимает {{$count}} случайных позитивных эффектов у противника."
 
-#: public/js/services/arenaService.js:340
-#: public/js/services/arenaService.js:345
+#: public/js/services/arenaService.js:346
+#: public/js/services/arenaService.js:351
 msgid "restore"
 msgstr "восстанавливает"
 
@@ -2178,7 +2194,7 @@ msgstr "Стоимость воскрешения:"
 msgid "Retreat"
 msgstr "Сдаться"
 
-#: public/js/services/arenaService.js:356
+#: public/js/services/arenaService.js:362
 msgid "retreats"
 msgstr "отступает"
 
@@ -2242,7 +2258,7 @@ msgid "Roll Dices"
 msgstr "Кинуть кости"
 
 #: public/js/services/abilityService.js:1311
-#: public/js/services/arenaService.js:457
+#: public/js/services/arenaService.js:463
 #: public/js/services/effectService.js:617
 msgid "Running Free"
 msgstr "Бегущий свободно"
@@ -2252,7 +2268,7 @@ msgid "Salvation Crucifix"
 msgstr "Распятие Спасения"
 
 #: public/js/services/abilityService.js:235
-#: public/js/services/arenaService.js:385
+#: public/js/services/arenaService.js:391
 #: public/js/services/effectService.js:150
 msgid "Sanctuary"
 msgstr "Святилище"
@@ -2272,6 +2288,11 @@ msgstr "поиск.."
 #: public/js/controllers/CityController.js:35
 msgid "searching..."
 msgstr "поиск..."
+
+#: template/partials/toolbars/chat.ejs:11
+#: template/partials/toolbars/chat.ejs:20
+msgid "Send"
+msgstr "Отправить"
 
 #: public/js/controllers/AbilitiesInfoController.js:26
 #: public/js/controllers/CharInfoController.js:66
@@ -2313,7 +2334,7 @@ msgstr ""
 "магического урона."
 
 #: public/js/services/abilityService.js:770
-#: public/js/services/arenaService.js:421
+#: public/js/services/arenaService.js:427
 msgid "Shot Down In Flames"
 msgstr "Испепеление"
 
@@ -2349,7 +2370,7 @@ msgstr ""
 "Палачи - это оружие самого Дьявола. Они уничтожают своих врагов в ближнем "
 "бою при помощи огромного меча, а также наносят большой урон."
 
-#: public/js/services/arenaService.js:269
+#: public/js/services/arenaService.js:275
 msgid "Someone invisible stands on that cell!"
 msgstr "Кто-то невидимый стоит на этой клетке!"
 
@@ -2431,7 +2452,7 @@ msgid "Soul shards:"
 msgstr "Осколки душ:"
 
 #: public/js/services/abilityService.js:1525
-#: public/js/services/arenaService.js:472
+#: public/js/services/arenaService.js:478
 msgid "Speed Of Light"
 msgstr "Скорость света"
 
@@ -2468,13 +2489,13 @@ msgid "Spell Power: + {{one}}%"
 msgstr "Сила заклинаний: + {{one}}%"
 
 #: public/js/services/abilityService.js:651
-#: public/js/services/arenaService.js:412
+#: public/js/services/arenaService.js:418
 #: public/js/services/effectService.js:270
 msgid "Spill The Blood"
 msgstr "Да прольётся кровь"
 
 #: public/js/services/abilityService.js:2637
-#: public/js/services/arenaService.js:550
+#: public/js/services/arenaService.js:556
 #: public/js/services/effectService.js:1302
 msgid "Spreading The Disease"
 msgstr "Распространение заразы"
@@ -2486,13 +2507,13 @@ msgid "Stacks up 5 times."
 msgstr "Суммируется до 5 раз."
 
 #: public/js/services/abilityService.js:1468
-#: public/js/services/arenaService.js:469
+#: public/js/services/arenaService.js:475
 #: public/js/services/effectService.js:722
 msgid "Stargazer"
 msgstr "Звездочёт"
 
 #: public/js/services/abilityService.js:991
-#: public/js/services/arenaService.js:436
+#: public/js/services/arenaService.js:442
 #: public/js/services/effectService.js:435
 msgid "State Of Grace"
 msgstr "Состояние благодати"
@@ -2607,7 +2628,7 @@ msgstr ""
 "открывается кровотечение в размере {{two}}% от нанесённого урона"
 
 #: public/js/services/abilityService.js:30
-#: public/js/services/arenaService.js:373
+#: public/js/services/arenaService.js:379
 #: public/js/services/effectService.js:11
 msgid "Strong Arm Of The Law"
 msgstr "Сильная рука закона"
@@ -2619,8 +2640,8 @@ msgstr "Сильная рука закона"
 msgid "Stunned. Skip next turn."
 msgstr "Оглушён. Пропускает следующий ход."
 
-#: public/js/controllers/CreateCharacterController.js:103
-#: public/js/controllers/CreateTeamController.js:51
+#: public/js/controllers/CreateCharacterController.js:102
+#: public/js/controllers/CreateTeamController.js:54
 msgid "Successful"
 msgstr "Успех"
 
@@ -2649,7 +2670,7 @@ msgstr ""
 msgid "Team name"
 msgstr "Название команды"
 
-#: public/js/controllers/CreateTeamController.js:35
+#: public/js/controllers/CreateTeamController.js:38
 msgid "Team name {{one}} is already in use"
 msgstr "Название команды {{one}} уже занято"
 
@@ -2680,7 +2701,7 @@ msgstr[2] ""
 "Телепортирует персонажа на любую клетку в радиусе {{$count}} клеток."
 
 #: public/js/services/abilityService.js:1975
-#: public/js/services/arenaService.js:502
+#: public/js/services/arenaService.js:508
 #: public/js/services/effectService.js:899
 msgid "Thank God For The Bomb"
 msgstr "Спасибо Богу за бомбы"
@@ -2690,7 +2711,7 @@ msgid "Thank God For The Bomb (Stun)"
 msgstr "Спасибо Богу за бомбы (оглушение)"
 
 #: public/js/services/abilityService.js:270
-#: public/js/services/arenaService.js:388
+#: public/js/services/arenaService.js:394
 #: public/js/services/effectService.js:178
 msgid "The Punishment Due"
 msgstr "Грядёт наказание"
@@ -2750,7 +2771,7 @@ msgstr ""
 "к применившему."
 
 #: public/js/services/abilityService.js:902
-#: public/js/services/arenaService.js:430
+#: public/js/services/arenaService.js:436
 #: public/js/services/effectService.js:383
 msgid "Thunderstruck"
 msgstr "Громом поражённый"
@@ -2763,8 +2784,8 @@ msgstr "Кинжал мучителя"
 msgid "Up in the air and becomes immune to physical damage"
 msgstr "Взмывает в воздух и становится невосприимчивым к физическому урону"
 
-#: public/js/services/arenaService.js:342
-#: public/js/services/arenaService.js:347
+#: public/js/services/arenaService.js:348
+#: public/js/services/arenaService.js:353
 msgid "used by"
 msgstr "использованной"
 
@@ -2777,7 +2798,7 @@ msgid "User is already created"
 msgstr "Такой пользователь уже существует"
 
 #: public/js/services/abilityService.js:8
-#: public/js/services/arenaService.js:370
+#: public/js/services/arenaService.js:376
 msgid "Void"
 msgstr "Пусто"
 
@@ -2786,18 +2807,18 @@ msgid "Waiting For Enemy..."
 msgstr "Ожидание оппонента..."
 
 #: public/js/services/abilityService.js:182
-#: public/js/services/arenaService.js:382
+#: public/js/services/arenaService.js:388
 #: public/js/services/effectService.js:128
 msgid "Walk Away"
 msgstr "Уходи прочь"
 
-#: public/js/services/arenaService.js:334
+#: public/js/services/arenaService.js:340
 msgid "was healed by"
 msgstr "был исцелён"
 
-#: template/partials/login.ejs:5
-msgid "Welcome to FOTM"
-msgstr "Добро пожаловать в FOTM"
+#: template/partials/login.ejs:6
+msgid "Welcome to FOTM game"
+msgstr "Добро пожаловать в игру FOTM"
 
 #: public/js/controllers/FormController.js:26
 msgid "Welcome!"
@@ -2823,9 +2844,9 @@ msgstr ""
 msgid "Win Rate: {{team.wins}}-{{team.loses}}"
 msgstr "Статистика: {{team.wins}}-{{team.loses}}"
 
-#: public/js/services/arenaService.js:273
-#: public/js/services/arenaService.js:331
+#: public/js/services/arenaService.js:279
 #: public/js/services/arenaService.js:337
+#: public/js/services/arenaService.js:343
 msgid "with"
 msgstr "использовав"
 
@@ -2834,7 +2855,7 @@ msgid "Yes"
 msgstr "Да"
 
 #: public/js/services/abilityService.js:954
-#: public/js/services/arenaService.js:433
+#: public/js/services/arenaService.js:439
 #: public/js/services/effectService.js:405
 msgid "You Aint No Angel"
 msgstr "Ты всё же ангел"
@@ -2843,7 +2864,7 @@ msgstr "Ты всё же ангел"
 msgid "You gain:"
 msgstr "Вы получаете:"
 
-#: public/js/controllers/ArenaController.js:626
+#: public/js/controllers/ArenaController.js:715
 msgid "You lose"
 msgstr "Паражение"
 
@@ -2856,16 +2877,16 @@ msgstr "Получено:"
 msgid "You will get random role of available for chosen race."
 msgstr "Вы получите случайную роль из доступных для выбранной расы."
 
-#: public/js/controllers/ArenaController.js:680
+#: public/js/controllers/ArenaController.js:662
 msgid "You win"
 msgstr "Победа"
 
-#: public/js/controllers/ArenaController.js:712
+#: public/js/controllers/ArenaController.js:755
 msgid "Your enemy not ready to battle"
 msgstr "Ваш противник не готов к битве"
 
-#: public/js/controllers/ArenaController.js:787
-#: public/js/controllers/ArenaController.js:792
+#: public/js/controllers/ArenaController.js:830
+#: public/js/controllers/ArenaController.js:835
 msgid "Your enemy was disconnected"
 msgstr "Ваш противник отключился"
 
@@ -2876,6 +2897,9 @@ msgstr "Ваш рейтинг: {{battleEnd.rating}} ({{battleEnd.ratingChange}})
 #: public/js/controllers/InventoryInfoController.js:125
 msgid "Zaqqum Branch"
 msgstr "Ветвь Закуума"
+
+#~ msgid "Welcome to FOTM"
+#~ msgstr "Добро пожаловать в FOTM"
 
 #~ msgid "Restore {{one}}% health for one target"
 #~ msgstr "Восстанавливает {{one}}% здоровья одной цели"

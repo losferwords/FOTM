@@ -1925,7 +1925,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                         this.cd=this.cooldown();
                         if(caster.checkHit()) {
                             //По цели
-                            var magicDamage = (1000 + this.variant * 150) * (1 + caster.spellPower);
+                            var magicDamage = (1250 + this.variant * 200) * (1 + caster.spellPower);
                             var critical = caster.checkCrit();
                             if (critical) {
                                 magicDamage = caster.applyCrit(magicDamage);
@@ -1936,7 +1936,7 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
                             target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
 
                             //АОЕ
-                            magicDamage = (1250 - this.variant * 150) * (1 + caster.spellPower);
+                            magicDamage = (1500 - this.variant * 200) * (1 + caster.spellPower);
 
                             var nearbyEnemies = target.findAllies(enemyTeam, 1);
                             for (var i = 0; i < nearbyEnemies.length; i++) {

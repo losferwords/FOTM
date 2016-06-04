@@ -84,9 +84,11 @@ angular.module('fotm').register.service('arenaService', ["gettextCatalog", "rand
         },
         //расчёт игровой очереди
         calcQueue: function(myTeam, enemyTeam, currentChar) {
+
             var activeQueue = []; //Активная очередь
             var endedQueue = []; //отходившая очередь
             var queue = [];
+            var removedActive = {};
 
             for(var i=0;i<myTeam.length;i++){
                 if(!myTeam[i].isDead) queue[queue.length]=myTeam[i];
@@ -96,7 +98,12 @@ angular.module('fotm').register.service('arenaService', ["gettextCatalog", "rand
             }
 
             if(currentChar) {
-                queue.splice(queue.indexOf(currentChar),1);
+                for(i = 0;i<queue.length;i++){
+                    if(queue[i]._id==currentChar._id) {
+                        removedActive = queue[i];
+                        queue.splice(i,1);
+                    }
+                }
             } //Не включаем персонажа, который в данный момент совершает ход
 
             for(i=0;i<queue.length;i++){
@@ -159,8 +166,7 @@ angular.module('fotm').register.service('arenaService', ["gettextCatalog", "rand
 
             //Вставляем текущего персонажа вперёд массива
             if(currentChar) {
-                var currentArray = [currentChar];
-                ready = currentArray.concat(ready);
+                ready.unshift(removedActive);
             }
 
             return ready;

@@ -4,19 +4,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Project-Id-Version: \n"
 
-#: public/js/services/arenaService.js:285
+#: public/js/services/arenaService.js:291
 msgid "'s grinder looking for meat!"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:103
-#: public/js/controllers/AdminController.js:250
-#: public/js/controllers/ArenaController.js:35
+#: public/js/controllers/AdminController.js:255
+#: public/js/controllers/ArenaController.js:36
 msgid "<p class='tooltip-need-weapon'>Need weapon</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:104
-#: public/js/controllers/AdminController.js:251
-#: public/js/controllers/ArenaController.js:36
+#: public/js/controllers/AdminController.js:256
+#: public/js/controllers/ArenaController.js:37
 msgid "<p class='tooltip-spell'>Spell</p>"
 msgstr ""
 
@@ -93,8 +93,8 @@ msgid "<p>Amount of <strong>health</strong> determines how long you can fight. I
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:107
-#: public/js/controllers/AdminController.js:254
-#: public/js/controllers/ArenaController.js:39
+#: public/js/controllers/AdminController.js:259
+#: public/js/controllers/ArenaController.js:40
 msgid "<p>Cooldown: {{one}}</p>"
 msgstr ""
 
@@ -115,45 +115,45 @@ msgid "<p>Create red soul gem</p><p>Cost: 4 red shards</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:108
-#: public/js/controllers/AdminController.js:255
-#: public/js/controllers/ArenaController.js:40
+#: public/js/controllers/AdminController.js:260
+#: public/js/controllers/ArenaController.js:41
 msgid "<p>Duration: {{one}}</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:109
-#: public/js/controllers/AdminController.js:256
-#: public/js/controllers/ArenaController.js:41
+#: public/js/controllers/AdminController.js:261
+#: public/js/controllers/ArenaController.js:42
 msgid "<p>Energy Cost: {{one}}</p>"
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:25
+#: public/js/controllers/ArenaController.js:26
 msgid "<p>Left: {{one}}</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:110
-#: public/js/controllers/AdminController.js:257
-#: public/js/controllers/ArenaController.js:42
+#: public/js/controllers/AdminController.js:262
+#: public/js/controllers/ArenaController.js:43
 msgid "<p>Mana Cost: {{one}}</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:105
-#: public/js/controllers/AdminController.js:252
-#: public/js/controllers/ArenaController.js:37
+#: public/js/controllers/AdminController.js:257
+#: public/js/controllers/ArenaController.js:38
 msgid "<p>Range: {{one}}</p>"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:106
-#: public/js/controllers/AdminController.js:253
-#: public/js/controllers/ArenaController.js:38
+#: public/js/controllers/AdminController.js:258
+#: public/js/controllers/ArenaController.js:39
 msgid "<p>Range: Self</p>"
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:23
+#: public/js/controllers/ArenaController.js:24
 msgid "<p>Stacks: {{one}}/{{two}}</p>"
 msgstr ""
 
 #: public/js/services/abilityService.js:2802
-#: public/js/services/arenaService.js:562
+#: public/js/services/arenaService.js:568
 msgid "A Touch Of Evil"
 msgstr ""
 
@@ -193,8 +193,12 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
-#: public/js/services/arenaService.js:276
+#: public/js/services/arenaService.js:282
 msgid "area effect"
+msgstr ""
+
+#: template/partials/toolbars/chat.ejs:14
+msgid "Arena"
 msgstr ""
 
 #: public/js/services/effectService.js:1311
@@ -248,12 +252,12 @@ msgstr ""
 msgid "Battle"
 msgstr ""
 
-#: public/js/services/arenaService.js:263
+#: public/js/services/arenaService.js:269
 msgid "Battle begins! First move for"
 msgstr ""
 
-#: public/js/services/arenaService.js:308
-#: public/js/services/arenaService.js:312
+#: public/js/services/arenaService.js:314
+#: public/js/services/arenaService.js:318
 msgid "because immunity"
 msgstr ""
 
@@ -286,12 +290,12 @@ msgstr ""
 msgid "Block Chance: + {{one}}%"
 msgstr ""
 
-#: public/js/services/arenaService.js:320
+#: public/js/services/arenaService.js:326
 msgid "blocked"
 msgstr ""
 
 #: public/js/services/abilityService.js:2497
-#: public/js/services/arenaService.js:541
+#: public/js/services/arenaService.js:547
 msgid "Bloodsucker"
 msgstr ""
 
@@ -304,7 +308,7 @@ msgid "Boots"
 msgstr ""
 
 #: public/js/services/abilityService.js:1679
-#: public/js/services/arenaService.js:484
+#: public/js/services/arenaService.js:490
 msgid "Brain Damage"
 msgstr ""
 
@@ -316,11 +320,11 @@ msgstr ""
 msgid "Buffs and debuffs of this character can't be dispelled or stolen."
 msgstr ""
 
-#: public/js/services/arenaService.js:297
+#: public/js/services/arenaService.js:303
 msgid "Buffs can't be removed, because target is under 'Locked And Loaded' effect!"
 msgstr ""
 
-#: public/js/services/arenaService.js:291
+#: public/js/services/arenaService.js:297
 msgid "Buffs can't be stolen, because target is under 'Locked And Loaded' effect!"
 msgstr ""
 
@@ -334,7 +338,7 @@ msgid "Burn"
 msgstr ""
 
 #: public/js/services/abilityService.js:1859
-#: public/js/services/arenaService.js:496
+#: public/js/services/arenaService.js:502
 #: public/js/services/effectService.js:877
 msgid "Burning Ambition"
 msgstr ""
@@ -349,7 +353,7 @@ msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:20
 #: public/js/controllers/CharInfoController.js:60
-#: public/js/controllers/CreateCharacterController.js:144
+#: public/js/controllers/CreateCharacterController.js:139
 #: public/js/controllers/InventoryInfoController.js:40
 msgid "Cambion"
 msgstr ""
@@ -358,18 +362,18 @@ msgstr ""
 msgid "Cambions are children of demons and humans. They follow the path of chaos and destruction.Cambions get random extra-abilities of Slayer, Ripper, Malefic and Heretic."
 msgstr ""
 
-#: public/js/services/arenaService.js:288
+#: public/js/services/arenaService.js:294
 msgid "can't calculate the distance and miss with"
 msgstr ""
 
 #: template/partials/createCharacter.ejs:146
 #: template/partials/createTeam.ejs:69
-#: template/partials/registration.ejs:33
+#: template/partials/registration.ejs:34
 msgid "Cancel"
 msgstr ""
 
-#: public/js/services/arenaService.js:362
-#: public/js/services/arenaService.js:366
+#: public/js/services/arenaService.js:368
+#: public/js/services/arenaService.js:372
 msgid "cast"
 msgstr ""
 
@@ -466,13 +470,13 @@ msgid "Cast on enemy target. Decreases Spell Power and Hit Chance for 25%."
 msgstr ""
 
 #: public/js/services/abilityService.js:1761
-#: public/js/services/arenaService.js:490
+#: public/js/services/arenaService.js:496
 #: public/js/services/effectService.js:836
 msgid "Caught Somewhere In Time"
 msgstr ""
 
 #: public/js/services/abilityService.js:2050
-#: public/js/services/arenaService.js:508
+#: public/js/services/arenaService.js:514
 #: public/js/services/effectService.js:1018
 msgid "Cauterization"
 msgstr ""
@@ -519,12 +523,16 @@ msgstr ""
 msgid "Charges to enemy, deals {{one}}% of weapon damage and immobilizes target"
 msgstr ""
 
+#: template/partials/toolbars/chat.ejs:3
+msgid "Chat"
+msgstr ""
+
 #: public/js/controllers/InventoryInfoController.js:77
 msgid "Chest"
 msgstr ""
 
 #: public/js/services/abilityService.js:2716
-#: public/js/services/arenaService.js:556
+#: public/js/services/arenaService.js:562
 #: public/js/services/effectService.js:1369
 msgid "Children Of The Damned"
 msgstr ""
@@ -546,7 +554,7 @@ msgid "Clairvoyant Wand"
 msgstr ""
 
 #: public/js/services/abilityService.js:2329
-#: public/js/services/arenaService.js:529
+#: public/js/services/arenaService.js:535
 msgid "Cleanse The Soul"
 msgstr ""
 
@@ -602,14 +610,18 @@ msgid "Cloth robe"
 msgstr ""
 
 #: public/js/services/abilityService.js:320
-#: public/js/services/arenaService.js:391
+#: public/js/services/arenaService.js:397
 msgid "Come And Get It"
 msgstr ""
 
 #: public/js/services/abilityService.js:1075
-#: public/js/services/arenaService.js:442
+#: public/js/services/arenaService.js:448
 #: public/js/services/effectService.js:472
 msgid "Come Cover Me"
+msgstr ""
+
+#: template/partials/toolbars/chat.ejs:5
+msgid "Common"
 msgstr ""
 
 #: template/partials/abilitiesInfo.ejs:63
@@ -625,7 +637,7 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
-#: public/js/controllers/CreateTeamController.js:21
+#: public/js/controllers/CreateTeamController.js:24
 msgid "Create 1 more member"
 msgid_plural "Create {{$count}} more members"
 msgstr[0] ""
@@ -640,14 +652,14 @@ msgid "Create Team"
 msgstr ""
 
 #: public/js/services/abilityService.js:2596
-#: public/js/services/arenaService.js:547
+#: public/js/services/arenaService.js:553
 #: public/js/services/effectService.js:1267
 msgid "Creeping Death"
 msgstr ""
 
-#: public/js/services/arenaService.js:322
-#: public/js/services/arenaService.js:330
+#: public/js/services/arenaService.js:328
 #: public/js/services/arenaService.js:336
+#: public/js/services/arenaService.js:342
 msgid "CRITICAL"
 msgstr ""
 
@@ -680,7 +692,7 @@ msgstr ""
 msgid "Critical Rating: + {{one}}%"
 msgstr ""
 
-#: public/js/services/arenaService.js:321
+#: public/js/services/arenaService.js:327
 msgid "damage from"
 msgstr ""
 
@@ -700,7 +712,7 @@ msgstr ""
 msgid "Deals {{one}} magical damage to target and {{two}} magical damage to all enemy targets in 1 cell radius."
 msgstr ""
 
-#: public/js/services/arenaService.js:294
+#: public/js/services/arenaService.js:300
 msgid "Debuffs can't be removed, because target is under 'Locked And Loaded' effect!"
 msgstr ""
 
@@ -717,7 +729,7 @@ msgid "Decreases movement cost to {{one}} energy. Remove all immobilize effects.
 msgstr ""
 
 #: public/js/services/abilityService.js:77
-#: public/js/services/arenaService.js:376
+#: public/js/services/arenaService.js:382
 #: public/js/services/effectService.js:36
 msgid "Defender Of The Faith"
 msgstr ""
@@ -745,21 +757,21 @@ msgstr ""
 msgid "Dexterity: + {{one}}"
 msgstr ""
 
-#: public/js/services/arenaService.js:311
+#: public/js/services/arenaService.js:317
 msgid "didn't get effect"
 msgstr ""
 
-#: public/js/services/arenaService.js:306
+#: public/js/services/arenaService.js:312
 msgid "didn't take damage from"
 msgstr ""
 
 #: public/js/services/abilityService.js:417
-#: public/js/services/arenaService.js:397
+#: public/js/services/arenaService.js:403
 msgid "Die By The Sword"
 msgstr ""
 
 #: public/js/services/abilityService.js:137
-#: public/js/services/arenaService.js:379
+#: public/js/services/arenaService.js:385
 #: public/js/services/effectService.js:92
 msgid "Disarm"
 msgstr ""
@@ -794,21 +806,25 @@ msgstr ""
 msgid "Dodge Chance: + {{one}}%"
 msgstr ""
 
-#: public/js/services/arenaService.js:315
+#: public/js/services/arenaService.js:321
 msgid "dodged from"
 msgstr ""
 
-#: public/js/services/arenaService.js:279
+#: public/js/services/arenaService.js:285
 msgid "DOT effect"
 msgstr ""
 
 #: public/js/services/abilityService.js:2084
-#: public/js/services/arenaService.js:511
+#: public/js/services/arenaService.js:517
 #: public/js/services/effectService.js:1056
 msgid "Down In Flames"
 msgstr ""
 
-#: public/js/services/arenaService.js:303
+#: public/js/controllers/ArenaController.js:618
+msgid "Draw"
+msgstr ""
+
+#: public/js/services/arenaService.js:309
 msgid "drop cooldown for"
 msgstr ""
 
@@ -826,12 +842,12 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: public/js/services/abilityService.js:686
-#: public/js/services/arenaService.js:415
+#: public/js/services/arenaService.js:421
 #: public/js/services/effectService.js:302
 msgid "Dyers Eve"
 msgstr ""
 
-#: template/partials/registration.ejs:41
+#: template/partials/registration.ejs:42
 msgid "E-mail is required"
 msgstr ""
 
@@ -848,7 +864,7 @@ msgid "Effect fades if you use ability."
 msgstr ""
 
 #: public/js/services/abilityService.js:818
-#: public/js/services/arenaService.js:424
+#: public/js/services/arenaService.js:430
 msgid "Electric Eye"
 msgstr ""
 
@@ -860,7 +876,7 @@ msgstr ""
 msgid "Energy cost: {{interestingAbility.energyCost()}}"
 msgstr ""
 
-#: public/js/services/arenaService.js:341
+#: public/js/services/arenaService.js:347
 msgid "energy with"
 msgstr ""
 
@@ -875,7 +891,7 @@ msgstr ""
 msgid "Energy: + {{one}}"
 msgstr ""
 
-#: template/partials/login.ejs:24
+#: template/partials/login.ejs:25
 msgid "Enter"
 msgstr ""
 
@@ -922,29 +938,29 @@ msgstr ""
 msgid "Exit"
 msgstr ""
 
-#: public/js/services/arenaService.js:282
+#: public/js/services/arenaService.js:288
 msgid "explosion"
 msgstr ""
 
 #: public/js/services/abilityService.js:1433
-#: public/js/services/arenaService.js:466
+#: public/js/services/arenaService.js:472
 #: public/js/services/effectService.js:698
 msgid "Fade To Black"
 msgstr ""
 
 #: public/js/services/abilityService.js:1806
-#: public/js/services/arenaService.js:493
+#: public/js/services/arenaService.js:499
 msgid "Family Tree"
 msgstr ""
 
 #: public/js/services/abilityService.js:1346
-#: public/js/services/arenaService.js:460
+#: public/js/services/arenaService.js:466
 #: public/js/services/effectService.js:644
 msgid "Fast As The Shark"
 msgstr ""
 
 #: public/js/services/abilityService.js:2548
-#: public/js/services/arenaService.js:544
+#: public/js/services/arenaService.js:550
 #: public/js/services/effectService.js:1232
 msgid "Fear Of The Dark"
 msgstr ""
@@ -954,22 +970,22 @@ msgid "Female"
 msgstr ""
 
 #: public/js/services/abilityService.js:2115
-#: public/js/services/arenaService.js:514
+#: public/js/services/arenaService.js:520
 #: public/js/services/effectService.js:1096
 msgid "Fight Fire With Fire"
 msgstr ""
 
 #: public/js/services/abilityService.js:1911
-#: public/js/services/arenaService.js:499
+#: public/js/services/arenaService.js:505
 msgid "Fireball"
 msgstr ""
 
 #: public/js/services/abilityService.js:558
-#: public/js/services/arenaService.js:406
+#: public/js/services/arenaService.js:412
 msgid "Follow The Tears"
 msgstr ""
 
-#: public/js/services/arenaService.js:335
+#: public/js/services/arenaService.js:341
 msgid "for"
 msgstr ""
 
@@ -1002,27 +1018,27 @@ msgstr ""
 msgid "Gender"
 msgstr ""
 
-#: public/js/controllers/CreateTeamController.js:18
+#: public/js/controllers/CreateTeamController.js:21
 msgid "Give a name for your team"
 msgstr ""
 
-#: public/js/services/arenaService.js:319
+#: public/js/services/arenaService.js:325
 msgid "got"
 msgstr ""
 
 #: public/js/services/abilityService.js:504
-#: public/js/services/arenaService.js:403
+#: public/js/services/arenaService.js:409
 msgid "Grinder"
 msgstr ""
 
 #: public/js/services/abilityService.js:2366
-#: public/js/services/arenaService.js:532
+#: public/js/services/arenaService.js:538
 #: public/js/services/effectService.js:1155
 msgid "Hallowed Be Thy Name"
 msgstr ""
 
 #: public/js/services/abilityService.js:2150
-#: public/js/services/arenaService.js:517
+#: public/js/services/arenaService.js:523
 msgid "Hammer Of The Gods"
 msgstr ""
 
@@ -1030,7 +1046,7 @@ msgstr ""
 msgid "Hands"
 msgstr ""
 
-#: public/js/services/arenaService.js:300
+#: public/js/services/arenaService.js:306
 msgid "has immunity to control effects!"
 msgstr ""
 
@@ -1038,7 +1054,7 @@ msgstr ""
 msgid "Head"
 msgstr ""
 
-#: public/js/services/arenaService.js:329
+#: public/js/services/arenaService.js:335
 msgid "healed for"
 msgstr ""
 
@@ -1078,7 +1094,7 @@ msgid "Health: + {{one}}"
 msgstr ""
 
 #: public/js/services/abilityService.js:2460
-#: public/js/services/arenaService.js:538
+#: public/js/services/arenaService.js:544
 #: public/js/services/effectService.js:1206
 msgid "Heaven Can Wait"
 msgstr ""
@@ -1118,24 +1134,24 @@ msgid "Hit Chance: + {{one}}%"
 msgstr ""
 
 #: public/js/services/abilityService.js:2401
-#: public/js/services/arenaService.js:535
+#: public/js/services/arenaService.js:541
 msgid "Hit The Lights"
 msgstr ""
 
 #: public/js/services/abilityService.js:1246
-#: public/js/services/arenaService.js:454
+#: public/js/services/arenaService.js:460
 #: public/js/services/effectService.js:595
 msgid "Hog Tied"
 msgstr ""
 
 #: public/js/services/abilityService.js:2270
-#: public/js/services/arenaService.js:526
+#: public/js/services/arenaService.js:532
 msgid "Holy Smoke"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:19
 #: public/js/controllers/CharInfoController.js:59
-#: public/js/controllers/CreateCharacterController.js:143
+#: public/js/controllers/CreateCharacterController.js:138
 #: public/js/controllers/InventoryInfoController.js:39
 msgid "Human"
 msgstr ""
@@ -1145,7 +1161,7 @@ msgid "Humans are free to choose their own path.They get random extra-abilities 
 msgstr ""
 
 #: public/js/services/abilityService.js:727
-#: public/js/services/arenaService.js:418
+#: public/js/services/arenaService.js:424
 #: public/js/services/effectService.js:327
 msgid "I Dont Wanna Stop"
 msgstr ""
@@ -1200,7 +1216,7 @@ msgid "Incubus Dagger"
 msgstr ""
 
 #: public/js/services/abilityService.js:1726
-#: public/js/services/arenaService.js:487
+#: public/js/services/arenaService.js:493
 #: public/js/services/effectService.js:804
 msgid "Infinite Dreams"
 msgstr ""
@@ -1225,7 +1241,7 @@ msgid "Initiative: + {{one}}"
 msgstr ""
 
 #: public/js/services/abilityService.js:1112
-#: public/js/services/arenaService.js:445
+#: public/js/services/arenaService.js:451
 #: public/js/services/effectService.js:508
 msgid "Inject The Venom"
 msgstr ""
@@ -1253,29 +1269,29 @@ msgid "Inventory"
 msgstr ""
 
 #: public/js/services/abilityService.js:1160
-#: public/js/services/arenaService.js:448
+#: public/js/services/arenaService.js:454
 #: public/js/services/effectService.js:543
 msgid "Invisible"
 msgstr ""
 
-#: public/js/services/arenaService.js:326
+#: public/js/services/arenaService.js:332
 msgid "is dead"
 msgstr ""
 
-#: public/js/services/arenaService.js:353
+#: public/js/services/arenaService.js:359
 msgid "is in clearcasting state and save mana"
 msgstr ""
 
-#: public/js/services/arenaService.js:359
+#: public/js/services/arenaService.js:365
 msgid "is stunned and skip turn"
 msgstr ""
 
-#: public/js/services/arenaService.js:350
+#: public/js/services/arenaService.js:356
 msgid "is very lucky and save his energy"
 msgstr ""
 
 #: public/js/services/abilityService.js:1194
-#: public/js/services/arenaService.js:451
+#: public/js/services/arenaService.js:457
 #: public/js/services/effectService.js:573
 msgid "Jawbreaker"
 msgstr ""
@@ -1305,7 +1321,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: public/js/services/abilityService.js:2235
-#: public/js/services/arenaService.js:523
+#: public/js/services/arenaService.js:529
 msgid "Laying On Hands"
 msgstr ""
 
@@ -1350,37 +1366,37 @@ msgid "Legs"
 msgstr ""
 
 #: public/js/services/abilityService.js:1643
-#: public/js/services/arenaService.js:481
+#: public/js/services/arenaService.js:487
 msgid "Lets Me Take It"
 msgstr ""
 
 #: public/js/services/abilityService.js:866
-#: public/js/services/arenaService.js:427
+#: public/js/services/arenaService.js:433
 #: public/js/services/effectService.js:351
 msgid "Lights In The Sky"
 msgstr ""
 
 #: public/js/services/abilityService.js:2757
-#: public/js/services/arenaService.js:559
+#: public/js/services/arenaService.js:565
 #: public/js/services/effectService.js:1420
 msgid "Locked And Loaded"
 msgstr ""
 
-#: template/partials/login.ejs:12
-#: template/partials/registration.ejs:12
+#: template/partials/login.ejs:13
+#: template/partials/registration.ejs:13
 msgid "Login"
 msgstr ""
 
-#: template/partials/registration.ejs:39
+#: template/partials/registration.ejs:40
 msgid "Login must be between 3 and 20 characters."
 msgstr ""
 
-#: template/partials/registration.ejs:38
+#: template/partials/registration.ejs:39
 msgid "Login must start with a letter, <br>and contain english letters &amp; numbers only."
 msgstr ""
 
-#: template/partials/login.ejs:27
-#: template/partials/registration.ejs:37
+#: template/partials/login.ejs:28
+#: template/partials/registration.ejs:38
 msgid "Login name is required"
 msgstr ""
 
@@ -1400,7 +1416,7 @@ msgid "Luck: + {{one}}%"
 msgstr ""
 
 #: public/js/services/abilityService.js:614
-#: public/js/services/arenaService.js:409
+#: public/js/services/arenaService.js:415
 #: public/js/services/effectService.js:240
 msgid "Made In Hell"
 msgstr ""
@@ -1490,7 +1506,7 @@ msgstr ""
 msgid "Mana Regeneration increased to {{one}}%."
 msgstr ""
 
-#: public/js/services/arenaService.js:346
+#: public/js/services/arenaService.js:352
 msgid "mana with"
 msgstr ""
 
@@ -1506,12 +1522,12 @@ msgid "Mana: + {{one}}"
 msgstr ""
 
 #: public/js/services/abilityService.js:2201
-#: public/js/services/arenaService.js:520
+#: public/js/services/arenaService.js:526
 #: public/js/services/effectService.js:1121
 msgid "Mercyful Fate"
 msgstr ""
 
-#: public/js/services/arenaService.js:272
+#: public/js/services/arenaService.js:278
 msgid "miss against"
 msgstr ""
 
@@ -1520,7 +1536,7 @@ msgid "Movement cost decreased to {{one}} energy."
 msgstr ""
 
 #: public/js/services/abilityService.js:1027
-#: public/js/services/arenaService.js:439
+#: public/js/services/arenaService.js:445
 msgid "My Last Words"
 msgstr ""
 
@@ -1528,7 +1544,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: public/js/controllers/CreateCharacterController.js:32
+#: public/js/controllers/CreateCharacterController.js:33
 msgid "Name {{one}} is already in use"
 msgstr ""
 
@@ -1544,7 +1560,7 @@ msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:18
 #: public/js/controllers/CharInfoController.js:58
-#: public/js/controllers/CreateCharacterController.js:142
+#: public/js/controllers/CreateCharacterController.js:137
 #: public/js/controllers/InventoryInfoController.js:38
 msgid "Nephilim"
 msgstr ""
@@ -1554,13 +1570,13 @@ msgid "Nephilims are children of angels and humans. They revere the light and er
 msgstr ""
 
 #: public/js/services/abilityService.js:1552
-#: public/js/services/arenaService.js:475
+#: public/js/services/arenaService.js:481
 #: public/js/services/effectService.js:747
 msgid "Never A Word"
 msgstr ""
 
 #: public/js/services/abilityService.js:369
-#: public/js/services/arenaService.js:394
+#: public/js/services/arenaService.js:400
 msgid "New Faith"
 msgstr ""
 
@@ -1580,7 +1596,7 @@ msgstr ""
 msgid "Not enough red shards"
 msgstr ""
 
-#: public/js/services/arenaService.js:266
+#: public/js/services/arenaService.js:272
 msgid "Now is turn of"
 msgstr ""
 
@@ -1588,13 +1604,13 @@ msgstr ""
 msgid "Now you can log in"
 msgstr ""
 
-#: public/js/services/arenaService.js:307
-#: public/js/services/arenaService.js:316
-#: public/js/services/arenaService.js:323
+#: public/js/services/arenaService.js:313
+#: public/js/services/arenaService.js:322
+#: public/js/services/arenaService.js:329
 msgid "of"
 msgstr ""
 
-#: public/js/services/arenaService.js:363
+#: public/js/services/arenaService.js:369
 msgid "on"
 msgstr ""
 
@@ -1610,8 +1626,8 @@ msgstr ""
 msgid "Parameters Tune"
 msgstr ""
 
-#: template/partials/login.ejs:18
-#: template/partials/registration.ejs:24
+#: template/partials/login.ejs:19
+#: template/partials/registration.ejs:25
 msgid "Password"
 msgstr ""
 
@@ -1619,16 +1635,16 @@ msgstr ""
 msgid "Password incorrect"
 msgstr ""
 
-#: template/partials/login.ejs:28
-#: template/partials/registration.ejs:43
+#: template/partials/login.ejs:29
+#: template/partials/registration.ejs:44
 msgid "Password is required"
 msgstr ""
 
-#: template/partials/registration.ejs:44
+#: template/partials/registration.ejs:45
 msgid "Password must be between 5 and 20 characters."
 msgstr ""
 
-#: template/partials/registration.ejs:45
+#: template/partials/registration.ejs:46
 msgid "Password Must contain one lower &amp; uppercase letter,<br>and one non-alpha character (a number or a symbol.)"
 msgstr ""
 
@@ -1681,11 +1697,11 @@ msgid_plural "players"
 msgstr[0] ""
 msgstr[1] ""
 
-#: template/partials/login.ejs:10
+#: template/partials/login.ejs:11
 msgid "Please login or <a href=\"/registration\">register</a>"
 msgstr ""
 
-#: template/partials/registration.ejs:9
+#: template/partials/registration.ejs:10
 msgid "Please, complete this form"
 msgstr ""
 
@@ -1694,13 +1710,13 @@ msgid "Portrait"
 msgstr ""
 
 #: public/js/services/abilityService.js:2019
-#: public/js/services/arenaService.js:505
+#: public/js/services/arenaService.js:511
 #: public/js/services/effectService.js:985
 msgid "Powerslave"
 msgstr ""
 
 #: public/js/services/abilityService.js:1604
-#: public/js/services/arenaService.js:478
+#: public/js/services/arenaService.js:484
 #: public/js/services/effectService.js:769
 msgid "Prophecy"
 msgstr ""
@@ -1717,13 +1733,13 @@ msgid "Prophets know a lot about the future. They use this knowledge as a weapon
 msgstr ""
 
 #: public/js/services/abilityService.js:1381
-#: public/js/services/arenaService.js:463
+#: public/js/services/arenaService.js:469
 #: public/js/services/effectService.js:676
 msgid "Prowler"
 msgstr ""
 
 #: public/js/services/abilityService.js:2679
-#: public/js/services/arenaService.js:553
+#: public/js/services/arenaService.js:559
 msgid "Purgatory"
 msgstr ""
 
@@ -1776,11 +1792,11 @@ msgstr ""
 msgid "Redeemers judge all their enemies from long distance. They use their range weapons to control situation on battlefield."
 msgstr ""
 
-#: template/partials/registration.ejs:30
+#: template/partials/registration.ejs:31
 msgid "Register"
 msgstr ""
 
-#: template/partials/registration.ejs:4
+#: template/partials/registration.ejs:5
 msgid "Registration"
 msgstr ""
 
@@ -1789,7 +1805,7 @@ msgid "Registration successful"
 msgstr ""
 
 #: public/js/services/abilityService.js:459
-#: public/js/services/arenaService.js:400
+#: public/js/services/arenaService.js:406
 #: public/js/services/effectService.js:215
 msgid "Reign In Blood"
 msgstr ""
@@ -1806,8 +1822,8 @@ msgid_plural "Removes {{$count}} random positive effect from enemy."
 msgstr[0] ""
 msgstr[1] ""
 
-#: public/js/services/arenaService.js:340
-#: public/js/services/arenaService.js:345
+#: public/js/services/arenaService.js:346
+#: public/js/services/arenaService.js:351
 msgid "restore"
 msgstr ""
 
@@ -1831,7 +1847,7 @@ msgstr ""
 msgid "Retreat"
 msgstr ""
 
-#: public/js/services/arenaService.js:356
+#: public/js/services/arenaService.js:362
 msgid "retreats"
 msgstr ""
 
@@ -1892,7 +1908,7 @@ msgid "Roll Dices"
 msgstr ""
 
 #: public/js/services/abilityService.js:1311
-#: public/js/services/arenaService.js:457
+#: public/js/services/arenaService.js:463
 #: public/js/services/effectService.js:617
 msgid "Running Free"
 msgstr ""
@@ -1902,7 +1918,7 @@ msgid "Salvation Crucifix"
 msgstr ""
 
 #: public/js/services/abilityService.js:235
-#: public/js/services/arenaService.js:385
+#: public/js/services/arenaService.js:391
 #: public/js/services/effectService.js:150
 msgid "Sanctuary"
 msgstr ""
@@ -1921,6 +1937,11 @@ msgstr ""
 
 #: public/js/controllers/CityController.js:35
 msgid "searching..."
+msgstr ""
+
+#: template/partials/toolbars/chat.ejs:11
+#: template/partials/toolbars/chat.ejs:20
+msgid "Send"
 msgstr ""
 
 #: public/js/controllers/AbilitiesInfoController.js:26
@@ -1952,7 +1973,7 @@ msgid "Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical dam
 msgstr ""
 
 #: public/js/services/abilityService.js:770
-#: public/js/services/arenaService.js:421
+#: public/js/services/arenaService.js:427
 msgid "Shot Down In Flames"
 msgstr ""
 
@@ -1980,7 +2001,7 @@ msgstr ""
 msgid "Slayers are weapon of Devil itself. They destroy enemies in melee combat with huge sword and deals a lot of damage."
 msgstr ""
 
-#: public/js/services/arenaService.js:269
+#: public/js/services/arenaService.js:275
 msgid "Someone invisible stands on that cell!"
 msgstr ""
 
@@ -2063,7 +2084,7 @@ msgid "Soul shards:"
 msgstr ""
 
 #: public/js/services/abilityService.js:1525
-#: public/js/services/arenaService.js:472
+#: public/js/services/arenaService.js:478
 msgid "Speed Of Light"
 msgstr ""
 
@@ -2101,13 +2122,13 @@ msgid "Spell Power: + {{one}}%"
 msgstr ""
 
 #: public/js/services/abilityService.js:651
-#: public/js/services/arenaService.js:412
+#: public/js/services/arenaService.js:418
 #: public/js/services/effectService.js:270
 msgid "Spill The Blood"
 msgstr ""
 
 #: public/js/services/abilityService.js:2637
-#: public/js/services/arenaService.js:550
+#: public/js/services/arenaService.js:556
 #: public/js/services/effectService.js:1302
 msgid "Spreading The Disease"
 msgstr ""
@@ -2119,13 +2140,13 @@ msgid "Stacks up 5 times."
 msgstr ""
 
 #: public/js/services/abilityService.js:1468
-#: public/js/services/arenaService.js:469
+#: public/js/services/arenaService.js:475
 #: public/js/services/effectService.js:722
 msgid "Stargazer"
 msgstr ""
 
 #: public/js/services/abilityService.js:991
-#: public/js/services/arenaService.js:436
+#: public/js/services/arenaService.js:442
 #: public/js/services/effectService.js:435
 msgid "State Of Grace"
 msgstr ""
@@ -2202,7 +2223,7 @@ msgid "Strikes enemy, deals {{one}}% of weapon damage. After that causes bleedin
 msgstr ""
 
 #: public/js/services/abilityService.js:30
-#: public/js/services/arenaService.js:373
+#: public/js/services/arenaService.js:379
 #: public/js/services/effectService.js:11
 msgid "Strong Arm Of The Law"
 msgstr ""
@@ -2214,8 +2235,8 @@ msgstr ""
 msgid "Stunned. Skip next turn."
 msgstr ""
 
-#: public/js/controllers/CreateCharacterController.js:103
-#: public/js/controllers/CreateTeamController.js:51
+#: public/js/controllers/CreateCharacterController.js:102
+#: public/js/controllers/CreateTeamController.js:54
 msgid "Successful"
 msgstr ""
 
@@ -2239,7 +2260,7 @@ msgstr ""
 msgid "Team name"
 msgstr ""
 
-#: public/js/controllers/CreateTeamController.js:35
+#: public/js/controllers/CreateTeamController.js:38
 msgid "Team name {{one}} is already in use"
 msgstr ""
 
@@ -2266,7 +2287,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: public/js/services/abilityService.js:1975
-#: public/js/services/arenaService.js:502
+#: public/js/services/arenaService.js:508
 #: public/js/services/effectService.js:899
 msgid "Thank God For The Bomb"
 msgstr ""
@@ -2276,7 +2297,7 @@ msgid "Thank God For The Bomb (Stun)"
 msgstr ""
 
 #: public/js/services/abilityService.js:270
-#: public/js/services/arenaService.js:388
+#: public/js/services/arenaService.js:394
 #: public/js/services/effectService.js:178
 msgid "The Punishment Due"
 msgstr ""
@@ -2315,7 +2336,7 @@ msgid "Throws spear to enemy, deals {{one}}% of weapon damage and draws the targ
 msgstr ""
 
 #: public/js/services/abilityService.js:902
-#: public/js/services/arenaService.js:430
+#: public/js/services/arenaService.js:436
 #: public/js/services/effectService.js:383
 msgid "Thunderstruck"
 msgstr ""
@@ -2328,8 +2349,8 @@ msgstr ""
 msgid "Up in the air and becomes immune to physical damage"
 msgstr ""
 
-#: public/js/services/arenaService.js:342
-#: public/js/services/arenaService.js:347
+#: public/js/services/arenaService.js:348
+#: public/js/services/arenaService.js:353
 msgid "used by"
 msgstr ""
 
@@ -2342,7 +2363,7 @@ msgid "User is already created"
 msgstr ""
 
 #: public/js/services/abilityService.js:8
-#: public/js/services/arenaService.js:370
+#: public/js/services/arenaService.js:376
 msgid "Void"
 msgstr ""
 
@@ -2351,17 +2372,17 @@ msgid "Waiting For Enemy..."
 msgstr ""
 
 #: public/js/services/abilityService.js:182
-#: public/js/services/arenaService.js:382
+#: public/js/services/arenaService.js:388
 #: public/js/services/effectService.js:128
 msgid "Walk Away"
 msgstr ""
 
-#: public/js/services/arenaService.js:334
+#: public/js/services/arenaService.js:340
 msgid "was healed by"
 msgstr ""
 
-#: template/partials/login.ejs:5
-msgid "Welcome to FOTM"
+#: template/partials/login.ejs:6
+msgid "Welcome to FOTM game"
 msgstr ""
 
 #: public/js/controllers/FormController.js:26
@@ -2380,9 +2401,9 @@ msgstr ""
 msgid "Win Rate: {{team.wins}}-{{team.loses}}"
 msgstr ""
 
-#: public/js/services/arenaService.js:273
-#: public/js/services/arenaService.js:331
+#: public/js/services/arenaService.js:279
 #: public/js/services/arenaService.js:337
+#: public/js/services/arenaService.js:343
 msgid "with"
 msgstr ""
 
@@ -2391,7 +2412,7 @@ msgid "Yes"
 msgstr ""
 
 #: public/js/services/abilityService.js:954
-#: public/js/services/arenaService.js:433
+#: public/js/services/arenaService.js:439
 #: public/js/services/effectService.js:405
 msgid "You Aint No Angel"
 msgstr ""
@@ -2400,7 +2421,7 @@ msgstr ""
 msgid "You gain:"
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:626
+#: public/js/controllers/ArenaController.js:715
 msgid "You lose"
 msgstr ""
 
@@ -2413,16 +2434,16 @@ msgstr ""
 msgid "You will get random role of available for chosen race."
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:680
+#: public/js/controllers/ArenaController.js:662
 msgid "You win"
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:712
+#: public/js/controllers/ArenaController.js:755
 msgid "Your enemy not ready to battle"
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:787
-#: public/js/controllers/ArenaController.js:792
+#: public/js/controllers/ArenaController.js:830
+#: public/js/controllers/ArenaController.js:835
 msgid "Your enemy was disconnected"
 msgstr ""
 

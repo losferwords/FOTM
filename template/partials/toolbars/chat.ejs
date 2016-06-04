@@ -1,18 +1,24 @@
 <% if(user){ %>
 <div class="chat-box">
-    <button class="btn btn-sm btn-primary chat-btn" ng-click="chatOpened=!chatOpened">Chat</button>
-    <uib-tabset ng-show="chatOpened">
-        <uib-tab heading="Common | translate">
+    <button class="btn btn-sm btn-primary chat-btn" ng-click="chatOpened=!chatOpened" translate>Chat</button>
+    <uib-tabset class="chat-tabset" ng-show="chatOpened">
+        <uib-tab heading="{{'Common'|translate}}">
             <div class="chat-log well customScrollBar" autoscroll>
-                <p ng-repeat="msg in commonChat track by $index" ng-style="{'color' : msg.color}"><span class="text-muted">{{msg.time}} </span> {{msg.text}}</p>
+                <p ng-repeat="msg in chatService.getMessages('common') track by $index"><span class="text-muted">{{msg.time}}: </span><span class="text-success">{{msg.sender}} > </span><span ng-class="{'text-warning': msg.sender=='losfer'}" ng-bind-html="msg.text"></span></p>
             </div>
-            <input type="text" class="form-control new-msg" ng-model="newCommonMsg.text" ng-minlength="2" ng-maxlength="150"><button class="btn btn-sm btn-success" translate ng-click="sendMsg('common')">Send</button>
+            <div class="form-group">
+                <textarea type="text" ng-enter="sendMsg('common')" class="form-control new-msg customScrollBar" ng-model="newCommonMsg.text" maxlength="156"></textarea>
+                <button class="btn btn-sm btn-success" translate ng-click="sendMsg('common')">Send</button>
+            </div>
         </uib-tab>
-        <uib-tab heading="Arena | translate">
+        <uib-tab heading="{{'Arena'|translate}}" ng-show="$root.actualLocation=='/arena'">
             <div class="chat-log well customScrollBar" autoscroll>
-                <p ng-repeat="msg in arenaChat track by $index" ng-style="{'color' : msg.color}"><span class="text-muted">{{msg.time}} </span> {{msg.text}}</p>
+                <p ng-repeat="msg in chatService.getMessages('arena') track by $index"><span class="text-muted">{{msg.time}}: </span><span class="text-success">{{msg.sender}} > </span><span ng-class="{'text-warning': msg.sender=='losfer'}" ng-bind-html="msg.text"></span></p>
             </div>
-            <input type="text" class="form-control new-msg" ng-model="newArenaMsg.text" ng-minlength="2" ng-maxlength="150"><button class="btn btn-sm btn-success" translate ng-click="sendMsg('arena')">Send</button>
+            <div class="form-group">
+                <textarea type="text" ng-enter="sendMsg('arena')" class="form-control new-msg customScrollBar" ng-model="newArenaMsg.text" maxlength="156"></textarea>
+                <button class="btn btn-sm btn-success" translate ng-click="sendMsg('arena')">Send</button>
+            </div>
         </uib-tab>
     </uib-tabset>
 </div>    

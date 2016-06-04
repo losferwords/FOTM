@@ -1,16 +1,18 @@
 //Контроллер сокетов
-angular.module('fotm').controller("SocketController", ["$scope", '$window', '$location', '$rootScope', '$timeout', 'mainSocket', SocketController]);
+angular.module('fotm').controller("SocketController", ["$scope", '$window', '$location', '$rootScope', '$timeout', '$injector', 'mainSocket', 'chatService', SocketController]);
 
-function SocketController($scope, $window, $location, $rootScope, $timeout, mainSocket) {
+function SocketController($scope, $window, $location, $rootScope, $timeout, $injector, mainSocket, chatService) {
     $scope.chatOpened = false;
-    $scope.commonChat = [];
-    $scope.arenaChat = [];
     $scope.newCommonMsg = {
         text: ""
     };
     $scope.newArenaMsg = {
         text: ""
     };
+
+    if($injector.has('chatService')) {
+        $scope.chatService = $injector.get('chatService');
+    }
 
     mainSocket.on("leave", function (serverOnlineUsers) {
         $rootScope.onlineUsers = serverOnlineUsers;
@@ -69,8 +71,8 @@ function SocketController($scope, $window, $location, $rootScope, $timeout, main
         $scope.userName = name;
     });
 
-    mainSocket.on('newCommonMessage', function(msg){
-        $scope.commonChat.push(msg);
+    mainSocket.on('newMessage', function(msg, channel){
+        chatService.newMessage(channel, msg);
     });
 
     $scope.sendMsg = function(channel){
@@ -84,28 +86,23 @@ function SocketController($scope, $window, $location, $rootScope, $timeout, main
             return h+":"+m;
         }
 
-        function processMsg(msgType, msgArray){
-                msgType.time = currentTime();
-                mainSocket.emit('sendChatMessage', channel, msgType);
-                msgType.text="";
-                //Очищаем первый элемент чата, если он переполнен
-                if(msgArray.length==100){
-                    msgArray.splice(0,1);
-                }
-
-                //обновляем чат на клиенте
-                msgArray.push(msgType);
-            }
+        function processMsg(msgType){
+            if(msgType.text.length<1) return;
+            msgType.time = currentTime();
+            msgType.sender = $scope.userName;
+            mainSocket.emit('sendChatMessage', channel, msgType);
+            msgType.text="";
+        }
 
         switch(channel){
             case 'common' : 
-                processMsg(newCommonMsg, commonChat);
+                processMsg($scope.newCommonMsg);
                 break;
             case 'arena' : 
-                processMsg(newArenaMsg, arenaChat);
+                processMsg($scope.newArenaMsg);
                 break;            
         }
-    }
+    };
 
     //Показ информации
     $rootScope.showInfoMessage = function(message){
@@ -117,6 +114,62 @@ function SocketController($scope, $window, $location, $rootScope, $timeout, main
 
 angular.module('fotm').factory('mainSocket', function (socketFactory) {
     return socketFactory();
+});
+
+//Сервис для чата
+angular.module('fotm').service('chatService', ['$filter', function($filter) {
+    var commonChat = [];
+    var arenaChat = [];
+    return {
+        newMessage : function (channel, msg) {
+            function addMessage(msgArray) {
+                msg.text=$filter('linky')(msg.text, '_blank');
+                //Очищаем первый элемент чата, если он переполнен
+                if (msgArray.length == 100) {
+                    msgArray.splice(0, 1);
+                }
+                msgArray.push(msg);
+            }
+
+            switch(channel){
+                case 'common' :
+                    addMessage(commonChat);
+                    break;
+                case 'arena' :
+                    addMessage(arenaChat);
+                    break;
+            }
+        },
+        getMessages : function(channel) {
+            switch(channel){
+                case 'common' :
+                    return commonChat;
+                case 'arena' :
+                    return arenaChat;
+            }
+        },
+        clearMessages : function(channel) {
+            switch(channel){
+                case 'common' :
+                    commonChat = [];
+                case 'arena' :
+                    arenaChat = [];
+            }
+        }
+    }
+}]);
+
+angular.module('fotm').directive('ngEnter', function() {
+    return function(scope, element, attrs) {
+        element.bind("keydown", function(e) {
+            if(e.which === 13) {
+                scope.$apply(function(){
+                    scope.$eval(attrs.ngEnter, {'e': e});
+                });
+                e.preventDefault();
+            }
+        });
+    };
 });
 
 
