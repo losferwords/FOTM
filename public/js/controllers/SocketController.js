@@ -9,6 +9,8 @@ function SocketController($scope, $window, $location, $rootScope, $timeout, $inj
     $scope.newArenaMsg = {
         text: ""
     };
+    $scope.chatOpened = false;
+    $scope.unreadMsgs = 0;
 
     if($injector.has('chatService')) {
         $scope.chatService = $injector.get('chatService');
@@ -73,7 +75,17 @@ function SocketController($scope, $window, $location, $rootScope, $timeout, $inj
 
     mainSocket.on('newMessage', function(msg, channel){
         chatService.newMessage(channel, msg);
+        if(!$scope.chatOpened){
+            $scope.unreadMsgs++;
+        }
     });
+
+    $scope.toggleChat = function() {
+        $scope.chatOpened = !$scope.chatOpened;
+        if($scope.chatOpened) {
+            $scope.unreadMsgs = 0;
+        }
+    };
 
     $scope.sendMsg = function(channel){
         //Функция возврщает время в формате hh:mm
@@ -101,6 +113,17 @@ function SocketController($scope, $window, $location, $rootScope, $timeout, $inj
             case 'arena' : 
                 processMsg($scope.newArenaMsg);
                 break;            
+        }
+    };
+
+    $scope.addSenderToMsg = function(channel, sender){
+        switch(channel) {
+            case 'common' :
+                $scope.newCommonMsg.text+=sender;
+                break;
+            case 'arena' :
+                $scope.newArenaMsg.text+=sender;
+                break;
         }
     };
 

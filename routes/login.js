@@ -21,10 +21,13 @@ exports.post = function (req, res, next) {
         var userRoom = "user:room:" + user.username;
         var connectedSockets = io.of('/').in(userRoom).connected;
 
-        for (var socketId in io.nsps["/"].adapter.rooms[userRoom]) {
-            var socket = connectedSockets[socketId];
-            socket.emit('kicked');
+        if(io.nsps["/"].adapter.rooms[userRoom]){
+            for (var socketId in io.nsps["/"].adapter.rooms[userRoom].sockets) {
+                var socket = connectedSockets[socketId];
+                socket.emit('kicked');
+            }
         }
+
 
         req.session.user = user._id;
         res.send({});

@@ -2052,6 +2052,10 @@ canvas {
   margin: 5px 0;
 }
 
+.chat-box .chat-sender {
+  cursor: pointer;
+}
+
 /* MD------------------------------------------------------*/
 
 @media (min-width: 992px) and (max-width: 1200px) {

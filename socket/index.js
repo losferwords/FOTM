@@ -524,8 +524,7 @@ module.exports = function (server) {
         });
 
         socket.on('sendChatMessage', function (channel, msg) {
-            log.info("User "+msg.sender+" wrote:");
-            log.info(msg.text);
+            log.info("User "+msg.sender+" wrote: "+msg.text);
             switch(channel) {
                 case 'common' : io.sockets.in(serverRoom).emit('newMessage', msg, channel); break;
                 case 'arena' : if(battleRoom) io.sockets.in(battleRoom).emit('newMessage', msg, channel); break;
