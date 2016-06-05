@@ -1,5 +1,6 @@
 //Сервис для генерации случайных чисел
-angular.module('fotm').register.service('randomService', function() {
+(function (module) {
+    module.service('randomService', function() {
     return {
         //целое в диапазоне
         randomInt: function (min, max) {
@@ -29,3 +30,4 @@ angular.module('fotm').register.service('randomService', function() {
         }
     }
 });
+})(angular.module("fotm"));

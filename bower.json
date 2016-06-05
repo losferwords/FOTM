@@ -21,17 +21,31 @@
     "angular-socket-io": "^0.7.0",
     "bootstrap": "^3.3.6",
     "angular-route": "^1.5.6",
-    "script.js": "^2.5.8",
     "angular-sanitize": "^1.5.6",
     "socket.io-client": "^1.4.6",
-    "angular": "~1.5.6",
     "jquery": "^2.2.4",
+    "angular": "~1.5.6",
     "angular-hotkeys": "chieffancypants/angular-hotkeys#^1.7.0",
     "angular-audio": "^1.7.2",
     "angular-chart.js": "^0.10.2",
     "Chart.js": "#~1.1.1",
     "angulartics": "^1.0.3",
     "angulartics-google-analytics": "^0.1.4"
+  },
+  "overrides": {
+    "angular": {
+      "dependencies": {
+        "jquery": "^2.2.4"
+      }
+    },
+    "socket.io-client": {
+      "main": "socket.io.js"
+    },
+    "angular-hotkeys": {
+      "dependencies": {
+        "angular": "~1.5.6"
+      }
+    }
   },
   "resolutions": {
     "angular": "~1.5.6"

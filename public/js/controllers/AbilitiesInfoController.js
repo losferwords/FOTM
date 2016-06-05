@@ -1,7 +1,7 @@
-angular.module('fotm').register.controller("AbilitiesInfoController", ["$scope", '$rootScope', '$route', '$location', 'mainSocket', 'character', 'abilityService', 'gettextCatalog', AbilitiesInfoController]);
-
-//Контроллер информации о способностях
-function AbilitiesInfoController($scope, $rootScope, $route, $location, mainSocket, character, abilityService, gettextCatalog) {
+(function (module) {
+    module.controller("AbilitiesInfoController", AbilitiesInfoController);
+    //Контроллер информации о способностях
+    function AbilitiesInfoController($scope, $rootScope, $route, $location, mainSocket, character, abilityService, gettextCatalog) {
     $scope.abilityFilter = 'all';
     $scope.abilitiesBook = []; //Массив способностей
     $scope.movingAbility = undefined; //Перемещаемая способность
@@ -300,3 +300,4 @@ function AbilitiesInfoController($scope, $rootScope, $route, $location, mainSock
         }
     }
 }
+})(angular.module("fotm"));

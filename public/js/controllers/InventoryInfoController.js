@@ -1,7 +1,8 @@
-angular.module('fotm').register.controller("InventoryInfoController", ["$scope", '$rootScope', '$route', '$location', '$timeout', 'mainSocket', 'character', 'randomService', 'gettextCatalog', InventoryInfoController]);
+(function (module) {
+    module.controller("InventoryInfoController", InventoryInfoController);
 
-//Контроллер инвентаря
-function InventoryInfoController($scope, $rootScope, $route, $location, $timeout, mainSocket, character, randomService, gettextCatalog) {
+    //Контроллер инвентаря
+    function InventoryInfoController($scope, $rootScope, $route, $location, $timeout, mainSocket, character, randomService, gettextCatalog) {
     var craftTimer; //Таймер информации о созданном камне
     var disTimer; //Таймер информации о разрушенном камне
     $scope.gemFilter = "all";
@@ -763,3 +764,4 @@ function InventoryInfoController($scope, $rootScope, $route, $location, $timeout
         return newGem;
     }
 }
+})(angular.module("fotm"));

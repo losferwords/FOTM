@@ -1,6 +1,6 @@
 <% if(user){ %>
 <div class="chat-box">
-    <button class="btn btn-sm btn-primary chat-btn" ng-click="toggleChat()" translate>Chat <span class="badge" ng-if="!chatOpened && unreadMsgs>0">{{unreadMsgs}}</span></button>
+    <button class="btn btn-primary chat-btn" ng-click="toggleChat()" translate>Chat <span class="badge" ng-if="!chatOpened && unreadMsgs>0">{{unreadMsgs}}</span></button>
     <uib-tabset class="chat-tabset" ng-show="chatOpened">
         <uib-tab heading="{{'Common'|translate}}">
             <div class="chat-log well customScrollBar" autoscroll>

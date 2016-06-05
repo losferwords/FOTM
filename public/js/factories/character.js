@@ -1,5 +1,6 @@
 //Фабрика, которая по сути является "классом" character
-angular.module('fotm').register.factory('character', ["abilityService", "effectService", "randomService", "characterService", "gettextCatalog", "soundService", "arenaService", function(abilityService, effectService, randomService, characterService, gettextCatalog, soundService, arenaService) {
+(function (module) {
+    module.factory('character', function(abilityService, effectService, randomService, characterService, gettextCatalog, soundService, arenaService) {
 
     //Конструктор
     var Character = function(char) {
@@ -1698,12 +1699,11 @@ angular.module('fotm').register.factory('character', ["abilityService", "effectS
         return count;
     };
 
-
     Character.prototype.getSize = function() {
         var self = this;
         console.log("Character "+self.charName+" length: "+byteLength(JSON.stringify(self))+" bytes");
     };
 
-
     return Character;
-}]);
+});
+})(angular.module("fotm"));

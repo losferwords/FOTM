@@ -1,5 +1,6 @@
 //Сервис звуков в игре
-angular.module('fotm').register.service('soundService', ["ngAudio" , "$timeout", function(ngAudio, $timeout) {
+(function (module) {
+    module.service('soundService', function(ngAudio, $timeout) {
     var loadedSounds = [];
     var musicObj = {};
 
@@ -134,4 +135,5 @@ angular.module('fotm').register.service('soundService', ["ngAudio" , "$timeout",
             return musicObj;
         }
     }
-}]);
+});
+})(angular.module("fotm"));

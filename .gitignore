@@ -5,6 +5,8 @@ $ cat .gitignore
 /public/vendor/bower_components
 /.idea
 /data
+/public/build
+/public/css/all.css
 run_mongo_server.bat
 /bin
 /obj

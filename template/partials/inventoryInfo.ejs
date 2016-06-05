@@ -86,7 +86,7 @@
                                         </tr>
                                         <tr ng-show="interestingItem.maxHealth>0" class="text-danger">
                                             <td translate>Health:</td>
-                                            <td>{{interestingItem.maxHealth}}</td>
+                                            <td>{{interestingItem.maxHealth.toFixed(0)}}</td>
                                         </tr>
                                         <tr ng-show="interestingItem.healthReg>0" class="text-danger">
                                             <td translate>Health Reg.:</td>
@@ -111,7 +111,7 @@
                                         </tr>
                                         <tr ng-show="interestingItem.maxEnergy>0" class="text-success">
                                             <td translate>Energy:</td>
-                                            <td>{{interestingItem.maxEnergy}}</td>
+                                            <td>{{interestingItem.maxEnergy.toFixed(0)}}</td>
                                         </tr>
                                         <tr ng-show="interestingItem.hitChance>0" class="text-success">
                                             <td translate>Hit Chance:</td>
@@ -136,7 +136,7 @@
                                         </tr>
                                         <tr ng-show="interestingItem.maxMana>0" class="text-primary">
                                             <td translate>Mana:</td>
-                                            <td>{{interestingItem.maxMana}}</td>
+                                            <td>{{interestingItem.maxMana.toFixed(0)}}</td>
                                         </tr>
                                         <tr ng-show="interestingItem.manaReg>0" class="text-primary">
                                             <td translate>Mana Reg.:</td>
@@ -148,7 +148,7 @@
                                         </tr>
                                         <tr ng-show="interestingItem.initiative>0" class="text-primary">
                                             <td translate>Initiative:</td>
-                                            <td>{{interestingItem.initiative}}</td>
+                                            <td>{{interestingItem.initiative.toFixed(0)}}</td>
                                         </tr>
                                     </table>
                                 </div>

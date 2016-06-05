@@ -1,8 +1,7 @@
 // I get a rough estimate of the number of watchers on the page. This assumes
 // that the entire page is inside the same AngularJS application.
-angular.module('fotm').register.factory(
-    "getWatchCount",
-    function() {
+(function (module) {
+    module.factory("getWatchCount", function() {
         // I return the count of watchers on the current page.
         function getWatchCount() {
             var total = 0;
@@ -30,5 +29,5 @@ angular.module('fotm').register.factory(
             return( total );
         }
         return( getWatchCount );
-    }
-);
+    });
+})(angular.module("fotm"));
