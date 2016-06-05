@@ -3,8 +3,7 @@
   "version": "0.6.5",
   "private": true,
   "scripts": {
-    "postinstall": "bower install",
-    "prestart": "gulp default --env production"
+    "postinstall": "bower install && gulp default --env production"
   },
   "dependencies": {
     "async": "^1.5.2",
