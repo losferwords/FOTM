@@ -1,5 +1,6 @@
 //Сервис для создания персонажа
-angular.module('fotm').register.service('characterService', ["gettextCatalog", "randomService", function(gettextCatalog, randomService) {
+(function (module) {
+    module.service('characterService', function(gettextCatalog, randomService) {
     var genderParams = {
         male: {str:5, dxt:0, int:5},
         female: {str:0, dxt:5, int:5}
@@ -1003,4 +1004,5 @@ angular.module('fotm').register.service('characterService', ["gettextCatalog", "
             return startAbilities[role];
         }
     }
-}]);
+});
+})(angular.module("fotm"));

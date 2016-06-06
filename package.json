@@ -3,7 +3,7 @@
   "version": "0.6.5",
   "private": true,
   "scripts": {
-    "postinstall": "bower install"
+    "postinstall": "bower install && gulp default --env production"
   },
   "dependencies": {
     "async": "^1.5.2",
@@ -20,6 +20,16 @@
     "express": "^4.13.4",
     "express-error-handler": "^1.1.0",
     "express-session": "^1.13.0",
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^2.0.9",
+    "gulp-concat": "^2.6.0",
+    "gulp-environments": "^0.1.1",
+    "gulp-filter": "^4.0.0",
+    "gulp-if": "^2.0.1",
+    "gulp-load-plugins": "^1.2.4",
+    "gulp-main-bower-files": "^1.5.1",
+    "gulp-ng-annotate": "^2.0.0",
+    "gulp-uglify": "^1.5.3",
     "mongodb": "^2.1.21",
     "mongoose": "^4.4.19",
     "morgan": "^1.7.0",

@@ -1,7 +1,8 @@
-angular.module('fotm').register.controller("CreateCharacterController", ["$scope", '$rootScope', '$location', '$timeout', 'mainSocket', 'characterService', 'abilityService', 'randomService', 'gettextCatalog', CreateCharacterController]);
+(function (module) {
+    module.controller("CreateCharacterController", CreateCharacterController);
 
-//Контроллер создания персонажа
-function CreateCharacterController($scope, $rootScope, $location, $interval, mainSocket, characterService, abilityService, randomService, gettextCatalog) {
+    //Контроллер создания персонажа
+    function CreateCharacterController($scope, $rootScope, $location, mainSocket, characterService, abilityService, randomService, gettextCatalog) {
     var characterObj = {};
     var teamId;
 
@@ -200,3 +201,4 @@ function CreateCharacterController($scope, $rootScope, $location, $interval, mai
         return portraits;
     }
 }
+})(angular.module("fotm"));

@@ -1,5 +1,6 @@
 //Сервис эффектов в игре
-angular.module('fotm').register.service('effectService', ["randomService", "gettextCatalog", function(randomService, gettextCatalog) {
+(function (module) {
+    module.service('effectService', function(randomService, gettextCatalog) {
     return {
         effect: function(name, variant){
             switch(name){
@@ -1438,4 +1439,5 @@ angular.module('fotm').register.service('effectService', ["randomService", "gett
             }
         }
     }
-}]);
+});
+})(angular.module("fotm"));

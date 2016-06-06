@@ -1,5 +1,6 @@
 //Сервис для работы арены
-angular.module('fotm').register.service('arenaService', ["gettextCatalog", "randomService", function(gettextCatalog, randomService) {
+(function (module) {
+    module.service('arenaService', function(gettextCatalog, randomService) {
     var map=[];
     return {
         //Заполнение карты DIV-ами
@@ -571,4 +572,5 @@ angular.module('fotm').register.service('arenaService', ["gettextCatalog", "rand
             return message;
         }
     }
-}]);
+});
+})(angular.module("fotm"));

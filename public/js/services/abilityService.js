@@ -1,5 +1,6 @@
 //Сервис способностей в игре
-angular.module('fotm').register.service('abilityService', ["randomService", "effectService","gettextCatalog", function(randomService, effectService, gettextCatalog) {
+(function (module) {
+    module.service('abilityService', function(randomService, effectService, gettextCatalog) {
     return {
         ability: function(name){
             switch(name){
@@ -2859,4 +2860,5 @@ angular.module('fotm').register.service('abilityService', ["randomService", "eff
             }
         }
     }
-}]);
+});
+})(angular.module("fotm"));
