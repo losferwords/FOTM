@@ -140,7 +140,7 @@
     });
 
     //Сервис для чата
-    module.service('chatService', function($filter) {
+    module.service('chatService', function($filter, soundService) {
         var commonChat = [];
         var arenaChat = [];
         return {
@@ -152,6 +152,7 @@
                         msgArray.splice(0, 1);
                     }
                     msgArray.push(msg);
+                    soundService.getSoundObj().newMessage.play();
                 }
 
                 switch(channel){

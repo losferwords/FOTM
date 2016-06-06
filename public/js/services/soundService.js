@@ -3,6 +3,7 @@
     module.service('soundService', function(ngAudio, $timeout) {
     var loadedSounds = [];
     var musicObj = {};
+    var soundObj = {};
 
     //Музыка
     musicObj.cityAmbience = ngAudio.load("sounds/music/city.mp3");
@@ -14,6 +15,12 @@
 
     musicObj.loseMusic = ngAudio.load("sounds/music/lose.mp3");
     musicObj.loseMusic.volume=0.4;
+
+    soundObj.newMessage = ngAudio.load("sounds/fx/chat.mp3");
+    soundObj.newMessage.volume=0.6;
+
+    soundObj.joinArena = ngAudio.load("sounds/fx/join-arena.mp3");
+    soundObj.joinArena.volume=0.6;
 
     return {
         playSound: function(name){
@@ -133,6 +140,9 @@
         },
         getMusicObj: function () {
             return musicObj;
+        },
+        getSoundObj: function() {
+            return soundObj;
         }
     }
 });
