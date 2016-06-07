@@ -355,6 +355,7 @@ module.exports = function (server) {
         socket.on('joinArenaLobby', function(){
             socket.join(arenaLobby);
             log.info("User "+username+" join arena");
+            io.sockets.in(serverRoom).emit('someoneJoinArena');
             var queue = Object.keys(io.nsps["/"].adapter.rooms[arenaLobby].sockets);
             //Если найдено 2 человека в очереди
             if(queue.length>1){

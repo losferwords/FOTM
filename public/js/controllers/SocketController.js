@@ -1,7 +1,7 @@
 (function (module) {
     module.controller("SocketController", SocketController);
     //Контроллер сокетов
-    function SocketController($scope, $window, $rootScope, $timeout, $injector, mainSocket, chatService) {
+    function SocketController($scope, $window, $rootScope, $timeout, $injector, mainSocket, chatService, soundService) {
         $scope.chatOpened = false;
         $scope.newCommonMsg = {
             text: ""
@@ -44,21 +44,29 @@
         mainSocket.on('connect_error', function () {
             $scope.errorHandler = "disconnected from server";
             mainSocket.disconnect();
+            $timeout(function(){$window.location.href="/"},3000);
         });
 
         mainSocket.on('connect_timeout', function () {
             $scope.errorHandler = "server timeout is reached";
             mainSocket.disconnect();
+            $timeout(function(){$window.location.href="/"},3000);
         });
 
         mainSocket.on('error', function (err) {
             $scope.errorHandler = "socket error: " + err;
             mainSocket.disconnect();
+            $timeout(function(){$window.location.href="/"},3000);
         });
 
         mainSocket.on('customError', function (reason) {
             $scope.errorHandler = "Error: " + JSON.stringify(reason.message);
             mainSocket.disconnect();
+            $timeout(function(){$window.location.href="/"},3000);
+        });
+
+        mainSocket.on('someoneJoinArena', function() {
+            soundService.getSoundObj().joinArena.play();
         });
 
         $scope.$on('$destroy', function (event) {

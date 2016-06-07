@@ -994,11 +994,18 @@
                 scope.$watch(
                     function () {
                         return element.children().length;
-                    },
-                    function () {
-                        element.animate({ scrollTop: element.prop('scrollHeight')}, 0);
-                    }
+                    },scroll
                 );
+
+                scope.$watch(
+                    function () {
+                        return element.is(":visible")
+                    },scroll
+                );
+
+                function scroll() {
+                    element.animate({ scrollTop: element.prop('scrollHeight')}, 0);
+                }
             }
         };
     });

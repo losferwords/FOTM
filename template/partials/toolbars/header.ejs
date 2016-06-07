@@ -7,7 +7,8 @@
                     <p class="navbar-text online-text"><span class="text-info"><span translate>Online:</span><span class="badge">{{onlineUsers}}</span> <span translate translate-n="onlineUsers" translate-plural="players">player</span></span></p>
                     <button class="language-btn btn" ng-click="changeLanguage('ru')"><img src="images/interface/ru.gif" alt=""/></button>
                     <button class="language-btn btn" ng-click="changeLanguage('en')"><img src="images/interface/gb.gif" alt=""/></button>
-                    <button class="btn btn-sm navbar-btn mute-btn" ng-class="{'btn-success': soundEnabled, 'btn-danger': !soundEnabled}" ng-click="toggleSound()"><span ng-class="{'glyphicon glyphicon-volume-up': soundEnabled, 'glyphicon glyphicon-volume-off': !soundEnabled}"></span></button>
+                    <button class="btn btn-sm navbar-btn mute-btn" ng-class="{'btn-success': soundService.soundEnabled, 'btn-danger': !soundService.soundEnabled}" ng-click="toggleSound()"><span ng-class="{'glyphicon glyphicon-volume-up': soundService.soundEnabled, 'glyphicon glyphicon-volume-off': !soundService.soundEnabled}"></span></button>
+                    <button class="btn btn-sm navbar-btn mute-btn" ng-class="{'btn-success': soundService.musicEnabled, 'btn-danger': !soundService.musicEnabled}" ng-click="toggleMusic()"><span class="glyphicon glyphicon-music"></span></button>
                 </li>
             </ul>
             <ul class="nav col-xs-4 col-sm-3 col-lg-2">

@@ -863,6 +863,7 @@ canvas {
   background-repeat: no-repeat;
   position: relative;
   border: 1px solid #000;
+  z-index: 0;
 }
 
 .ability-icon .ability-fade {
@@ -873,7 +874,7 @@ canvas {
   left: 0;
   bottom: 0;
   right: 0;
-  z-index: 1001;
+  z-index: 1;
 }
 
 .ability-icon[disabled] {

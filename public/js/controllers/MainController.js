@@ -2,16 +2,17 @@
     //Главный контроллер
     module.controller("MainController", MainController);
 
-    function MainController($scope, $rootScope, $window, $location, gettextCatalog, ngAudio) {
+    function MainController($scope, $rootScope, $window, $location, gettextCatalog, ngAudio, soundService) {
         gettextCatalog.setCurrentLanguage('en');
-        $rootScope.soundEnabled=true;
         ngAudio.performance=1000;
+
+        $scope.soundService = soundService;
 
         //Блок обработки нажатия на кнопку <- в браузере
         $rootScope.$on('$locationChangeSuccess', function() {
             $rootScope.actualLocation = $location.path();
         });
-        $rootScope.$watch(function () {return $location.path()}, function (newLocation, oldLocation) {
+        $rootScope.$watch(function () {return $location.path()}, function (newLocation) {
             if($rootScope.actualLocation === newLocation) {
                 $window.location.href="/"; //выкидываем на логин скрин
             }
@@ -33,14 +34,11 @@
         };
 
         $rootScope.toggleSound = function () {
-            if($rootScope.soundEnabled) {
-                $rootScope.soundEnabled = false;
-                ngAudio.mute();
-            }
-            else {
-                $rootScope.soundEnabled = true;
-                ngAudio.unmute();
-            }
+            soundService.soundEnabled = !soundService.soundEnabled;
+        };
+
+        $rootScope.toggleMusic = function () {
+            soundService.musicEnabled = !soundService.musicEnabled;
         };
 
         //Смена классов информационного div
