@@ -1,7 +1,7 @@
 <div ng-controller="SocketController">
     <%- partial('../partials/toolbars/header') %>
     <div class="row" ng-controller="CityController" ng-cloak>
-        <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 well bs-component city">
+        <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 well bs-component city" ng-if="team">
             <legend translate>City</legend>
 
             <div class="top-shown-shards">
@@ -30,15 +30,15 @@
                                 <h2 class="panel-title" ng-if="char.charName!==char._id">{{char.charName}}</h2>
                             </div>
                             <div class="panel-body text-center">
-                                <button class="btn btn-primary btn-create" ng-click="createCharClick(char)" ng-if="char.charName===char._id" translate>Create</button>
+                                <button class="btn btn-primary btn-create" ng-click="createCharClick(char)" ng-disabled="pending" ng-if="char.charName===char._id" translate>Create</button>
                                 <div class="portrait" ng-style="{'background-image': getCharPortrait(char)}" ng-if="char.charName!==char._id">
                                     <div class="role-in-portrait" ng-class="[char.role+'-icon']"></div>
                                 </div>
                                 <div class="btn-group-vertical btn-group-char-options" ng-if="!(char.lose || char.charName===char._id)">
-                                    <button class="btn btn-default btn-sm" ng-click="characterClick(char)" ng-disabled="searchBattle" translate>Character</button>
-                                    <button class="btn btn-info btn-sm" ng-click="abilitiesClick(char)" ng-disabled="searchBattle" translate>Abilities</button>
-                                    <button class="btn btn-success btn-sm" ng-click="inventoryClick(char)" ng-disabled="searchBattle" translate>Inventory</button>
-                                    <button class="btn btn-danger btn-sm" ng-click="burnClick(char)" ng-disabled="searchBattle" translate>Burn</button>
+                                    <button class="btn btn-default btn-sm" ng-click="characterClick(char)" ng-disabled="searchBattle || pending" translate>Character</button>
+                                    <button class="btn btn-info btn-sm" ng-click="abilitiesClick(char)" ng-disabled="searchBattle || pending" translate>Abilities</button>
+                                    <button class="btn btn-success btn-sm" ng-click="inventoryClick(char)" ng-disabled="searchBattle || pending" translate>Inventory</button>
+                                    <button class="btn btn-danger btn-sm" ng-click="burnClick(char)" ng-disabled="searchBattle || pending" translate>Burn</button>
                                 </div>
 
                                 <div class="resurrect-shards" ng-if="(char.lose && char.charName!==char._id)">
@@ -62,11 +62,11 @@
                                 <div class="btn-group-vertical" ng-if="(char.lose && char.charName!==char._id)">
                                     <button class="btn btn-success btn-sm"
                                             ng-click="resurrectClick(char)"
-                                            ng-disabled="checkResurrectCost(char)"
+                                            ng-disabled="checkResurrectCost(char) || pending"
                                             translate>
                                         Resurrect
                                     </button>
-                                    <button class="btn btn-danger btn-sm" ng-click="burnClick(char)" translate>Burn</button>
+                                    <button class="btn btn-danger btn-sm" ng-click="burnClick(char)" translate ng-disabled="pending">Burn</button>
                                 </div>
                             </div>
                         </div>
@@ -74,23 +74,27 @@
                 </div>
                 <div class="clearfix"></div>
                 <div class="btn-group">
-                    <button class="btn btn-success btn-sm" ng-click="joinArenaClick()" ng-disabled="searchBattle || checkForLose()">{{joinBattleBtnHtml()}}</button>
-                    <button class="btn btn-warning btn-sm" ng-click="leaveArenaClick()" ng-disabled="!searchBattle || checkForLose()" translate>Leave Queue</button>
+                    <button class="btn btn-success btn-sm" ng-click="joinArenaClick()" ng-disabled="searchBattle || checkForLose() || pending">{{joinBattleBtnHtml()}}</button>
+                    <button class="btn btn-warning btn-sm" ng-click="leaveArenaClick()" ng-disabled="!searchBattle || checkForLose() || pending" translate>Leave Queue</button>
                 </div>
                 <div class="btn-group">
-                    <button class="btn btn-primary btn-sm roll-btn" ng-click="rollDicesClick()" ng-disabled="searchBattle || nextRollLeft!==0">{{rollDicesBtnText()}}</button>
+                    <button class="btn btn-primary btn-sm roll-btn" ng-click="rollDicesClick()" ng-disabled="searchBattle || nextRollLeft!==0 || pending">{{rollDicesBtnText()}}</button>
                     <button class="btn btn-danger btn-sm" ng-click="deleteTeamClick()" ng-disabled="searchBattle" translate>Delete Team</button>
                 </div>
             </div>
             <div class="clearfix">
                 <div class="col-xs-12">
                     <div class="row text-center">
+                        <span class="arena-queue" ng-class="{'text-default':arenaQueue==0, 'text-success': arenaQueue>0}" translate>Players in arena queue: {{arenaQueue}}</span>
                         <h6 translate>Rating: {{team.rating}} (Rank {{rank}})</h6>
                         <h6 translate>Win Rate: {{team.wins}}-{{team.loses}}</h6>
                     </div>
                 </div>
             </div>
-            <button class="btn btn-warning btn-sm clearfix" ng-if="userName==='losfer'" ng-click="openAdmin()">Admin</button>
+            <button class="btn btn-warning btn-sm clearfix" ng-if="userName==='losfer'" ng-disabled="pending" ng-click="openAdmin()">Admin</button>
+        </div>
+        <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 well bs-component city" ng-if="!team">
+            <legend translate>Load City...</legend>
         </div>
     </div>
 

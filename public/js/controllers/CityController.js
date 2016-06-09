@@ -10,6 +10,9 @@
         var rollDiceTimer;
 
         $scope.searchBattle = false;
+        $scope.arenaQueue = 0;
+        $scope.pending = false; //ожидание ответа от сервера
+        $scope.resurectingChar; //Вооскрешающийся
 
         //Кнопка "Встать в очередь на арену"
         $scope.joinArenaClick = function () {
@@ -75,32 +78,32 @@
         };
 
         $scope.resurrectClick = function(char){
+            $scope.pending = true;
+            $scope.resurectingChar = char;
             mainSocket.emit('setChar', {
                 _id: char._id,
                 lose: false
             });
-            mainSocket.emit('setTeam', {
-                _id: $scope.team._id,
-                souls: {
-                    red: $scope.team.souls.red-characterService.getRoleCost(char.role).red,
-                    green: $scope.team.souls.green-characterService.getRoleCost(char.role).green,
-                    blue: $scope.team.souls.blue-characterService.getRoleCost(char.role).blue
-                }
-            });
         };
 
         mainSocket.on("setCharResult", function () {
-            charSetFlag=true;
-            //На сервер отправили 2 сообщения, так что переход будет успешным только когда ответ придёт от обоих
+            if($scope.resurectingChar){
+                mainSocket.emit('setTeam', {
+                    _id: $scope.team._id,
+                    souls: {
+                        red: $scope.team.souls.red-characterService.getRoleCost($scope.resurectingChar.role).red,
+                        green: $scope.team.souls.green-characterService.getRoleCost($scope.resurectingChar.role).green,
+                        blue: $scope.team.souls.blue-characterService.getRoleCost($scope.resurectingChar.role).blue
+                    }
+                });
+            }
+            else {
+                $scope.pending=false;
+            }
         });
         mainSocket.on("setTeamResult", function () {
-            deleteCharInterval=$interval(function(){
-                if(charSetFlag) {
-                    mainSocket.emit("getUserTeam");
-                    $interval.cancel(deleteCharInterval);
-                    deleteCharInterval = undefined;
-                }
-            }, 500);
+            $scope.resurectingChar = undefined;
+            mainSocket.emit("getUserTeam");
         });
 
         $scope.checkResurrectCost = function(char){
@@ -121,6 +124,7 @@
             //Эта метка нужна для того, чтобы не удалять пока персонажа из базы, а просто пометить его, как сожжённого
             char.charName=char._id;
             char.lose=true;
+            $scope.pending=true;
             mainSocket.emit('setChar', {
                 _id: char._id,
                 charName: char._id,
@@ -200,12 +204,17 @@
             $location.path("/arena");
         });
 
+        mainSocket.on("arenaQueueChanged", function(queue){
+            $scope.arenaQueue = queue;
+        });
+
         $scope.$on('$routeChangeSuccess', function () {
             soundService.getMusicObj().cityAmbience.play();
             if(soundService.getMusicObj().battleAmbience){
                 soundService.getMusicObj().battleAmbience.pause();
             }
             mainSocket.emit("getUserTeam");
+            $scope.pending=true;
         });
         mainSocket.on('getUserTeamResult', function(team, rank, nextRollLeft){
             if(team){
@@ -237,6 +246,8 @@
                         rollDiceTimer=undefined;
                     }
                 }, 1000);
+                $scope.pending = false;
+                mainSocket.emit("getArenaQueue");
             }
             else {
                 $location.path("/searchTeam");

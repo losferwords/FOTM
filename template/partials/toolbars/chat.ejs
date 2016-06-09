@@ -4,7 +4,7 @@
     <uib-tabset class="chat-tabset" ng-show="chatOpened">
         <uib-tab heading="{{'Common'|translate}}">
             <div class="chat-log well customScrollBar" autoscroll>
-                <p ng-repeat="msg in chatService.getMessages('common') track by $index"><span class="text-muted">{{msg.time}}: </span><span class="text-success chat-sender" ng-click="addSenderToMsg('common', msg.sender)">{{msg.sender}} ></span><span ng-class="{'text-warning': msg.sender=='losfer'}" ng-bind-html="msg.text"></span></p>
+                <p ng-repeat="msg in chatService.getMessages('common') track by $index"><span class="text-muted">{{msg.time}}: </span><span class="text-success chat-sender" ng-if="msg.sender!='server'" ng-click="addSenderToMsg('common', msg.sender)"> {{msg.sender}} ></span><span ng-class="{'text-warning': msg.sender=='losfer', 'text-success': msg.sender=='server'}" ng-bind-html="msg.text"></span></p>
             </div>
             <div class="form-group">
                 <textarea type="text" ng-enter="sendMsg('common')" class="form-control new-msg customScrollBar" ng-model="newCommonMsg.text" maxlength="156"></textarea>

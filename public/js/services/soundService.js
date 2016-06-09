@@ -20,10 +20,10 @@
 
         //Звуки
         soundObj.newMessage = ngAudio.load("sounds/fx/chat.mp3");
-        soundObj.newMessage.volume=0.6;
+        soundObj.newMessage.volume=0.4;
 
         soundObj.joinArena = ngAudio.load("sounds/fx/join-arena.mp3");
-        soundObj.joinArena.volume=0.6;
+        soundObj.joinArena.volume=0.5;
 
         return {
             playSound: function(name){

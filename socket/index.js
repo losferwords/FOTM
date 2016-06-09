@@ -100,6 +100,7 @@ module.exports = function (server) {
         //количества человек на сервере
         var serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom].sockets).length;
         io.sockets.in(serverRoom).emit('join', serverOnlineUsers);
+        socket.broadcast.to(serverRoom).emit('newMessage', {text: ("User {{one}} join game", {one: username}), sender: "server", time: currentTime()}, "common");
         log.info("User "+username+" join game");
 
         socket.on('disconnect', function () {
@@ -357,6 +358,7 @@ module.exports = function (server) {
             log.info("User "+username+" join arena");
             io.sockets.in(serverRoom).emit('someoneJoinArena');
             var queue = Object.keys(io.nsps["/"].adapter.rooms[arenaLobby].sockets);
+            io.sockets.in(serverRoom).emit('arenaQueueChanged', queue.length);
             //Если найдено 2 человека в очереди
             if(queue.length>1){
                 //Формируем уникальный ключ комнаты для боя
@@ -406,14 +408,23 @@ module.exports = function (server) {
                     io.sockets.connected[queue[1]].emit('startBattle', enemyBattleData);
                     io.sockets.connected[queue[0]].leave(arenaLobby);
                     io.sockets.connected[queue[1]].leave(arenaLobby);
+                    io.sockets.in(serverRoom).emit('arenaQueueChanged', 0);
                     io.sockets.connected[queue[0]].join(battleRoom);
                     io.sockets.connected[queue[1]].join(battleRoom);
                 }
             }
         });
 
+        socket.on('getArenaQueue', function(){
+            if(io.nsps["/"].adapter.rooms[arenaLobby]) {
+                var queue = Object.keys(io.nsps["/"].adapter.rooms[arenaLobby].sockets);
+                io.sockets.in(serverRoom).emit('arenaQueueChanged', queue.length);
+            }
+        });
+
         socket.on('leaveArenaLobby', function(){
             log.info("User "+username+" leave arena");
+            io.sockets.in(serverRoom).emit('arenaQueueChanged', 0);
             socket.leave(arenaLobby);
         });
 

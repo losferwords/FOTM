@@ -263,6 +263,12 @@ form input {
   min-width: 70px;
 }
 
+.arena-queue {
+  margin-top: 10px;
+  margin-bottom: 0;
+  display: block;
+}
+
 .shards-dices {
   margin-bottom: 5px;
 }
@@ -906,7 +912,6 @@ canvas {
 .enemy-abilities {
   height: 32px;
 }
-
 
 .battle-end-container h2 {
   margin-top: 5px;

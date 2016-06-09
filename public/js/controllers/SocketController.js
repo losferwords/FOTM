@@ -1,7 +1,7 @@
 (function (module) {
     module.controller("SocketController", SocketController);
     //Контроллер сокетов
-    function SocketController($scope, $window, $rootScope, $timeout, $injector, mainSocket, chatService, soundService) {
+    function SocketController($scope, $window, $rootScope, $timeout, $injector, mainSocket, chatService, soundService, gettextCatalog) {
         $scope.chatOpened = false;
         $scope.newCommonMsg = {
             text: ""
@@ -66,7 +66,9 @@
         });
 
         mainSocket.on('someoneJoinArena', function() {
-            soundService.getSoundObj().joinArena.play();
+            if($rootScope.actualLocation!='/arena'){
+                soundService.getSoundObj().joinArena.play();
+            }
         });
 
         $scope.$on('$destroy', function (event) {
@@ -96,16 +98,6 @@
         };
 
         $scope.sendMsg = function(channel){
-            //Функция возврщает время в формате hh:mm
-            function currentTime() {
-                var date = new Date();
-                var h = date.getHours();
-                var m = date.getMinutes();
-                if (h < 10) h = '0' + h;
-                if (m < 10) m = '0' + m;
-                return h+":"+m;
-            }
-
             function processMsg(msgType){
                 if(msgType.text.length<1) return;
                 msgType.time = currentTime();
@@ -123,6 +115,16 @@
                     break;
             }
         };
+
+        //Функция возврщает время в формате hh:mm
+        function currentTime() {
+            var date = new Date();
+            var h = date.getHours();
+            var m = date.getMinutes();
+            if (h < 10) h = '0' + h;
+            if (m < 10) m = '0' + m;
+            return h+":"+m;
+        }
 
         $scope.addSenderToMsg = function(channel, sender){
             switch(channel) {
