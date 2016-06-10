@@ -20,8 +20,14 @@
             $rootScope.onlineUsers = serverOnlineUsers;
         });
 
-        mainSocket.on("join", function (serverOnlineUsers) {
+        mainSocket.on("join", function (serverOnlineUsers, username) {
             $rootScope.onlineUsers = serverOnlineUsers;
+            if($scope.userName && $scope.userName!=username){
+                chatService.newMessage("common", {text: gettextCatalog.getString("User {{one}} join game", {one: username}), sender: "server", time: currentTime()});
+                if(!$scope.chatOpened){
+                    $scope.unreadMsgs++;
+                }
+            }
         });
 
         mainSocket.on("connect", function () {

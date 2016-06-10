@@ -99,8 +99,7 @@ module.exports = function (server) {
         //Отправляем всем игрокам на сервере сообщение об изменении
         //количества человек на сервере
         var serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom].sockets).length;
-        io.sockets.in(serverRoom).emit('join', serverOnlineUsers);
-        socket.broadcast.to(serverRoom).emit('newMessage', {text: ("User {{one}} join game", {one: username}), sender: "server", time: currentTime()}, "common");
+        io.sockets.in(serverRoom).emit('join', serverOnlineUsers, username);
         log.info("User "+username+" join game");
 
         socket.on('disconnect', function () {

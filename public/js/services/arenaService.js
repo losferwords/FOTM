@@ -272,6 +272,10 @@
             if(message.indexOf("Now is turn of")!=-1) {
                 message=message.replace("Now is turn of", gettextCatalog.getString("Now is turn of"));
             }
+            if(message.indexOf("The battle ends after")!=-1) {
+                message=message.replace("The battle ends after", gettextCatalog.getString("The battle ends after"));
+                message=message.replace("turns", gettextCatalog.getString("turns"));
+            }
             if(message.indexOf("Someone invisible stands on that cell!")!=-1) {
                 message=message.replace("Someone invisible stands on that cell!", gettextCatalog.getString("Someone invisible stands on that cell!"));
             }

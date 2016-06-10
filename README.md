@@ -25,4 +25,5 @@ CHANGELOG
 - version 0.6.2 - ready manual and fix lot of bugs
 - version 0.6.4 - fix small bugs after open test
 - version 0.6.5 - Add chat and draw
+- version 0.6.6 - Chat and sound improvements
 

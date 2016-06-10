@@ -936,7 +936,7 @@
         log("Now is turn of "+$scope.activeChar.charName+".", $scope.activeChar.battleColor);
         //объявление об исходе боя в ничью
         if($scope.turnsSpended>=90){
-            log("The battle ends in a draw after "+(100-$scope.turnsSpended)+" turns.");
+            log("The battle ends after "+(100-$scope.turnsSpended)+" turns.");
         }
     });
 
