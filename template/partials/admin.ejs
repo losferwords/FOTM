@@ -17,10 +17,10 @@
                                 <div class="panel-body text-center">
                                     <h3 ng-if="char.charName===char._id">Burned</h3>
                                     <div class="portrait" ng-style="{'background-image': getCharPortrait(char)}" ng-if="char.charName!==char._id">
-                                        <div class="role-in-portrait" ng-class="[char.role+'-icon']"></div>
+                                        <div class="role-in-portrait icon" ng-class="[char.role+'-icon']"></div>
                                     </div>
                                     <div class="ability-slot-container btn-group" ng-if="char.charName!==char._id">
-                                        <div class="ability-slot btn"
+                                        <div class="ability-slot btn icon"
                                              ng-repeat="ability in char.abilities track by $index"
                                              ng-style="{'background-image': ability.icon(), 'background-color' : getAbilityColor(ability)}"
                                              ng-disabled = "ability.name==='Void'"
@@ -110,7 +110,7 @@
                                 <td>{{team.username}}</td>
                                 <td>{{team.teamName}}</td>
                                 <td>
-                                    <div class="char-icon"
+                                    <div class="char-icon icon"
                                          ng-repeat="char in team.characters"
                                          ng-class="[char.role+'-icon']"
                                          uib-tooltip="{{char.charName}}"

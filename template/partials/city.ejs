@@ -8,15 +8,15 @@
                 <p translate>Soul shards:</p>
                 <div class="shards-container">
                     <div class="shard red-shard">
-                        <div class="icon"></div>
+                        <div class="shard-icon icon"></div>
                         <span>{{team.souls.red}}</span>
                     </div>
                     <div class="shard green-shard">
-                        <div class="icon"></div>
+                        <div class="shard-icon icon"></div>
                         <span>{{team.souls.green}}</span>
                     </div>
                     <div class="shard blue-shard">
-                        <div class="icon"></div>
+                        <div class="shard-icon icon"></div>
                         <span>{{team.souls.blue}}</span>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                             <div class="panel-body text-center">
                                 <button class="btn btn-primary btn-create" ng-click="createCharClick(char)" ng-disabled="pending" ng-if="char.charName===char._id" translate>Create</button>
                                 <div class="portrait" ng-style="{'background-image': getCharPortrait(char)}" ng-if="char.charName!==char._id">
-                                    <div class="role-in-portrait" ng-class="[char.role+'-icon']"></div>
+                                    <div class="role-in-portrait icon" ng-class="[char.role+'-icon']"></div>
                                 </div>
                                 <div class="btn-group-vertical btn-group-char-options" ng-if="!(char.lose || char.charName===char._id)">
                                     <button class="btn btn-default btn-sm" ng-click="characterClick(char)" ng-disabled="searchBattle || pending" translate>Character</button>
@@ -45,15 +45,15 @@
                                     <p translate>Resurrection cost:</p>
                                     <div class="shards-container">
                                         <div class="shard red-shard">
-                                            <div class="icon"></div>
+                                            <div class="shard-icon icon"></div>
                                             <span>{{getRoleCost(char.role,'red')}}</span>
                                         </div>
                                         <div class="shard green-shard">
-                                            <div class="icon"></div>
+                                            <div class="shard-icon icon"></div>
                                             <span>{{getRoleCost(char.role,'green')}}</span>
                                         </div>
                                         <div class="shard blue-shard">
-                                            <div class="icon"></div>
+                                            <div class="shard-icon icon"></div>
                                             <span>{{getRoleCost(char.role,'blue')}}</span>
                                         </div>
                                     </div>
@@ -113,13 +113,6 @@
     </script>
 
     <script type="text/ng-template" id="diceModal.html">
-        <img src="images/icons/interface/dice0.svg" ng-hide="true"/>
-        <img src="images/icons/interface/dice1.svg" ng-hide="true"/>
-        <img src="images/icons/interface/dice2.svg" ng-hide="true"/>
-        <img src="images/icons/interface/dice3.svg" ng-hide="true"/>
-        <img src="images/icons/interface/dice4.svg" ng-hide="true"/>
-        <img src="images/icons/interface/dice5.svg" ng-hide="true"/>
-        <img src="images/icons/interface/dice6.svg" ng-hide="true"/>
 
         <div class="modal-header text-center">
             <h5 class="modal-title" translate>Roll Dices</h5>
@@ -127,16 +120,16 @@
         <div class="modal-body text-center">
             <div class="shards-container shards-dices">
                 <div class="shard red-shard">
-                    <div class="icon"></div>
-                    <div class="dice red-dice" ng-class="{'none':dices.red===0, 'one':dices.red===1, 'two':dices.red===2, 'three':dices.red===3, 'four':dices.red===4, 'five':dices.red===5, 'six':dices.red===6}"></div>
+                    <div class="shard-icon icon"></div>
+                    <div class="dice red-dice icon" ng-class="{'none':dices.red===0, 'one':dices.red===1, 'two':dices.red===2, 'three':dices.red===3, 'four':dices.red===4, 'five':dices.red===5, 'six':dices.red===6}"></div>
                 </div>
                 <div class="shard green-shard">
-                    <div class="icon"></div>
-                    <div class="dice green-dice" ng-class="{'none':dices.green===0, 'one':dices.green===1, 'two':dices.green===2, 'three':dices.green===3, 'four':dices.green===4, 'five':dices.green===5, 'six':dices.green===6}"></div>
+                    <div class="shard-icon icon"></div>
+                    <div class="dice green-dice icon" ng-class="{'none':dices.green===0, 'one':dices.green===1, 'two':dices.green===2, 'three':dices.green===3, 'four':dices.green===4, 'five':dices.green===5, 'six':dices.green===6}"></div>
                 </div>
                 <div class="shard blue-shard">
-                    <div class="icon"></div>
-                    <div class="dice blue-dice" ng-class="{'none':dices.blue===0, 'one':dices.blue===1, 'two':dices.blue===2, 'three':dices.blue===3, 'four':dices.blue===4, 'five':dices.blue===5, 'six':dices.blue===6}"></div>
+                    <div class="shard-icon icon"></div>
+                    <div class="dice blue-dice icon" ng-class="{'none':dices.blue===0, 'one':dices.blue===1, 'two':dices.blue===2, 'three':dices.blue===3, 'four':dices.blue===4, 'five':dices.blue===5, 'six':dices.blue===6}"></div>
                 </div>
             </div>
             <button class="btn btn-primary" type="button" ng-click="rollDices()" ng-if="!rollComplete">{{rollDicesText()}}</button>

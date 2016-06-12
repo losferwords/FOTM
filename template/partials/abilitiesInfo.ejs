@@ -19,7 +19,7 @@
                                             </div>
                                         </div>
                                         <div class="ability-slot-container btn-group">
-                                            <div class="ability-slot btn"
+                                            <div class="ability-slot btn icon"
                                                  ng-repeat="ability in char.abilities track by $index"
                                                  ng-class="{'active': interestingAbility.name===ability.name, 'dropable': movingAbility}"
                                                  ng-style="{'background-image': ability.icon(), 'background-color' : getAbilityColor(ability)}"
@@ -39,7 +39,7 @@
                                                  ng-click = "chooseAbilityForTune(ability)">
                                             </div>
                                         </div>
-                                        <div class="ability-switch btn" ng-class="{'tune':tuneMode, 'move':!tuneMode}" ng-click="changeTuneAbilitiesMode()"></div>
+                                        <div class="ability-switch btn icon" ng-class="{'tune':tuneMode, 'move':!tuneMode}" ng-click="changeTuneAbilitiesMode()"></div>
                                     </div>
                                 </div>
                                 <div class="panel panel-warning ability-tune" ng-class="{'hidden-on-xs': !tuneMode}">
@@ -49,7 +49,7 @@
                                             <span class="text-warning" ng-if="!interestingAbility" translate>Choose ability for tune</span>
                                             <div class="arrow-container" ng-if="interestingAbility">
                                                 <div class="btn btn-success arrow" ng-click="prevVersion()" ng-disabled="interestingAbility.variant===1"><i class="glyphicon glyphicon-chevron-left"></i></div>
-                                                <div class="ability-slot" ng-style="{'background-image': interestingAbility.icon(), 'background-color' : getAbilityColor(interestingAbility)}"></div>
+                                                <div class="ability-slot icon" ng-style="{'background-image': interestingAbility.icon(), 'background-color' : getAbilityColor(interestingAbility)}"></div>
                                                 <div class="btn btn-success arrow" ng-click="nextVersion()" ng-disabled="interestingAbility.variant===5"><i class="glyphicon glyphicon-chevron-right"></i></div>
                                             </div>
                                         </div>
@@ -74,15 +74,15 @@
                                 <div class="ability-book">
                                     <div class="ability-filter">
                                         <div class="btn-group">
-                                            <button class="btn btn-sm show-all" uib-btn-radio="'all'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('all')"></button>
-                                            <button class="btn btn-sm sentinel-icon" uib-btn-radio="'sentinel'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('sentinel')" ng-hide="char.race=='cambion'"></button>
-                                            <button class="btn btn-sm slayer-icon" uib-btn-radio="'slayer'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('slayer')" ng-hide="char.race=='nephilim'"></button>
-                                            <button class="btn btn-sm redeemer-icon" uib-btn-radio="'redeemer'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('redeemer')" ng-hide="char.race=='cambion'"></button>
-                                            <button class="btn btn-sm ripper-icon" uib-btn-radio="'ripper'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('ripper')" ng-hide="char.race=='nephilim'"></button>
-                                            <button class="btn btn-sm prophet-icon" uib-btn-radio="'prophet'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('prophet')" ng-hide="char.race=='cambion'"></button>
-                                            <button class="btn btn-sm malefic-icon" uib-btn-radio="'malefic'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('malefic')" ng-hide="char.race=='nephilim'"></button>
-                                            <button class="btn btn-sm cleric-icon" uib-btn-radio="'cleric'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('cleric')" ng-hide="char.race=='cambion'" ng-class="{'nephilim':char.race==='nephilim'}"></button>
-                                            <button class="btn btn-sm heretic-icon" uib-btn-radio="'heretic'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('heretic')" ng-hide="char.race=='nephilim'"></button>
+                                            <button class="btn btn-sm show-all icon" uib-btn-radio="'all'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('all')"></button>
+                                            <button class="btn btn-sm sentinel-icon icon" uib-btn-radio="'sentinel'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('sentinel')" ng-hide="char.race=='cambion'"></button>
+                                            <button class="btn btn-sm slayer-icon icon" uib-btn-radio="'slayer'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('slayer')" ng-hide="char.race=='nephilim'"></button>
+                                            <button class="btn btn-sm redeemer-icon icon" uib-btn-radio="'redeemer'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('redeemer')" ng-hide="char.race=='cambion'"></button>
+                                            <button class="btn btn-sm ripper-icon icon" uib-btn-radio="'ripper'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('ripper')" ng-hide="char.race=='nephilim'"></button>
+                                            <button class="btn btn-sm prophet-icon icon" uib-btn-radio="'prophet'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('prophet')" ng-hide="char.race=='cambion'"></button>
+                                            <button class="btn btn-sm malefic-icon icon" uib-btn-radio="'malefic'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('malefic')" ng-hide="char.race=='nephilim'"></button>
+                                            <button class="btn btn-sm cleric-icon icon" uib-btn-radio="'cleric'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('cleric')" ng-hide="char.race=='cambion'" ng-class="{'nephilim':char.race==='nephilim'}"></button>
+                                            <button class="btn btn-sm heretic-icon icon" uib-btn-radio="'heretic'" ng-model="abilityFilter" ng-click="populateAbilitiesBook('heretic')" ng-hide="char.race=='nephilim'"></button>
                                         </div>
                                     </div>
                                     <div class="ability-tab customScrollBar"
@@ -90,7 +90,7 @@
                                          dnd-droppable="true"
                                          dnd-droppable-opts = "{layer: 'layer1'}"
                                          dnd-on-drop = "removeAbilityFromPanel()">
-                                        <div class="ability-icon"
+                                        <div class="ability-icon icon"
                                              ng-repeat="ability in abilitiesBook track by $index"
                                              ng-style="{'background-image': ability.icon(),
                                                         'background-color': getAbilityColor(ability)}"

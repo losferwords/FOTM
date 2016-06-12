@@ -8,15 +8,15 @@
                 <p translate>Soul shards:</p>
                 <div class="shards-container">
                     <div class="shard red-shard">
-                        <div class="icon"></div>
+                        <div class="shard-icon icon"></div>
                         <span>{{team.souls.red}}</span>
                     </div>
                     <div class="shard green-shard">
-                        <div class="icon"></div>
+                        <div class="shard-icon icon"></div>
                         <span>{{team.souls.green}}</span>
                     </div>
                     <div class="shard blue-shard">
-                        <div class="icon"></div>
+                        <div class="shard-icon icon"></div>
                         <span>{{team.souls.blue}}</span>
                     </div>
                 </div>
@@ -28,7 +28,7 @@
                     <div class="panel-body">
                         <div class="text-success" ng-if="createdChars[0]">{{::createdChars[0].charName}}</div>
                         <div class="portrait" ng-style="{'background-image': getCharPortrait(createdChars[0])}" ng-if="createdChars[0]">
-                            <div class="role-in-portrait" ng-class="[createdChars[0].role+'-icon']"></div>
+                            <div class="role-in-portrait icon" ng-class="[createdChars[0].role+'-icon']"></div>
                         </div>
                         <button class="btn btn-primary" ng-if="!createdChars[0]" ng-click="createCharClick()" ng-disabled="createCharPending" translate>Create</button>
                     </div>
@@ -37,7 +37,7 @@
                     <div class="panel-body">
                         <div class="text-success" ng-if="createdChars[1]">{{::createdChars[1].charName}}</div>
                         <div class="portrait" ng-style="{'background-image': getCharPortrait(createdChars[1])}" ng-if="createdChars[1]">
-                            <div class="role-in-portrait" ng-class="[createdChars[1].role+'-icon']"></div>
+                            <div class="role-in-portrait icon" ng-class="[createdChars[1].role+'-icon']"></div>
                         </div>
                         <button class="btn btn-primary" ng-if="!createdChars[1]" ng-click="createCharClick()" ng-disabled="!createdChars[0] || createCharPending" translate>Create</button>
                     </div>
@@ -46,7 +46,7 @@
                     <div class="panel-body">
                         <div class="text-success" ng-if="createdChars[2]">{{::createdChars[2].charName}}</div>
                         <div class="portrait" ng-style="{'background-image': getCharPortrait(createdChars[2])}" ng-if="createdChars[2]">
-                            <div class="role-in-portrait" ng-class="[createdChars[2].role+'-icon']"></div>
+                            <div class="role-in-portrait icon" ng-class="[createdChars[2].role+'-icon']"></div>
                         </div>
                         <button class="btn btn-primary" ng-if="!createdChars[2]" ng-click="createCharClick()" ng-disabled="!createdChars[1] || createCharPending" translate>Create</button>
                     </div>

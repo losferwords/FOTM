@@ -740,9 +740,16 @@
     //После загрузки контроллера проверяем, загрузился ли контроллер у противника
     $scope.$on('$routeChangeSuccess', function () {
         //Музыка
-        soundService.getMusicObj().cityAmbience.pause();
-        soundService.chooseAmbient($rootScope.currentBattle.groundType);
+        if(soundService.getMusicObj().cityMusic){
+            soundService.getMusicObj().cityMusic.pause();
+        }
+        if(!soundService.getMusicObj().battleMusic || soundService.getMusicObj().battleMusic.paused){
+            soundService.chooseAmbient($rootScope.currentBattle.groundType);
+            soundService.initMusic('battle');
+        }
+
         soundService.loadSounds(); //Загружаем все необходимые для боя звуки
+
         chatService.clearMessages('arena');
         $scope.opponentWaiting=true;
 
@@ -756,6 +763,17 @@
                 $rootScope.showInfoMessage(gettextCatalog.getString("Your enemy not ready to battle"));
             }
         },1000);
+    });
+
+    $scope.$watch(function(){
+        if(soundService.getMusicObj().battleMusic) {
+            return soundService.getMusicObj().battleMusic.progress
+        }
+    }, function(newVal){
+        if(newVal>=1){
+            soundService.getMusicObj().battleMusic.pause();
+            soundService.nextTrack('battle');
+        }
     });
 
     //Если противник готов, начинаем первый ход
@@ -1148,7 +1166,7 @@
                                 var isCritical = "";
                                 if(buf[buf.length-1].crit) isCritical="crit";
 
-                                element.append("<div class='battle-text-cont child_"+childCount+" "+isCritical+"'><div class='battle-text-icon' style='background-image: "+buf[buf.length-1].icon+"; background-color: "+buf[buf.length-1].color+"'></div><span style='color: "+getTextTypeColor(buf[buf.length-1].type)+"'>"+buf[buf.length-1].text+"</span></div>");
+                                element.append("<div class='battle-text-cont child_"+childCount+" "+isCritical+"'><div class='battle-text-icon icon' style='background-image: "+buf[buf.length-1].icon+"; background-color: "+buf[buf.length-1].color+"'></div><span style='color: "+getTextTypeColor(buf[buf.length-1].type)+"'>"+buf[buf.length-1].text+"</span></div>");
                                 $timeout(function(){
                                     var childName='.battle-text-cont.child_'+childCount;
                                     createdElements.push(element.find(childName));

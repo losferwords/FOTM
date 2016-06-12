@@ -20,8 +20,8 @@
                                     <label class="control-label text-success form-left" translate>Gender</label>
                                     <div class="text-center form-right">
                                         <div class="btn-group">
-                                            <div class="btn btn-primary icon-small" ng-model="characterObj.gender" uib-btn-radio="'male'" ng-style="{'background-image':'url(./images/icons/interface/male.svg)'}" tooltip-placement="left" uib-tooltip="{{'Male' |translate}}" tooltip-append-to-body="true"></div>
-                                            <div class="btn btn-primary icon-small" ng-model="characterObj.gender" uib-btn-radio="'female'" ng-style="{'background-image':'url(./images/icons/interface/female.svg)'}" tooltip-placement="right" uib-tooltip="{{'Female' |translate}}" tooltip-append-to-body="true"></div>
+                                            <div class="btn btn-primary icon-small icon" ng-model="characterObj.gender" uib-btn-radio="'male'" ng-style="{'background-image':'url(../images/assets/svg/view/sprites.svg#interface--male)'}" tooltip-placement="left" uib-tooltip="{{'Male' |translate}}" tooltip-append-to-body="true"></div>
+                                            <div class="btn btn-primary icon-small icon" ng-model="characterObj.gender" uib-btn-radio="'female'" ng-style="{'background-image':'url(../images/assets/svg/view/sprites.svg#interface--female)'}" tooltip-placement="right" uib-tooltip="{{'Female' |translate}}" tooltip-append-to-body="true"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -37,15 +37,15 @@
                                     <label class="control-label text-success form-left" translate>Role</label>
                                     <div class="text-center form-right">
                                         <div class="btn-group">
-                                            <div class="btn btn-default icon-role icon-random" ng-model="characterObj.role" uib-btn-radio="'random'" ng-style="{'background-image':'url(./images/icons/interface/random.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Random' |translate}}" tooltip-append-to-body="true"></div>
-                                            <div class="btn btn-default icon-role icon-sentinel" ng-model="characterObj.role" uib-btn-radio="'sentinel'" ng-style="{'background-image':'url(./images/icons/roles/sentinel.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Sentinel' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='cambion'"></div>
-                                            <div class="btn btn-default icon-role icon-slayer" ng-model="characterObj.role" uib-btn-radio="'slayer'" ng-style="{'background-image':'url(./images/icons/roles/slayer.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Slayer' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='nephilim'"></div>
-                                            <div class="btn btn-default icon-role icon-redeemer" ng-model="characterObj.role" uib-btn-radio="'redeemer'" ng-style="{'background-image':'url(./images/icons/roles/redeemer.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Redeemer' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='cambion'"></div>
-                                            <div class="btn btn-default icon-role icon-ripper" ng-model="characterObj.role" uib-btn-radio="'ripper'" ng-style="{'background-image':'url(./images/icons/roles/ripper.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Ripper' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='nephilim'"></div>
-                                            <div class="btn btn-default icon-role icon-prophet" ng-model="characterObj.role" uib-btn-radio="'prophet'" ng-style="{'background-image':'url(./images/icons/roles/prophet.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Prophet' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='cambion'"></div>
-                                            <div class="btn btn-default icon-role icon-malefic" ng-model="characterObj.role" uib-btn-radio="'malefic'" ng-style="{'background-image':'url(./images/icons/roles/malefic.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Malefic' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='nephilim'"></div>
-                                            <div class="btn btn-default icon-role icon-cleric" ng-model="characterObj.role" uib-btn-radio="'cleric'" ng-style="{'background-image':'url(./images/icons/roles/cleric.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Cleric' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='cambion'"></div>
-                                            <div class="btn btn-default icon-role icon-heretic" ng-model="characterObj.role" uib-btn-radio="'heretic'" ng-style="{'background-image':'url(./images/icons/roles/heretic.svg)'}" tooltip-placement="bottom" uib-tooltip="{{'Heretic' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='nephilim'"></div>
+                                            <div class="btn btn-default icon-role icon-random icon" ng-model="characterObj.role" uib-btn-radio="'random'" ng-style="{'background-image':'url(../images/assets/svg/view/sprites.svg#interface--random)'}" tooltip-placement="bottom" uib-tooltip="{{'Random' |translate}}" tooltip-append-to-body="true"></div>
+                                            <div class="btn btn-default icon-role icon-sentinel icon" ng-model="characterObj.role" uib-btn-radio="'sentinel'" ng-style="{'background-image':'url(../images/assets/svg/view/sprites.svg#roles--sentinel)'}" tooltip-placement="bottom" uib-tooltip="{{'Sentinel' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='cambion'"></div>
+                                            <div class="btn btn-default icon-role icon-slayer icon" ng-model="characterObj.role" uib-btn-radio="'slayer'" ng-style="{'background-image':'url(../images/assets/svg/view/sprites.svg#roles--slayer)'}" tooltip-placement="bottom" uib-tooltip="{{'Slayer' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='nephilim'"></div>
+                                            <div class="btn btn-default icon-role icon-redeemer icon" ng-model="characterObj.role" uib-btn-radio="'redeemer'" ng-style="{'background-image':'url(../images/assets/svg/view/sprites.svg#roles--redeemer)'}" tooltip-placement="bottom" uib-tooltip="{{'Redeemer' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='cambion'"></div>
+                                            <div class="btn btn-default icon-role icon-ripper icon" ng-model="characterObj.role" uib-btn-radio="'ripper'" ng-style="{'background-image':'url(../images/assets/svg/view/sprites.svg#roles--ripper)'}" tooltip-placement="bottom" uib-tooltip="{{'Ripper' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='nephilim'"></div>
+                                            <div class="btn btn-default icon-role icon-prophet icon" ng-model="characterObj.role" uib-btn-radio="'prophet'" ng-style="{'background-image':'url(../images/assets/svg/view/sprites.svg#roles--prophet)'}" tooltip-placement="bottom" uib-tooltip="{{'Prophet' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='cambion'"></div>
+                                            <div class="btn btn-default icon-role icon-malefic icon" ng-model="characterObj.role" uib-btn-radio="'malefic'" ng-style="{'background-image':'url(../images/assets/svg/view/sprites.svg#roles--malefic)'}" tooltip-placement="bottom" uib-tooltip="{{'Malefic' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='nephilim'"></div>
+                                            <div class="btn btn-default icon-role icon-cleric icon" ng-model="characterObj.role" uib-btn-radio="'cleric'" ng-style="{'background-image':'url(../images/assets/svg/view/sprites.svg#roles--cleric)'}" tooltip-placement="bottom" uib-tooltip="{{'Cleric' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='cambion'"></div>
+                                            <div class="btn btn-default icon-role icon-heretic icon" ng-model="characterObj.role" uib-btn-radio="'heretic'" ng-style="{'background-image':'url(../images/assets/svg/view/sprites.svg#roles--heretic)'}" tooltip-placement="bottom" uib-tooltip="{{'Heretic' |translate}}" tooltip-append-to-body="true" ng-hide="characterObj.race=='nephilim'"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -54,15 +54,15 @@
                                     <div class="text-center form-right">
                                         <div class="shards-container shards-cost">
                                             <div class="shard red-shard">
-                                                <div class="icon"></div>
+                                                <div class="shard-icon icon"></div>
                                                 <span ng-class="{'not-enough': (teamSouls.red-roleCost.red)<0}">{{roleCost.red}}</span>
                                             </div>
                                             <div class="shard green-shard">
-                                                <div class="icon"></div>
+                                                <div class="shard-icon icon"></div>
                                                 <span ng-class="{'not-enough': (teamSouls.green-roleCost.green)<0}">{{roleCost.green}}</span>
                                             </div>
                                             <div class="shard blue-shard">
-                                                <div class="icon"></div>
+                                                <div class="shard-icon icon"></div>
                                                 <span ng-class="{'not-enough': (teamSouls.blue-roleCost.blue)<0}">{{roleCost.blue}}</span>
                                             </div>
                                         </div>
@@ -73,15 +73,15 @@
                                     <div class="text-center form-right">
                                         <div class="shards-container shards-cost">
                                             <div class="shard red-shard">
-                                                <div class="icon"></div>
+                                                <div class="shard-icon icon"></div>
                                                 <span>{{teamSouls.red}}</span>
                                             </div>
                                             <div class="shard green-shard">
-                                                <div class="icon"></div>
+                                                <div class="shard-icon icon"></div>
                                                 <span>{{teamSouls.green}}</span>
                                             </div>
                                             <div class="shard blue-shard">
-                                                <div class="icon"></div>
+                                                <div class="shard-icon icon"></div>
                                                 <span>{{teamSouls.blue}}</span>
                                             </div>
                                         </div>

@@ -1,0 +1,91 @@
+/* MD------------------------------------------------------*/
+
+@media (min-width: 992px) and (max-width: 1200px) {
+
+    .create-char-form .form-left {
+        width: 30%;
+        margin-right: 2%;
+    }
+
+    .create-char-form .form-left.smaller {
+        font-size: 11px;
+    }
+
+    .create-char-form .form-right {
+        width: 65%;
+    }
+
+    .shards-cost.shards-container .shard span {
+        width: 45px;
+    }
+
+    .icon-role {
+        width: 26px;
+        height: 26px;
+    }
+
+    .team_creation .portrait {
+        width: 112px;
+        height: 112px;
+    }
+
+    .abilitiesInfo .options {
+        margin-right: 74px;
+    }
+
+    .inventory .content-right {
+        width: 224px;
+    }
+
+    .inventory .portrait {
+        width: 48px;
+        height: 48px;
+        margin-right: 5px;
+    }
+
+    .inventory .char-desc {
+        width: 120px;
+    }
+
+    .inventory .char-desc-panel .panel-body {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+
+    .battleScreen .my-team-info,
+    .battleScreen .enemy-team-info {
+        width: 300px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .battleScreen .center-info {
+        width: 340px;
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .battleScreen .char-panel .portrait {
+        width: 48px;
+        height: 48px;
+        margin-right: 5px;
+    }
+
+    .battleScreen .char-panel .portrait .role-in-portrait {
+        width: 16px;
+        height: 16px;
+    }
+
+    .battleScreen .char-panel .char-info {
+        width: 190px;
+    }
+
+    .battleScreen .progress-bar span {
+        width: 190px;
+    }
+
+    .loader {
+        right: 8px;
+    }
+
+}

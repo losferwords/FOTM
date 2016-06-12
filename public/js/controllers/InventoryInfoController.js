@@ -17,15 +17,15 @@
             if($scope.inventory[i].name!=="Void"){
                 switch($scope.inventory[i].color){
                     case "red":
-                        $scope.inventory[i].image = function() { return 'url(../images/icons/inventory/rupee.svg)'};
+                        $scope.inventory[i].image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--rupee)'};
                         $scope.inventory[i].bgColor = function() {return "#cc0000"};
                         break;
                     case "green":
-                        $scope.inventory[i].image = function() { return 'url(../images/icons/inventory/emerald.svg)'};
+                        $scope.inventory[i].image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--emerald)'};
                         $scope.inventory[i].bgColor = function() {return "#77b300"};
                         break;
                     case "blue":
-                        $scope.inventory[i].image = function() { return 'url(../images/icons/inventory/saphir.svg)'};
+                        $scope.inventory[i].image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--saphir)'};
                         $scope.inventory[i].bgColor = function() {return "#2a9fd6"};
                         break;
                 }
@@ -144,7 +144,7 @@
 
     //Функция устанавливает картинку для сокета
     $scope.getSocketImage = function(socket) {
-        if(socket.gem=="Void") return 'url(../images/icons/inventory/cut-diamond.svg)';
+        if(socket.gem=="Void") return 'url(../images/assets/svg/view/sprites.svg#inventory--cut-diamond)';
         return socket.gem.image;
     };
 
@@ -356,9 +356,9 @@
         $scope.newSoul.delta=delta;
 
         switch($scope.dragGem.color){
-            case 'red': $scope.newSoul.image = 'url(../images/icons/inventory/crystal-shine-red.svg)';break;
-            case 'green': $scope.newSoul.image = 'url(../images/icons/inventory/crystal-shine-green.svg)';break;
-            case 'blue': $scope.newSoul.image = 'url(../images/icons/inventory/crystal-shine-blue.svg)';break;
+            case 'red': $scope.newSoul.image = 'url(../images/assets/svg/view/sprites.svg#inventory--crystal-shine-red)';break;
+            case 'green': $scope.newSoul.image = 'url(../images/assets/svg/view/sprites.svg#inventory--crystal-shine-green)';break;
+            case 'blue': $scope.newSoul.image = 'url(../images/assets/svg/view/sprites.svg#inventory--crystal-shine-blue)';break;
         }
 
         $scope.dragGem=undefined;
@@ -524,7 +524,7 @@
 
         switch(newGem.color){
             case 'red':
-            newGem.image = function() { return 'url(../images/icons/inventory/rupee.svg)'};
+            newGem.image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--rupee)'};
             newGem.bgColor=function() { return "#cc0000"};
             switch(Math.floor(Math.random() * 6)){
                 case 0:
@@ -560,7 +560,7 @@
             }
             break;
             case 'green':
-                newGem.image = function() { return 'url(../images/icons/inventory/emerald.svg)'};
+                newGem.image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--emerald)'};
                 newGem.bgColor=function() { return "#77b300"};
                 switch(Math.floor(Math.random() * 6)){
                     case 0:
@@ -596,7 +596,7 @@
                 }
                 break;
             case 'blue':
-                newGem.image = function() { return 'url(../images/icons/inventory/saphir.svg)'};
+                newGem.image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--saphir)'};
                 newGem.bgColor= function() {return "#2a9fd6"};
                 switch(Math.floor(Math.random() * 6)){
                     case 0:
@@ -652,7 +652,7 @@
 
         switch(newGem.color){
             case 'red':
-                newGem.image = function(){return 'url(../images/icons/inventory/rupee.svg)'};
+                newGem.image = function(){return 'url(../images/assets/svg/view/sprites.svg#inventory--rupee)'};
                 newGem.bgColor=function(){return "#cc0000"};
                 switch(Math.floor(Math.random() * 6)){
                     case 0:
@@ -688,7 +688,7 @@
                 }
                 break;
             case 'green':
-                newGem.image = function(){return 'url(../images/icons/inventory/emerald.svg)'};
+                newGem.image = function(){return 'url(../images/assets/svg/view/sprites.svg#inventory--emerald)'};
                 newGem.bgColor=function(){return "#77b300"};
                 switch(Math.floor(Math.random() * 6)){
                     case 0:
@@ -724,7 +724,7 @@
                 }
                 break;
             case 'blue':
-                newGem.image = function(){return 'url(../images/icons/inventory/saphir.svg)'};
+                newGem.image = function(){return 'url(../images/assets/svg/view/sprites.svg#inventory--saphir)'};
                 newGem.bgColor=function(){return "#2a9fd6"};
                 switch(Math.floor(Math.random() * 6)){
                     case 0:

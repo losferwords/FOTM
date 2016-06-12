@@ -1,0 +1,267 @@
+/* XS-------------------------------------------- */
+
+@media (max-width: 768px) {
+
+    body {
+        font-size: 12px;
+    }
+
+    .container {
+        width: 360px;
+    }
+
+    .well {
+        padding: 5px;
+    }
+
+    .btn {
+        font-size: 12px;
+    }
+
+    .form-control {
+        font-size: 12px;
+    }
+
+    .form-horizontal .form-group {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    label {
+        height: 38px;
+        line-height: 38px;
+        margin-bottom: 0;
+    }
+
+    .panel {
+        margin-bottom: 5px;
+    }
+
+    .panel-body {
+        padding: 5px;
+    }
+
+    .panel-title {
+        font-size: 14px;
+    }
+
+    .online-text {
+        width: 120px;
+        display: inline-block;
+    }
+
+    .language-btn {
+        width: 14px;
+        height: 8px;
+        margin-left: 2px;
+    }
+
+    .language-btn img {
+        width: 14px;
+        height: 8px;
+    }
+
+    .mute-btn {
+        padding: 3px 5px;
+        margin-left: 0;
+    }
+
+    .create-char-form .form-left {
+        width: 30%;
+        margin-right: 1%;
+    }
+
+    .create-char-form .form-left.smaller {
+        font-size: 10px;
+    }
+
+    .create-char-form .form-right {
+        width: 65%;
+    }
+
+    .shards-cost.shards-container .shard span {
+        width: 32px;
+    }
+
+    .icon-role {
+        width: 21px;
+        height: 21px;
+    }
+
+    .city .portrait {
+        width: 60px;
+        height: 60px;
+    }
+
+    .city .portrait .role-in-portrait {
+        width: 24px;
+        height: 24px;
+    }
+
+    .city .btn-group-vertical {
+        font-size: 11px;
+    }
+
+    .city .panel .btn-group-char-options {
+        margin-top: 37px;
+    }
+
+    .charInfo .char-desc-panel {
+        width: 100%;
+        height: 77px;
+        display: block;
+    }
+
+    .charInfo .portrait {
+        margin-right: 5px;
+    }
+
+    .charInfo .char-desc {
+        width: 210px;
+    }
+
+    .charInfo .panel-triangle p.title {
+        margin-bottom: 18px;
+    }
+
+    .charInfo .panel-triangle {
+        width: 100%;
+        display: block;
+        height: 290px;
+    }
+
+    .charInfo .panel-triangle .left,
+    .charInfo .panel-triangle .right {
+        width: 100%;
+        display: block;
+    }
+
+    .charInfo .triangle-container {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .charInfo .panel-triangle .str {
+        top: 167px;
+        left: 41px;
+    }
+
+    .charInfo .panel-triangle .dxt {
+        top: 30px;
+        left: 139px;
+    }
+
+    .charInfo .panel-triangle .int {
+        top: 167px;
+        left: 237px
+    }
+
+    .charInfo .panel-triangle .right {
+        margin-top: 10px;
+    }
+
+    .charInfo .stats {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+
+    .abilitiesInfo .char-desc-panel {
+        width: 100%;
+        display: block;
+        margin-right: 0;
+        height: 188px;
+        margin-bottom: 5px;
+    }
+
+    .abilitiesInfo .ability-slot {
+        width: 42px;
+        height: 42px;
+    }
+
+    .abilitiesInfo .ability-switch {
+        width: 48px;
+        height: 48px;
+    }
+
+    .abilitiesInfo .ability-tune {
+        width: 100%;
+        display: block;
+        height: 300px;
+    }
+
+    .abilitiesInfo .ability-tune .description span {
+        font-size: 10px;
+    }
+
+    .abilitiesInfo .hidden-on-xs {
+        display: none;
+    }
+
+    .abilitiesInfo .ability-book {
+        float: none;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .ability-tab {
+        width: 306px;
+        height: 128px;
+    }
+
+    .ability-tab .ability-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .abilitiesInfo .options {
+        margin-top: 5px;
+        margin-right: auto;
+        margin-left: auto;
+        float: none;
+    }
+
+    .abilitiesInfo .stats {
+        margin-bottom: 5px;
+    }
+
+    .inventory .content-left {
+        width: 100%;
+        margin-right: auto;
+        margin-left: auto;
+        display: block;
+    }
+
+    .inventory .content-right {
+        width: 100%;
+        display: block;
+    }
+
+    .inventory .char-desc-panel {
+        width: 100%;
+        height: 77px;
+        display: block;
+    }
+
+    .inventory .portrait {
+        margin-right: 5px;
+    }
+
+    .inventory .char-desc {
+        width: 210px;
+    }
+
+    .battleScreen .my-team-info,
+    .battleScreen .center-info,
+    .battleScreen .enemy-team-info {
+        width: 345px;
+        padding-left: 0;
+        padding-right: 0;
+        display: block;
+    }
+
+}

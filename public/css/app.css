@@ -26,6 +26,12 @@ body {
   outline: none;
 }
 
+.icon {
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+
 .withoutHeader {
   margin-top: 20px;
 }
@@ -121,7 +127,7 @@ form input {
   margin-bottom: 5px;
 }
 
-.top-shown-shards .shards-container .shard .icon {
+.top-shown-shards .shards-container .shard .shard-icon {
   width: 28px;
   height: 28px;
   margin: 0 auto;
@@ -182,7 +188,7 @@ form input {
   text-align: center;
 }
 
-.shards-cost.shards-container .shard .icon {
+.shards-cost.shards-container .shard .shard-icon {
   width: 20px;
   height: 20px;
   margin: 0 auto;
@@ -297,27 +303,32 @@ form input {
 }
 
 .shards-dices .dice.none {
-  background-image: url(../images/icons/interface/dice0.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#interface--dice0');
+  font-size: 0;
 }
-
 .shards-dices .dice.one {
-  background-image: url(../images/icons/interface/dice1.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#interface--dice1');
+  font-size: 1px;
 }
-
 .shards-dices .dice.two {
-  background-image: url(../images/icons/interface/dice2.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#interface--dice2');
+  font-size: 2px;
 }
 .shards-dices .dice.three {
-  background-image: url(../images/icons/interface/dice3.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#interface--dice3');
+  font-size: 3px;
 }
 .shards-dices .dice.four {
-  background-image: url(../images/icons/interface/dice4.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#interface--dice4');
+  font-size: 4px;
 }
 .shards-dices .dice.five {
-  background-image: url(../images/icons/interface/dice5.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#interface--dice5');
+  font-size: 5px;
 }
 .shards-dices .dice.six {
-  background-image: url(../images/icons/interface/dice6.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#interface--dice6');
+  font-size: 6px;
 }
 
 .resurrect-shards .shards-container {
@@ -331,7 +342,7 @@ form input {
   font-size: 10px;
 }
 
-.resurrect-shards .shards-container .shard .icon {
+.resurrect-shards .shards-container .shard .shard-icon {
   width: 20px;
   height: 20px;
   margin: 2px auto;
@@ -767,7 +778,7 @@ form input {
   display: inline-block;
   border: none;
   border-radius: 0;
-  background-image: url(../images/icons/interface/end-turn.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#interface--end-turn');
   color: #fff;
   font-size: 14px;
   width: 36px;
@@ -1347,22 +1358,22 @@ canvas {
 }
 
 .inventory .inventory-filter .show-all{
-  background-image: url(../images/icons/inventory/gems.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#inventory--gems');
   background-color: #fff;
 }
 
 .inventory .inventory-filter .show-red {
-  background-image: url(../images/icons/inventory/rupee.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#inventory--rupee');
   background-color: #cc0000;
 }
 
 .inventory .inventory-filter .show-green {
-  background-image: url(../images/icons/inventory/emerald.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#inventory--emerald');
   background-color: #77b300;
 }
 
 .inventory .inventory-filter .show-blue {
-  background-image: url(../images/icons/inventory/saphir.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#inventory--saphir');
   background-color: #2a9fd6;
 }
 
@@ -1435,7 +1446,7 @@ canvas {
   vertical-align: top;
 }
 
-.shards-container .shard .icon {
+.shards-container .shard .shard-icon {
   width: 32px;
   height: 32px;
   margin: 5px auto;
@@ -1446,18 +1457,18 @@ canvas {
   color: #fff;
 }
 
-.shards-container .red-shard .icon{
-  background-image: url(../images/icons/inventory/crystal-shine-red.svg);
+.shards-container .red-shard .shard-icon{
+  background-image: url('../images/assets/svg/view/sprites.svg#inventory--crystal-shine-red');
   background-repeat: no-repeat;
 }
 
-.shards-container .green-shard .icon{
-  background-image: url(../images/icons/inventory/crystal-shine-green.svg);
+.shards-container .green-shard .shard-icon{
+  background-image: url('../images/assets/svg/view/sprites.svg#inventory--crystal-shine-green');
   background-repeat: no-repeat;
 }
 
-.shards-container .blue-shard .icon{
-  background-image: url(../images/icons/inventory/crystal-shine-blue.svg);
+.shards-container .blue-shard .shard-icon{
+  background-image: url('../images/assets/svg/view/sprites.svg#inventory--crystal-shine-blue');
   background-repeat: no-repeat;
 }
 
@@ -1501,7 +1512,7 @@ canvas {
   width: 48px;
   height: 48px;
   margin: 5px auto 0 auto;
-  background-image: url(../images/icons/inventory/diamond-hard.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#inventory--diamond-hard');
   background-color: #999;
   border-radius: 4px;
   display: inline-block;
@@ -1519,7 +1530,7 @@ canvas {
   width: 40px;
   height: 40px;
   border-radius: 4px;
-  background-image: url(../images/icons/inventory/floating-crystal.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#inventory--floating-crystal');
   display: inline-block;
   vertical-align: top;
   margin: 0 1px;
@@ -1699,11 +1710,11 @@ canvas {
 }
 
 .abilitiesInfo .ability-switch.tune {
-  background-image: url(../images/icons/interface/gears.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#interface--gears');
 }
 
 .abilitiesInfo .ability-switch.move {
-  background-image: url(../images/icons/interface/move.svg);
+  background-image: url('../images/assets/svg/view/sprites.svg#interface--move');
 }
 
 .abilitiesInfo .ability-slot {
@@ -1765,47 +1776,47 @@ canvas {
 }
 
 .abilitiesInfo .ability-filter .show-all{
-  background-image: url(../images/icons/roles/spellbook.svg) !important;
+  background-image: url('../images/assets/svg/view/sprites.svg#roles--spellbook') !important;
   background-color: #ccc;
 }
 
 .sentinel-icon {
-  background-image: url(../images/icons/roles/sentinel.svg) !important;
+  background-image: url('../images/assets/svg/view/sprites.svg#roles--sentinel') !important;
   background-color: #f7f7f7;
 }
 
 .slayer-icon {
-  background-image: url(../images/icons/roles/slayer.svg) !important;
+  background-image: url('../images/assets/svg/view/sprites.svg#roles--slayer') !important;
   background-color: #ff0906;
 }
 
 .redeemer-icon {
-  background-image: url(../images/icons/roles/redeemer.svg) !important;
+  background-image: url('../images/assets/svg/view/sprites.svg#roles--redeemer') !important;
   background-color: #0055AF;
 }
 
 .ripper-icon {
-  background-image: url(../images/icons/roles/ripper.svg) !important;
+  background-image: url('../images/assets/svg/view/sprites.svg#roles--ripper') !important;
   background-color: #61dd45;
 }
 
 .prophet-icon {
-  background-image: url(../images/icons/roles/prophet.svg) !important;
+  background-image: url('../images/assets/svg/view/sprites.svg#roles--prophet') !important;
   background-color: #00b3ee;
 }
 
 .malefic-icon {
-  background-image: url(../images/icons/roles/malefic.svg) !important;
+  background-image: url('../images/assets/svg/view/sprites.svg#roles--malefic') !important;
   background-color: #f05800;
 }
 
 .cleric-icon {
-  background-image: url(../images/icons/roles/cleric.svg) !important;
+  background-image: url('../images/assets/svg/view/sprites.svg#roles--cleric') !important;
   background-color: #ffc520;
 }
 
 .heretic-icon {
-  background-image: url(../images/icons/roles/heretic.svg) !important;
+  background-image: url('../images/assets/svg/view/sprites.svg#roles--heretic') !important;
   background-color: #862197;
 }
 
@@ -2061,525 +2072,3 @@ canvas {
 .chat-box .chat-sender {
   cursor: pointer;
 }
-
-/* MD------------------------------------------------------*/
-
-@media (min-width: 992px) and (max-width: 1200px) {
-
-  .create-char-form .form-left {
-    width: 30%;
-    margin-right: 2%;
-  }
-
-  .create-char-form .form-left.smaller {
-    font-size: 11px;
-  }
-
-  .create-char-form .form-right {
-    width: 65%;
-  }
-
-  .shards-cost.shards-container .shard span {
-    width: 45px;
-  }
-
-  .icon-role {
-    width: 26px;
-    height: 26px;
-  }
-
-  .team_creation .portrait {
-    width: 112px;
-    height: 112px;
-  }
-
-  .abilitiesInfo .options {
-    margin-right: 74px;
-  }
-
-  .inventory .content-right {
-    width: 224px;
-  }
-
-  .inventory .portrait {
-    width: 48px;
-    height: 48px;
-    margin-right: 5px;
-  }
-
-  .inventory .char-desc {
-    width: 120px;
-  }
-
-  .inventory .char-desc-panel .panel-body {
-    padding-right: 5px;
-    padding-left: 5px;
-  }
-
-  .battleScreen .my-team-info,
-  .battleScreen .enemy-team-info {
-    width: 300px;
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-
-  .battleScreen .center-info {
-    width: 340px;
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-
-  .battleScreen .char-panel .portrait {
-    width: 48px;
-    height: 48px;
-    margin-right: 5px;
-  }
-
-  .battleScreen .char-panel .portrait .role-in-portrait {
-    width: 16px;
-    height: 16px;
-  }
-
-  .battleScreen .char-panel .char-info {
-    width: 190px;
-  }
-
-  .battleScreen .progress-bar span {
-    width: 190px;
-  }
-
-  .loader {
-    right: 8px;
-  }
-
-}
-
-/* SM------------------------------------------------------*/
-
-@media (min-width: 768px) and (max-width: 992px) {
-  .panel-body {
-    padding: 10px;
-  }
-
-  .form-horizontal .form-group {
-    margin-left: -10px;
-    margin-right: -10px;
-  }
-
-  .form-group {
-    margin-bottom: 10px;
-  }
-
-  .create-char-form .form-left {
-    width: 30%;
-    margin-right: 1%;
-  }
-
-  .create-char-form .form-left.smaller {
-    font-size: 10px;
-  }
-
-  .create-char-form .form-right {
-    width: 65%;
-  }
-
-  .shards-cost.shards-container .shard span {
-    width: 32px;
-  }
-
-  .icon-role {
-    width: 24px;
-    height: 24px;
-  }
-
-  .team_creation .portrait {
-    width: 90px;
-    height: 90px;
-  }
-
-  .charInfo .char-desc {
-    width: 170px;
-  }
-
-  .abilitiesInfo .ability-slot {
-    width: 42px;
-    height: 42px;
-  }
-
-  .ability-tab {
-    width: 528px;
-    height: 128px;
-  }
-
-  .ability-tab .ability-icon {
-    width: 42px;
-    height: 42px;
-  }
-
-  .abilitiesInfo .ability-book {
-    margin-left: 30px;
-  }
-
-  .abilitiesInfo .options {
-    margin-right: 17px;
-  }
-
-  .inventory .char-desc-panel {
-    height: 125px;
-  }
-
-  .inventory .content-right {
-    width: 100%;
-    display: block;
-    font-size: 12px;
-  }
-
-  .inventory .char-desc-panel .panel-body {
-    padding-right: 5px;
-    padding-left: 5px;
-  }
-
-  .inventory .portrait {
-    width: 42px;
-    height: 42px;
-    margin-right: 5px;
-  }
-
-  .inventory .char-desc {
-    width: 81px;
-    font-size: 10px;
-  }
-
-  .battleScreen .panel-body {
-    padding: 3px;
-  }
-
-  .battleScreen .my-team-info,
-  .battleScreen .enemy-team-info {
-    width: 199px;
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-
-  .battleScreen .center-info {
-    width: 330px;
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-
-  .battleScreen .char-panel .portrait {
-    width: 32px;
-    height: 32px;
-    margin-right: 5px;
-  }
-
-  .battleScreen .char-panel .portrait .role-in-portrait {
-    width: 12px;
-    height: 12px;
-  }
-
-  .battleScreen .char-panel .char-info {
-    width: 120px;
-  }
-
-  .battleScreen .progress-bar span {
-    width: 120px;
-  }
-
-  .battleScreen .ability-group {
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .battleScreen .ability-wrapper {
-    width: 24px;
-    height: 24px;
-  }
-
-  .battleScreen .ability-icon {
-    width: 24px;
-    height: 24px;
-  }
-
-  .battleScreen .ability-icon span {
-    font-size: 12px;
-    line-height: 24px;
-  }
-
-  .loader {
-    right: 8px;
-  }
-
-  .battleScreen .buff-icon {
-    width: 24px;
-    height: 24px;
-  }
-
-}
-
-@media (max-width: 768px) {
-
-  body {
-    font-size: 12px;
-  }
-
-  .container {
-    width: 360px;
-  }
-
-  .well {
-    padding: 5px;
-  }
-
-  .btn {
-    font-size: 12px;
-  }
-
-  .form-control {
-    font-size: 12px;
-  }
-
-  .form-horizontal .form-group {
-    margin-left: -5px;
-    margin-right: -5px;
-  }
-
-  .form-group {
-    margin-bottom: 10px;
-  }
-
-  label {
-    height: 38px;
-    line-height: 38px;
-    margin-bottom: 0;
-  }
-
-  .panel {
-    margin-bottom: 5px;
-  }
-
-  .panel-body {
-    padding: 5px;
-  }
-
-  .panel-title {
-    font-size: 14px;
-  }
-
-  .online-text {
-    width: 120px;
-    display: inline-block;
-  }
-
-  .language-btn {
-    width: 14px;
-    height: 8px;
-    margin-left: 2px;
-  }
-
-  .language-btn img {
-    width: 14px;
-    height: 8px;
-  }
-
-  .mute-btn {
-    padding: 3px 5px;
-    margin-left: 0;
-  }
-
-  .create-char-form .form-left {
-    width: 30%;
-    margin-right: 1%;
-  }
-
-  .create-char-form .form-left.smaller {
-    font-size: 10px;
-  }
-
-  .create-char-form .form-right {
-    width: 65%;
-  }
-
-  .shards-cost.shards-container .shard span {
-    width: 32px;
-  }
-
-  .icon-role {
-    width: 21px;
-    height: 21px;
-  }
-
-  .city .portrait {
-    width: 60px;
-    height: 60px;
-  }
-
-  .city .portrait .role-in-portrait {
-    width: 24px;
-    height: 24px;
-  }
-
-  .city .btn-group-vertical {
-    font-size: 11px;
-  }
-
-  .city .panel .btn-group-char-options {
-    margin-top: 37px;
-  }
-
-  .charInfo .char-desc-panel {
-    width: 100%;
-    height: 77px;
-    display: block;
-  }
-
-  .charInfo .portrait {
-    margin-right: 5px;
-  }
-
-  .charInfo .char-desc {
-    width: 210px;
-  }
-
-  .charInfo .panel-triangle p.title {
-    margin-bottom: 18px;
-  }
-
-  .charInfo .panel-triangle {
-    width: 100%;
-    display: block;
-    height: 290px;
-  }
-
-  .charInfo .panel-triangle .left,
-  .charInfo .panel-triangle .right {
-    width: 100%;
-    display: block;
-  }
-
-  .charInfo .triangle-container {
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .charInfo .panel-triangle .str {
-    top: 167px;
-    left: 41px;
-  }
-
-  .charInfo .panel-triangle .dxt {
-    top: 30px;
-    left: 139px;
-  }
-
-  .charInfo .panel-triangle .int {
-    top: 167px;
-    left: 237px
-  }
-
-  .charInfo .panel-triangle .right {
-    margin-top: 10px;
-  }
-
-  .charInfo .stats {
-    width: 100%;
-    margin-right: 0;
-    margin-bottom: 5px;
-  }
-
-  .abilitiesInfo .char-desc-panel {
-    width: 100%;
-    display: block;
-    margin-right: 0;
-    height: 188px;
-    margin-bottom: 5px;
-  }
-
-  .abilitiesInfo .ability-slot {
-    width: 42px;
-    height: 42px;
-  }
-
-  .abilitiesInfo .ability-switch {
-    width: 48px;
-    height: 48px;
-  }
-
-  .abilitiesInfo .ability-tune {
-    width: 100%;
-    display: block;
-    height: 300px;
-  }
-
-  .abilitiesInfo .ability-tune .description span {
-    font-size: 10px;
-  }
-
-  .abilitiesInfo .hidden-on-xs {
-    display: none;
-  }
-
-  .abilitiesInfo .ability-book {
-    float: none;
-    margin-right: auto;
-    margin-left: auto;
-  }
-
-  .ability-tab {
-    width: 306px;
-    height: 128px;
-  }
-
-  .ability-tab .ability-icon {
-    width: 42px;
-    height: 42px;
-  }
-
-  .abilitiesInfo .options {
-    margin-top: 5px;
-    margin-right: auto;
-    margin-left: auto;
-    float: none;
-  }
-
-  .abilitiesInfo .stats {
-    margin-bottom: 5px;
-  }
-
-  .inventory .content-left {
-    width: 100%;
-    margin-right: auto;
-    margin-left: auto;
-    display: block;
-  }
-
-  .inventory .content-right {
-    width: 100%;
-    display: block;
-  }
-
-  .inventory .char-desc-panel {
-    width: 100%;
-    height: 77px;
-    display: block;
-  }
-
-  .inventory .portrait {
-    margin-right: 5px;
-  }
-
-  .inventory .char-desc {
-    width: 210px;
-  }
-
-  .battleScreen .my-team-info,
-  .battleScreen .center-info,
-  .battleScreen .enemy-team-info {
-    width: 345px;
-    padding-left: 0;
-    padding-right: 0;
-    display: block;
-  }
-
-}
-

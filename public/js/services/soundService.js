@@ -1,35 +1,35 @@
 //Сервис звуков в игре
 (function (module) {
-    module.service('soundService', function(ngAudio, $timeout) {
+    module.service('soundService', function(ngAudio, $timeout, randomService) {
         var loadedSounds = [];
         var musicObj = {};
         var soundObj = {};
         var soundEnabled = true;
         var musicEnabled = true;
+        var musicIndexArrays = {
+            city: [],
+            battle: []
+        };
 
         //Музыка
-        musicObj.cityAmbience = ngAudio.load("sounds/music/city.mp3");
-        musicObj.cityAmbience.loop = true;
-        musicObj.cityAmbience.volume=0.1;
-
         musicObj.winMusic = ngAudio.load("sounds/music/win.mp3");
-        musicObj.winMusic.volume=0.4;
+        musicObj.winMusic.volume=0.1;
 
         musicObj.loseMusic = ngAudio.load("sounds/music/lose.mp3");
-        musicObj.loseMusic.volume=0.4;
+        musicObj.loseMusic.volume=0.1;
 
         //Звуки
         soundObj.newMessage = ngAudio.load("sounds/fx/chat.mp3");
-        soundObj.newMessage.volume=0.4;
+        soundObj.newMessage.volume=0.1;
 
         soundObj.joinArena = ngAudio.load("sounds/fx/join-arena.mp3");
-        soundObj.joinArena.volume=0.5;
+        soundObj.joinArena.volume=0.1;
 
         return {
             playSound: function(name){
                 if(!this.soundEnabled) return;
                 var newSound = ngAudio.load(loadedSounds[name]);
-                newSound.volume=0.4;
+                newSound.volume=0.1;
                 newSound.play();
                 $timeout(function(){
                     newSound.destroy();
@@ -134,14 +134,72 @@
                     musicObj.battleAmbience.destroy();
                 }
                 switch(type){
-                    case 0: musicObj.battleAmbience = ngAudio.load("sounds/music/grass.mp3"); break;
-                    case 1: musicObj.battleAmbience = ngAudio.load("sounds/music/desert.mp3"); break;
-                    case 2: musicObj.battleAmbience = ngAudio.load("sounds/music/snow.mp3"); break;
+                    case 0: musicObj.battleAmbience = ngAudio.load("sounds/music/ambience/grass.mp3"); break;
+                    case 1: musicObj.battleAmbience = ngAudio.load("sounds/music/ambience/desert.mp3"); break;
+                    case 2: musicObj.battleAmbience = ngAudio.load("sounds/music/ambience/snow.mp3"); break;
                 }
                 musicObj.battleAmbience.loop=true;
-                musicObj.battleAmbience.volume=0.1;
+                musicObj.battleAmbience.volume=0.01;
                 musicObj.battleAmbience.play();
                 musicObj.battleAmbience.setMuting(!this.musicEnabled);
+            },
+            initMusic: function(area) {
+                if(area=="city"){
+                    init.call(this, "cityMusic", 4, area);
+                }
+                else if(area=="battle"){
+                    init.call(this, "battleMusic", 3, area);
+                }
+
+                function init(obj, length, area){
+                    var progression = [];
+                    for(var i=0;i<length;i++){
+                        progression.push(i);
+                    }
+                    musicIndexArrays[area] = randomService.shuffle(progression);
+                    this.playTrack.call(this, area, musicIndexArrays[area][0]);
+                }
+            },
+            nextTrack: function(area) {
+                if(area=="city"){
+                    next.call(this, 'cityMusic', area);
+                }
+                else if(area=="battle"){
+                    next.call(this, 'battleMusic', area);
+                }
+
+                function next(obj, area){
+                    var next=musicIndexArrays[area].indexOf(musicObj[obj].index);
+                    if(next==(musicIndexArrays[area].length-1)){
+                        next=0;
+                    }
+                    else {
+                        next++;
+                    }
+                    this.playTrack.call(this, area, musicIndexArrays[area][next]);
+                }
+
+            },
+            playTrack: function(area, index) {
+                if(area=="city"){
+                    play.call(this, 'cityMusic', index);
+                }
+                else if(area=="battle"){
+                    play.call(this, 'battleMusic', index);
+                }
+
+                function play(obj, index) {
+                    if(musicObj[obj]) {
+                        musicObj[obj] = undefined;
+                    }
+                    musicObj[obj] = ngAudio.load("sounds/music/"+area+"/"+area+index+".mp3");
+                    musicObj[obj].index = index;
+                    musicObj[obj].loop=false;
+                    musicObj[obj].volume=0.02;
+                    musicObj[obj].play();
+                    musicObj[obj].setMuting(!this.musicEnabled);
+                }
+
             },
             getMusicObj: function () {
                 return musicObj;

@@ -1,0 +1,162 @@
+/* SM------------------------------------------------------*/
+
+@media (min-width: 768px) and (max-width: 992px) {
+    .panel-body {
+        padding: 10px;
+    }
+
+    .form-horizontal .form-group {
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    .create-char-form .form-left {
+        width: 30%;
+        margin-right: 1%;
+    }
+
+    .create-char-form .form-left.smaller {
+        font-size: 10px;
+    }
+
+    .create-char-form .form-right {
+        width: 65%;
+    }
+
+    .shards-cost.shards-container .shard span {
+        width: 32px;
+    }
+
+    .icon-role {
+        width: 24px;
+        height: 24px;
+    }
+
+    .team_creation .portrait {
+        width: 90px;
+        height: 90px;
+    }
+
+    .charInfo .char-desc {
+        width: 170px;
+    }
+
+    .abilitiesInfo .ability-slot {
+        width: 42px;
+        height: 42px;
+    }
+
+    .ability-tab {
+        width: 528px;
+        height: 128px;
+    }
+
+    .ability-tab .ability-icon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .abilitiesInfo .ability-book {
+        margin-left: 30px;
+    }
+
+    .abilitiesInfo .options {
+        margin-right: 17px;
+    }
+
+    .inventory .char-desc-panel {
+        height: 125px;
+    }
+
+    .inventory .content-right {
+        width: 100%;
+        display: block;
+        font-size: 12px;
+    }
+
+    .inventory .char-desc-panel .panel-body {
+        padding-right: 5px;
+        padding-left: 5px;
+    }
+
+    .inventory .portrait {
+        width: 42px;
+        height: 42px;
+        margin-right: 5px;
+    }
+
+    .inventory .char-desc {
+        width: 81px;
+        font-size: 10px;
+    }
+
+    .battleScreen .panel-body {
+        padding: 3px;
+    }
+
+    .battleScreen .my-team-info,
+    .battleScreen .enemy-team-info {
+        width: 199px;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .battleScreen .center-info {
+        width: 330px;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .battleScreen .char-panel .portrait {
+        width: 32px;
+        height: 32px;
+        margin-right: 5px;
+    }
+
+    .battleScreen .char-panel .portrait .role-in-portrait {
+        width: 12px;
+        height: 12px;
+    }
+
+    .battleScreen .char-panel .char-info {
+        width: 120px;
+    }
+
+    .battleScreen .progress-bar span {
+        width: 120px;
+    }
+
+    .battleScreen .ability-group {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .battleScreen .ability-wrapper {
+        width: 24px;
+        height: 24px;
+    }
+
+    .battleScreen .ability-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .battleScreen .ability-icon span {
+        font-size: 12px;
+        line-height: 24px;
+    }
+
+    .loader {
+        right: 8px;
+    }
+
+    .battleScreen .buff-icon {
+        width: 24px;
+        height: 24px;
+    }
+
+}

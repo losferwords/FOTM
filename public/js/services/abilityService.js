@@ -11,7 +11,7 @@
                     desc: function(){
                         return "Empty";
                     },
-                    icon : function() { return "url(../images/icons/abilities/void.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--void)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         return false;
                     },
@@ -41,7 +41,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/StrongArmOfTheLaw.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--StrongArmOfTheLaw)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -88,7 +88,7 @@
                         }
 
                     },
-                    icon : function() { return "url(../images/icons/abilities/DefenderOfTheFaith.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DefenderOfTheFaith)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -147,7 +147,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/Disarm.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Disarm)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -192,7 +192,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/WalkAway.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--WalkAway)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -245,7 +245,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/Sanctuary.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Sanctuary)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -281,7 +281,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/ThePunishmentDue.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ThePunishmentDue)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -327,7 +327,7 @@
                                 one: (this.variant*20+50).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/ComeAndGetIt.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ComeAndGetIt)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -374,7 +374,7 @@
                         return gettextCatalog.getString("Cast on ally target. Removes 3 random negative effects, that cause periodic damage. Restore {{one}} health.",
                             {one: (200+this.variant*175).toFixed(0)});
                     },
-                    icon : function() { return "url(../images/icons/abilities/NewFaith.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--NewFaith)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -424,7 +424,7 @@
                                 one: (this.variant*35+100).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/DieByTheSword.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DieByTheSword)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -467,7 +467,7 @@
                                 two: (this.variant*2)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/ReignInBlood.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ReignInBlood)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -512,7 +512,7 @@
                                 two: (36-this.variant*6)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/Grinder.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Grinder)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -565,7 +565,7 @@
                                 one: (this.variant*30+50).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/FollowTheTears.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FollowTheTears)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
 
                         if(caster.immobilized){
@@ -627,7 +627,7 @@
                             });
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/MadeInHell.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--MadeInHell)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -662,7 +662,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/SpillTheBlood.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--SpillTheBlood)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -697,7 +697,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/DyersEve.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DyersEve)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -743,7 +743,7 @@
                             "This ability doesn't remove control effects, which is already on character.");
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/IDontWannaStop.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--IDontWannaStop)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -778,7 +778,7 @@
                                 two: (400+this.variant*50).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/ShotDownInFlames.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ShotDownInFlames)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -826,7 +826,7 @@
                                 two: (300+this.variant*50).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/ElectricEye.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ElectricEye)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -877,7 +877,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/LightsInTheSky.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--LightsInTheSky)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -912,7 +912,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/Thunderstruck.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Thunderstruck)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -967,7 +967,7 @@
                             });
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/YouAintNoAngel.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--YouAintNoAngel)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1002,7 +1002,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/StateOfGrace.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--StateOfGrace)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1035,7 +1035,7 @@
                                 two: (400+this.variant*100).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/MyLastWords.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--MyLastWords)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1085,7 +1085,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/ComeCoverMe.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ComeCoverMe)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1123,7 +1123,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"during next turn", "during next {{$count}} turns",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/InjectTheVenom.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--InjectTheVenom)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1170,7 +1170,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/Invisible.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Invisible)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1204,7 +1204,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/Jawbreaker.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Jawbreaker)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1256,7 +1256,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/HogTied.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HogTied)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
 
                         if(caster.immobilized){
@@ -1321,7 +1321,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/RunningFree.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--RunningFree)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1357,7 +1357,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/FastAsTheShark.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FastAsTheShark)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1391,7 +1391,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/Prowler.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Prowler)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1442,7 +1442,7 @@
                         str+=gettextCatalog.getString("Effect fades if owner takes or deals damage.");
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/FadeToBlack.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FadeToBlack)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1482,7 +1482,7 @@
                         str+=gettextCatalog.getString("Stacks up 5 times.");
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/Stargazer.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Stargazer)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1529,7 +1529,7 @@
                     desc: function() {
                         return gettextCatalog.getPlural((1+this.variant),"Teleports character to any cell in {{$count}} cell radius.","Teleports character to any cell in {{$count}} cells radius.",{});
                     },
-                    icon : function() { return "url(../images/icons/abilities/SpeedOfLight.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--SpeedOfLight)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1560,7 +1560,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/NeverAWord.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--NeverAWord)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1614,7 +1614,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/Prophecy.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Prophecy)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1648,7 +1648,7 @@
                         return gettextCatalog.getString(
                             "Steals 1 random positive effect from enemy to caster.");
                     },
-                    icon : function() { return "url(../images/icons/abilities/LetsMeTakeIt.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--LetsMeTakeIt)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1686,7 +1686,7 @@
                                 one: (this.variant*12).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/BrainDamage.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--BrainDamage)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1737,7 +1737,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/InfiniteDreams.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--InfiniteDreams)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1775,7 +1775,7 @@
                             });
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/CaughtSomewhereInTime.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--CaughtSomewhereInTime)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1814,7 +1814,7 @@
                                 two: (150+this.variant*70).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/FamilyTree.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FamilyTree)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1869,7 +1869,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Disarm lasts {{$count}} turn.", "Disarm lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/BurningAmbition.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--BurningAmbition)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1919,7 +1919,7 @@
                                 two: (1500-this.variant*200).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/Fireball.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Fireball)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -1990,7 +1990,7 @@
                             });
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/ThankGodForTheBomb.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ThankGodForTheBomb)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2026,7 +2026,7 @@
                                 one: (this.variant*15).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/Powerslave.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Powerslave)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2060,7 +2060,7 @@
                     str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                     return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/Cauterization.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Cauterization)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2091,7 +2091,7 @@
                                 one: (this.variant*3).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/DownInFlames.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DownInFlames)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2124,7 +2124,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/FightFireWithFire.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FightFireWithFire)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2158,7 +2158,7 @@
                                 two: (400+this.variant*75).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/HammerOfTheGods.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HammerOfTheGods)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2211,7 +2211,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/MercyfulFate.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--MercyfulFate)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2241,7 +2241,7 @@
                             one: (10+this.variant*15).toFixed(0)
                         });
                     },
-                    icon : function() { return "url(../images/icons/abilities/LayingOnHands.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--LayingOnHands)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2278,7 +2278,7 @@
                                 two: (150+this.variant*150).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/HolySmoke.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HolySmoke)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2333,7 +2333,7 @@
                     desc: function() {
                         return gettextCatalog.getPlural(this.variant,"Removes {{$count}} random negative effects from ally.", "Removes {{$count}} random negative effect from ally.",{});
                     },
-                    icon : function() { return "url(../images/icons/abilities/CleanseTheSoul.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--CleanseTheSoul)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2377,7 +2377,7 @@
                         }
 
                     },
-                    icon : function() { return "url(../images/icons/abilities/HallowedBeThyName.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HallowedBeThyName)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2409,7 +2409,7 @@
                                 two: (325+this.variant*75).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/HitTheLights.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HitTheLights)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2468,7 +2468,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/HeavenCanWait.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HeavenCanWait)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2505,7 +2505,7 @@
                                 two: (150+this.variant*15).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/Bloodsucker.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Bloodsucker)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2559,7 +2559,7 @@
                         str+=gettextCatalog.getPlural(this.duration(),"during next turn", "during next {{$count}} turns",{});
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/FearOfTheDark.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FearOfTheDark)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2608,7 +2608,7 @@
                         str+=gettextCatalog.getString("Stacks up 5 times.");
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/CreepingDeath.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--CreepingDeath)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2650,7 +2650,7 @@
                         str+=gettextCatalog.getString("Stacks up 5 times.");
                         return str;
                     },
-                    icon : function() { return "url(../images/icons/abilities/SpreadingTheDisease.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--SpreadingTheDisease)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2683,7 +2683,7 @@
                     desc: function() {
                         return gettextCatalog.getPlural(this.variant,"Removes {{$count}} random positive effects from enemy.", "Removes {{$count}} random positive effect from enemy.",{});
                     },
-                    icon : function() { return "url(../images/icons/abilities/Purgatory.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Purgatory)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2727,7 +2727,7 @@
                         }
 
                     },
-                    icon : function() { return "url(../images/icons/abilities/ChildrenOfTheDamned.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ChildrenOfTheDamned)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2761,7 +2761,7 @@
                     desc: function() {
                         return gettextCatalog.getString("Cast on any target. While this effect active, owner's buffs and debuffs can't be dispelled or stolen.");
                     },
-                    icon : function() { return "url(../images/icons/abilities/LockedAndLoaded.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--LockedAndLoaded)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());
@@ -2810,7 +2810,7 @@
                                 two: (40+this.variant*25).toFixed(0)
                             });
                     },
-                    icon : function() { return "url(../images/icons/abilities/ATouchOfEvil.svg)"},
+                    icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ATouchOfEvil)"},
                     cast : function (caster, target, myTeam, enemyTeam) {
                         caster.spendEnergy(this.energyCost());
                         caster.spendMana(this.manaCost());

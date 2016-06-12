@@ -6,7 +6,6 @@
         var searchTimer;
         var searchProcessStep=0;
         var charSetFlag;
-        var deleteCharInterval;
         var rollDiceTimer;
 
         $scope.searchBattle = false;
@@ -140,7 +139,7 @@
         //Функция запускает modal удаления команды
         $scope.deleteTeamClick = function() {
             var modalInstance = $uibModal.open({
-                animation: $scope.animationsEnabled,
+                animation: false,
                 templateUrl: 'deleteModal.html',
                 controller: 'CityModalController',
                 size: 'sm',
@@ -155,7 +154,7 @@
         //Функция запускает modal костей
         $scope.rollDicesClick = function() {
             var modalInstance = $uibModal.open({
-                animation: $scope.animationsEnabled,
+                animation: false,
                 templateUrl: 'diceModal.html',
                 controller: 'diceModalController',
                 size: 'sm',
@@ -188,9 +187,19 @@
         };
 
         $scope.$on('$destroy', function (event) {
-            $interval.cancel(deleteCharInterval);
             $interval.cancel(rollDiceTimer);
             $interval.cancel(searchTimer);
+        });
+
+        $scope.$watch(function(){
+            if(soundService.getMusicObj().cityMusic) {
+                return soundService.getMusicObj().cityMusic.progress
+            }
+        }, function(newVal){
+            if(newVal>=1){
+                soundService.getMusicObj().cityMusic.pause();
+                soundService.nextTrack('city');
+            }
         });
 
         mainSocket.on("startBattle", function(data){
@@ -209,9 +218,12 @@
         });
 
         $scope.$on('$routeChangeSuccess', function () {
-            soundService.getMusicObj().cityAmbience.play();
+            if(!soundService.getMusicObj().cityMusic || soundService.getMusicObj().cityMusic.paused){
+                soundService.initMusic('city');
+            }
             if(soundService.getMusicObj().battleAmbience){
                 soundService.getMusicObj().battleAmbience.pause();
+                soundService.getMusicObj().battleMusic.pause();
             }
             mainSocket.emit("getUserTeam");
             $scope.pending=true;

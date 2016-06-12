@@ -18,7 +18,7 @@
                                         <div class="portrait btn"
                                                 ng-style="{'background-image': getCharPortrait(char)}"
                                                 uib-popover-template="'effectsPopover.html'">
-                                            <div class="role-in-portrait ally" ng-class="::[char.role+'-icon']"></div>
+                                            <div class="role-in-portrait ally icon" ng-class="::[char.role+'-icon']"></div>
                                         </div>
                                         <div class="char-info">
                                             <p class="text-left char-name" ng-style="::{'color' : char.battleColor}">{{::char.charName}}</p>
@@ -37,7 +37,7 @@
                                                      tooltip-append-to-body="true"
                                                      tooltip-animation="false"
                                                      tooltip-class="ability-tooltip">
-                                                    <div class="ability-icon"
+                                                    <div class="ability-icon icon"
                                                          ng-style="::{'background-image': ability.icon(), 'background-color': getAbilityColor(ability)}"
                                                          ng-disabled="!checkAbilityForUse(ability, char) || waitServ || !enemyTeamLoaded"
                                                          ng-class="{'prepared': checkPreparedAbility(ability, char)}"
@@ -58,7 +58,7 @@
                                                      tooltip-append-to-body="true"
                                                      tooltip-animation="false"
                                                      tooltip-class="ability-tooltip">
-                                                    <div class="ability-icon"
+                                                    <div class="ability-icon icon"
                                                          ng-style="::{'background-image': ability.icon(), 'background-color': getAbilityColor(ability)}"
                                                          ng-disabled="!checkAbilityForUse(ability, char) || waitServ || !enemyTeamLoaded"
                                                          ng-class="{'prepared': checkPreparedAbility(ability, char)}"
@@ -95,7 +95,7 @@
                         <div class="queue">
                             <div ng-repeat="player in queue track by $index" class="portrait" ng-style="{'border-color' : player.battleColor, 'background-image': 'url('+player.portrait+')'}"></div>
                         </div>
-                        <button class="btn btn-default btn-end-turn" ng-class="{'waiting' : waitServ}" ng-style="{'background-color': queue[0].battleColor}" ng-disabled="!myTurn || $scope.activeChar.turnEnded || !enemyTeamLoaded" ng-click="endTurn()">{{getTurnTime()}}</button>
+                        <button class="btn btn-default btn-end-turn icon" ng-class="{'waiting' : waitServ}" ng-style="{'background-color': queue[0].battleColor}" ng-disabled="!myTurn || $scope.activeChar.turnEnded || !enemyTeamLoaded" ng-click="endTurn()">{{getTurnTime()}}</button>
                         <div class="loader" ng-if="waitServ || !enemyTeamLoaded"></div>
                     </div>
                     <div class="combatLog well customScrollBar" autoscroll>
@@ -109,15 +109,15 @@
                         <p translate>You gain:</p>
                         <div class="shards-container">
                             <div class="shard red-shard">
-                                <div class="icon"></div>
+                                <div class="shard-icon icon"></div>
                                 <span>+{{::battleEnd.souls.red}}</span>
                             </div>
                             <div class="shard green-shard">
-                                <div class="icon"></div>
+                                <div class="shard-icon icon"></div>
                                 <span>+{{::battleEnd.souls.green}}</span>
                             </div>
                             <div class="shard blue-shard">
-                                <div class="icon"></div>
+                                <div class="shard-icon icon"></div>
                                 <span>+{{::battleEnd.souls.blue}}</span>
                             </div>
                         </div>
@@ -136,7 +136,7 @@
                                         <div class="portrait btn"
                                              ng-style="{'background-image': getCharPortrait(char)}"
                                              uib-popover-template="'effectsPopover.html'">
-                                            <div class="role-in-portrait enemy" ng-class="::[char.role+'-icon']"></div>
+                                            <div class="role-in-portrait enemy icon" ng-class="::[char.role+'-icon']"></div>
                                         </div>
                                         <div class="char-info">
                                             <p class="text-left char-name" ng-style="::{'color' : char.battleColor }">{{::char.charName}}</p>
@@ -155,7 +155,7 @@
                                                      tooltip-append-to-body="true"
                                                      tooltip-animation="false"
                                                      tooltip-class="ability-tooltip">
-                                                    <div class="ability-icon"
+                                                    <div class="ability-icon icon"
                                                          ng-style="::{'background-image': ability.icon(), 'background-color': getAbilityColor(ability)}"
                                                          ng-disabled="true"
                                                             >
@@ -174,7 +174,7 @@
                                                      tooltip-append-to-body="true"
                                                      tooltip-animation="false"
                                                      tooltip-class="ability-tooltip">
-                                                    <div class="ability-icon"
+                                                    <div class="ability-icon icon"
                                                          ng-style="::{'background-image': ability.icon(), 'background-color': getAbilityColor(ability)}"
                                                          ng-disabled="true"
                                                             >
@@ -200,7 +200,7 @@
             <div ng-if="char.buffs.length>0">
                 <p translate>Buffs:</p>
                 <div ng-repeat="effect in char.buffs track by $index"
-                     class='buff-icon'
+                     class='buff-icon icon'
                      ng-style="{'background-image': effect.icon(), 'background-color': getAbilityColor(effect)}"
                      uib-tooltip-html="getEffectTooltip(effect)"
                      tooltip-placement="bottom"
@@ -211,7 +211,7 @@
             <div ng-if="char.debuffs.length>0">
                 <p translate>Debuffs:</p>
                 <div ng-repeat="effect in char.debuffs track by $index"
-                     class='buff-icon'
+                     class='buff-icon icon'
                      ng-style="{'background-image': effect.icon(), 'background-color': getAbilityColor(effect)}"
                      uib-tooltip-html="getEffectTooltip(effect)"
                      tooltip-placement="bottom"
