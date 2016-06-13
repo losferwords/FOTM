@@ -18,6 +18,17 @@
             }
         });
 
+        $scope.$watch(function(){
+            if(soundService.getMusicObj().cityMusic) {
+                return soundService.getMusicObj().cityMusic.progress
+            }
+        }, function(newVal){
+            if(newVal>=1){
+                soundService.getMusicObj().cityMusic.pause();
+                soundService.nextTrack('city');
+            }
+        });
+
         //Запрет на пользование строкой браузера
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             if(!current && $location.path()!=="/")

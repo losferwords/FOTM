@@ -139,7 +139,7 @@
                     case 2: musicObj.battleAmbience = ngAudio.load("sounds/music/ambience/snow.mp3"); break;
                 }
                 musicObj.battleAmbience.loop=true;
-                musicObj.battleAmbience.volume=0.01;
+                musicObj.battleAmbience.volume=0.04;
                 musicObj.battleAmbience.play();
                 musicObj.battleAmbience.setMuting(!this.musicEnabled);
             },
@@ -195,7 +195,7 @@
                     musicObj[obj] = ngAudio.load("sounds/music/"+area+"/"+area+index+".mp3");
                     musicObj[obj].index = index;
                     musicObj[obj].loop=false;
-                    musicObj[obj].volume=0.02;
+                    musicObj[obj].volume=0.05;
                     musicObj[obj].play();
                     musicObj[obj].setMuting(!this.musicEnabled);
                 }

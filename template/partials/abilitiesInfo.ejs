@@ -18,11 +18,11 @@
                                                 <p translate>Role: {{getCharRole()}}</p>
                                             </div>
                                         </div>
-                                        <div class="ability-slot-container btn-group">
+                                        <div class="ability-slot-container btn-group"">
                                             <div class="ability-slot btn icon"
                                                  ng-repeat="ability in char.abilities track by $index"
                                                  ng-class="{'active': interestingAbility.name===ability.name, 'dropable': movingAbility}"
-                                                 ng-style="{'background-image': ability.icon(), 'background-color' : getAbilityColor(ability)}"
+                                                 ng-style="{'background-color' : getAbilityColor(ability)}"
                                                  ng-disabled = "ability.name==='Void'"
                                                  uib-tooltip-html="getAbilityTooltip(ability)"
                                                  tooltip-placement="top"
@@ -37,6 +37,7 @@
                                                  dnd-droppable-opts = "{layer: 'layer1'}"
                                                  dnd-on-drop = "addAbilityToPanel($index)"
                                                  ng-click = "chooseAbilityForTune(ability)">
+                                                <img class="bg-img" ng-src="{{ability.icon().slice(6).slice(0,-1)}}"/>
                                             </div>
                                         </div>
                                         <div class="ability-switch btn icon" ng-class="{'tune':tuneMode, 'move':!tuneMode}" ng-click="changeTuneAbilitiesMode()"></div>
@@ -92,8 +93,7 @@
                                          dnd-on-drop = "removeAbilityFromPanel()">
                                         <div class="ability-icon icon"
                                              ng-repeat="ability in abilitiesBook track by $index"
-                                             ng-style="{'background-image': ability.icon(),
-                                                        'background-color': getAbilityColor(ability)}"
+                                             ng-style="{'background-color': getAbilityColor(ability)}"
                                              uib-tooltip-html="getAbilityTooltip(ability)"
                                              tooltip-placement="top"
                                              tooltip-append-to-body="true"
@@ -103,6 +103,7 @@
                                              dnd-draggable-opts = "{layer: 'layer1', helper : 'clone'}"
                                              dnd-on-dragstart = "abilityDragStart(ability, 'book')"
                                              dnd-on-dragend = "abilityDragEnd('book')">
+                                            <img class="bg-img" ng-src="{{ability.icon().slice(6).slice(0,-1)}}"/>
                                         </div>
                                     </div>
                                 </div>

@@ -166,8 +166,7 @@
 
                                         <div class="gem icon"
                                              ng-show="socket.gem!='Void'"
-                                             ng-style="{'background-image': socket.gem.image(),
-                                                    'background-color': socket.gem.bgColor()}"
+                                             ng-style="{'background-color': socket.gem.bgColor()}"
                                              uib-tooltip-html="getGemTooltip(socket.gem)"
                                              tooltip-placement="bottom"
                                              tooltip-append-to-body="true"
@@ -176,6 +175,7 @@
                                              dnd-draggable-opts = "{layer: 'layer2', helper : 'clone'}"
                                              dnd-on-dragstart = "socketDragStart(socket)"
                                              dnd-on-dragend = "socketDragEnd(socket)">
+                                            <img class="bg-img" ng-src="{{socket.gem.image().slice(6).slice(0,-1)}}"/>
                                         </div>
                                     </div>
                                 </div>
@@ -198,8 +198,7 @@
                                  dnd-on-drop = "setGemToInventory()">
                                 <div class="gem icon"
                                      ng-repeat="gem in getGems(gemFilter) track by $index"
-                                     ng-style="{'background-image': gem.image(),
-                                                    'background-color': gem.bgColor()}"
+                                     ng-style="{'background-color': gem.bgColor()}"
                                      uib-tooltip-html="getGemTooltip(gem)"
                                      tooltip-placement="top"
                                      tooltip-append-to-body="true"
@@ -208,6 +207,7 @@
                                      dnd-draggable-opts = "{layer: 'layer1', helper : 'clone'}"
                                      dnd-on-dragstart = "inventoryDragStart(gem)"
                                      dnd-on-dragend = "inventoryDragEnd()">
+                                    <img class="bg-img" ng-src="{{gem.image().slice(6).slice(0,-1)}}"/>
                                 </div>
                             </div>
                         </div>

@@ -1,10 +1,23 @@
 <% if(user){ %>
 <div class="row" ng-cloak>
-    <nav class="navbar navbar-default navbar-fixed-bottom">
+    <nav class="navbar navbar-default navbar-fixed-bottom custom-navbar">
         <div class="container">
             <ul class="nav col-xs-12">
                 <li class="col-xs-4"><p class="navbar-text"><span class="text-danger">{{errorHandler}}</span></p></li>
                 <li class="col-xs-4"><p class="navbar-text"><span class="text-info">{{infoMessage}}</span></p></li>
+                <li class="col-xs-4">
+                    <p class="navbar-text external-links">
+                        <a href="https://vk.com/fotm_game" target="_blank">
+                            <img src="images/interface/help-vk.png"/>
+                        </a>
+                        <a href="https://www.youtube.com/channel/UCeE-7Mq7wHOGBwKMfj2GcIQ" target="_blank">
+                            <img src="images/interface/help-youtube.png"/>
+                        </a>
+                        <a href="https://github.com/losferwords/FOTM" target="_blank">
+                            <img src="images/interface/help-github.png"/>
+                        </a>
+                    </p>
+                </li>
             </ul>
         </div>
     </nav>
