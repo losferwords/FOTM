@@ -4,7 +4,7 @@ var uglify = require('gulp-uglify');
 var environments = require('gulp-environments');
 var cleanCSS = require('gulp-clean-css');
 var svgSprite = require('gulp-svg-sprite');
-const imagemin = require('gulp-imagemin');
+var imagemin = require('gulp-imagemin');
 var $ = require('gulp-load-plugins')({ pattern: ['gulp-*'] });
 
 var dest = 'public';
