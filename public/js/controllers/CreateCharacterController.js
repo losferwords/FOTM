@@ -140,7 +140,7 @@
 
         $scope.races=["nephilim","human","cambion"];
         $scope.racePortraitPaths = function(number){
-            return {"background-image" : "url(./images/portraits/"+$scope.races[number]+"/"+$scope.characterObj.gender+"/"+$scope.races[number]+"_"+$scope.characterObj.gender+"_1.jpg)"};
+            return {"background-image" : "url(./images/assets/img/portraits/"+$scope.races[number]+"/"+$scope.characterObj.gender+"/"+$scope.races[number]+"_"+$scope.characterObj.gender+"_1.jpg)"};
         };
         $scope.getRaceName=function(name){
             switch (name) {
@@ -203,7 +203,7 @@
         function getPortraits(){
             var portraits=[];
             for(var i=1;i<=4;i++){
-                portraits.push({image: "./images/portraits/"+$scope.characterObj.race+"/"+$scope.characterObj.gender+"/"+$scope.characterObj.race+"_"+$scope.characterObj.gender+"_"+i+".jpg"});
+                portraits.push({image: "./images/assets/img/portraits/"+$scope.characterObj.race+"/"+$scope.characterObj.gender+"/"+$scope.characterObj.race+"_"+$scope.characterObj.gender+"_"+i+".jpg"});
             }
             return portraits;
         }

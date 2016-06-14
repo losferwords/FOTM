@@ -617,5 +617,24 @@ module.exports = function (server) {
         return array;
     }
 
+    //Вариант обновления всей базы
+    //Character.find({}, function(err, chars){
+    //    if (err) socket.emit("customError", err);
+    //    log.info("Total chars: "+chars.length);
+    //    chars.forEach(function(char, i) {
+    //        if(char.portrait)
+    //        {
+    //            if(char.portrait.length>0){
+    //                char.portrait = char.portrait.replace("images/portraits/", "images/assets/img/portraits/");
+    //                char.save(function(err, char){
+    //                    log.info("RENAME ready for "+i+": "+char.charName);
+    //                    if (err) socket.emit("customError", err);
+    //                });
+    //            }
+    //        }
+    //    });
+    //    log.info("READY");
+    //});
+
     return io;
 };

@@ -26,6 +26,7 @@
     "gulp-environments": "^0.1.1",
     "gulp-filter": "^4.0.0",
     "gulp-if": "^2.0.1",
+    "gulp-imagemin": "^3.0.1",
     "gulp-load-plugins": "^1.2.4",
     "gulp-main-bower-files": "^1.5.1",
     "gulp-ng-annotate": "^2.0.0",

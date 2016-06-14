@@ -16,13 +16,13 @@
                         var ground;
                         switch (groundType) {
                             case(0):
-                                ground = "url(./images/tiles/grass.jpg)";
+                                ground = "url(./images/assets/img/tiles/grass.jpg)";
                                 break;
                             case(1):
-                                ground = "url(./images/tiles/sand.jpg)";
+                                ground = "url(./images/assets/img/tiles/sand.jpg)";
                                 break;
                             case(2):
-                                ground = "url(./images/tiles/snow.jpg)";
+                                ground = "url(./images/assets/img/tiles/snow.jpg)";
                                 break;
                         }
                         return ground;
@@ -34,13 +34,13 @@
                         var ground;
                         switch (groundType) {
                             case(0):
-                                ground = "url(./images/tiles/grass_wall.jpg)";
+                                ground = "url(./images/assets/img/tiles/grass_wall.jpg)";
                                 break;
                             case(1):
-                                ground = "url(./images/tiles/sand_wall.jpg)";
+                                ground = "url(./images/assets/img/tiles/sand_wall.jpg)";
                                 break;
                             case(2):
-                                ground = "url(./images/tiles/snow_wall.jpg)";
+                                ground = "url(./images/assets/img/tiles/snow_wall.jpg)";
                                 break;
                         }
                         return ground;

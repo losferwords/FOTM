@@ -4,6 +4,7 @@ var uglify = require('gulp-uglify');
 var environments = require('gulp-environments');
 var cleanCSS = require('gulp-clean-css');
 var svgSprite = require('gulp-svg-sprite');
+const imagemin = require('gulp-imagemin');
 var $ = require('gulp-load-plugins')({ pattern: ['gulp-*'] });
 
 var dest = 'public';
@@ -57,15 +58,15 @@ gulp.task('svg-pack', function () {
         .pipe(gulp.dest(dest+"/images/assets/svg"));
 });
 
-//gulp.task('svg-symbols-pack', function () {
-//    return gulp.src(dest+'/images/icons/**/*.svg')
-//        .pipe(svgSprite({
-//            preview: false
-//        }))
-//        .pipe(gulp.dest(dest+"/images/assets/svg"));
-//});
+gulp.task('img-pack', function () {
+    return gulp.src([dest+'/images/pictures/**/*.*'])
+        .pipe(imagemin({
+            verbose: true
+        }))
+        .pipe(gulp.dest(dest+"/images/assets/img"));
+});
 
-gulp.task('default', ['3rdparty-js-pack', 'app-js-pack', 'app-css-pack', 'svg-pack']);
+gulp.task('default', ['3rdparty-js-pack', 'app-js-pack', 'app-css-pack', 'svg-pack', 'img-pack']);
 
 /**
  * Swallows stream error and ends stream

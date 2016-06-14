@@ -1044,7 +1044,7 @@
             self.buffs=[];
             self.debuffs=[];
             self.isDead=true;
-            self.portrait = "./images/portraits/death.jpg";
+            self.portrait = "./images/assets/img/portraits/death.jpg";
             self.logBuffer.push(self.charName + " is dead");
             self.playSound("death");
         }
