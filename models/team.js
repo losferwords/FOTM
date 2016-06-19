@@ -218,23 +218,23 @@ schema.statics.deleteTeam = function(teamId, callback){
                         if (err) callback(err);
                     });
                 }
-            });
-            //Затем удалим записи о созданных тимах у юзера
-            team.populate('_user', function(err, popTeam){
-                if (err) return callback(err);
-                popTeam._user.team=undefined;
-                popTeam._user.save(function(err, user){
-                    if (err) callback(err);
+                //Затем удалим записи о созданных тимах у юзера
+                popTeam.populate('_user', function(err, popTeam){
+                    if (err) return callback(err);
+                    popTeam._user.team=undefined;
+                    popTeam._user.save(function(err, user){
+                        if (err) callback(err);
+                    });
+                    //затем удалим сами тимы
+                    popTeam.remove(function(err){
+                        if (err) return callback(err);
+                        callback(null);
+                    });
                 });
-            });
-            //затем удалим сами тимы
-            team.remove(function(err){
-                if (err) return callback(err);
-                callback(null);
             });
         }
         else {
-            callback(new CustomError("Team Deleted"));
+            callback(new CustomError("Team For deletion not found"));
         }
     });
 };

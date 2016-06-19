@@ -102,6 +102,14 @@ module.exports = function (server) {
         io.sockets.in(serverRoom).emit('join', serverOnlineUsers, username);
         log.info("User "+username+" join game");
 
+        User.findByIdAndUpdate(socket.handshake.user._id,
+            {$set: {
+                lastVisit: new Date()
+            }}, {upsert: true},
+            function(err, user) {
+                if (err) socket.emit("customError", err);
+            });
+
         socket.on('disconnect', function () {
             if(io.nsps["/"].adapter.rooms[serverRoom]) { //Проверка на то, что я последний человек на сервере
                 serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[serverRoom].sockets).length;
@@ -109,7 +117,6 @@ module.exports = function (server) {
                 log.info("User "+username+" leave game");
                 //И выкидываем из боя оппонента, если сами вышли
                 if (battleRoom) {
-
                     if(battleStart){
                         //Вылетевшей команде засчитываем поражение
                         var userId = socket.handshake.user._id;
@@ -136,7 +143,6 @@ module.exports = function (server) {
                             });
                         });
                     }
-
 
                     //Выкидываем оппонента
                     if(io.nsps["/"].adapter.rooms[battleRoom]){
@@ -513,7 +519,10 @@ module.exports = function (server) {
                     var user={};
                     user['id']=users[i].id;
                     user['username']=users[i].username;
+                    user['email']=users[i].email;
                     user['team']=users[i].team;
+                    user['lastVisit']=users[i].lastVisit;
+                    user['created']=users[i].created;
                     user['isOnline']=false;
                     userArray[i]=user;
                 }
@@ -522,15 +531,37 @@ module.exports = function (server) {
                 var serverSockets = io.of('/').in(serverRoom).connected;
                 for (var socketId in io.nsps["/"].adapter.rooms[serverRoom].sockets) {
                     if(io.nsps["/"].adapter.rooms[serverRoom].sockets.hasOwnProperty(socketId)){
-                        var socket = serverSockets[socketId];
+                        var socketItem = serverSockets[socketId];
                         for(i=0;i<userArray.length;i++) {
-                            if (userArray[i].id === socket.handshake.user.id) {
+                            if (userArray[i].id === socketItem.handshake.user.id) {
                                 userArray[i].isOnline=true;
                             }
                         }
                     }
                 }
                 socket.emit('getUsersListResult', userArray);
+            });
+        });
+
+        socket.on('deleteUser', function(id) {
+            var userId = id;
+            User.findById(userId, function(err, foundedUser) {
+                if(foundedUser.team) {
+                    Team.deleteTeam(foundedUser.team, function(err){
+                        if (err) socket.emit("customError", err);
+                        User.remove({_id: userId}, function(err) {
+                            if (err) socket.emit("customError", err);
+                            socket.emit("deleteUserResult");
+                        });
+                    });
+                }
+                else {
+                    User.remove({_id: userId}, function(err) {
+                        if (err) socket.emit("customError", err);
+                        socket.emit("deleteUserResult");
+                    });
+                }
+
             });
         });
 

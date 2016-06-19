@@ -1949,12 +1949,33 @@ canvas {
 }
 
 .admin .user-list {
-  height: 500px;
+  height: 550px;
   width: 30%;
   text-align: left;
   display: inline-block;
   vertical-align: top;
+}
+
+.admin .user-list h6 {
+  width: 100%;
+  display: block;
+}
+
+.admin .user-list .sort-btns {
+  display: block;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.admin .user-list .sort-btns>.btn {
+  width: 25%;
+}
+
+.admin .user-list .user-list-panel {
+  display: block;
+  width: 100%;
   overflow-y: scroll;
+  height: 480px;
 }
 
 .admin .ability-slot {
@@ -2020,6 +2041,15 @@ canvas {
 
 .admin .char-icon:last-child {
   margin-right: 0;
+}
+
+.admin .user-stats {
+  margin-bottom: 20px;
+}
+
+.admin .user-stats td{
+  padding: 5px;
+  border: 1px solid #fff;
 }
 
 .chat-box {

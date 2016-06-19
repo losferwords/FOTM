@@ -1,7 +1,7 @@
 (function (module) {
     module.controller("AdminController", AdminController);
     //Контроллер администратора
-    function AdminController($scope, $location, $timeout, mainSocket, character, characterService, gettextCatalog) {
+    function AdminController($scope, $rootScope, $location, $timeout, mainSocket, character, characterService, gettextCatalog, $route) {
         var teamsLoad=false; //Загрузка тим уже была вызвана
         $scope.roleChart = {};
         $scope.currentUser = {user: undefined};
@@ -52,6 +52,12 @@
             }
             else {
                 $scope.chosenTeam = undefined;
+            }
+        };
+
+        $scope.deleteUser = function(user) {
+            if(user){
+                mainSocket.emit("deleteUser", user.id);
             }
         };
 
@@ -196,9 +202,71 @@
             $location.path('/city');
         };
 
+        $scope.refresh = function() {
+            $route.reload();
+        };
+
+        $scope.sortBy = function(param) {
+            switch(param) {
+                case 'isOnline' :
+                    $scope.users.sort(function (a, b) {
+                        if (a.isOnline < b.isOnline) {
+                            return 1;
+                        }
+                        else if (a.isOnline > b.isOnline) {
+                            return -1;
+                        }
+                        return 0
+                    });
+                    break;
+                case 'az' :
+                    $scope.users.sort(function (a, b) {
+                        if(a.username.toLowerCase() < b.username.toLowerCase()){
+                            return -1;
+                        }
+                        else if(a.username.toLowerCase() > b.username.toLowerCase()){
+                            return 1;
+                        }
+                        return 0;
+                    });
+                    break;
+                case 'lastVisit' :
+                    $scope.users.sort(function (a, b) {
+                        var visitTimeA = 0;
+                        var visitTimeB = 0;
+                        if(a.lastVisit) visitTimeA = new Date(a.lastVisit).getTime();
+                        if(b.lastVisit) visitTimeB = new Date(b.lastVisit).getTime();
+                        if(visitTimeA > visitTimeB){
+                            return -1;
+                        }
+                        else if(visitTimeA < visitTimeB){
+                            return 1;
+                        }
+                        return 0;
+                    });
+                    break;
+                case 'created' :
+                    $scope.users.sort(function (a, b) {
+                        if(new Date(a.created).getTime() > new Date(b.created).getTime()){
+                            return -1;
+                        }
+                        else if(new Date(a.created).getTime() < new Date(b.created).getTime()){
+                            return 1;
+                        }
+                        return 0;
+                    });
+                    break;
+            }
+        };
+
         //Функция возвращает портрет персонажа для background
         $scope.getCharPortrait = function(char) {
             return "url(."+char.portrait+")";
+        };
+
+        $scope.formatDateTime = function(date){
+            if(!date) return "Not set";
+            return new Date(date).toLocaleString("ru", {year: 'numeric', month: 'long', day: 'numeric',hour: 'numeric',minute: 'numeric', second: 'numeric'});
         };
 
         //Функция выбирает цвет для способности по её роли
@@ -305,19 +373,11 @@
 
         mainSocket.on('getUsersListResult', function(users){
             users.sort(function (a, b) {
-                if (a.isOnline < b.isOnline) {
-                    return 1;
-                }
-                else if (a.isOnline > b.isOnline) {
+                if(a.username.toLowerCase() < b.username.toLowerCase()){
                     return -1;
                 }
-                else {
-                    if(a.username.toLowerCase() < b.username.toLowerCase()){
-                        return -1;
-                    }
-                    else if(a.username.toLowerCase() > b.username.toLowerCase()){
-                        return 1;
-                    }
+                else if(a.username.toLowerCase() > b.username.toLowerCase()){
+                    return 1;
                 }
                 return 0;
             });
@@ -340,6 +400,12 @@
                     $scope.chosenTeam.characters[i].initChar();
                 }
             }
+        });
+
+        mainSocket.on('deleteUserResult', function(){
+            $rootScope.showInfoMessage("Successfully deleted");
+            $scope.chosenTeam = undefined;
+            mainSocket.emit("getUsersList");
         });
 
     }
