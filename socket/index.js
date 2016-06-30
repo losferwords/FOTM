@@ -102,13 +102,10 @@ module.exports = function (server) {
         io.sockets.in(serverRoom).emit('join', serverOnlineUsers, username);
         log.info("User "+username+" join game");
 
-        User.findByIdAndUpdate(socket.handshake.user._id,
-            {$set: {
-                lastVisit: new Date()
-            }}, {upsert: true},
-            function(err, user) {
-                if (err) socket.emit("customError", err);
-            });
+        //Обновляем у пользователя время последнего визита
+        User.setById(socket.handshake.user._id, {lastVisit: new Date()}, function(err, user) {
+            if (err) socket.emit("customError", err);
+        });
 
         socket.on('disconnect', function () {
             if(io.nsps["/"].adapter.rooms[serverRoom]) { //Проверка на то, что я последний человек на сервере
@@ -120,22 +117,20 @@ module.exports = function (server) {
                     if(battleStart){
                         //Вылетевшей команде засчитываем поражение
                         var userId = socket.handshake.user._id;
-                        User.getTeam(userId, function(err, team){
+                        Team.getByUserIdPop(userId, function(err, team){
                             if (err) socket.emit("customError", err);
                             var rateChange = 0;
                             if(team.rating-25>=1000) rateChange=25;
-                            Team.findByIdAndUpdate(team._id, {$set: {
-                                _id: team._id,
+                            Team.setById(team._id, {
                                 rating: team.rating-rateChange,
                                 souls: {red: team.souls.red+2, green: team.souls.green+2, blue: team.souls.blue+2},
                                 loses: team.loses+1
-                            }}, {upsert: true},
-                                function(err, team){
+                            }, function(err, team){
                                 if (err) socket.emit("customError", err);
                                 Character.find({_team: team._id}, function(err, chars){
                                     if (err) socket.emit("customError", err);
                                     for(var i=0;i<chars.length;i++){
-                                        Character.findByIdAndUpdate(chars[i]._id, {$set: {lose: true}}, {upsert: true}, function(err, char){
+                                        Character.setById(chars[i]._id, {lose: true}, function(err){
                                             if (err) socket.emit("customError", err);
                                         });
                                     }
@@ -154,7 +149,7 @@ module.exports = function (server) {
                     }
                 }
             }
-            deleteDummies(socket.handshake.user._id);
+            Team.deleteDummies(socket.handshake.user._id);
         });
 
         socket.on('getUserName', function () {
@@ -267,15 +262,17 @@ module.exports = function (server) {
         });
 
         socket.on('removeDummyTeam', function(){
-            deleteDummies(socket.handshake.user._id);
+            Team.deleteDummies(socket.handshake.user._id, function (err, data) {
+                if (err && err.status!='no team') socket.emit("customError", err);
+            });
         });
 
         socket.on('removeUsersDummies', function() {
-            User.find({}, function (err, users) {
+            User.getAll(function (err, users) {
                 if (err) socket.emit("customError", err);
 
                 for (var i = 0; i < users.length; i++) {
-                    deleteDummies(users[i]._id);
+                    Team.deleteDummies(users[i]._id);
                 }
             });
         });
@@ -289,11 +286,11 @@ module.exports = function (server) {
         });
 
         socket.on('checkUserTeam', function(){
-            deleteDummiesSync(socket, function(err, result){
-                if(err) socket.emit("customError", err);
+            var userId = socket.handshake.user._id;
+            Team.deleteDummies(userId, function (err, data) {
+                if (err && err.status!='no team') socket.emit("customError", err);
 
-                var userId = socket.handshake.user._id;
-                User.findById(userId, function(err, findedUser) {
+                User.getById(userId, function(err, findedUser) {
                     if (err) socket.emit("customError", err);
                     if(findedUser.team) {
                         socket.emit("checkUserTeamResult", findedUser.team);
@@ -305,25 +302,17 @@ module.exports = function (server) {
             });
         });
 
-        socket.on('getUserTeam', function(definedUser, all, username){
-            //all true, когда админ хочет получить все команды
-            //username только когда all true, чтобы для найденной команды сохранить имя игрока, для которого она искалась
+        socket.on('getUserTeam', function(){
             var userId=0;
 
-            //Если есть definedUser, значит это админу нужна конкретная тима, если нет, то это просто тима игрока
-            if(definedUser){
-                userId = definedUser;
+            //ОЧИСТКА БОЕВЫХ КОМНАТ
+            if(battleRoom) {
+                socket.leave(battleRoom);
+                battleRoom=undefined;
             }
-            else {
-                //ОЧИСТКА БОЕВЫХ КОМНАТ
-                if(battleRoom) {
-                    socket.leave(battleRoom);
-                    battleRoom=undefined;
-                }
-                userId = socket.handshake.user._id;
-            }
+            userId = socket.handshake.user._id;
 
-            User.getTeam(userId, function(err, team){
+            Team.getByUserIdPop(userId, function(err, team){
                 if (err) socket.emit("customError", err);
                 if(!team) {
                     //Если тима не найдена, значит она была удалена, а ссылка на неё осталась
@@ -333,28 +322,55 @@ module.exports = function (server) {
                     });
                 }
                 else {
-                    //Для игрока - только его юзер
-                    if(!definedUser) {
-                        Team.findRank(team._id, function (err, rank) {
-                            if (err) socket.emit("customError", err);
+                    Team.findRank(team._id, function (err, rank) {
+                        if (err) socket.emit("customError", err);
 
-                            //Отправим (текущее время на сервере - время последнего рола)
-                            var nowTime = new Date();
+                        //Отправим (текущее время на сервере - время последнего рола)
+                        var nowTime = new Date();
 
-                            socket.emit("getUserTeamResult", team, rank, (nowTime - team.lastRoll));
-                        });
+                        socket.emit("getUserTeamResult", team, rank, (nowTime - team.lastRoll));
+                    });
+                }
+            });
+        });
+
+        socket.on('getAllUsersPop', function(){
+            var usersList = [];
+            User.getAll(function(err, users){
+                if (err) socket.emit("customError", err);
+                var serverSockets = io.of('/').in(serverRoom).connected;
+                async.each(users, function(user, callback) {
+                    var currentUser = user;
+                    currentUser._doc.isOnline = false;
+                    //Проверяем онлайн игрока
+                    for (var socketId in io.nsps["/"].adapter.rooms[serverRoom].sockets) {
+                        if(io.nsps["/"].adapter.rooms[serverRoom].sockets.hasOwnProperty(socketId)){
+                            var socketItem = serverSockets[socketId];
+                            if (currentUser.id === socketItem.handshake.user.id) {
+                                currentUser._doc.isOnline=true;
+                            }
+                        }
+                    }
+                    if(user.team){
+                        user.populate('team', function(err, userWithTeam){
+                            if (err) return callback(err);
+                            currentUser = userWithTeam;
+                            currentUser.team.populate('characters', function(err, teamWithChars){
+                                if (err) return callback(err);
+                                currentUser.team = teamWithChars;
+                                usersList.push(currentUser);
+                                callback(null);
+                            });
+                        })
                     }
                     else {
-                        //Для админки - все User'ы
-                        if(all){
-                            socket.emit("getUserTeamResult", team, true, username);
-                        }
-                        //Для админки - конкретный User
-                        else {
-                            socket.emit("getUserTeamResult", team);
-                        }
+                        usersList.push(currentUser);
+                        callback(null);
                     }
-                }
+                }, function(err){
+                    if (err) socket.emit("customError", err);
+                    socket.emit('getAllUsersPopResult', usersList);
+                });
             });
         });
 
@@ -464,7 +480,7 @@ module.exports = function (server) {
             User.findById(allyUserId, function(err, allyUser){
                 if(err) socket.emit("customError", err);
                 //Наполняем её
-                Team.getPopTeam({_id: allyUser.team}, function(err, popAllyTeam){
+                Team.getTeamPop({_id: allyUser.team}, function(err, popAllyTeam){
                     if(err) socket.emit("customError", err);
                     allyTeam=popAllyTeam;
                     //Если всё прошло удачно
@@ -473,7 +489,7 @@ module.exports = function (server) {
                         User.findById(enemyUserId, function(err, enemyUser) {
                             if (err) socket.emit("customError", err);
                             //Наполняем её
-                            Team.getPopTeam({_id: enemyUser.team}, function (err, popEnemyTeam) {
+                            Team.getTeamPop({_id: enemyUser.team}, function (err, popEnemyTeam) {
                                 if (err) socket.emit("customError", err);
                                 enemyTeam = popEnemyTeam;
                                 //если всё удачно, то отправляем тимы клиенту
@@ -508,41 +524,6 @@ module.exports = function (server) {
             io.sockets.in(room).emit('updateTeamsResult', chars1, chars2);
         });
 
-        socket.on('getUsersList', function() {
-            var userArray=[];
-            //Ищем всех юзеров
-            User.find({}, function (err, users) {
-                if (err) socket.emit("customError", err);
-
-                //Формируем свои объекты для передачи
-                for(var i=0;i<users.length;i++) {
-                    var user={};
-                    user['id']=users[i].id;
-                    user['username']=users[i].username;
-                    user['email']=users[i].email;
-                    user['team']=users[i].team;
-                    user['lastVisit']=users[i].lastVisit;
-                    user['created']=users[i].created;
-                    user['isOnline']=false;
-                    userArray[i]=user;
-                }
-
-                //Ищем онлайн игроков
-                var serverSockets = io.of('/').in(serverRoom).connected;
-                for (var socketId in io.nsps["/"].adapter.rooms[serverRoom].sockets) {
-                    if(io.nsps["/"].adapter.rooms[serverRoom].sockets.hasOwnProperty(socketId)){
-                        var socketItem = serverSockets[socketId];
-                        for(i=0;i<userArray.length;i++) {
-                            if (userArray[i].id === socketItem.handshake.user.id) {
-                                userArray[i].isOnline=true;
-                            }
-                        }
-                    }
-                }
-                socket.emit('getUsersListResult', userArray);
-            });
-        });
-
         socket.on('deleteUser', function(id) {
             var userId = id;
             User.findById(userId, function(err, foundedUser) {
@@ -574,59 +555,6 @@ module.exports = function (server) {
         });
 
     });
-
-    //Функция удаляет несохранённые team и character с callback
-    function deleteDummiesSync(socket, callback) {
-        async.waterfall([
-            function (callback) {
-                var userId = socket.handshake.user._id;
-                Team.findOne({teamName: "newTeam_"+userId}, function(err, team){
-                    if(err) {
-                        return callback(err);
-                    }
-                    //Если найдена хоть одна dummy тима, удалим её
-                    if(team){
-                        return callback(null, team);
-                    }
-                    else {
-                        return callback(null, null);
-                    }
-                });
-            },
-            function (team, callback) {
-                if(team) {
-                    User.deleteDummies(team, function (err, data) {
-                        if (err) {
-                            return callback(err);
-                        }
-                        return callback(null,null);
-                    });
-                }
-                else {
-                    return callback(null,null);
-                }
-            }
-        ], callback);
-    }
-
-    //Функция удаляет несохранённые team и character
-    function deleteDummies(userId) {
-        Team.findOne({teamName: "newTeam_"+userId}, function(err, team){
-            if(err) {
-                log.error(err);
-            }
-            //Если найдена хоть одна dummy тима, удалим её
-            if(team) {
-                var teamName = team.teamName;
-                User.deleteDummies(team, function (err) {
-                    if (err) {
-                        log.error(err);
-                    }
-                    log.info("Team "+teamName+" was deleted");
-                });
-            }
-        });
-    }
 
     //Функция перемешивания
     function shuffle (array) {

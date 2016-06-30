@@ -52,6 +52,10 @@ var schema = new Schema({
     }
 });
 
+//GET------------------------------------------------------------------------
+
+//CREATE---------------------------------------------------------------------
+
 //Создаём нового персонажа (пока пустого)
 schema.statics.create = function(teamId, callback){
     var Character = this;
@@ -78,6 +82,10 @@ schema.statics.create = function(teamId, callback){
         }
     ], callback);
 };
+
+//UPDATE---------------------------------------------------------------------
+
+//DELETE---------------------------------------------------------------------
 
 exports.Character = mongoose.model('Character', schema);
 

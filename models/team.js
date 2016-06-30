@@ -1,6 +1,7 @@
 var async = require('async');
 var util = require('util');
 var Character = require('models/character').Character;
+var User = require('models/user').User;
 
 var mongoose = require('lib/mongoose'),
     Schema = mongoose.Schema;
@@ -55,32 +56,59 @@ var schema = new Schema({
     }
 });
 
-//Создаём новую команду (пока пустую)
-schema.statics.create = function(userId, callback){
+//GET---------------------------------------------------------------------------
+
+//Получение заполненной активной команды со всеми персонажами
+schema.statics.getByUserIdPop = function(userId, callback){
+    var Team = this;
+    async.waterfall([
+        function (callback) {
+            User.findById(userId, callback); //находим юзера
+        },
+        function (user, callback) {
+            Team.findById(user.team, function(err, team){
+                if (err) return callback(err);
+                if(team!==null){
+                    callback(null, team);
+                }
+                else {
+                    callback(null, null);
+                }
+            });
+        },
+        function (team, callback) {
+            if(team){
+                team.populate('characters', function(err, popTeam){ //заполняем команду персонажами
+                    if (err) return callback(err);
+                    callback(null, popTeam);
+                });
+            }
+            else {
+                callback(null, null);
+            }
+
+        }
+    ], callback);
+};
+
+//Выборка тимы (Со всеми персонажами)
+schema.statics.getTeamPop = function(cond, callback){
     var Team = this;
 
     async.waterfall([
         function (callback) {
-            Team.findOneAndRemove({teamName: "newTeam_"+userId}, callback); //Смотрим, вдруг предыдущая dummyTeam осталась за юзером
+            Team.findOne(cond, callback);
         },
-        function (deletedTeam, callback) {
-            //создадим новую dummy-тиму
-            var dummyTeam = new Team({teamName: "newTeam_"+userId, _user: userId, souls: {red: 16, green: 16, blue: 16}});
-            dummyTeam.save(function (err) {
-                if (err) return callback(err);
-                callback(null, dummyTeam);
-            });
-        },
-        function (dummyTeam, callback) {
-            //Добавляем созданную тиму в массив команд юзера
-            dummyTeam.populate('_user', function(err, team){
-                if (err) return callback(err);
-                team._user.team=team._id;
-                team._user.save(function(err, user){
-                    if (err) callback(err);
-                    callback(null, team);
+        function (foundedTeam, callback) {
+            if(!foundedTeam){
+                callback(null, null); //здесь нет ошибки, просто не найдено команд
+            }
+            else {
+                foundedTeam.populate('characters', function (err, popTeam) {
+                    if (err) return callback(err);
+                    callback(null, popTeam);
                 });
-            });
+            }
         }
     ], callback);
 };
@@ -122,29 +150,6 @@ schema.statics.findRank = function(teamId, callback){
                         break;
                     }
                 }
-            }
-        }
-    ], callback);
-};
-
-//Выборка тимы (Со всеми персонажами)
-schema.statics.getPopTeam = function(cond, callback){
-    var Team = this;
-
-    async.waterfall([
-        function (callback) {
-            Team.findOne(cond, callback);
-        },
-        function (foundedTeam, callback) {
-            if(!foundedTeam){
-                callback(null, null); //здесь нет ошибки, просто не найдено команд
-            }
-            else {
-                //Добавляем созданную тиму в массив команд юзера
-                foundedTeam.populate('characters', function (err, popTeam) {
-                    if (err) return callback(err);
-                    callback(null, popTeam);
-                });
             }
         }
     ], callback);
@@ -196,39 +201,85 @@ schema.statics.getDummy = function(userId, callback){
             }
         },
         function(completeTeam, callback){
-            if(completeTeam) Team.getPopTeam({_id: completeTeam._id}, callback);
+            if(completeTeam) Team.getTeamPop({_id: completeTeam._id}, callback);
             else callback(null, null);
         }
     ], callback);
 };
 
+//CREATE---------------------------------------------------------------------
+
+//Создаём новую команду (пока пустую)
+schema.statics.create = function(userId, callback){
+    var Team = this;
+
+    async.waterfall([
+        function (callback) {
+            Team.findOneAndRemove({teamName: "newTeam_"+userId}, callback); //Смотрим, вдруг предыдущая dummyTeam осталась за юзером
+        },
+        function (deletedTeam, callback) {
+            //создадим новую dummy-тиму
+            var dummyTeam = new Team({teamName: "newTeam_"+userId, _user: userId, souls: {red: 16, green: 16, blue: 16}});
+            dummyTeam.save(function (err) {
+                if (err) return callback(err);
+                callback(null, dummyTeam);
+            });
+        },
+        function (dummyTeam, callback) {
+            //Добавляем созданную тиму в массив команд юзера
+            dummyTeam.populate('_user', function(err, team){
+                if (err) return callback(err);
+                team._user.team=team._id;
+                team._user.save(function(err, user){
+                    if (err) callback(err);
+                    callback(null, team);
+                });
+            });
+        }
+    ], callback);
+};
+
+//UPDATE---------------------------------------------------------------------
+
+schema.statics.setById = function(teamId, setter, callback) {
+    var Team = this;
+    Team.findByIdAndUpdate(teamId,
+        {$set: setter}, {upsert: true},
+        callback);
+};
+
+//DELETE---------------------------------------------------------------------
+
 //Удаление тимы
 schema.statics.deleteTeam = function(teamId, callback){
     var Team = this;
     Team.findById(teamId, function(err, team){
-        if(err) {
-            return callback(err);
-        }
+        if(err) callback(err);
+
         if(team){
             //Сперва удалим персонажей
             team.populate('characters', function(err, popTeam){
                 if (err) return callback(err);
-                for(var j=0;j<popTeam.characters.length;j++) {
-                    popTeam.characters[j].remove(function (err, chars) {
+                async.each(popTeam.characters, function(characterInTeam, callback) {
+                    characterInTeam.remove(function (err) {
                         if (err) callback(err);
+                        else callback(null, null);
                     });
-                }
-                //Затем удалим записи о созданных тимах у юзера
-                popTeam.populate('_user', function(err, popTeam){
-                    if (err) return callback(err);
-                    popTeam._user.team=undefined;
-                    popTeam._user.save(function(err, user){
-                        if (err) callback(err);
-                    });
-                    //затем удалим сами тимы
-                    popTeam.remove(function(err){
+                }, function(err){
+                    if (err) callback(err);
+
+                    //Затем удалим записи о созданных тимах у юзера
+                    popTeam.populate('_user', function(err, popTeam){
                         if (err) return callback(err);
-                        callback(null);
+                        popTeam._user.team=undefined;
+                        popTeam._user.save(function(err, user){
+                            if (err) callback(err);
+                        });
+                        //затем удалим сами тимы
+                        popTeam.remove(function(err){
+                            if (err) return callback(err);
+                            callback(null);
+                        });
                     });
                 });
             });
@@ -237,6 +288,61 @@ schema.statics.deleteTeam = function(teamId, callback){
             callback(new CustomError("Team For deletion not found"));
         }
     });
+};
+
+//Удаление недоделанных команд и персонажей
+schema.statics.deleteDummies = function(userId, callback){
+    var Team = this;
+    async.waterfall([
+        function (callback) {
+            //Сперва удалим персонажей
+            Team.findOne({teamName: "newTeam_"+userId}, function(err, team){
+                if(err) return callback(err);
+                //Если найдена хоть одна dummy тима, удалим её
+                if(team) return callback(null, team);
+                else return callback({status: 'no team'}, null); //выход из waterfall
+            });
+        },
+        function (team, callback) {
+            //Сперва удалим персонажей
+            team.populate('characters', function(err, popTeam){
+                if (err) return callback(err);
+                async.each(popTeam.characters, function(characterInTeam, callback) {
+                    characterInTeam.remove(function (err) {
+                        if (err) callback(err);
+                        else callback(null, null);
+                    });
+                }, function(err) {
+                    if (err) callback(err);
+                    callback(null, popTeam);
+                });
+            });
+        },
+        function (popTeam, callback) {
+            //Затем удалим записи о созданных тимах у юзера
+            popTeam.populate('_user', function(err, popUserTeam){
+                if (err) {
+                    return callback(err);
+                }
+                popUserTeam._user.team=undefined;
+                popUserTeam._user.save(function(err, user){
+                    if (err) {
+                        callback(err);
+                    }
+                    callback(null, popUserTeam);
+                });
+            });
+        },
+        function (team, callback) {
+            var deletedTeam = team;
+            //затем удалим сами тимы
+            team.remove(function(err){
+                if (err) return callback(err);
+                console.log("Team "+deletedTeam.teamName+" was deleted");
+                callback(null);
+            });
+        }
+    ], callback);
 };
 
 exports.Team = mongoose.model('Team', schema);

@@ -43,12 +43,16 @@
         };
 
         $scope.$on('$routeChangeSuccess', function () {
-            mainSocket.emit("getUsersList");
+            mainSocket.emit("getAllUsersPop");
         });
 
         $scope.loadTeam = function(user){
             if(user.team){
-                mainSocket.emit("getUserTeam", user.id);
+                $scope.chosenTeam = user.team;
+                for(var i=0;i<$scope.chosenTeam.characters.length;i++){
+                    $scope.chosenTeam.characters[i] = new character($scope.chosenTeam.characters[i]);
+                    $scope.chosenTeam.characters[i].initChar();
+                }
             }
             else {
                 $scope.chosenTeam = undefined;
@@ -58,17 +62,6 @@
         $scope.deleteUser = function(user) {
             if(user){
                 mainSocket.emit("deleteUser", user.id);
-            }
-        };
-
-        $scope.loadAllTeams = function(){
-            if(teamsLoad) return;
-
-            teamsLoad=true;
-            for(var i=0;i<$scope.users.length;i++){
-                if($scope.users[i].team && $scope.users!==null){
-                    mainSocket.emit("getUserTeam", $scope.users[i].id, true, $scope.users[i].username);
-                }
             }
         };
 
@@ -371,7 +364,7 @@
             });
         }
 
-        mainSocket.on('getUsersListResult', function(users){
+        mainSocket.on('getAllUsersPopResult', function(users){
             users.sort(function (a, b) {
                 if(a.username.toLowerCase() < b.username.toLowerCase()){
                     return -1;
@@ -382,30 +375,21 @@
                 return 0;
             });
             $scope.users = users;
-        });
-
-        mainSocket.on('getUserTeamResult', function(team, all, username){
-            if(!team || team===null) return;
-
-            if(all){
-                team.username=username;
-                $scope.teamList.push(team);
-                updateRoleStat();
-                calculateRankings();
-            }
-            else {
-                $scope.chosenTeam = team;
-                for(var i=0;i<$scope.chosenTeam.characters.length;i++){
-                    $scope.chosenTeam.characters[i] = new character($scope.chosenTeam.characters[i]);
-                    $scope.chosenTeam.characters[i].initChar();
+            $scope.teamList = [];
+            for(var i=0;i<$scope.users.length;i++){
+                if(users[i].team) {
+                    users[i].team.username = users[i].username;
+                    $scope.teamList.push($scope.users[i].team);
                 }
             }
+            updateRoleStat();
+            calculateRankings();
         });
 
         mainSocket.on('deleteUserResult', function(){
             $rootScope.showInfoMessage("Successfully deleted");
             $scope.chosenTeam = undefined;
-            mainSocket.emit("getUsersList");
+            mainSocket.emit("getAllUsersPop");
         });
 
     }

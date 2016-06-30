@@ -1,8 +1,6 @@
 var crypto = require('crypto');
 var async = require('async');
 var util = require('util');
-var Team = require('models/team').Team;
-var Character = require('models/character').Character;
 
 var mongoose = require('lib/mongoose'),
     Schema = mongoose.Schema;
@@ -40,22 +38,20 @@ var schema = new Schema({
     }
 });
 
-schema.methods.encryptPassword = function (password) {
-    return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
+//GET---------------------------------------------------------------------
+
+schema.statics.getById = function(userId, callback) {
+    var User = this;
+    async.waterfall([
+        function (callback) {
+            User.findById(userId, callback); //находим юзера
+        }
+    ], callback);
 };
 
-schema.virtual('password')
-    .set(function (password) {
-        this._plainPassword = password;
-        this.salt = Math.random() + '';
-        this.hashedPassword = this.encryptPassword(password);
-    })
-    .get(function () {
-        return this._plainPassword;
-    });
-
-schema.methods.checkPassword = function (password) {
-    return this.encryptPassword(password) === this.hashedPassword;
+schema.statics.getAll = function(callback) {
+    var User = this;
+    User.find({}, callback); //находим всех юзеров
 };
 
 schema.statics.authorize = function (username, password, callback) {
@@ -88,6 +84,26 @@ schema.statics.authorize = function (username, password, callback) {
         }
     ], callback);
 };
+
+schema.methods.encryptPassword = function (password) {
+    return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
+};
+
+schema.virtual('password')
+    .set(function (password) {
+        this._plainPassword = password;
+        this.salt = Math.random() + '';
+        this.hashedPassword = this.encryptPassword(password);
+    })
+    .get(function () {
+        return this._plainPassword;
+    });
+
+schema.methods.checkPassword = function (password) {
+    return this.encryptPassword(password) === this.hashedPassword;
+};
+
+//CREATE---------------------------------------------------------------------
 
 schema.statics.register = function (username, password, email, callback) {
     /**
@@ -137,85 +153,16 @@ schema.statics.register = function (username, password, email, callback) {
     ], callback);
 };
 
-//Удаление недоделанных команд и персонажей
-schema.statics.deleteDummies = function(team, callback){
+//UPDATE---------------------------------------------------------------------
+
+schema.statics.setById = function(userId, setter, callback) {
     var User = this;
-    async.waterfall([
-        function (callback) {
-            //Сперва удалим персонажей
-            team.populate('characters', function(err, popTeam){
-                if (err) {
-                    return callback(err);
-                }
-                for(var j=0;j<popTeam.characters.length;j++) {
-                    popTeam.characters[j].remove(function (err, chars) {
-                        if (err) {
-                            callback(err);
-                        }
-                    });
-                }
-                callback(null, popTeam);
-            });
-        },
-        function (popTeam, callback) {
-            //Затем удалим записи о созданных тимах у юзера
-            popTeam.populate('_user', function(err, popUserTeam){
-                if (err) {
-                    return callback(err);
-                }
-                popUserTeam._user.team=undefined;
-                popUserTeam._user.save(function(err, user){
-                    if (err) {
-                        callback(err);
-                    }
-                    callback(null, popUserTeam);
-                });
-            });
-        },
-        function (team, callback) {
-            //затем удалим сами тимы
-            team.remove(function(err){
-                if (err) {
-                    return callback(err);
-                }
-                callback(null);
-            });
-        }
-    ], callback);
+    User.findByIdAndUpdate(userId,
+        {$set: setter}, {upsert: true},
+        callback);
 };
 
-//Получение заполненной активной команды со всеми персонажами
-schema.statics.getTeam = function(userId, callback){
-    var User = this;
-    async.waterfall([
-        function (callback) {
-            User.findById(userId, callback); //находим юзера
-        },
-        function (user, callback) {
-            Team.findById(user.team, function(err, team){
-                if (err) return callback(err);
-                if(team!==null){
-                    callback(null, team);
-                }
-                else {
-                    callback(null, null);
-                }
-            });
-        },
-        function (team, callback) {
-            if(team){
-                team.populate('characters', function(err, popTeam){ //заполняем команду персонажами
-                    if (err) return callback(err);
-                    callback(null, popTeam);
-                });
-            }
-            else {
-                callback(null, null);
-            }
-
-        }
-    ], callback);
-};
+//DELETE---------------------------------------------------------------------
 
 exports.User = mongoose.model('User', schema);
 
