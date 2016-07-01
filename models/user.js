@@ -42,11 +42,7 @@ var schema = new Schema({
 
 schema.statics.getById = function(userId, callback) {
     var User = this;
-    async.waterfall([
-        function (callback) {
-            User.findById(userId, callback); //находим юзера
-        }
-    ], callback);
+    User.findById(userId, callback); //находим юзера
 };
 
 schema.statics.getAll = function(callback) {

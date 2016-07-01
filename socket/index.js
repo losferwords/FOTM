@@ -24,7 +24,7 @@ function loadUser(session, callback) {
         return callback(null, null);
     }
 
-    User.findById(session.user, function (err, user) {
+    User.getById(session.user, function (err, user) {
         if (err) return callback(err);
 
         if (!user) {
@@ -127,7 +127,7 @@ module.exports = function (server) {
                                 loses: team.loses+1
                             }, function(err, team){
                                 if (err) socket.emit("customError", err);
-                                Character.find({_team: team._id}, function(err, chars){
+                                Character.getAllByAny({_team: team._id}, function(err, chars){
                                     if (err) socket.emit("customError", err);
                                     for(var i=0;i<chars.length;i++){
                                         Character.setById(chars[i]._id, {lose: true}, function(err){
@@ -158,13 +158,13 @@ module.exports = function (server) {
 
         socket.on('createChar', function(){
             var userId = socket.handshake.user._id;
-            Team.findOne({teamName: "newTeam_"+userId}, function(err, team){
+            Team.getByAny({teamName: "newTeam_"+userId}, function(err, team){
                 if(err) socket.emit("customError", err);
                 if(team!=null){
                     Character.create(team._id, function(err, char){
                         if (err) socket.emit("customError", err);
                         if(char) socket.emit("createCharResult");
-                        else log.error("Can create character");
+                        else log.error("Can't create character");
                     });
                 }
                 else {
@@ -178,7 +178,7 @@ module.exports = function (server) {
             Team.findByIdAndUpdate(teamId, {$pull: {characters: charId}}, function(err, team){
                 if(err) socket.emit("customError", err);
                 //А потом удалим и его самого
-                Character.findByIdAndRemove(charId, function(err){
+                Character.deleteById(charId, function(err){
                     if (err) socket.emit("customError", err);
                     socket.emit("removeCharResult");
                 });
@@ -186,7 +186,7 @@ module.exports = function (server) {
         });
 
         socket.on('getChar', function(cond){
-            Character.findOne(cond, function(err, char){
+            Character.getByAny(cond, function(err, char){
                 if (err) socket.emit("customError", err);
                 if(char) socket.emit("getCharResult", char);
                 else socket.emit("getCharResult");
@@ -197,7 +197,7 @@ module.exports = function (server) {
             var userId = socket.handshake.user._id;
             Team.findOne({teamName: "newTeam_"+userId}, function(err, team){
                 if(err) socket.emit("customError", err);
-                Character.findOne({charName: "newChar_"+team._id}, function(err, char){
+                Character.getByAny({charName: "newChar_"+team._id}, function(err, char){
                     if (err) socket.emit("customError", err);
                     if(char){
                         char.populate('_team', function(err, popChar) {
@@ -215,7 +215,7 @@ module.exports = function (server) {
         });
 
         socket.on('setChar', function(cond){
-            Character.findByIdAndUpdate(cond._id, {$set: cond}, {upsert: true}, function(err, char){
+            Character.setById(cond._id, cond, function(err, char){
                 if (err) socket.emit("customError", err);
                 socket.emit("setCharResult");
             });
@@ -255,7 +255,7 @@ module.exports = function (server) {
         });
 
         socket.on('setTeam', function(cond){
-            Team.findByIdAndUpdate(cond._id, {$set: cond}, {upsert: true}, function(err, team){
+            Team.setById(cond._id, cond, function(err, team){
                 if (err) socket.emit("customError", err);
                 socket.emit("setTeamResult");
             });
@@ -316,7 +316,7 @@ module.exports = function (server) {
                 if (err) socket.emit("customError", err);
                 if(!team) {
                     //Если тима не найдена, значит она была удалена, а ссылка на неё осталась
-                    User.findByIdAndUpdate(userId, {$set: {team: undefined}}, {upsert: true}, function(err, user){
+                    User.setById(userId, {team: undefined}, function(err, user){
                         if (err) socket.emit("customError", err);
                         socket.emit("getUserTeamResult", null);
                     });
@@ -477,7 +477,7 @@ module.exports = function (server) {
             }
 
             //Сперва ищем свою команду
-            User.findById(allyUserId, function(err, allyUser){
+            User.getById(allyUserId, function(err, allyUser){
                 if(err) socket.emit("customError", err);
                 //Наполняем её
                 Team.getTeamPop({_id: allyUser.team}, function(err, popAllyTeam){
@@ -486,7 +486,7 @@ module.exports = function (server) {
                     //Если всё прошло удачно
                     if(allyTeam){
                         //Ищём чужую команду
-                        User.findById(enemyUserId, function(err, enemyUser) {
+                        User.getById(enemyUserId, function(err, enemyUser) {
                             if (err) socket.emit("customError", err);
                             //Наполняем её
                             Team.getTeamPop({_id: enemyUser.team}, function (err, popEnemyTeam) {
@@ -526,7 +526,7 @@ module.exports = function (server) {
 
         socket.on('deleteUser', function(id) {
             var userId = id;
-            User.findById(userId, function(err, foundedUser) {
+            User.getById(userId, function(err, foundedUser) {
                 if(foundedUser.team) {
                     Team.deleteTeam(foundedUser.team, function(err){
                         if (err) socket.emit("customError", err);

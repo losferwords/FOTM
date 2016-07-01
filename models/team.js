@@ -113,6 +113,18 @@ schema.statics.getTeamPop = function(cond, callback){
     ], callback);
 };
 
+//Выборка тим по любому условию
+schema.statics.getAllByAny = function(cond, callback){
+    var Team = this;
+    Team.find(cond, callback);
+};
+
+//Выборка тимы по любому условию
+schema.statics.getByAny = function(cond, callback){
+    var Team = this;
+    Team.findOne(cond, callback);
+};
+
 //Вычисляем ранг команды
 schema.statics.findRank = function(teamId, callback){
     var Team = this;
