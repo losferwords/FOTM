@@ -61,7 +61,7 @@
 
         $scope.deleteUser = function(user) {
             if(user){
-                mainSocket.emit("deleteUser", user.id);
+                mainSocket.emit("deleteUser", user._id);
             }
         };
 

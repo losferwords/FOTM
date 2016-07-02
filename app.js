@@ -84,9 +84,10 @@ else {
     });
 }
 
-
-
-
-
 var io = require('socket')(server);
+require('socket/userEvents')(io);
+require('socket/teamEvents')(io);
+require('socket/characterEvents')(io);
+require('socket/cityEvents')(io);
+require('socket/battleEvents')(io);
 app.set('io', io);
