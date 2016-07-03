@@ -3,18 +3,33 @@
 
     //Контроллер создания персонажа
     function CreateCharacterController($scope, $rootScope, $location, mainSocket, characterService, abilityService, randomService, gettextCatalog) {
+        var defaultGenderIndex = randomService.randomInt(0,1);
+        var defaultGender = "";
+        switch(defaultGenderIndex) {
+            case 0 : defaultGender = "male"; break;
+            case 1 : defaultGender = "female"; break;
+        }
+
+        var defaultRaceIndex = randomService.randomInt(0,2);
+        var defaultRace = "";
+        switch(defaultRaceIndex) {
+            case 0 : defaultRace = "nephilim"; break;
+            case 1 : defaultRace = "human"; break;
+            case 2 : defaultRace = "cambion"; break;
+        }
+
         $scope.characterObj = {
             _team: "",
             _id: "",
             charName: "",
-            gender: "male",
-            race: "human",
+            gender: defaultGender,
+            race: defaultRace,
             role: "random"
         };
         var teamId;
 
         $scope.activePortrait = {
-            value: 0
+            value: randomService.randomInt(0,3)
         };
         $scope.createCharPending = false;
 
@@ -30,7 +45,7 @@
                 $location.path('/city');
             }
             else{
-                mainSocket.emit("removeChar", $scope.characterObj._team, $scope.characterObj._id);
+                mainSocket.emit("removeChar", teamId, $scope.characterObj._id);
                 $scope.createCharPending = true;
             }
         };
@@ -78,8 +93,8 @@
                     }
                 }
                 updateCharInfo();
-                var abilitiesArr = characterService.getStartAbilities($scope.characterObj.role);
                 var availableAbilitiesArr = characterService.getBasicAbilities($scope.characterObj.role, $scope.characterObj.race);
+                var abilitiesArr = characterService.getStartAbilities(availableAbilitiesArr);
 
                 var abilitiesObjectsArr = [];
                 for(var i=0;i<abilitiesArr.length;i++){

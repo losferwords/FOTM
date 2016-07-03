@@ -1000,8 +1000,8 @@
             return roleAvailableAbilities[role];
         },
         //стартовые способности
-        getStartAbilities: function (role) {
-            return startAbilities[role];
+        getStartAbilities: function (basicAbilities) {
+            return randomService.shuffle(basicAbilities).splice(0,7);
         }
     }
 });
