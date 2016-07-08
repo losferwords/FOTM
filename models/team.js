@@ -2,6 +2,7 @@ var async = require('async');
 var util = require('util');
 var Character = require('models/character').Character;
 var User = require('models/user').User;
+var CharacterFactory = require('services/characterFactory');
 
 var mongoose = require('lib/mongoose'),
     Schema = mongoose.Schema;
@@ -59,7 +60,7 @@ var schema = new Schema({
 //GET---------------------------------------------------------------------------
 
 //Получение заполненной активной команды со всеми персонажами
-schema.statics.getByUserIdPop = function(userId, callback){
+schema.statics.getByUserIdFull = function(userId, callback){
     var Team = this;
     async.waterfall([
         function (callback) {
@@ -80,7 +81,13 @@ schema.statics.getByUserIdPop = function(userId, callback){
             if(team){
                 team.populate('characters', function(err, popTeam){ //заполняем команду персонажами
                     if (err) return callback(err);
-                    callback(null, popTeam);
+                    async.each(popTeam.characters, function(characterInTeam, callback) {
+                        characterInTeam._doc = CharacterFactory(characterInTeam._doc);
+                        callback(null, characterInTeam);
+                    }, function(err) {
+                        if (err) callback(err);
+                        callback(null, popTeam);
+                    });
                 });
             }
             else {
@@ -256,7 +263,7 @@ schema.statics.create = function(userId, callback){
 schema.statics.setById = function(teamId, setter, callback) {
     var Team = this;
     Team.findByIdAndUpdate(teamId,
-        {$set: setter}, {upsert: true},
+        {$set: setter}, {upsert: true, new: true},
         callback);
 };
 

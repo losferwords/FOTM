@@ -100,7 +100,7 @@ schema.statics.create = function(teamId, callback){
 schema.statics.setById = function(charId, setter, callback) {
     var Character = this;
     Character.findByIdAndUpdate(charId,
-        {$set: setter}, {upsert: true},
+        {$set: setter}, {upsert: true, new: true},
         callback);
 };
 

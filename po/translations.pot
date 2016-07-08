@@ -8,14 +8,14 @@ msgstr ""
 msgid "'s grinder looking for meat!"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:103
-#: public/js/controllers/AdminController.js:255
+#: public/js/controllers/AbilitiesInfoController.js:111
+#: public/js/controllers/AdminController.js:316
 #: public/js/controllers/ArenaController.js:37
 msgid "<p class='tooltip-need-weapon'>Need weapon</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:104
-#: public/js/controllers/AdminController.js:256
+#: public/js/controllers/AbilitiesInfoController.js:112
+#: public/js/controllers/AdminController.js:317
 #: public/js/controllers/ArenaController.js:38
 msgid "<p class='tooltip-spell'>Spell</p>"
 msgstr ""
@@ -92,8 +92,8 @@ msgstr ""
 msgid "<p>Amount of <strong>health</strong> determines how long you can fight. If you lose your health you die.</p><p>Basic: {{one}}</p><p>From strength: {{two}}</p><p>From items: {{three}}</p><p>Total: {{four}}</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:107
-#: public/js/controllers/AdminController.js:259
+#: public/js/controllers/AbilitiesInfoController.js:115
+#: public/js/controllers/AdminController.js:320
 #: public/js/controllers/ArenaController.js:41
 msgid "<p>Cooldown: {{one}}</p>"
 msgstr ""
@@ -114,14 +114,14 @@ msgstr ""
 msgid "<p>Create red soul gem</p><p>Cost: 4 red shards</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:108
-#: public/js/controllers/AdminController.js:260
+#: public/js/controllers/AbilitiesInfoController.js:116
+#: public/js/controllers/AdminController.js:321
 #: public/js/controllers/ArenaController.js:42
 msgid "<p>Duration: {{one}}</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:109
-#: public/js/controllers/AdminController.js:261
+#: public/js/controllers/AbilitiesInfoController.js:117
+#: public/js/controllers/AdminController.js:322
 #: public/js/controllers/ArenaController.js:43
 msgid "<p>Energy Cost: {{one}}</p>"
 msgstr ""
@@ -130,20 +130,20 @@ msgstr ""
 msgid "<p>Left: {{one}}</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:110
-#: public/js/controllers/AdminController.js:262
+#: public/js/controllers/AbilitiesInfoController.js:118
+#: public/js/controllers/AdminController.js:323
 #: public/js/controllers/ArenaController.js:44
 msgid "<p>Mana Cost: {{one}}</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:105
-#: public/js/controllers/AdminController.js:257
+#: public/js/controllers/AbilitiesInfoController.js:113
+#: public/js/controllers/AdminController.js:318
 #: public/js/controllers/ArenaController.js:39
 msgid "<p>Range: {{one}}</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:106
-#: public/js/controllers/AdminController.js:258
+#: public/js/controllers/AbilitiesInfoController.js:114
+#: public/js/controllers/AdminController.js:319
 #: public/js/controllers/ArenaController.js:40
 msgid "<p>Range: Self</p>"
 msgstr ""
@@ -172,7 +172,7 @@ msgstr ""
 msgid "Ability can be used only if character health is less than 50%. Heals up caster for {{one}} and increases Critical Chance for {{two}}%."
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:47
+#: template/partials/abilitiesInfo.ejs:48
 msgid "Ability Tune"
 msgstr ""
 
@@ -226,7 +226,7 @@ msgstr ""
 msgid "Attack Power increased to 25%.<br>Block Chance increased to 25%."
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:137
+#: template/partials/abilitiesInfo.ejs:138
 #: template/partials/charInfo.ejs:72
 #: template/partials/inventoryInfo.ejs:336
 #: template/partials/inventoryInfo.ejs:84
@@ -237,7 +237,7 @@ msgstr ""
 msgid "Attack Power: + {{one}}%"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:116
+#: template/partials/abilitiesInfo.ejs:117
 #: template/partials/arena.ejs:124
 #: template/partials/charInfo.ejs:49
 #: template/partials/inventoryInfo.ejs:305
@@ -279,7 +279,7 @@ msgstr ""
 msgid "Block Chance increased to 40%.<br>Physical Resistance increased to 40%.<br>Magical Resistance increased to 40%."
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:177
+#: template/partials/abilitiesInfo.ejs:178
 #: template/partials/charInfo.ejs:112
 #: template/partials/inventoryInfo.ejs:100
 #: template/partials/inventoryInfo.ejs:376
@@ -351,9 +351,9 @@ msgstr ""
 msgid "Calls to hell and becomes immune to magical damage"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:20
-#: public/js/controllers/CharInfoController.js:60
-#: public/js/controllers/CreateCharacterController.js:149
+#: public/js/controllers/AbilitiesInfoController.js:30
+#: public/js/controllers/CharInfoController.js:35
+#: public/js/controllers/CreateCharacterController.js:164
 #: public/js/controllers/InventoryInfoController.js:41
 msgid "Cambion"
 msgstr ""
@@ -481,7 +481,7 @@ msgstr ""
 msgid "Cauterization"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:114
+#: template/partials/abilitiesInfo.ejs:115
 #: template/partials/city.ejs:38
 #: template/partials/inventoryInfo.ejs:303
 msgid "Character"
@@ -537,7 +537,7 @@ msgstr ""
 msgid "Children Of The Damned"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:49
+#: template/partials/abilitiesInfo.ejs:50
 msgid "Choose ability for tune"
 msgstr ""
 
@@ -562,8 +562,8 @@ msgstr ""
 msgid "Clearcasting state. Don't spend mana on spells."
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:32
-#: public/js/controllers/CharInfoController.js:72
+#: public/js/controllers/AbilitiesInfoController.js:42
+#: public/js/controllers/CharInfoController.js:47
 #: public/js/controllers/InventoryInfoController.js:53
 #: template/partials/createCharacter.ejs:47
 msgid "Cleric"
@@ -581,7 +581,7 @@ msgstr ""
 msgid "Clerics are called to bring the light of healing into battlefield. Their prayers and blessings protect allies from a terrible fate."
 msgstr ""
 
-#: template/partials/city.ejs:145
+#: template/partials/city.ejs:138
 msgid "Close"
 msgstr ""
 
@@ -624,7 +624,7 @@ msgstr ""
 msgid "Common"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:63
+#: template/partials/abilitiesInfo.ejs:64
 msgid "Cooldown: {{interestingAbility.cooldown()}}"
 msgstr ""
 
@@ -681,7 +681,7 @@ msgstr ""
 msgid "Critical Chance increased to 25%.<br>Dodge Chance increased to 25%."
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:203
+#: template/partials/abilitiesInfo.ejs:204
 #: template/partials/charInfo.ejs:138
 #: template/partials/inventoryInfo.ejs:109
 #: template/partials/inventoryInfo.ejs:402
@@ -746,7 +746,7 @@ msgstr ""
 msgid "Dexterity"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:193
+#: template/partials/abilitiesInfo.ejs:194
 #: template/partials/charInfo.ejs:128
 #: template/partials/inventoryInfo.ejs:105
 #: template/partials/inventoryInfo.ejs:392
@@ -795,7 +795,7 @@ msgstr ""
 msgid "Dodge Chance increased to {{one}}%."
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:233
+#: template/partials/abilitiesInfo.ejs:234
 #: template/partials/charInfo.ejs:168
 #: template/partials/inventoryInfo.ejs:121
 #: template/partials/inventoryInfo.ejs:432
@@ -828,7 +828,7 @@ msgstr ""
 msgid "drop cooldown for"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:64
+#: template/partials/abilitiesInfo.ejs:65
 msgid "Duration: {{interestingAbility.duration()}}"
 msgstr ""
 
@@ -872,7 +872,7 @@ msgstr ""
 msgid "Enemy can see spells of that character."
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:65
+#: template/partials/abilitiesInfo.ejs:66
 msgid "Energy cost: {{interestingAbility.energyCost()}}"
 msgstr ""
 
@@ -880,7 +880,7 @@ msgstr ""
 msgid "energy with"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:213
+#: template/partials/abilitiesInfo.ejs:214
 #: template/partials/charInfo.ejs:148
 #: template/partials/inventoryInfo.ejs:113
 #: template/partials/inventoryInfo.ejs:412
@@ -1062,7 +1062,7 @@ msgstr ""
 msgid "Heals up ally target for {{one}}. Or deals {{two}} magical damage to enemy target."
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:157
+#: template/partials/abilitiesInfo.ejs:158
 #: template/partials/charInfo.ejs:92
 #: template/partials/inventoryInfo.ejs:356
 #: template/partials/inventoryInfo.ejs:92
@@ -1082,7 +1082,7 @@ msgstr ""
 msgid "Health Regeneration increased to {{one}}%."
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:147
+#: template/partials/abilitiesInfo.ejs:148
 #: template/partials/charInfo.ejs:82
 #: template/partials/inventoryInfo.ejs:346
 #: template/partials/inventoryInfo.ejs:88
@@ -1099,8 +1099,8 @@ msgstr ""
 msgid "Heaven Can Wait"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:33
-#: public/js/controllers/CharInfoController.js:73
+#: public/js/controllers/AbilitiesInfoController.js:43
+#: public/js/controllers/CharInfoController.js:48
 #: public/js/controllers/InventoryInfoController.js:54
 #: template/partials/createCharacter.ejs:48
 msgid "Heretic"
@@ -1122,7 +1122,7 @@ msgstr ""
 msgid "Hit Chance increased to {{one}}%."
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:223
+#: template/partials/abilitiesInfo.ejs:224
 #: template/partials/charInfo.ejs:158
 #: template/partials/inventoryInfo.ejs:117
 #: template/partials/inventoryInfo.ejs:422
@@ -1149,9 +1149,9 @@ msgstr ""
 msgid "Holy Smoke"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:19
-#: public/js/controllers/CharInfoController.js:59
-#: public/js/controllers/CreateCharacterController.js:148
+#: public/js/controllers/AbilitiesInfoController.js:29
+#: public/js/controllers/CharInfoController.js:34
+#: public/js/controllers/CreateCharacterController.js:163
 #: public/js/controllers/InventoryInfoController.js:40
 msgid "Human"
 msgstr ""
@@ -1229,7 +1229,7 @@ msgstr ""
 msgid "Initiative increased to {{one}}%."
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:309
+#: template/partials/abilitiesInfo.ejs:310
 #: template/partials/charInfo.ejs:244
 #: template/partials/inventoryInfo.ejs:150
 #: template/partials/inventoryInfo.ejs:508
@@ -1250,7 +1250,7 @@ msgstr ""
 msgid "Intellect"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:259
+#: template/partials/abilitiesInfo.ejs:260
 #: template/partials/charInfo.ejs:194
 #: template/partials/inventoryInfo.ejs:130
 #: template/partials/inventoryInfo.ejs:458
@@ -1261,7 +1261,7 @@ msgstr ""
 msgid "Intellect: + {{one}}"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:115
+#: template/partials/abilitiesInfo.ejs:116
 #: template/partials/charInfo.ejs:48
 #: template/partials/city.ejs:40
 #: template/partials/inventoryInfo.ejs:5
@@ -1296,7 +1296,7 @@ msgstr ""
 msgid "Jawbreaker"
 msgstr ""
 
-#: public/js/controllers/CityController.js:33
+#: public/js/controllers/CityController.js:31
 msgid "Join Battle"
 msgstr ""
 
@@ -1416,7 +1416,7 @@ msgstr ""
 msgid "Luck increased to {{one}}%."
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:243
+#: template/partials/abilitiesInfo.ejs:244
 #: template/partials/charInfo.ejs:178
 #: template/partials/inventoryInfo.ejs:125
 #: template/partials/inventoryInfo.ejs:442
@@ -1433,7 +1433,7 @@ msgstr ""
 msgid "Made In Hell"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:299
+#: template/partials/abilitiesInfo.ejs:300
 #: template/partials/charInfo.ejs:234
 #: template/partials/inventoryInfo.ejs:146
 #: template/partials/inventoryInfo.ejs:498
@@ -1476,8 +1476,8 @@ msgstr ""
 msgid "Male"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:31
-#: public/js/controllers/CharInfoController.js:71
+#: public/js/controllers/AbilitiesInfoController.js:41
+#: public/js/controllers/CharInfoController.js:46
 #: public/js/controllers/InventoryInfoController.js:52
 #: template/partials/createCharacter.ejs:46
 msgid "Malefic"
@@ -1495,11 +1495,11 @@ msgstr ""
 msgid "Malleus Maleficarum"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:66
+#: template/partials/abilitiesInfo.ejs:67
 msgid "Mana cost: {{interestingAbility.manaCost()}}"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:289
+#: template/partials/abilitiesInfo.ejs:290
 #: template/partials/charInfo.ejs:224
 #: template/partials/inventoryInfo.ejs:142
 #: template/partials/inventoryInfo.ejs:488
@@ -1522,7 +1522,7 @@ msgstr ""
 msgid "mana with"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:279
+#: template/partials/abilitiesInfo.ejs:280
 #: template/partials/charInfo.ejs:214
 #: template/partials/inventoryInfo.ejs:138
 #: template/partials/inventoryInfo.ejs:478
@@ -1556,7 +1556,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: public/js/controllers/CreateCharacterController.js:45
+#: public/js/controllers/CreateCharacterController.js:60
 msgid "Name {{one}} is already in use"
 msgstr ""
 
@@ -1566,13 +1566,13 @@ msgstr ""
 msgid "Name: {{char.charName}}"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:59
+#: template/partials/abilitiesInfo.ejs:60
 msgid "Need weapon"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:18
-#: public/js/controllers/CharInfoController.js:58
-#: public/js/controllers/CreateCharacterController.js:147
+#: public/js/controllers/AbilitiesInfoController.js:28
+#: public/js/controllers/CharInfoController.js:33
+#: public/js/controllers/CreateCharacterController.js:162
 #: public/js/controllers/InventoryInfoController.js:39
 msgid "Nephilim"
 msgstr ""
@@ -1660,7 +1660,7 @@ msgstr ""
 msgid "Password Must contain one lower &amp; uppercase letter,<br>and one non-alpha character (a number or a symbol.)"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:167
+#: template/partials/abilitiesInfo.ejs:168
 #: template/partials/charInfo.ejs:102
 #: template/partials/inventoryInfo.ejs:366
 #: template/partials/inventoryInfo.ejs:96
@@ -1737,8 +1737,8 @@ msgstr ""
 msgid "Prophecy"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:30
-#: public/js/controllers/CharInfoController.js:70
+#: public/js/controllers/AbilitiesInfoController.js:40
+#: public/js/controllers/CharInfoController.js:45
 #: public/js/controllers/InventoryInfoController.js:51
 #: template/partials/createCharacter.ejs:45
 msgid "Prophet"
@@ -1785,11 +1785,11 @@ msgstr ""
 msgid "Range distance:"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:62
+#: template/partials/abilitiesInfo.ejs:63
 msgid "Range: {{interestingAbility.range()}}"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:61
+#: template/partials/abilitiesInfo.ejs:62
 msgid "Range: Self"
 msgstr ""
 
@@ -1797,8 +1797,8 @@ msgstr ""
 msgid "Rating: {{team.rating}} (Rank {{rank}})"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:28
-#: public/js/controllers/CharInfoController.js:68
+#: public/js/controllers/AbilitiesInfoController.js:38
+#: public/js/controllers/CharInfoController.js:43
 #: public/js/controllers/InventoryInfoController.js:49
 #: template/partials/createCharacter.ejs:43
 msgid "Redeemer"
@@ -1888,8 +1888,8 @@ msgstr ""
 msgid "Ring"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:29
-#: public/js/controllers/CharInfoController.js:69
+#: public/js/controllers/AbilitiesInfoController.js:39
+#: public/js/controllers/CharInfoController.js:44
 #: public/js/controllers/InventoryInfoController.js:50
 #: template/partials/createCharacter.ejs:44
 msgid "Ripper"
@@ -1917,9 +1917,9 @@ msgstr ""
 msgid "Role: {{getCharRole()}}"
 msgstr ""
 
-#: public/js/controllers/CityController.js:182
+#: public/js/controllers/CityController.js:180
 #: public/js/controllers/CityController.js:302
-#: template/partials/city.ejs:125
+#: template/partials/city.ejs:118
 msgid "Roll Dices"
 msgstr ""
 
@@ -1943,15 +1943,15 @@ msgstr ""
 msgid "Search Team..."
 msgstr ""
 
-#: public/js/controllers/CityController.js:37
+#: public/js/controllers/CityController.js:35
 msgid "searching."
 msgstr ""
 
-#: public/js/controllers/CityController.js:38
+#: public/js/controllers/CityController.js:36
 msgid "searching.."
 msgstr ""
 
-#: public/js/controllers/CityController.js:39
+#: public/js/controllers/CityController.js:37
 msgid "searching..."
 msgstr ""
 
@@ -1960,8 +1960,8 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:26
-#: public/js/controllers/CharInfoController.js:66
+#: public/js/controllers/AbilitiesInfoController.js:36
+#: public/js/controllers/CharInfoController.js:41
 #: public/js/controllers/InventoryInfoController.js:47
 #: template/partials/createCharacter.ejs:41
 msgid "Sentinel"
@@ -2006,8 +2006,8 @@ msgstr ""
 msgid "Slaughter Dagger"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:27
-#: public/js/controllers/CharInfoController.js:67
+#: public/js/controllers/AbilitiesInfoController.js:37
+#: public/js/controllers/CharInfoController.js:42
 #: public/js/controllers/InventoryInfoController.js:48
 #: template/partials/createCharacter.ejs:42
 msgid "Slayer"
@@ -2104,7 +2104,7 @@ msgstr ""
 msgid "Speed Of Light"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:60
+#: template/partials/abilitiesInfo.ejs:61
 msgid "Spell"
 msgstr ""
 
@@ -2126,7 +2126,7 @@ msgstr ""
 msgid "Spell Power increased to 25%.<br>Hit Chance increased to 25%."
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:269
+#: template/partials/abilitiesInfo.ejs:270
 #: template/partials/charInfo.ejs:204
 #: template/partials/inventoryInfo.ejs:134
 #: template/partials/inventoryInfo.ejs:468
@@ -2179,7 +2179,7 @@ msgstr ""
 msgid "Strength"
 msgstr ""
 
-#: template/partials/abilitiesInfo.ejs:127
+#: template/partials/abilitiesInfo.ejs:128
 #: template/partials/charInfo.ejs:62
 #: template/partials/inventoryInfo.ejs:326
 #: template/partials/inventoryInfo.ejs:80
@@ -2251,7 +2251,7 @@ msgstr ""
 msgid "Stunned. Skip next turn."
 msgstr ""
 
-#: public/js/controllers/CreateCharacterController.js:115
+#: public/js/controllers/CreateCharacterController.js:130
 #: public/js/controllers/CreateTeamController.js:65
 msgid "Successful"
 msgstr ""
@@ -2466,12 +2466,12 @@ msgstr ""
 msgid "You win"
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:756
+#: public/js/controllers/ArenaController.js:763
 msgid "Your enemy not ready to battle"
 msgstr ""
 
-#: public/js/controllers/ArenaController.js:831
-#: public/js/controllers/ArenaController.js:836
+#: public/js/controllers/ArenaController.js:849
+#: public/js/controllers/ArenaController.js:854
 msgid "Your enemy was disconnected"
 msgstr ""
 

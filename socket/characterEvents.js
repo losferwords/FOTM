@@ -3,6 +3,8 @@ var async = require('async');
 var User = require('models/user').User;
 var Team = require('models/team').Team;
 var Character = require('models/character').Character;
+var CharacterFactory = require('services/characterFactory');
+var AbilityFactory = require('services/abilityFactory');
 
 module.exports = function (serverIO) {
     var io = serverIO;
@@ -66,11 +68,35 @@ module.exports = function (serverIO) {
             });
         });
 
-        socket.on('setChar', function(cond){
+        socket.on('setChar', function(cond, cb){
             Character.setById(cond._id, cond, function(err, char){
                 if (err) socket.emit("customError", err);
-                socket.emit("setCharResult");
+                cb(CharacterFactory(char._doc));
             });
+        });
+
+        socket.on('calcCharByParams', function(charId, point, cb){
+            if(socket.team){
+                for(var i=0;i<socket.team.characters.length;i++) {
+                    if(socket.team.characters[i]._id==charId) {
+                        socket.team.characters[i].calcParamsByPoint(point);
+                        cb(socket.team.characters[i]);
+                        break;
+                    }
+                }
+            }
+        });
+
+        socket.on('getAbility', function(name, cb){
+            cb(AbilityFactory(name));
+        });
+
+        socket.on('getAbilities', function(nameArray, cb){
+            var abilityArray = [];
+            for(var i=0;i<nameArray;i++){
+                abilityArray.push(AbilityFactory(nameArray[i]))
+            }
+            cb(abilityArray);
         });
 
     });

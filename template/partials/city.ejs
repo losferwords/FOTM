@@ -30,15 +30,15 @@
                                 <h2 class="panel-title" ng-if="char.charName!==char._id">{{char.charName}}</h2>
                             </div>
                             <div class="panel-body text-center">
-                                <button class="btn btn-primary btn-create" ng-click="createCharClick(char)" ng-disabled="pending" ng-if="char.charName===char._id" translate>Create</button>
+                                <button class="btn btn-primary btn-create" ng-click="createCharClick($index)" ng-disabled="pending" ng-if="char.charName===char._id" translate>Create</button>
                                 <div class="portrait" ng-style="{'background-image': getCharPortrait(char)}" ng-if="char.charName!==char._id">
                                     <div class="role-in-portrait icon" ng-class="[char.role+'-icon']"></div>
                                 </div>
                                 <div class="btn-group-vertical btn-group-char-options" ng-if="!(char.lose || char.charName===char._id)">
-                                    <button class="btn btn-default btn-sm" ng-click="characterClick(char)" ng-disabled="searchBattle || pending" translate>Character</button>
-                                    <button class="btn btn-info btn-sm" ng-click="abilitiesClick(char)" ng-disabled="searchBattle || pending" translate>Abilities</button>
-                                    <button class="btn btn-success btn-sm" ng-click="inventoryClick(char)" ng-disabled="searchBattle || pending" translate>Inventory</button>
-                                    <button class="btn btn-danger btn-sm" ng-click="burnClick(char)" ng-disabled="searchBattle || pending" translate>Burn</button>
+                                    <button class="btn btn-default btn-sm" ng-click="characterClick($index)" ng-disabled="searchBattle || pending" translate>Character</button>
+                                    <button class="btn btn-info btn-sm" ng-click="abilitiesClick($index)" ng-disabled="searchBattle || pending" translate>Abilities</button>
+                                    <button class="btn btn-success btn-sm" ng-click="inventoryClick($index)" ng-disabled="searchBattle || pending" translate>Inventory</button>
+                                    <button class="btn btn-danger btn-sm" ng-click="burnClick($index)" ng-disabled="searchBattle || pending" translate>Burn</button>
                                 </div>
 
                                 <div class="resurrect-shards" ng-if="(char.lose && char.charName!==char._id)">

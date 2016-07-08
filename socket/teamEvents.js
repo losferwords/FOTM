@@ -89,7 +89,7 @@ module.exports = function (serverIO) {
             }
             userId = socket.handshake.user._id;
 
-            Team.getByUserIdPop(userId, function(err, team){
+            Team.getByUserIdFull(userId, function(err, team){
                 if (err) socket.emit("customError", err);
                 if(!team) {
                     //Если тима не найдена, значит она была удалена, а ссылка на неё осталась
@@ -99,6 +99,15 @@ module.exports = function (serverIO) {
                     });
                 }
                 else {
+                    //Устанавливаем команду на сокете (выбираем только документы, отсекаем методы модели)
+                    var teamForSocket = team._doc;
+                    var charactersForSocket = [];
+                    for(var i=0;i<team._doc.characters.length;i++){
+                        charactersForSocket.push(team._doc.characters[i]._doc);
+                    }
+                    teamForSocket.characters = charactersForSocket;
+                    socket.team = teamForSocket;
+                    //ищем ранк
                     Team.findRank(team._id, function (err, rank) {
                         if (err) socket.emit("customError", err);
 

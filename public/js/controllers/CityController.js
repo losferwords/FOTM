@@ -2,10 +2,9 @@
     module.controller("CityController", CityController);
 
     //Контроллер выбора пати
-    function CityController($scope, $rootScope, $location, $interval, $uibModal, $route, characterService, mainSocket, gettextCatalog, soundService) {
+    function CityController($scope, $rootScope, $location, $interval, $uibModal, $route, characterService, mainSocket, gettextCatalog, soundService, currentTeam) {
         var searchTimer;
         var searchProcessStep=0;
-        var charSetFlag;
         var rollDiceTimer;
 
         $scope.searchBattle = false;
@@ -56,18 +55,18 @@
             $interval.cancel(searchTimer);
         };
 
-        $scope.characterClick = function(char){
-            $rootScope.interestingChar=char;
+        $scope.characterClick = function(index){
+            currentTeam.setCurrentCharIndex(index);
             $location.path("/charInfo");
         };
 
-        $scope.abilitiesClick = function(char){
-            $rootScope.interestingChar=char;
+        $scope.abilitiesClick = function(index){
+            currentTeam.setCurrentCharIndex(index);
             $location.path("/abilitiesInfo");
         };
 
-        $scope.inventoryClick = function(char){
-            $rootScope.interestingChar=char;
+        $scope.inventoryClick = function(index){
+            currentTeam.setCurrentCharIndex(index);
             $location.path("/inventoryInfo");
         };
 
@@ -114,8 +113,8 @@
             return true;
         };
 
-        $scope.createCharClick = function(char){
-            $rootScope.interestingChar=char;
+        $scope.createCharClick = function(index){
+            currentTeam.setCurrentCharIndex(index);
             $location.path("/createChar");
         };
 
@@ -223,7 +222,7 @@
                 $scope.team.characters[0].battleColor="#2a9fd6";
                 $scope.team.characters[1].battleColor="#0055AF";
                 $scope.team.characters[2].battleColor="#9933cc";
-                $rootScope.interestingTeam = team;
+                currentTeam.set(team);
                 $scope.rank = rank;
 
                 var left = new Date(3600000-(nextRollLeft));
