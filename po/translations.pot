@@ -8,13 +8,13 @@ msgstr ""
 msgid "'s grinder looking for meat!"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:111
+#: public/js/controllers/AbilitiesInfoController.js:113
 #: public/js/controllers/AdminController.js:316
 #: public/js/controllers/ArenaController.js:37
 msgid "<p class='tooltip-need-weapon'>Need weapon</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:112
+#: public/js/controllers/AbilitiesInfoController.js:114
 #: public/js/controllers/AdminController.js:317
 #: public/js/controllers/ArenaController.js:38
 msgid "<p class='tooltip-spell'>Spell</p>"
@@ -92,7 +92,7 @@ msgstr ""
 msgid "<p>Amount of <strong>health</strong> determines how long you can fight. If you lose your health you die.</p><p>Basic: {{one}}</p><p>From strength: {{two}}</p><p>From items: {{three}}</p><p>Total: {{four}}</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:115
+#: public/js/controllers/AbilitiesInfoController.js:117
 #: public/js/controllers/AdminController.js:320
 #: public/js/controllers/ArenaController.js:41
 msgid "<p>Cooldown: {{one}}</p>"
@@ -114,13 +114,13 @@ msgstr ""
 msgid "<p>Create red soul gem</p><p>Cost: 4 red shards</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:116
+#: public/js/controllers/AbilitiesInfoController.js:118
 #: public/js/controllers/AdminController.js:321
 #: public/js/controllers/ArenaController.js:42
 msgid "<p>Duration: {{one}}</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:117
+#: public/js/controllers/AbilitiesInfoController.js:119
 #: public/js/controllers/AdminController.js:322
 #: public/js/controllers/ArenaController.js:43
 msgid "<p>Energy Cost: {{one}}</p>"
@@ -130,19 +130,19 @@ msgstr ""
 msgid "<p>Left: {{one}}</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:118
+#: public/js/controllers/AbilitiesInfoController.js:120
 #: public/js/controllers/AdminController.js:323
 #: public/js/controllers/ArenaController.js:44
 msgid "<p>Mana Cost: {{one}}</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:113
+#: public/js/controllers/AbilitiesInfoController.js:115
 #: public/js/controllers/AdminController.js:318
 #: public/js/controllers/ArenaController.js:39
 msgid "<p>Range: {{one}}</p>"
 msgstr ""
 
-#: public/js/controllers/AbilitiesInfoController.js:114
+#: public/js/controllers/AbilitiesInfoController.js:116
 #: public/js/controllers/AdminController.js:319
 #: public/js/controllers/ArenaController.js:40
 msgid "<p>Range: Self</p>"

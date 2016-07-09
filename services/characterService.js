@@ -1003,15 +1003,13 @@ module.exports = {
     getStartAbilities: function (basicAbilities) {
         return randomService.shuffle(basicAbilities).splice(0,7);
     },
-    abilityForClient: function (name) {
+    abilityForClient: function (name, variant) {
         var ServerAbility = AbilityFactory(name);
         return {
             name: ServerAbility.name,
-            localName: ServerAbility.localName(),
-            variant: ServerAbility.variant,
             role : ServerAbility.role(),
-            desc: ServerAbility.desc(),
             icon : ServerAbility.icon(),
+            variant: variant,
             targetType : ServerAbility.targetType(),
             range : ServerAbility.range(),
             duration: ServerAbility.duration(),

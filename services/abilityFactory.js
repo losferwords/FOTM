@@ -1,19 +1,18 @@
+
 //Фабрика создания способностей по имени
 var Ability = function(name){
     switch(name){
         case "Void": return {
             name : "Void",
-            localName: function(){return gettextCatalog.getString("Void")},
             role : function() {return "void"},
-            desc: function(){
-                return "Empty";
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--void)"},
+            variant: 3,
             cast : function (caster, target, myTeam, enemyTeam) {
                 return false;
             },
             targetType : function() { return "self"},
             range: function() {return 0},
+            duration: function(){return 0},
             energyCost : function() {return 99999},
             manaCost : function() {return 99999},
             cooldown : function() {return 6},
@@ -25,19 +24,8 @@ var Ability = function(name){
 
         case "Strong Arm Of The Law": return {
             name : "Strong Arm Of The Law",
-            localName: function(){return gettextCatalog.getString("Strong Arm Of The Law")},
             variant: 3,
             role : function() {return "sentinel"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Strikes enemy, deals {{one}}% of weapon damage and decreases target Hit Chance to {{two}}%",{
-                        one: (this.variant*20+100).toFixed(0),
-                        two: (this.variant*7)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--StrongArmOfTheLaw)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -72,19 +60,8 @@ var Ability = function(name){
 
         case "Defender Of The Faith": return {
             name : "Defender Of The Faith",
-            localName: function(){return gettextCatalog.getString("Defender Of The Faith")},
             variant: 3,
             role : function() {return "sentinel"},
-            desc: function() {
-                switch(this.variant){
-                    case 1: return gettextCatalog.getString("Cast on ally target. Increases Block Chance, Magical and Physical Resistances for 10%."); break;
-                    case 2: return gettextCatalog.getString("Increases Block Chance, Magical and Physical Resistances of all party members for 10%"); break;
-                    case 3: return gettextCatalog.getString("Cast on ally target. Increases Block Chance, Magical and Physical Resistances for 20%"); break;
-                    case 4: return gettextCatalog.getString("Increases Block Chance, Magical and Physical Resistances of all party members for 20%"); break;
-                    case 5: return gettextCatalog.getString("Cast on ally target. Increases Block Chance, Magical and Physical Resistances for 40%"); break;
-                }
-
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DefenderOfTheFaith)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -132,18 +109,8 @@ var Ability = function(name){
 
         case "Disarm": return {
             name : "Disarm",
-            localName: function(){return gettextCatalog.getString("Disarm")},
             variant: 3,
             role : function() {return "sentinel"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Takes off target weapon and some armor. Reduces target physical resistance and dodge chance for {{one}}%.",{
-                        one: (this.variant*7).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Disarm)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -177,18 +144,8 @@ var Ability = function(name){
 
         case "Walk Away": return {
             name : "Walk Away",
-            localName: function(){return gettextCatalog.getString("Walk Away")},
             variant: 3,
             role : function() {return "sentinel"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Strikes enemy with shield, deals {{one}}% of weapon damage, throws enemy away and stuns him",{
-                        one: (this.variant*30+80).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--WalkAway)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -230,18 +187,8 @@ var Ability = function(name){
 
         case "Sanctuary": return {
             name : "Sanctuary",
-            localName: function(){return gettextCatalog.getString("Sanctuary")},
             variant: 3,
             role : function() {return "sentinel"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Cast on ally target. Caster takes {{one}}% of damage taken by target ally.",{
-                        one: (this.variant*15).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Sanctuary)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -265,19 +212,8 @@ var Ability = function(name){
 
         case "The Punishment Due": return {
             name : "The Punishment Due",
-            localName: function(){return gettextCatalog.getString("The Punishment Due")},
             variant: 3,
             role : function() {return "sentinel"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Strikes enemy, deals {{one}}% of weapon damage. After that causes bleeding for {{two}}% of dealing damage",{
-                        one: (this.variant*10+90).toFixed(0),
-                        two: (this.variant*10).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ThePunishmentDue)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -315,15 +251,8 @@ var Ability = function(name){
 
         case "Come And Get It": return {
             name : "Come And Get It",
-            localName: function(){return gettextCatalog.getString("Come And Get It")},
             variant: 3,
             role : function() {return "sentinel"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Throws spear to enemy, deals {{one}}% of weapon damage and draws the target to caster.",{
-                        one: (this.variant*20+50).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ComeAndGetIt)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -364,13 +293,8 @@ var Ability = function(name){
 
         case "New Faith": return {
             name : "New Faith",
-            localName: function(){return gettextCatalog.getString("New Faith")},
             variant: 3,
             role : function() {return "sentinel"},
-            desc: function() {
-                return gettextCatalog.getString("Cast on ally target. Removes 3 random negative effects, that cause periodic damage. Restore {{one}} health.",
-                    {one: (200+this.variant*175).toFixed(0)});
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--NewFaith)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -412,15 +336,8 @@ var Ability = function(name){
 
         case "Die By The Sword": return {
             name : "Die By The Sword",
-            localName: function(){return gettextCatalog.getString("Die By The Sword")},
             variant: 3,
             role : function() {return "slayer"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Strikes enemy, deals {{one}}% of weapon damage.",{
-                        one: (this.variant*35+100).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DieByTheSword)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -454,16 +371,8 @@ var Ability = function(name){
 
         case "Reign In Blood": return {
             name : "Reign In Blood",
-            localName: function(){return gettextCatalog.getString("Reign In Blood")},
             variant: 3,
             role : function() {return "slayer"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Strikes enemy, deals {{one}}% of weapon damage and increases Attack Power to {{two}}% until miss. Stacks up 5 times.",{
-                        one: (this.variant*10+80).toFixed(0),
-                        two: (this.variant*2)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ReignInBlood)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -499,16 +408,8 @@ var Ability = function(name){
 
         case "Grinder": return {
             name : "Grinder",
-            localName: function(){return gettextCatalog.getString("Grinder")},
             variant: 3,
             role : function() {return "slayer"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Strikes all enemies in 1 cell radius, deals {{one}}% of weapon damage. Ability has {{two}}% chance to restore it's cooldown immediately.",{
-                        one: (this.variant*20+50).toFixed(0),
-                        two: (36-this.variant*6)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Grinder)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -553,15 +454,8 @@ var Ability = function(name){
 
         case "Follow The Tears": return {
             name : "Follow The Tears",
-            localName: function(){return gettextCatalog.getString("Follow The Tears")},
             variant: 3,
             role : function() {return "slayer"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Charges to enemy and deals {{one}}% of weapon damage.",{
-                        one: (this.variant*30+50).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FollowTheTears)"},
             cast : function (caster, target, myTeam, enemyTeam) {
 
@@ -609,21 +503,8 @@ var Ability = function(name){
 
         case "Made In Hell": return {
             name : "Made In Hell",
-            localName: function(){return gettextCatalog.getString("Made In Hell")},
             variant: 3,
             role : function() {return "slayer"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Calls to hell and becomes immune to magical damage");
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                str+=" ";
-                str+= gettextCatalog.getString(
-                    "Mana Regeneration increased to {{one}} %.",{
-                        one: (this.variant*60).toFixed(0)
-                    });
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--MadeInHell)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -646,19 +527,8 @@ var Ability = function(name){
 
         case "Spill The Blood": return {
             name : "Spill The Blood",
-            localName: function(){return gettextCatalog.getString("Spill The Blood")},
             variant: 3,
             role : function() {return "slayer"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Attack Power increased to {{one}}%. Health Regeneration increased to {{two}}%.",{
-                        one: (this.variant*10).toFixed(0),
-                        two: (this.variant*15).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--SpillTheBlood)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -681,19 +551,8 @@ var Ability = function(name){
 
         case "Dyers Eve": return {
             name : "Dyers Eve",
-            localName: function(){return gettextCatalog.getString("Dyers Eve")},
             variant: 3,
             role : function() {return "slayer"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Ability can be used only if character health is less than 50%. Heals up caster for {{one}} and increases Critical Chance for {{two}}%.",{
-                        one: (500+this.variant*500).toFixed(0),
-                        two: (this.variant*20).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DyersEve)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -722,24 +581,8 @@ var Ability = function(name){
 
         case "I Dont Wanna Stop": return {
             name : "I Dont Wanna Stop",
-            localName: function(){return gettextCatalog.getString("I Dont Wanna Stop")},
             variant: 3,
             role : function() {return "slayer"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Character becomes immune to control abilities");
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                str+=" ";
-                str+= gettextCatalog.getString(
-                    "Restores {{one}} energy.",{
-                        one: (100+this.variant*150).toFixed(0)
-                    });
-                str+=" ";
-                str+= gettextCatalog.getString(
-                    "This ability doesn't remove control effects, which is already on character.");
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--IDontWannaStop)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -765,16 +608,8 @@ var Ability = function(name){
 
         case "Shot Down In Flames": return {
             name : "Shot Down In Flames",
-            localName: function(){return gettextCatalog.getString("Shot Down In Flames")},
             variant: 3,
             role : function() {return "redeemer"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage.",{
-                        one: ((6-this.variant)*10+60).toFixed(0),
-                        two: (400+this.variant*50).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ShotDownInFlames)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -813,16 +648,8 @@ var Ability = function(name){
 
         case "Electric Eye": return {
             name : "Electric Eye",
-            localName: function(){return gettextCatalog.getString("Electric Eye")},
             variant: 3,
             role : function() {return "redeemer"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage.",{
-                        one: (this.variant*10+90).toFixed(0),
-                        two: (300+this.variant*50).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ElectricEye)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -861,19 +688,8 @@ var Ability = function(name){
 
         case "Lights In The Sky": return {
             name : "Lights In The Sky",
-            localName: function(){return gettextCatalog.getString("Lights In The Sky")},
             variant: 3,
             role : function() {return "redeemer"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Cast on ally target. Increases Hit Chance for {{one}}% and Critical Chance for {{two}}%.",{
-                        one: (15+this.variant*2).toFixed(0),
-                        two: (25-this.variant*2).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--LightsInTheSky)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -897,18 +713,8 @@ var Ability = function(name){
 
         case "Thunderstruck": return {
             name : "Thunderstruck",
-            localName: function(){return gettextCatalog.getString("Thunderstruck")},
             variant: 3,
             role : function() {return "redeemer"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Throws lightning which deals {{one}} magical damage and stuns target",{
-                        one: (80+this.variant*150).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Thunderstruck)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -949,21 +755,8 @@ var Ability = function(name){
 
         case "You Aint No Angel": return {
             name : "You Aint No Angel",
-            localName: function(){return gettextCatalog.getString("You Aint No Angel")},
             variant: 3,
             role : function() {return "redeemer"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Up in the air and becomes immune to physical damage");
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                str+=" ";
-                str+= gettextCatalog.getString(
-                    "Health Regeneration increased to {{one}} %.",{
-                        one: (this.variant*60).toFixed(0)
-                    });
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--YouAintNoAngel)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -986,19 +779,8 @@ var Ability = function(name){
 
         case "State Of Grace": return {
             name : "State Of Grace",
-            localName: function(){return gettextCatalog.getString("State Of Grace")},
             variant: 3,
             role : function() {return "redeemer"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Fully restores energy. Every turn restores {{one}} health and {{two}} mana",{
-                        one: (100+this.variant*60).toFixed(0),
-                        two: (460-this.variant*60).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--StateOfGrace)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1022,16 +804,8 @@ var Ability = function(name){
 
         case "My Last Words": return {
             name : "My Last Words",
-            localName: function(){return gettextCatalog.getString("My Last Words")},
             variant: 3,
             role : function() {return "redeemer"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "This ability can be used only against characters with less than 50% health. Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage.",{
-                        one: (this.variant*20+100).toFixed(0),
-                        two: (400+this.variant*100).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--MyLastWords)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1070,18 +844,8 @@ var Ability = function(name){
 
         case "Come Cover Me": return {
             name : "Come Cover Me",
-            localName: function(){return gettextCatalog.getString("Come Cover Me")},
             variant: 3,
             role : function() {return "redeemer"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Cast on ally target. Draws the target to caster. Every turn restores {{one}} target's health.",{
-                        one: (100+this.variant*50).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ComeCoverMe)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1107,19 +871,8 @@ var Ability = function(name){
 
         case "Inject The Venom": return {
             name : "Inject The Venom",
-            localName: function(){return gettextCatalog.getString("Inject The Venom")},
             variant: 3,
             role : function() {return "ripper"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Strikes enemy, deals {{one}}% of weapon damage and injects the venom, what deals {{two}} magical damage",{
-                        one: (this.variant*10+100).toFixed(0),
-                        two: (this.variant*75)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"during next turn", "during next {{$count}} turns",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--InjectTheVenom)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1155,18 +908,8 @@ var Ability = function(name){
 
         case "Invisible": return {
             name : "Invisible",
-            localName: function(){return gettextCatalog.getString("Invisible")},
             variant: 3,
             role : function() {return "ripper"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Character becomes invisible. Invisibility fades if owner takes or deals damage. While character is invisible, his Attack Power increased to {{one}}%.",{
-                        one: (this.variant*20).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Invisible)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1189,18 +932,8 @@ var Ability = function(name){
 
         case "Jawbreaker": return {
             name : "Jawbreaker",
-            localName: function(){return gettextCatalog.getString("Jawbreaker")},
             variant: 3,
             role : function() {return "ripper"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Strikes enemy, deals {{one}}% of weapon damage and makes target silenced",{
-                        one: (this.variant*10+80).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Jawbreaker)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1241,18 +974,8 @@ var Ability = function(name){
 
         case "Hog Tied": return {
             name : "Hog Tied",
-            localName: function(){return gettextCatalog.getString("Hog Tied")},
             variant: 3,
             role : function() {return "ripper"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Charges to enemy, deals {{one}}% of weapon damage and immobilizes target",{
-                        one: (this.variant*15+80).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HogTied)"},
             cast : function (caster, target, myTeam, enemyTeam) {
 
@@ -1306,18 +1029,8 @@ var Ability = function(name){
 
         case "Running Free": return {
             name : "Running Free",
-            localName: function(){return gettextCatalog.getString("Running Free")},
             variant: 3,
             role : function() {return "ripper"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Decreases movement cost to {{one}} energy. Remove all immobilize effects.",{
-                        one: (this.variant*40).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--RunningFree)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1341,19 +1054,8 @@ var Ability = function(name){
 
         case "Fast As The Shark": return {
             name : "Fast As The Shark",
-            localName: function(){return gettextCatalog.getString("Fast As The Shark")},
             variant: 3,
             role : function() {return "ripper"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Increases Luck for {{one}}% and Dodge Chance for {{two}}%",{
-                        one: (this.variant*15).toFixed(0),
-                        two: (this.variant*20).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FastAsTheShark)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1376,18 +1078,8 @@ var Ability = function(name){
 
         case "Prowler": return {
             name : "Prowler",
-            localName: function(){return gettextCatalog.getString("Prowler")},
             variant: 3,
             role : function() {return "ripper"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Strikes enemy, deals {{one}}% of weapon damage and stuns target",{
-                        one: (this.variant*10+100).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Prowler)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1428,17 +1120,8 @@ var Ability = function(name){
 
         case "Fade To Black": return {
             name : "Fade To Black",
-            localName: function(){return gettextCatalog.getString("Fade To Black")},
             variant: 3,
             role : function() {return "ripper"},
-            desc: function() {
-                var str = gettextCatalog.getString("Cast on ally target. Target becomes invisible");
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                str+=" ";
-                str+=gettextCatalog.getString("Effect fades if owner takes or deals damage.");
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FadeToBlack)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1463,22 +1146,8 @@ var Ability = function(name){
 
         case "Stargazer": return {
             name : "Stargazer",
-            localName: function(){return gettextCatalog.getString("Stargazer")},
             variant: 3,
             role : function() {return "prophet"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Shoots the enemy with wand, deals {{one}}% of weapon damage, {{two}} magical damage and increases Spell Power to {{three}}%",{
-                        one: (this.variant*10+100).toFixed(0),
-                        two: (250+this.variant*0.1*250).toFixed(0),
-                        three: this.variant
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                str+=" ";
-                str+=gettextCatalog.getString("Stacks up 5 times.");
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Stargazer)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1520,12 +1189,8 @@ var Ability = function(name){
 
         case "Speed Of Light": return {
             name : "Speed Of Light",
-            localName: function(){return gettextCatalog.getString("Speed Of Light")},
             variant: 3,
             role : function() {return "prophet"},
-            desc: function() {
-                return gettextCatalog.getPlural((1+this.variant),"Teleports character to any cell in {{$count}} cell radius.","Teleports character to any cell in {{$count}} cells radius.",{});
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--SpeedOfLight)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1547,16 +1212,8 @@ var Ability = function(name){
 
         case "Never A Word": return {
             name : "Never A Word",
-            localName: function(){return gettextCatalog.getString("Never A Word")},
             variant: 3,
             role : function() {return "prophet"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "All enemies in 1 cell radius becomes silenced");
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--NeverAWord)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1599,18 +1256,8 @@ var Ability = function(name){
 
         case "Prophecy": return {
             name : "Prophecy",
-            localName: function(){return gettextCatalog.getString("Prophecy")},
             variant: 3,
             role : function() {return "prophet"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Shows current spells of the target. Decreases Magical Resistance and Initiative of the target to {{one}}%.",{
-                        one: (this.variant*10).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Prophecy)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1638,13 +1285,8 @@ var Ability = function(name){
 
         case "Lets Me Take It": return {
             name : "Lets Me Take It",
-            localName: function(){return gettextCatalog.getString("Lets Me Take It")},
             variant: 3,
             role : function() {return "prophet"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Steals 1 random positive effect from enemy to caster.");
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--LetsMeTakeIt)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1674,15 +1316,8 @@ var Ability = function(name){
 
         case "Brain Damage": return {
             name : "Brain Damage",
-            localName: function(){return gettextCatalog.getString("Brain Damage")},
             variant: 3,
             role : function() {return "prophet"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Deals {{one}} magical damage for every turn, that lefts for every target ability.",{
-                        one: (this.variant*12).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--BrainDamage)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1721,19 +1356,8 @@ var Ability = function(name){
 
         case "Infinite Dreams": return {
             name : "Infinite Dreams",
-            localName: function(){return gettextCatalog.getString("Infinite Dreams")},
             variant: 3,
             role : function() {return "prophet"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Cast on ally target. Increases Initiative for {{one}}%. Every turn restores {{two}}% mana.",{
-                        one: (this.variant*15).toFixed(0),
-                        two: (this.variant).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--InfiniteDreams)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1756,22 +1380,8 @@ var Ability = function(name){
 
         case "Caught Somewhere In Time": return {
             name : "Caught Somewhere In Time",
-            localName: function(){return gettextCatalog.getString("Caught Somewhere In Time")},
             variant: 3,
             role : function() {return "prophet"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Every turn deals {{one}} magical damage",{
-                        one: (75*this.variant).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"during next turn", "during next {{$count}} turns",{});
-                str+=" ";
-                str+=gettextCatalog.getString("Immobilize target. Every turn damage from this effect rise up for {{one}}%.", {
-                    one: (35-this.variant*5).toFixed(0)
-                });
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--CaughtSomewhereInTime)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1801,16 +1411,8 @@ var Ability = function(name){
 
         case "Family Tree": return {
             name : "Family Tree",
-            localName: function(){return gettextCatalog.getString("Family Tree")},
             variant: 3,
             role : function() {return "malefic"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Malefic staff transforms into the burning tree. Deals {{one}}% of weapon damage and {{two}} magical damage to all enemies in 2 cell radius.",{
-                        one: (this.variant*10+80).toFixed(0),
-                        two: (150+this.variant*70).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FamilyTree)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1854,18 +1456,8 @@ var Ability = function(name){
 
         case "Burning Ambition": return {
             name : "Burning Ambition",
-            localName: function(){return gettextCatalog.getString("Burning Ambition")},
             variant: 3,
             role : function() {return "malefic"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Burns target weapon and deals {{one}} magical damage.",{
-                        one: (200+this.variant*150).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Disarm lasts {{$count}} turn.", "Disarm lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--BurningAmbition)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1906,16 +1498,8 @@ var Ability = function(name){
 
         case "Fireball": return {
             name : "Fireball",
-            localName: function(){return gettextCatalog.getString("Fireball")},
             variant: 3,
             role : function() {return "malefic"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Deals {{one}} magical damage to target and {{two}} magical damage to all enemy targets in 1 cell radius.",{
-                        one: (1250+this.variant*200).toFixed(0),
-                        two: (1500-this.variant*200).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Fireball)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -1970,23 +1554,8 @@ var Ability = function(name){
 
         case "Thank God For The Bomb": return {
             name : "Thank God For The Bomb",
-            localName: function(){return gettextCatalog.getString("Thank God For The Bomb")},
             variant: 3,
             role : function() {return "malefic"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Target becomes living bomb and every turn gets {{one}} magical damage",{
-                        one: (100*this.variant).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                str+=" ";
-                str+=gettextCatalog.getString(
-                    "When this effect ends, all enemies in one cell radius around target gets {{one}} magical damage and becomes stunned for 3 turns.",{
-                        one: (300*this.variant).toFixed(0)
-                    });
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ThankGodForTheBomb)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2014,15 +1583,8 @@ var Ability = function(name){
 
         case "Powerslave": return {
             name : "Powerslave",
-            localName: function(){return gettextCatalog.getString("Powerslave")},
             variant: 3,
             role : function() {return "malefic"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Increases Spell Power for {{one}}%. Brings you in clearcasting state. In this state you doesn't need mana for abilities. This effect is active until you use any ability.",{
-                        one: (this.variant*15).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Powerslave)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2045,18 +1607,8 @@ var Ability = function(name){
 
         case "Cauterization": return {
             name : "Cauterization",
-            localName: function(){return gettextCatalog.getString("Cauterization")},
             variant: 3,
             role : function() {return "malefic"},
-            desc: function() {
-                var str = gettextCatalog.getString("Cast on ally target. Every turn restores {{one}} health and burns {{two}} mana.", {
-                    one: (this.variant*80).toFixed(0),
-                    two: (this.variant*60).toFixed(0)
-                });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Cauterization)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2079,15 +1631,8 @@ var Ability = function(name){
 
         case "Down In Flames": return {
             name : "Down In Flames",
-            localName: function(){return gettextCatalog.getString("Down In Flames")},
             variant: 3,
             role : function() {return "malefic"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Increases Spell Power and Critical Chance for {{one}}%. Effect fades if you miss. Stacks up 10 times.",{
-                        one: (this.variant*3).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DownInFlames)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2110,17 +1655,8 @@ var Ability = function(name){
 
         case "Fight Fire With Fire": return {
             name : "Fight Fire With Fire",
-            localName: function(){return gettextCatalog.getString("Fight Fire With Fire")},
             variant: 3,
             role : function() {return "malefic"},
-            desc: function() {
-                var str = gettextCatalog.getString("Returns {{one}}% of damage back to the attacker.", {
-                    one: (20+this.variant*10).toFixed(0)
-                });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FightFireWithFire)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2145,16 +1681,8 @@ var Ability = function(name){
 
         case "Hammer Of The Gods": return {
             name : "Hammer Of The Gods",
-            localName: function(){return gettextCatalog.getString("Hammer Of The Gods")},
             variant: 3,
             role : function() {return "cleric"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Strikes enemy with hammer, deals {{one}}% of weapon damage, {{two}} magical damage and restores mana equal to dealing damage.",{
-                        one: (this.variant*15+100).toFixed(0),
-                        two: (400+this.variant*75).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HammerOfTheGods)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2196,18 +1724,8 @@ var Ability = function(name){
 
         case "Mercyful Fate": return {
             name : "Mercyful Fate",
-            localName: function(){return gettextCatalog.getString("Mercyful Fate")},
             variant: 3,
             role : function() {return "cleric"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Cast on ally target. Every turn restores {{one}} health. Stacks up 3 times.",{
-                        one: (75+this.variant*15).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--MercyfulFate)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2230,14 +1748,8 @@ var Ability = function(name){
 
         case "Laying On Hands": return {
             name : "Laying On Hands",
-            localName: function(){return gettextCatalog.getString("Laying On Hands")},
             variant: 3,
             role : function() {return "cleric"},
-            desc: function() {
-                return gettextCatalog.getString("Restore {{one}}% health for one target.", {
-                    one: (10+this.variant*15).toFixed(0)
-                });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--LayingOnHands)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2265,16 +1777,8 @@ var Ability = function(name){
 
         case "Holy Smoke": return {
             name : "Holy Smoke",
-            localName: function(){return gettextCatalog.getString("Holy Smoke")},
             variant: 3,
             role : function() {return "cleric"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Heals up ally target for {{one}}. Or deals {{two}} magical damage to enemy target.",{
-                        one: (250+this.variant*250).toFixed(0),
-                        two: (150+this.variant*150).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HolySmoke)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2324,12 +1828,8 @@ var Ability = function(name){
 
         case "Cleanse The Soul": return {
             name : "Cleanse The Soul",
-            localName: function(){return gettextCatalog.getString("Cleanse The Soul")},
             variant: 3,
             role : function() {return "cleric"},
-            desc: function() {
-                return gettextCatalog.getPlural(this.variant,"Removes {{$count}} random negative effects from ally.", "Removes {{$count}} random negative effect from ally.",{});
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--CleanseTheSoul)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2361,19 +1861,8 @@ var Ability = function(name){
 
         case "Hallowed Be Thy Name": return {
             name : "Hallowed Be Thy Name",
-            localName: function(){return gettextCatalog.getString("Hallowed Be Thy Name")},
             variant: 3,
             role : function() {return "cleric"},
-            desc: function() {
-                switch(this.variant){
-                    case 1: return gettextCatalog.getString("Cast on ally target. Increases Attack Power and Block Chance for 25%."); break;
-                    case 2: return gettextCatalog.getString("Cast on ally target. Increases Critical Chance and Dodge Chance for 25%."); break;
-                    case 3: return gettextCatalog.getString("Cast on ally target. Increases Spell Power and Hit Chance for 25%."); break;
-                    case 4: return gettextCatalog.getString("Cast on ally target. Increases Physical Resistance and Health Regeneration for 25%."); break;
-                    case 5: return gettextCatalog.getString("Cast on ally target. Increases Magical Resistance and Mana Regeneration for 25%."); break;
-                }
-
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HallowedBeThyName)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2396,16 +1885,8 @@ var Ability = function(name){
 
         case "Hit The Lights": return {
             name : "Hit The Lights",
-            localName: function(){return gettextCatalog.getString("Hit The Lights")},
             variant: 3,
             role : function() {return "cleric"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Cleric shines on all targets in 2 cell radius. Deals {{one}} magical damage to all enemies. And heals up allies for {{two}}.",{
-                        one: (775-this.variant*75).toFixed(0),
-                        two: (325+this.variant*75).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HitTheLights)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2455,16 +1936,8 @@ var Ability = function(name){
 
         case "Heaven Can Wait": return {
             name : "Heaven Can Wait",
-            localName: function(){return gettextCatalog.getString("Heaven Can Wait")},
             variant: 3,
             role : function() {return "cleric"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Cast on ally target. Removes all debuffs from target and makes it immune to all damage and control.");
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HeavenCanWait)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2492,16 +1965,8 @@ var Ability = function(name){
 
         case "Bloodsucker": return {
             name : "Bloodsucker",
-            localName: function(){return gettextCatalog.getString("Bloodsucker")},
             variant: 3,
             role : function() {return "heretic"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Strikes enemy with dagger, deals {{one}}% of weapon damage, {{two}} magical damage and restores health equal to dealing damage.",{
-                        one: (this.variant*10+100).toFixed(0),
-                        two: (150+this.variant*15).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Bloodsucker)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2543,19 +2008,8 @@ var Ability = function(name){
 
         case "Fear Of The Dark": return {
             name : "Fear Of The Dark",
-            localName: function(){return gettextCatalog.getString("Fear Of The Dark")},
             variant: 3,
             role : function() {return "heretic"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Deals {{one}} magical damage and infects target with Fear Of The Dark, which deals {{two}} magical damage",{
-                        one: (300+this.variant*60).toFixed(0),
-                        two: (40+this.variant*60).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"during next turn", "during next {{$count}} turns",{});
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FearOfTheDark)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2591,20 +2045,8 @@ var Ability = function(name){
 
         case "Creeping Death": return {
             name : "Creeping Death",
-            localName: function(){return gettextCatalog.getString("Creeping Death")},
             variant: 3,
             role : function() {return "heretic"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Every turn deals {{one}} magical damage",{
-                        one: (30*this.variant).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"during next turn", "during next {{$count}} turns",{});
-                str+=" ";
-                str+=gettextCatalog.getString("Stacks up 5 times.");
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--CreepingDeath)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2632,21 +2074,8 @@ var Ability = function(name){
 
         case "Spreading The Disease": return {
             name : "Spreading The Disease",
-            localName: function(){return gettextCatalog.getString("Spreading The Disease")},
             variant: 3,
             role : function() {return "heretic"},
-            desc: function() {
-                var str = gettextCatalog.getString(
-                    "Every turn deals {{one}} magical damage. Decreases target's Attack Power, Spell Power and Critical Chance to {{two}}%. This effect spreads on all enemies in 1 cell radius around target.",{
-                        one: (20*this.variant).toFixed(0),
-                        two: (this.variant).toFixed(0)
-                    });
-                str+=" ";
-                str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                str+=" ";
-                str+=gettextCatalog.getString("Stacks up 5 times.");
-                return str;
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--SpreadingTheDisease)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2674,12 +2103,8 @@ var Ability = function(name){
 
         case "Purgatory": return {
             name : "Purgatory",
-            localName: function(){return gettextCatalog.getString("Purgatory")},
             variant: 3,
             role : function() {return "heretic"},
-            desc: function() {
-                return gettextCatalog.getPlural(this.variant,"Removes {{$count}} random positive effects from enemy.", "Removes {{$count}} random positive effect from enemy.",{});
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Purgatory)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2711,19 +2136,8 @@ var Ability = function(name){
 
         case "Children Of The Damned": return {
             name : "Children Of The Damned",
-            localName: function(){return gettextCatalog.getString("Children Of The Damned")},
             variant: 3,
             role : function() {return "heretic"},
-            desc: function() {
-                switch(this.variant){
-                    case 1: return gettextCatalog.getString("Cast on enemy target. Decreases Attack Power and Block Chance for 25%."); break;
-                    case 2: return gettextCatalog.getString("Cast on enemy target. Decreases Critical Chance and Dodge Chance for 25%."); break;
-                    case 3: return gettextCatalog.getString("Cast on enemy target. Decreases Spell Power and Hit Chance for 25%."); break;
-                    case 4: return gettextCatalog.getString("Cast on enemy target. Decreases Physical Resistance and Health Regeneration for 25%."); break;
-                    case 5: return gettextCatalog.getString("Cast on enemy target. Decreases Magical Resistance and Mana Regeneration for 25%."); break;
-                }
-
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ChildrenOfTheDamned)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2752,12 +2166,8 @@ var Ability = function(name){
 
         case "Locked And Loaded": return {
             name : "Locked And Loaded",
-            localName: function(){return gettextCatalog.getString("Locked And Loaded")},
             variant: 3,
             role : function() {return "heretic"},
-            desc: function() {
-                return gettextCatalog.getString("Cast on any target. While this effect active, owner's buffs and debuffs can't be dispelled or stolen.");
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--LockedAndLoaded)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());
@@ -2797,16 +2207,8 @@ var Ability = function(name){
 
         case "A Touch Of Evil": return {
             name : "A Touch Of Evil",
-            localName: function(){return gettextCatalog.getString("A Touch Of Evil")},
             variant: 3,
             role : function() {return "heretic"},
-            desc: function() {
-                return gettextCatalog.getString(
-                    "Strikes enemy with dagger, deals {{one}}% of weapon damage and {{two}} magical damage for each effect on target.",{
-                        one: (this.variant*6+10).toFixed(0),
-                        two: (40+this.variant*25).toFixed(0)
-                    });
-            },
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ATouchOfEvil)"},
             cast : function (caster, target, myTeam, enemyTeam) {
                 caster.spendEnergy(this.energyCost());

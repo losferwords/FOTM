@@ -11,67 +11,17 @@
                         desc: function(){
                             return "Empty";
                         },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--void)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            return false;
-                        },
-                        targetType : function() { return "self"},
-                        range: function() {return 0},
-                        energyCost : function() {return 99999},
-                        manaCost : function() {return 99999},
-                        cooldown : function() {return 6},
-                        needWeapon : function() {return false},
+                        icon : "url(../images/assets/svg/view/sprites.svg#abilities--void)",
+                        targetType : "self",
+                        range: 0,
+                        energyCost : 99999,
+                        manaCost : 99999,
+                        cooldown : 6,
+                        needWeapon : false,
                         cd : 0
                     };break;
 
                     //SENTINEL
-
-                    case "Strong Arm Of The Law": return {
-                        name : "Strong Arm Of The Law",
-                        localName: function(){return gettextCatalog.getString("Strong Arm Of The Law")},
-                        variant: 3,
-                        role : function() {return "sentinel"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Strikes enemy, deals {{one}}% of weapon damage and decreases target Hit Chance to {{two}}%",{
-                                    one: (this.variant*20+100).toFixed(0),
-                                    two: (this.variant*7)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--StrongArmOfTheLaw)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(1+this.variant*0.2), caster.maxDamage*(1+this.variant*0.2));
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-                                caster.playSound(this.name);
-                                if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                                    target.addDebuff(effectService.effect("Strong Arm Of The Law", this.variant), caster.charName, myTeam, enemyTeam);
-                                }
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 2},
-                        duration: function(){return 18-this.variant*2},
-                        energyCost : function(){return 100+this.variant*50},
-                        manaCost : function(){return 100+this.variant*100},
-                        cooldown : function(){return 1},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
 
                     case "Defender Of The Faith": return {
                         name : "Defender Of The Faith",
@@ -2858,6 +2808,44 @@
                     };break;
 
                 }
+            },
+            translateAbilities: function(abilities) {
+                for(var i=0;i<abilities.length;i++){
+                    switch(abilities[i].name) {
+                        //SENTINEL
+
+                        case "Strong Arm Of The Law":
+                            abilities[i].localName = function () {
+                                return gettextCatalog.getString("Strong Arm Of The Law")
+                            };
+                            abilities[i].desc = function () {
+                                var str = gettextCatalog.getString(
+                                    "Strikes enemy, deals {{one}}% of weapon damage and decreases target Hit Chance to {{two}}%", {
+                                        one: (this.variant * 20 + 100).toFixed(0),
+                                        two: (this.variant * 7)
+                                    });
+                                str += " ";
+                                str += gettextCatalog.getPlural(this.duration, "for next turn.", "for next {{$count}} turns.", {});
+                                return str;
+                            };
+                            break;
+
+                        case "Defender Of The Faith":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Defender Of The Faith")};
+                            abilities[i].desc = function() {
+                                switch(this.variant){
+                                    case 1: return gettextCatalog.getString("Cast on ally target. Increases Block Chance, Magical and Physical Resistances for 10%."); break;
+                                    case 2: return gettextCatalog.getString("Increases Block Chance, Magical and Physical Resistances of all party members for 10%"); break;
+                                    case 3: return gettextCatalog.getString("Cast on ally target. Increases Block Chance, Magical and Physical Resistances for 20%"); break;
+                                    case 4: return gettextCatalog.getString("Increases Block Chance, Magical and Physical Resistances of all party members for 20%"); break;
+                                    case 5: return gettextCatalog.getString("Cast on ally target. Increases Block Chance, Magical and Physical Resistances for 40%"); break;
+                                }
+                            };
+                            break;
+                    }
+                }
+
+                return abilities;
             }
         }
     });

@@ -9,16 +9,26 @@
 
         $scope.$on('$routeChangeSuccess', function () {
             $scope.char = currentTeam.get().characters[currentTeam.getCurrentCharIndex()];
-            $scope.char.abilities = abilityService.restoreAbilities($scope.char.abilities);
+            $scope.char.abilities = abilityService.translateAbilities($scope.char.abilities);
             $scope.populateAbilitiesBook('all');
         });
 
         function setAbilities() {
             mainSocket.emit('setChar', {
                 _id: $scope.char._id,
-                abilities: $scope.char.abilities
+                abilities: $scope.char.abilities,
+                availableAbilities: $scope.char.availableAbilities
             }, function(char) {
                 $scope.char = char;
+                $scope.char.abilities = abilityService.translateAbilities($scope.char.abilities);
+                if($scope.interestingAbility){
+                    for(var i=0;i<$scope.char.abilities.length;i++){
+                        if($scope.interestingAbility.name==$scope.char.abilities[i].name) {
+                            $scope.interestingAbility = $scope.char.abilities[i];
+                            break;
+                        }
+                    }
+                }
                 currentTeam.setChar($scope.char);
             });
         }
@@ -64,7 +74,7 @@
         //Предидущий вариант способности
         $scope.prevVersion = function(){
             $scope.interestingAbility.variant--;
-
+            setAbilities();
         };
 
         //Следующий вариант способности
@@ -75,9 +85,9 @@
 
         //Функция отбирает способности, доступные для данной роли
         $scope.populateAbilitiesBook = function (filter){
-            $scope.abilitiesBook = [];
-            var abilityNames = $scope.char.availableAbilities;
-            mainSocket.emit('getAbilities', abilityNames, function(abilities) {
+            mainSocket.emit('getAbilities', $scope.char.availableAbilities, function(abilities) {
+                $scope.abilitiesBook = [];
+                abilities = abilityService.translateAbilities(abilities);
                 for(var i=0;i<abilities.length;i++){
                     if(!checkAbilityInDeck(abilities[i].name)){
                         if($scope.movingAbility)
@@ -110,14 +120,14 @@
             var tooltip = "";
             tooltip+="<p class='name'>"+ability.localName()+" "+ability.variant+"</p>";
             tooltip+="<p class='desc'>"+ability.desc()+"</p>";
-            if(ability.needWeapon()) tooltip+=gettextCatalog.getString("<p class='tooltip-need-weapon'>Need weapon</p>");
+            if(ability.needWeapon) tooltip+=gettextCatalog.getString("<p class='tooltip-need-weapon'>Need weapon</p>");
             else tooltip+=gettextCatalog.getString("<p class='tooltip-spell'>Spell</p>");
-            if(ability.range()>0) tooltip+=gettextCatalog.getString("<p>Range: {{one}}</p>",{one: ability.range()});
+            if(ability.range>0) tooltip+=gettextCatalog.getString("<p>Range: {{one}}</p>",{one: ability.range});
             else tooltip+=gettextCatalog.getString("<p>Range: Self</p>");
-            tooltip+=gettextCatalog.getString("<p>Cooldown: {{one}}</p>",{one: ability.cooldown()});
-            if(ability.duration()>0) tooltip+=gettextCatalog.getString("<p>Duration: {{one}}</p>",{one: ability.duration()});
-            tooltip+=gettextCatalog.getString("<p>Energy Cost: {{one}}</p>",{one: ability.energyCost()});
-            tooltip+=gettextCatalog.getString("<p>Mana Cost: {{one}}</p>",{one: ability.manaCost()});
+            tooltip+=gettextCatalog.getString("<p>Cooldown: {{one}}</p>",{one: ability.cooldown});
+            if(ability.duration>0) tooltip+=gettextCatalog.getString("<p>Duration: {{one}}</p>",{one: ability.duration});
+            tooltip+=gettextCatalog.getString("<p>Energy Cost: {{one}}</p>",{one: ability.energyCost});
+            tooltip+=gettextCatalog.getString("<p>Mana Cost: {{one}}</p>",{one: ability.manaCost});
             return tooltip;
         };
 
@@ -199,7 +209,7 @@
         //Функция выбирает цвет для способности по её роли
         $scope.getAbilityColor = function(ability) {
             if(ability) {
-                switch (ability.role()) {
+                switch (ability.role) {
                     case "void":
                         return "#cccccc";
                         break;

@@ -5,6 +5,7 @@ var Team = require('models/team').Team;
 var Character = require('models/character').Character;
 var CharacterFactory = require('services/characterFactory');
 var AbilityFactory = require('services/abilityFactory');
+var characterService = require('services/characterService');
 
 module.exports = function (serverIO) {
     var io = serverIO;
@@ -88,13 +89,13 @@ module.exports = function (serverIO) {
         });
 
         socket.on('getAbility', function(name, cb){
-            cb(AbilityFactory(name));
+            cb(characterService.abilityForClient(AbilityFactory(name).name, 3));
         });
 
         socket.on('getAbilities', function(nameArray, cb){
             var abilityArray = [];
-            for(var i=0;i<nameArray;i++){
-                abilityArray.push(AbilityFactory(nameArray[i]))
+            for(var i=0;i<nameArray.length;i++){
+                abilityArray.push(characterService.abilityForClient(AbilityFactory(nameArray[i]).name, 3));
             }
             cb(abilityArray);
         });

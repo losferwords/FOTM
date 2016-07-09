@@ -12,9 +12,9 @@ var Character = function(char) {
 
     //Наполняем массив способностей значениями в Character Factory, чтобы отправить на клиент
     if(this.abilities) {
-        var abilitiesForClient = []
+        var abilitiesForClient = [];
         for (var i = 0; i < this.abilities.length; i++) {
-            abilitiesForClient.push(characterService.abilityForClient(this.abilities[i].name));
+            abilitiesForClient.push(characterService.abilityForClient(this.abilities[i].name, this.abilities[i].variant));
         }
         this.abilities = abilitiesForClient;
     }
