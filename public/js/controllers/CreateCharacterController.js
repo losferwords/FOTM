@@ -94,7 +94,7 @@
                 }
                 updateCharInfo();
                 var availableAbilitiesArr = characterService.getBasicAbilities($scope.characterObj.role, $scope.characterObj.race);
-                var abilitiesArr = characterService.getStartAbilities(availableAbilitiesArr);
+                var abilitiesArr = characterService.getStartAbilities(availableAbilitiesArr.slice());
 
                 var abilitiesObjectsArr = [];
                 for(var i=0;i<abilitiesArr.length;i++){
