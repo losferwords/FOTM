@@ -59,6 +59,10 @@ var schema = new Schema({
 
 //GET---------------------------------------------------------------------------
 
+schema.statics.getById = function(teamId, callback) {
+    this.findById(teamId, callback); //находим тиму
+};
+
 //Получение заполненной активной команды со всеми персонажами
 schema.statics.getByUserIdFull = function(userId, callback){
     var Team = this;
@@ -122,14 +126,12 @@ schema.statics.getTeamPop = function(cond, callback){
 
 //Выборка тим по любому условию
 schema.statics.getAllByAny = function(cond, callback){
-    var Team = this;
-    Team.find(cond, callback);
+    this.find(cond, callback);
 };
 
 //Выборка тимы по любому условию
 schema.statics.getByAny = function(cond, callback){
-    var Team = this;
-    Team.findOne(cond, callback);
+    this.findOne(cond, callback);
 };
 
 //Вычисляем ранг команды
@@ -261,8 +263,7 @@ schema.statics.create = function(userId, callback){
 //UPDATE---------------------------------------------------------------------
 
 schema.statics.setById = function(teamId, setter, callback) {
-    var Team = this;
-    Team.findByIdAndUpdate(teamId,
+    this.findByIdAndUpdate(teamId,
         {$set: setter}, {upsert: true, new: true},
         callback);
 };

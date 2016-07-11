@@ -56,14 +56,12 @@ var schema = new Schema({
 
 //Выборка чара по любому условию
 schema.statics.getByAny = function(cond, callback){
-    var Character = this;
-    Character.findOne(cond, callback);
+    this.findOne(cond, callback);
 };
 
 //Выборка чаров по любому условию
 schema.statics.getAllByAny = function(cond, callback){
-    var Character = this;
-    Character.find(cond, callback);
+    this.find(cond, callback);
 };
 
 //CREATE---------------------------------------------------------------------
@@ -98,8 +96,7 @@ schema.statics.create = function(teamId, callback){
 //UPDATE---------------------------------------------------------------------
 
 schema.statics.setById = function(charId, setter, callback) {
-    var Character = this;
-    Character.findByIdAndUpdate(charId,
+    this.findByIdAndUpdate(charId,
         {$set: setter}, {upsert: true, new: true},
         callback);
 };
@@ -107,8 +104,7 @@ schema.statics.setById = function(charId, setter, callback) {
 //DELETE---------------------------------------------------------------------
 
 schema.statics.deleteById = function(charId, callback) {
-    var Character = this;
-    Character.findByIdAndRemove(charId, callback);
+    this.findByIdAndRemove(charId, callback);
 };
 
 exports.Character = mongoose.model('Character', schema);

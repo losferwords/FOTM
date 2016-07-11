@@ -81,11 +81,7 @@
             mainSocket.emit('setChar', {
                 _id: char._id,
                 lose: false
-            });
-        };
-
-        mainSocket.on("setCharResult", function () {
-            if($scope.resurectingChar){
+            }, function() {
                 mainSocket.emit('setTeam', {
                     _id: $scope.team._id,
                     souls: {
@@ -93,16 +89,12 @@
                         green: $scope.team.souls.green-characterService.getRoleCost($scope.resurectingChar.role).green,
                         blue: $scope.team.souls.blue-characterService.getRoleCost($scope.resurectingChar.role).blue
                     }
+                }, function(){
+                    $scope.resurectingChar = undefined;
+                    mainSocket.emit("getUserTeam");
                 });
-            }
-            else {
-                $scope.pending=false;
-            }
-        });
-        mainSocket.on("setTeamResult", function () {
-            $scope.resurectingChar = undefined;
-            mainSocket.emit("getUserTeam");
-        });
+            });
+        };
 
         $scope.checkResurrectCost = function(char){
             if(($scope.team.souls.red-characterService.getRoleCost(char.role).red>=0) &&
@@ -127,6 +119,8 @@
                 _id: char._id,
                 charName: char._id,
                 lose: true
+            }, function() {
+                $scope.pending=false;
             });
         };
 

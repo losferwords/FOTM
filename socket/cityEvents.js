@@ -3,7 +3,7 @@ var async = require('async');
 var User = require('models/user').User;
 var Team = require('models/team').Team;
 var Character = require('models/character').Character;
-var socketUtils = require('socket/socketUtils');
+var randomService = require('services/randomService');
 
 module.exports = function (serverIO) {
     var io = serverIO;
@@ -32,7 +32,7 @@ module.exports = function (serverIO) {
                             availableWallPos.push(i);
                         }
                     }
-                    var shuffledWallPos= socketUtils.shuffle(availableWallPos);
+                    var shuffledWallPos= randomService.shuffle(availableWallPos);
                     var allyWallPositions = [];
                     var enemyWallPositions = [];
                     for(i=0;i<10;i++) {

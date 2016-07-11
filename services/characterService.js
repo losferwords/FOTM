@@ -1,4 +1,5 @@
 var AbilityFactory = require('services/abilityFactory');
+var randomService = require('services/randomService');
 
 //Сервис для создания персонажа
 var genderParams = {
@@ -1019,5 +1020,51 @@ module.exports = {
             needWeapon : ServerAbility.needWeapon(),
             cd : ServerAbility.cd
         }
+    },
+    generateRandomRole: function(race) {
+        var role;
+        if(race=="human"){
+            switch (randomService.randomInt(0,7)) {
+                case 0: role="sentinel"; break;
+                case 1: role="slayer"; break;
+                case 2: role="redeemer"; break;
+                case 3: role="ripper"; break;
+                case 4: role="prophet"; break;
+                case 5: role="malefic"; break;
+                case 6: role="cleric"; break;
+                case 7: role="heretic"; break;
+            }
+        }
+        else if(race=="nephilim"){
+            switch (randomService.randomInt(0,3)) {
+                case 0: role="sentinel"; break;
+                case 1: role="redeemer"; break;
+                case 2: role="prophet"; break;
+                case 3: role="cleric"; break;
+            }
+        }
+        else {
+            switch (randomService.randomInt(0,3)) {
+                case 0: role="slayer"; break;
+                case 1: role="ripper"; break;
+                case 2: role="malefic"; break;
+                case 3: role="heretic"; break;
+            }
+        }
+        return role;
+    },
+    generateAbilitiesArrays: function(role, race) {
+        var self = this;
+        //Набираем базовые скилы для данной роли
+        var availableAbilitiesArr = self.getBasicAbilities(role, race);
+        var abilitiesArr = self.getStartAbilities(availableAbilitiesArr.slice());
+
+        var abilitiesObjectsArr = [];
+        for(var i=0;i<abilitiesArr.length;i++){
+            abilitiesObjectsArr.push(AbilityFactory(abilitiesArr[i]));
+        }
+
+        return [abilitiesObjectsArr, availableAbilitiesArr];
     }
+
 };

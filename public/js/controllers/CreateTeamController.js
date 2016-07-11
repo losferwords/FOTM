@@ -2,7 +2,7 @@
     module.controller("CreateTeamController", CreateTeamController);
 
     //Контроллер создания пати
-    function CreateTeamController($scope, $rootScope, $location, $window, $timeout, mainSocket, gettextCatalog) {
+    function CreateTeamController($scope, $location, $window, $timeout, mainSocket, gettextCatalog, currentTeam) {
         var teamObj = {};
         $scope.createdChars = [];
         $scope.dummyTeamCreated = false;
@@ -13,14 +13,13 @@
         };
 
         //Кнопка создания персонажа на экране команды
-        $scope.createCharClick = function() {
-            mainSocket.emit("createChar");
+        $scope.createCharClick = function(index) {
+            currentTeam.setCurrentCharIndex(index);
+            mainSocket.emit("createChar", function(){
+                $location.path('/createChar');
+            });
             $scope.createCharPending = true;
         };
-
-        mainSocket.on("createCharResult", function() {
-            $location.path('/createChar');
-        });
 
         //Количество персонажей
         $scope.moreChars = function() {
@@ -37,37 +36,31 @@
         //Кнопка сохранения тимы
         $scope.submitTeamClick = function() {
             teamObj.teamName = $scope.teamName.value;
-            mainSocket.emit("getTeam", {teamName: $scope.teamName.value});
             $scope.createTeamPending = true;
+            mainSocket.emit("checkTeamBeforeCreate", {teamName: $scope.teamName.value}, function(team){
+                //Получаем результаты проверки тимы
+                if(team){
+                    $scope.changeInfoCSS("error"); //применяем ng-class
+                    $scope.info=gettextCatalog.getString("Team name {{one}} is already in use",{one: $scope.teamName.value});
+                    $scope.createTeamPending = false;
+                }
+                else {
+                    $scope.createTeamPending = true;
+                    mainSocket.emit('saveNewTeam', {
+                        _id: teamObj._id,
+                        teamName: $scope.teamName.value,
+                        souls: teamObj.souls
+                    }, function() {
+                        $scope.changeInfoCSS("success"); //применяем ng-class
+                        $scope.info=gettextCatalog.getString("Successful");
+                        $timeout(function(){
+                            $location.path('/city');
+                        }, 1000);
+                    });
+
+                }
+            });
         };
-        //Получаем результаты проверки тимы
-        mainSocket.on("getTeamResult", function (team) {
-            if(team){
-                $scope.changeInfoCSS("error"); //применяем ng-class
-                $scope.info=gettextCatalog.getString("Team name {{one}} is already in use",{one: $scope.teamName.value});
-                $scope.createTeamPending = false;
-            }
-            else {
-                mainSocket.emit('setTeam', {
-                    _id: teamObj._id,
-                    teamName: $scope.teamName.value,
-                    rating: 1000,
-                    wins: 0,
-                    loses: 0,
-                    inventory: [],
-                    souls: teamObj.souls,
-                    lastRoll: new Date()});
-                $scope.createTeamPending = true;
-            }
-        });
-        mainSocket.on("setTeamResult", function () {
-            $scope.changeInfoCSS("success"); //применяем ng-class
-            $scope.info=gettextCatalog.getString("Successful");
-            $timeout(function(){
-                $scope.createTeamPending = false;
-                $location.path('/city');
-            }, 1000);
-        });
 
         //При нажатии на "отмена" dummy тима должена удалиться вместе с персонажами
         $scope.cancelTeamClick = function() {
@@ -81,23 +74,23 @@
         };
 
         $scope.$on('$routeChangeSuccess', function () {
-            $rootScope.interestingChar=undefined;
-            mainSocket.emit("getDummyTeam");
-        });
-        mainSocket.on('getDummyTeamResult', function(team){
-            teamObj=team;
-            $scope.dummyTeamCreated = true;
-            if(team.characters[0]){
-                $scope.createdChars[0]=team.characters[0];
-            }
-            if(team.characters[1]){
-                $scope.createdChars[1]=team.characters[1];
-            }
-            if(team.characters[2]){
-                $scope.createdChars[2]=team.characters[2];
-            }
+            currentTeam.set(undefined);
+            mainSocket.emit("getDummyTeam", function(team){
+                teamObj=team;
+                $scope.dummyTeamCreated = true;
+                if(team.characters[0]){
+                    $scope.createdChars[0]=team.characters[0];
+                }
+                if(team.characters[1]){
+                    $scope.createdChars[1]=team.characters[1];
+                }
+                if(team.characters[2]){
+                    $scope.createdChars[2]=team.characters[2];
+                }
 
-            $scope.team=team;
+                $scope.team=team;
+                currentTeam.set($scope.team);
+            });
         });
     }
 })(angular.module("fotm"));

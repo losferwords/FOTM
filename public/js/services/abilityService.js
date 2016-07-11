@@ -21,1397 +21,6 @@
                         cd : 0
                     };break;
 
-                    //SENTINEL
-
-                    case "Defender Of The Faith": return {
-                        name : "Defender Of The Faith",
-                        localName: function(){return gettextCatalog.getString("Defender Of The Faith")},
-                        variant: 3,
-                        role : function() {return "sentinel"},
-                        desc: function() {
-                            switch(this.variant){
-                                case 1: return gettextCatalog.getString("Cast on ally target. Increases Block Chance, Magical and Physical Resistances for 10%."); break;
-                                case 2: return gettextCatalog.getString("Increases Block Chance, Magical and Physical Resistances of all party members for 10%"); break;
-                                case 3: return gettextCatalog.getString("Cast on ally target. Increases Block Chance, Magical and Physical Resistances for 20%"); break;
-                                case 4: return gettextCatalog.getString("Increases Block Chance, Magical and Physical Resistances of all party members for 20%"); break;
-                                case 5: return gettextCatalog.getString("Cast on ally target. Increases Block Chance, Magical and Physical Resistances for 40%"); break;
-                            }
-
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DefenderOfTheFaith)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            caster.playSound(this.name);
-                            if(this.variant===1 || this.variant===3 || this.variant===5){
-                                caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                                target.addBuff(effectService.effect("Defender Of The Faith", this.variant), caster.charName, myTeam, enemyTeam);
-                            }
-                            else {
-                                caster.logBuffer.push(caster.charName+" cast '"+this.name);
-                                for(var i=0; i<myTeam.length;i++){
-                                    if(!myTeam[i].isDead) {
-                                        myTeam[i].addBuff(effectService.effect("Defender Of The Faith", this.variant), caster.charName, myTeam, enemyTeam);
-                                    }
-
-                                }
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() {
-                            if (this.variant === 1 || this.variant === 3 || this.variant === 5) {
-                                return "ally";
-                            }
-                            else {
-                                return "self";
-                            }
-                        },
-                        range : function(){
-                            if (this.variant === 1 || this.variant === 3 || this.variant === 5) {
-                                return 3;
-                            }
-                            else {
-                                return 0;
-                            }
-                        },
-                        duration: function(){return 22-this.variant*2},
-                        energyCost : function(){return 50+this.variant*100},
-                        manaCost : function(){return 100+this.variant*100},
-                        cooldown : function(){return 12+this.variant*2},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    case "Disarm": return {
-                        name : "Disarm",
-                        localName: function(){return gettextCatalog.getString("Disarm")},
-                        variant: 3,
-                        role : function() {return "sentinel"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Takes off target weapon and some armor. Reduces target physical resistance and dodge chance for {{one}}%.",{
-                                    one: (this.variant*7).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Disarm)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                                caster.playSound(this.name);
-
-                                if(target.controlImmune) {
-                                    caster.logBuffer.push(target.charName+" has immunity to control effects!");
-                                }
-                                else {
-                                    target.addDebuff(effectService.effect("Disarm", this.variant), caster.charName, myTeam, enemyTeam);
-                                }
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 1},
-                        duration: function(){return 5+this.variant},
-                        energyCost : function(){return 150+this.variant*75},
-                        manaCost : function(){return 200+this.variant*75},
-                        cooldown : function(){return 11+this.variant},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    case "Walk Away": return {
-                        name : "Walk Away",
-                        localName: function(){return gettextCatalog.getString("Walk Away")},
-                        variant: 3,
-                        role : function() {return "sentinel"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Strikes enemy with shield, deals {{one}}% of weapon damage, throws enemy away and stuns him",{
-                                    one: (this.variant*30+80).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--WalkAway)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(0.8+this.variant*0.3), caster.maxDamage*(0.8+this.variant*0.3));
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-
-                                caster.playSound(this.name);
-                                if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                                    if(target.controlImmune) {
-                                        caster.logBuffer.push(target.charName+" has immunity to control effects!");
-                                    }
-                                    else {
-                                        caster.knockBack(target, myTeam, enemyTeam);
-                                        target.addDebuff(effectService.effect("Walk Away", this.variant), caster.charName, myTeam, enemyTeam);
-                                    }
-                                }
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 1},
-                        duration: function(){return 3+this.variant},
-                        energyCost : function(){return 250+this.variant*100},
-                        manaCost : function(){return 200+this.variant*150},
-                        cooldown : function(){return 12+this.variant},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "Sanctuary": return {
-                        name : "Sanctuary",
-                        localName: function(){return gettextCatalog.getString("Sanctuary")},
-                        variant: 3,
-                        role : function() {return "sentinel"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Cast on ally target. Caster takes {{one}}% of damage taken by target ally.",{
-                                    one: (this.variant*15).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Sanctuary)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                            caster.playSound(this.name);
-                            target.addBuff(effectService.effect("Sanctuary", this.variant), caster.charName, myTeam, enemyTeam);
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "allyNotMe"},
-                        range : function(){return 3},
-                        duration: function(){return 4+this.variant*2},
-                        energyCost : function(){return 100+this.variant*100},
-                        manaCost : function(){return 100+this.variant*150},
-                        cooldown : function(){return 10+this.variant*2},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    case "The Punishment Due": return {
-                        name : "The Punishment Due",
-                        localName: function(){return gettextCatalog.getString("The Punishment Due")},
-                        variant: 3,
-                        role : function() {return "sentinel"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Strikes enemy, deals {{one}}% of weapon damage. After that causes bleeding for {{two}}% of dealing damage",{
-                                    one: (this.variant*10+90).toFixed(0),
-                                    two: (this.variant*10).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ThePunishmentDue)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(0.9+this.variant*0.1), caster.maxDamage*(0.9+this.variant*0.1));
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-
-                                caster.playSound(this.name);
-                                if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                                    var newEffect=effectService.effect("The Punishment Due", this.variant);
-                                    newEffect.bleedDamage=physDamage*this.variant*0.1;
-                                    target.addDebuff(newEffect, caster.charName, myTeam, enemyTeam);
-                                }
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 2},
-                        duration: function(){return 4+this.variant},
-                        energyCost : function(){return 100+this.variant*75},
-                        manaCost : function(){return 150+this.variant*50},
-                        cooldown : function(){return 7+this.variant},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "Come And Get It": return {
-                        name : "Come And Get It",
-                        localName: function(){return gettextCatalog.getString("Come And Get It")},
-                        variant: 3,
-                        role : function() {return "sentinel"},
-                        desc: function() {
-                            return gettextCatalog.getString(
-                                "Throws spear to enemy, deals {{one}}% of weapon damage and draws the target to caster.",{
-                                    one: (this.variant*20+50).toFixed(0)
-                                });
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ComeAndGetIt)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(0.5+this.variant*0.2), caster.maxDamage*(0.5+this.variant*0.2));
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-
-                                caster.playSound(this.name);
-                                if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                                    if(target.controlImmune) {
-                                        caster.logBuffer.push(target.charName+" has immunity to control effects!");
-                                    }
-                                    else {
-                                        target.charge(caster, enemyTeam, myTeam);
-                                    }
-                                }
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 3},
-                        duration: function(){return 0},
-                        energyCost : function(){return 100+this.variant*75},
-                        manaCost : function(){return 100+this.variant*50},
-                        cooldown : function(){return 11+this.variant},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "New Faith": return {
-                        name : "New Faith",
-                        localName: function(){return gettextCatalog.getString("New Faith")},
-                        variant: 3,
-                        role : function() {return "sentinel"},
-                        desc: function() {
-                            return gettextCatalog.getString("Cast on ally target. Removes 3 random negative effects, that cause periodic damage. Restore {{one}} health.",
-                                {one: (200+this.variant*175).toFixed(0)});
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--NewFaith)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-
-                            caster.playSound(this.name);
-
-                            if(target.findEffect("Locked And Loaded")!==-1) {
-                                caster.logBuffer.push("Debuffs can't be removed, because target is under 'Locked And Loaded' effect!");
-                            }
-                            else {
-                                for(var i=0;i<3;i++) {
-                                    target.removeRandomDOT(myTeam, enemyTeam);
-                                }
-                            }
-
-                            var heal=(200+this.variant*175)*(1+caster.spellPower);
-                            var critical = caster.checkCrit();
-                            if (critical) {
-                                heal = caster.applyCrit(heal);
-                            }
-                            target.takeHeal(heal, caster, {name: this.name, icon: this.icon(), role: this.role()}, critical);
-
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "ally"},
-                        range : function(){return 3},
-                        duration: function(){return 0},
-                        energyCost : function(){return 100+this.variant*50},
-                        manaCost : function(){return 150+this.variant*100},
-                        cooldown : function(){return 5+this.variant},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    //SLAYER
-
-                    case "Die By The Sword": return {
-                        name : "Die By The Sword",
-                        localName: function(){return gettextCatalog.getString("Die By The Sword")},
-                        variant: 3,
-                        role : function() {return "slayer"},
-                        desc: function() {
-                            return gettextCatalog.getString(
-                                "Strikes enemy, deals {{one}}% of weapon damage.",{
-                                    one: (this.variant*35+100).toFixed(0)
-                                });
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DieByTheSword)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(1+this.variant*0.35), caster.maxDamage*(1+this.variant*0.35));
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-
-                                caster.playSound(this.name);
-                                target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 1},
-                        duration: function(){return 0},
-                        energyCost : function(){return 150+this.variant*100},
-                        manaCost : function(){return 100+this.variant*75},
-                        cooldown : function(){return 11+this.variant},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "Reign In Blood": return {
-                        name : "Reign In Blood",
-                        localName: function(){return gettextCatalog.getString("Reign In Blood")},
-                        variant: 3,
-                        role : function() {return "slayer"},
-                        desc: function() {
-                            return gettextCatalog.getString(
-                                "Strikes enemy, deals {{one}}% of weapon damage and increases Attack Power to {{two}}% until miss. Stacks up 5 times.",{
-                                    one: (this.variant*10+80).toFixed(0),
-                                    two: (this.variant*2)
-                                });
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ReignInBlood)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(0.8+this.variant*0.1), caster.maxDamage*(0.8+this.variant*0.1));
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-
-                                caster.playSound(this.name);
-                                if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                                    caster.addBuff(effectService.effect("Reign In Blood", this.variant), caster.charName, myTeam, enemyTeam);
-                                }
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 1},
-                        duration: function(){return 0},
-                        energyCost : function(){return 100+this.variant*75},
-                        manaCost : function(){return 100+this.variant*75},
-                        cooldown : function(){return 1},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "Grinder": return {
-                        name : "Grinder",
-                        localName: function(){return gettextCatalog.getString("Grinder")},
-                        variant: 3,
-                        role : function() {return "slayer"},
-                        desc: function() {
-                            return gettextCatalog.getString(
-                                "Strikes all enemies in 1 cell radius, deals {{one}}% of weapon damage. Ability has {{two}}% chance to restore it's cooldown immediately.",{
-                                    one: (this.variant*20+50).toFixed(0),
-                                    two: (36-this.variant*6)
-                                });
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Grinder)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-
-                            if(Math.random()>=((36-this.variant*6)*0.01)) {
-                                this.cd=this.cooldown();
-                            }
-                            else {
-                                caster.logBuffer.push(caster.charName+"'s grinder looking for meat!");
-                            }
-
-                            caster.playSound(this.name);
-                            var nearbyEnemies = caster.findEnemies(enemyTeam, 1);
-                            for (var i = 0; i < nearbyEnemies.length; i++) {
-                                //Для той же цели не проверяем miss
-                                if(caster.checkHit() || nearbyEnemies[i].charName===target.charName){
-                                    var physDamage = randomService.randomInt(caster.minDamage*(0.5+this.variant*0.2), caster.maxDamage*(0.5+this.variant*0.2));
-
-                                    var critical = caster.checkCrit();
-                                    if(critical){
-                                        physDamage=caster.applyCrit(physDamage);
-                                    }
-                                    physDamage=nearbyEnemies[i].applyResistance(physDamage, false);
-                                    nearbyEnemies[i].takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
-                                }
-                                else {
-                                    caster.afterMiss(nearbyEnemies[i].charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                                }
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "self"},
-                        range : function(){return 0},
-                        duration: function(){return 0},
-                        energyCost : function(){return 100+this.variant*75},
-                        manaCost : function(){return 150+this.variant*150},
-                        cooldown : function(){return 11+this.variant},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "Follow The Tears": return {
-                        name : "Follow The Tears",
-                        localName: function(){return gettextCatalog.getString("Follow The Tears")},
-                        variant: 3,
-                        role : function() {return "slayer"},
-                        desc: function() {
-                            return gettextCatalog.getString(
-                                "Charges to enemy and deals {{one}}% of weapon damage.",{
-                                    one: (this.variant*30+50).toFixed(0)
-                                });
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FollowTheTears)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-
-                            if(caster.immobilized){
-                                caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
-                                return;
-                            }
-                            //Пробуем сделать чардж, если не удалось, пишем в лог
-                            if(!caster.charge(target, myTeam, enemyTeam)) {
-                                caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
-                                return;
-                            }
-
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(0.5+this.variant*0.3), caster.maxDamage*(0.5+this.variant*0.3));
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-
-                                caster.playSound(this.name);
-                                target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 3},
-                        duration: function(){return 0},
-                        energyCost : function(){return 100+this.variant*100},
-                        manaCost : function(){return 150+this.variant*75},
-                        cooldown : function(){return 11+this.variant},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "Made In Hell": return {
-                        name : "Made In Hell",
-                        localName: function(){return gettextCatalog.getString("Made In Hell")},
-                        variant: 3,
-                        role : function() {return "slayer"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Calls to hell and becomes immune to magical damage");
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                            str+=" ";
-                            str+= gettextCatalog.getString(
-                                "Mana Regeneration increased to {{one}} %.",{
-                                    one: (this.variant*60).toFixed(0)
-                                });
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--MadeInHell)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                            caster.playSound(this.name);
-                            caster.addBuff(effectService.effect("Made In Hell", this.variant), caster.charName, myTeam, enemyTeam);
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "self"},
-                        range : function(){return 0},
-                        duration: function(){return 4+this.variant*2},
-                        energyCost : function(){return 200+this.variant*50},
-                        manaCost : function(){return 100+this.variant*100},
-                        cooldown : function(){return 16+this.variant*2},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    case "Spill The Blood": return {
-                        name : "Spill The Blood",
-                        localName: function(){return gettextCatalog.getString("Spill The Blood")},
-                        variant: 3,
-                        role : function() {return "slayer"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Attack Power increased to {{one}}%. Health Regeneration increased to {{two}}%.",{
-                                    one: (this.variant*10).toFixed(0),
-                                    two: (this.variant*15).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--SpillTheBlood)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                            caster.playSound(this.name);
-                            caster.addBuff(effectService.effect("Spill The Blood", this.variant), caster.charName, myTeam, enemyTeam);
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "self"},
-                        range : function(){return 0},
-                        duration: function(){return 12+this.variant},
-                        energyCost : function(){return 50+this.variant*100},
-                        manaCost : function(){return 100+this.variant*100},
-                        cooldown : function(){return 12+this.variant*2},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    case "Dyers Eve": return {
-                        name : "Dyers Eve",
-                        localName: function(){return gettextCatalog.getString("Dyers Eve")},
-                        variant: 3,
-                        role : function() {return "slayer"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Ability can be used only if character health is less than 50%. Heals up caster for {{one}} and increases Critical Chance for {{two}}%.",{
-                                    one: (500+this.variant*500).toFixed(0),
-                                    two: (this.variant*20).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DyersEve)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                            caster.playSound(this.name);
-                            caster.addBuff(effectService.effect("Dyers Eve", this.variant), caster.charName, myTeam, enemyTeam);
-                            var heal=(500+this.variant*500)*(1+caster.spellPower);
-                            var critical = caster.checkCrit();
-                            if (critical) {
-                                heal = caster.applyCrit(heal);
-                            }
-                            caster.takeHeal(heal, caster, {name: this.name, icon: this.icon(), role: this.role()}, critical);
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "self"},
-                        range : function(){return 0},
-                        duration: function(){return this.variant},
-                        energyCost : function(){return 100+this.variant*50},
-                        manaCost : function(){return 100+this.variant*75},
-                        cooldown : function(){return 12+this.variant*2},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    case "I Dont Wanna Stop": return {
-                        name : "I Dont Wanna Stop",
-                        localName: function(){return gettextCatalog.getString("I Dont Wanna Stop")},
-                        variant: 3,
-                        role : function() {return "slayer"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Character becomes immune to control abilities");
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                            str+=" ";
-                            str+= gettextCatalog.getString(
-                                "Restores {{one}} energy.",{
-                                    one: (100+this.variant*150).toFixed(0)
-                                });
-                            str+=" ";
-                            str+= gettextCatalog.getString(
-                                "This ability doesn't remove control effects, which is already on character.");
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--IDontWannaStop)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                            caster.playSound(this.name);
-                            caster.takeEnergy(100+this.variant*150, caster, this.name, false);
-                            caster.addBuff(effectService.effect("I Dont Wanna Stop", this.variant), caster.charName, myTeam, enemyTeam);
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "self"},
-                        range : function(){return 0},
-                        duration: function(){return 6+this.variant},
-                        energyCost : function(){return 300},
-                        manaCost : function(){return 100+this.variant*50},
-                        cooldown : function(){return 12+this.variant*2},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    //REDEEMER
-
-                    case "Shot Down In Flames": return {
-                        name : "Shot Down In Flames",
-                        localName: function(){return gettextCatalog.getString("Shot Down In Flames")},
-                        variant: 3,
-                        role : function() {return "redeemer"},
-                        desc: function() {
-                            return gettextCatalog.getString(
-                                "Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage.",{
-                                    one: ((6-this.variant)*10+60).toFixed(0),
-                                    two: (400+this.variant*50).toFixed(0)
-                                });
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ShotDownInFlames)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(0.6+(6-this.variant)*0.1), caster.maxDamage*(0.6+(6-this.variant)*0.1));
-                                var magicDamage = (400+this.variant*50)*(1+caster.spellPower);
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                    magicDamage=caster.applyCrit(magicDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-                                magicDamage=target.applyResistance(magicDamage, true);
-
-                                var totalDamage = physDamage+magicDamage;
-
-                                caster.playSound(this.name);
-                                target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 3},
-                        duration: function(){return 0},
-                        energyCost : function(){return 500},
-                        manaCost : function(){return 700},
-                        cooldown : function(){return 6},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "Electric Eye": return {
-                        name : "Electric Eye",
-                        localName: function(){return gettextCatalog.getString("Electric Eye")},
-                        variant: 3,
-                        role : function() {return "redeemer"},
-                        desc: function() {
-                            return gettextCatalog.getString(
-                                "Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage.",{
-                                    one: (this.variant*10+90).toFixed(0),
-                                    two: (300+this.variant*50).toFixed(0)
-                                });
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ElectricEye)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(0.9+this.variant*0.1), caster.maxDamage*(0.9+this.variant*0.1));
-                                var magicDamage = (300+this.variant*50)*(1+caster.spellPower);
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                    magicDamage=caster.applyCrit(magicDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-                                magicDamage=target.applyResistance(magicDamage, true);
-
-                                var totalDamage = physDamage+magicDamage;
-
-                                caster.playSound(this.name);
-                                target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 4},
-                        duration: function(){return 0},
-                        energyCost : function(){return 250+this.variant*100},
-                        manaCost : function(){return 200+this.variant*100},
-                        cooldown : function(){return 17+this.variant},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "Lights In The Sky": return {
-                        name : "Lights In The Sky",
-                        localName: function(){return gettextCatalog.getString("Lights In The Sky")},
-                        variant: 3,
-                        role : function() {return "redeemer"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Cast on ally target. Increases Hit Chance for {{one}}% and Critical Chance for {{two}}%.",{
-                                    one: (15+this.variant*2).toFixed(0),
-                                    two: (25-this.variant*2).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--LightsInTheSky)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                            caster.playSound(this.name);
-                            target.addBuff(effectService.effect("Lights In The Sky", this.variant), caster.charName, myTeam, enemyTeam);
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "ally"},
-                        range : function(){return 3},
-                        duration: function(){return 12},
-                        energyCost : function(){return 400},
-                        manaCost : function(){return 500},
-                        cooldown : function(){return 18},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    case "Thunderstruck": return {
-                        name : "Thunderstruck",
-                        localName: function(){return gettextCatalog.getString("Thunderstruck")},
-                        variant: 3,
-                        role : function() {return "redeemer"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Throws lightning which deals {{one}} magical damage and stuns target",{
-                                    one: (80+this.variant*150).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Thunderstruck)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var magicDamage = (80+this.variant*150)*(1+caster.spellPower);
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    magicDamage=caster.applyCrit(magicDamage);
-                                }
-                                magicDamage=target.applyResistance(magicDamage, true);
-
-                                caster.playSound(this.name);
-                                if(target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                                    if(target.controlImmune) {
-                                        caster.logBuffer.push(target.charName+" has immunity to control effects!");
-                                    }
-                                    else {
-                                        target.addDebuff(effectService.effect("Thunderstruck", this.variant), caster.charName, myTeam, enemyTeam);
-                                    }
-                                }
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 3},
-                        duration: function(){return 2+this.variant},
-                        energyCost : function(){return 150+this.variant*100},
-                        manaCost : function(){return 200+this.variant*100},
-                        cooldown : function(){return 6+this.variant*2},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    case "You Aint No Angel": return {
-                        name : "You Aint No Angel",
-                        localName: function(){return gettextCatalog.getString("You Aint No Angel")},
-                        variant: 3,
-                        role : function() {return "redeemer"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Up in the air and becomes immune to physical damage");
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                            str+=" ";
-                            str+= gettextCatalog.getString(
-                                "Health Regeneration increased to {{one}} %.",{
-                                    one: (this.variant*60).toFixed(0)
-                                });
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--YouAintNoAngel)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                            caster.playSound(this.name);
-                            caster.addBuff(effectService.effect("You Aint No Angel", this.variant), caster.charName, myTeam, enemyTeam);
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "self"},
-                        range : function(){return 0},
-                        duration: function(){return 4+this.variant*2},
-                        energyCost : function(){return 200+this.variant*50},
-                        manaCost : function(){return 100+this.variant*100},
-                        cooldown : function(){return 16+this.variant*2},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    case "State Of Grace": return {
-                        name : "State Of Grace",
-                        localName: function(){return gettextCatalog.getString("State Of Grace")},
-                        variant: 3,
-                        role : function() {return "redeemer"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Fully restores energy. Every turn restores {{one}} health and {{two}} mana",{
-                                    one: (100+this.variant*60).toFixed(0),
-                                    two: (460-this.variant*60).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--StateOfGrace)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                            caster.playSound(this.name);
-                            caster.takeEnergy(caster.maxEnergy, caster, this.name, false);
-                            caster.addBuff(effectService.effect("State Of Grace", this.variant), caster.charName, myTeam, enemyTeam);
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "self"},
-                        range : function(){return 0},
-                        duration: function(){return 7},
-                        energyCost : function(){return 450},
-                        manaCost : function(){return 1000},
-                        cooldown : function(){return 24},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    case "My Last Words": return {
-                        name : "My Last Words",
-                        localName: function(){return gettextCatalog.getString("My Last Words")},
-                        variant: 3,
-                        role : function() {return "redeemer"},
-                        desc: function() {
-                            return gettextCatalog.getString(
-                                "This ability can be used only against characters with less than 50% health. Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage.",{
-                                    one: (this.variant*20+100).toFixed(0),
-                                    two: (400+this.variant*100).toFixed(0)
-                                });
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--MyLastWords)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(1+this.variant*0.2), caster.maxDamage*(1+this.variant*0.2));
-                                var magicDamage = (400+this.variant*100)*(1+caster.spellPower);
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                    magicDamage=caster.applyCrit(magicDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-                                magicDamage=target.applyResistance(magicDamage, true);
-
-                                var totalDamage = physDamage+magicDamage;
-
-                                caster.playSound(this.name);
-                                target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 3},
-                        duration: function(){return 0},
-                        energyCost : function(){return 150+this.variant*100},
-                        manaCost : function(){return 200+this.variant*150},
-                        cooldown : function(){return 10+this.variant*2},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "Come Cover Me": return {
-                        name : "Come Cover Me",
-                        localName: function(){return gettextCatalog.getString("Come Cover Me")},
-                        variant: 3,
-                        role : function() {return "redeemer"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Cast on ally target. Draws the target to caster. Every turn restores {{one}} target's health.",{
-                                    one: (100+this.variant*50).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ComeCoverMe)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                            caster.playSound(this.name);
-                            target.charge(caster, myTeam, enemyTeam);
-                            target.addBuff(effectService.effect("Come Cover Me", this.variant), caster.charName, myTeam, enemyTeam);
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "allyNotMe"},
-                        range : function(){return 3},
-                        duration: function(){return 10-this.variant},
-                        energyCost : function(){return 250+this.variant*50},
-                        manaCost : function(){return 250+this.variant*100},
-                        cooldown : function(){return 7+this.variant},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    //RIPPER
-
-                    case "Inject The Venom": return {
-                        name : "Inject The Venom",
-                        localName: function(){return gettextCatalog.getString("Inject The Venom")},
-                        variant: 3,
-                        role : function() {return "ripper"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Strikes enemy, deals {{one}}% of weapon damage and injects the venom, what deals {{two}} magical damage",{
-                                    one: (this.variant*10+100).toFixed(0),
-                                    two: (this.variant*75)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"during next turn", "during next {{$count}} turns",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--InjectTheVenom)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(1+this.variant*0.1), caster.maxDamage*(1+this.variant*0.1));
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-
-                                caster.playSound(this.name);
-                                if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                                    target.addDebuff(effectService.effect("Inject The Venom", this.variant), caster.charName, myTeam, enemyTeam);
-                                }
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 1},
-                        duration: function(){return 16-this.variant*2},
-                        energyCost : function(){return 150+this.variant*75},
-                        manaCost : function(){return 150+this.variant*100},
-                        cooldown : function(){return 5+this.variant},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "Invisible": return {
-                        name : "Invisible",
-                        localName: function(){return gettextCatalog.getString("Invisible")},
-                        variant: 3,
-                        role : function() {return "ripper"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Character becomes invisible. Invisibility fades if owner takes or deals damage. While character is invisible, his Attack Power increased to {{one}}%.",{
-                                    one: (this.variant*20).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Invisible)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                            caster.playSound(this.name);
-                            caster.addBuff(effectService.effect("Invisible", this.variant), caster.charName, myTeam, enemyTeam);
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "self"},
-                        range : function(){return 0},
-                        duration: function(){return 3+this.variant*3},
-                        energyCost : function(){return 50+this.variant*100},
-                        manaCost : function(){return 100+this.variant*100},
-                        cooldown : function(){return 3+this.variant*3},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    case "Jawbreaker": return {
-                        name : "Jawbreaker",
-                        localName: function(){return gettextCatalog.getString("Jawbreaker")},
-                        variant: 3,
-                        role : function() {return "ripper"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Strikes enemy, deals {{one}}% of weapon damage and makes target silenced",{
-                                    one: (this.variant*10+80).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Jawbreaker)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(0.8+this.variant*0.1), caster.maxDamage*(0.8+this.variant*0.1));
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-
-                                caster.playSound(this.name);
-                                if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                                    if(target.controlImmune) {
-                                        caster.logBuffer.push(target.charName+" has immunity to control effects!");
-                                    }
-                                    else {
-                                        target.addDebuff(effectService.effect("Jawbreaker", this.variant), caster.charName, myTeam, enemyTeam);
-                                    }
-                                }
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 1},
-                        duration: function(){return 5+this.variant},
-                        energyCost : function(){return 100+this.variant*100},
-                        manaCost : function(){return 150+this.variant*75},
-                        cooldown : function(){return 15+this.variant},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "Hog Tied": return {
-                        name : "Hog Tied",
-                        localName: function(){return gettextCatalog.getString("Hog Tied")},
-                        variant: 3,
-                        role : function() {return "ripper"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Charges to enemy, deals {{one}}% of weapon damage and immobilizes target",{
-                                    one: (this.variant*15+80).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HogTied)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-
-                            if(caster.immobilized){
-                                caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
-                                return;
-                            }
-                            //Пробуем сделать чардж, если не удалось, пишем в лог
-                            if(!caster.charge(target, myTeam, enemyTeam)) {
-                                caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
-                                return;
-                            }
-
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(0.8+this.variant*0.15), caster.maxDamage*(0.8+this.variant*0.15));
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-
-                                caster.playSound(this.name);
-                                if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                                    if(target.controlImmune) {
-                                        caster.logBuffer.push(target.charName+" has immunity to control effects!");
-                                    }
-                                    else {
-                                        target.addDebuff(effectService.effect("Hog Tied", this.variant), caster.charName, myTeam, enemyTeam);
-                                    }
-                                }
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 2},
-                        duration: function(){return 7+this.variant},
-                        energyCost : function(){return 150+this.variant*100},
-                        manaCost : function(){return 100+this.variant*100},
-                        cooldown : function(){return 15+this.variant*2},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "Running Free": return {
-                        name : "Running Free",
-                        localName: function(){return gettextCatalog.getString("Running Free")},
-                        variant: 3,
-                        role : function() {return "ripper"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Decreases movement cost to {{one}} energy. Remove all immobilize effects.",{
-                                    one: (this.variant*40).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--RunningFree)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                            caster.playSound(this.name);
-                            caster.addBuff(effectService.effect("Running Free", this.variant), caster.charName, myTeam, enemyTeam);
-                            caster.removeImmobilization(myTeam, enemyTeam);
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "self"},
-                        range : function(){return 0},
-                        duration: function(){return 7+this.variant},
-                        energyCost : function(){return 50+this.variant*50},
-                        manaCost : function(){return 100+this.variant*75},
-                        cooldown : function(){return 12+this.variant},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    case "Fast As The Shark": return {
-                        name : "Fast As The Shark",
-                        localName: function(){return gettextCatalog.getString("Fast As The Shark")},
-                        variant: 3,
-                        role : function() {return "ripper"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Increases Luck for {{one}}% and Dodge Chance for {{two}}%",{
-                                    one: (this.variant*15).toFixed(0),
-                                    two: (this.variant*20).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FastAsTheShark)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                            caster.playSound(this.name);
-                            caster.addBuff(effectService.effect("Fast As The Shark", this.variant), caster.charName, myTeam, enemyTeam);
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "self"},
-                        range : function(){return 0},
-                        duration: function(){return 5+this.variant*2},
-                        energyCost : function(){return 50+this.variant*100},
-                        manaCost : function(){return 50+this.variant*100},
-                        cooldown : function(){return 10+this.variant},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
-                    case "Prowler": return {
-                        name : "Prowler",
-                        localName: function(){return gettextCatalog.getString("Prowler")},
-                        variant: 3,
-                        role : function() {return "ripper"},
-                        desc: function() {
-                            var str = gettextCatalog.getString(
-                                "Strikes enemy, deals {{one}}% of weapon damage and stuns target",{
-                                    one: (this.variant*10+100).toFixed(0)
-                                });
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Prowler)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            if(caster.checkHit()){
-                                var physDamage = randomService.randomInt(caster.minDamage*(1+this.variant*0.1), caster.maxDamage*(1+this.variant*0.1));
-                                var critical = caster.checkCrit();
-                                if(critical){
-                                    physDamage=caster.applyCrit(physDamage);
-                                }
-                                physDamage=target.applyResistance(physDamage, false);
-
-                                caster.playSound(this.name);
-                                if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                                    if(target.controlImmune) {
-                                        caster.logBuffer.push(target.charName+" has immunity to control effects!");
-                                    }
-                                    else {
-                                        target.addDebuff(effectService.effect("Prowler", this.variant), caster.charName, myTeam, enemyTeam);
-                                    }
-                                }
-                            }
-                            else {
-                                caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                            }
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "enemy"},
-                        range : function(){return 1},
-                        duration: function(){return 4+this.variant},
-                        energyCost : function(){return 100+this.variant*100},
-                        manaCost : function(){return 150+this.variant*75},
-                        cooldown : function(){return 12+this.variant*2},
-                        needWeapon : function() {return true},
-                        cd : 0
-                    };break;
-
-                    case "Fade To Black": return {
-                        name : "Fade To Black",
-                        localName: function(){return gettextCatalog.getString("Fade To Black")},
-                        variant: 3,
-                        role : function() {return "ripper"},
-                        desc: function() {
-                            var str = gettextCatalog.getString("Cast on ally target. Target becomes invisible");
-                            str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
-                            str+=" ";
-                            str+=gettextCatalog.getString("Effect fades if owner takes or deals damage.");
-                            return str;
-                        },
-                        icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FadeToBlack)"},
-                        cast : function (caster, target, myTeam, enemyTeam) {
-                            caster.spendEnergy(this.energyCost());
-                            caster.spendMana(this.manaCost());
-                            this.cd=this.cooldown();
-                            caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                            caster.playSound(this.name);
-                            target.addBuff(effectService.effect("Fade To Black", this.variant), caster.charName, myTeam, enemyTeam);
-                            caster.afterCast(this.name, myTeam, enemyTeam);
-                        },
-                        targetType : function() { return "allyNotMe"},
-                        range : function(){return 3},
-                        duration: function(){return 3+this.variant*2},
-                        energyCost : function(){return 50+this.variant*100},
-                        manaCost : function(){return 100+this.variant*100},
-                        cooldown : function(){return 3+this.variant*2},
-                        needWeapon : function() {return false},
-                        cd : 0
-                    };break;
-
                     //PROPHET
 
                     case "Stargazer": return {
@@ -1427,7 +36,7 @@
                                     three: this.variant
                                 });
                             str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
+                            str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
                             str+=" ";
                             str+=gettextCatalog.getString("Stacks up 5 times.");
                             return str;
@@ -1507,7 +116,7 @@
                             var str = gettextCatalog.getString(
                                 "All enemies in 1 cell radius becomes silenced");
                             str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
+                            str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
                             return str;
                         },
                         icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--NeverAWord)"},
@@ -1561,7 +170,7 @@
                                     one: (this.variant*10).toFixed(0)
                                 });
                             str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                            str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                             return str;
                         },
                         icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Prophecy)"},
@@ -1684,7 +293,7 @@
                                     two: (this.variant).toFixed(0)
                                 });
                             str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                            str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                             return str;
                         },
                         icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--InfiniteDreams)"},
@@ -1718,7 +327,7 @@
                                     one: (75*this.variant).toFixed(0)
                                 });
                             str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"during next turn", "during next {{$count}} turns",{});
+                            str+=gettextCatalog.getPlural(this.duration,"during next turn", "during next {{$count}} turns",{});
                             str+=" ";
                             str+=gettextCatalog.getString("Immobilize target. Every turn damage from this effect rise up for {{one}}%.", {
                                 one: (35-this.variant*5).toFixed(0)
@@ -1816,7 +425,7 @@
                                     one: (200+this.variant*150).toFixed(0)
                                 });
                             str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Disarm lasts {{$count}} turn.", "Disarm lasts {{$count}} turns.",{});
+                            str+=gettextCatalog.getPlural(this.duration,"Disarm lasts {{$count}} turn.", "Disarm lasts {{$count}} turns.",{});
                             return str;
                         },
                         icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--BurningAmbition)"},
@@ -1932,7 +541,7 @@
                                     one: (100*this.variant).toFixed(0)
                                 });
                             str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"for next turn.", "for next {{$count}} turns.",{});
+                            str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
                             str+=" ";
                             str+=gettextCatalog.getString(
                                 "When this effect ends, all enemies in one cell radius around target gets {{one}} magical damage and becomes stunned for 3 turns.",{
@@ -2007,7 +616,7 @@
                                 two: (this.variant*60).toFixed(0)
                         });
                         str+=" ";
-                        str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                        str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                         return str;
                         },
                         icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Cauterization)"},
@@ -2071,7 +680,7 @@
                                 one: (20+this.variant*10).toFixed(0)
                             });
                             str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                            str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                             return str;
                         },
                         icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FightFireWithFire)"},
@@ -2158,7 +767,7 @@
                                     one: (75+this.variant*15).toFixed(0)
                                 });
                             str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                            str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                             return str;
                         },
                         icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--MercyfulFate)"},
@@ -2415,7 +1024,7 @@
                             var str = gettextCatalog.getString(
                                 "Cast on ally target. Removes all debuffs from target and makes it immune to all damage and control.");
                             str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                            str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                             return str;
                         },
                         icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HeavenCanWait)"},
@@ -2506,7 +1115,7 @@
                                     two: (40+this.variant*60).toFixed(0)
                                 });
                             str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"during next turn", "during next {{$count}} turns",{});
+                            str+=gettextCatalog.getPlural(this.duration,"during next turn", "during next {{$count}} turns",{});
                             return str;
                         },
                         icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FearOfTheDark)"},
@@ -2553,7 +1162,7 @@
                                     one: (30*this.variant).toFixed(0)
                                 });
                             str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"during next turn", "during next {{$count}} turns",{});
+                            str+=gettextCatalog.getPlural(this.duration,"during next turn", "during next {{$count}} turns",{});
                             str+=" ";
                             str+=gettextCatalog.getString("Stacks up 5 times.");
                             return str;
@@ -2595,7 +1204,7 @@
                                     two: (this.variant).toFixed(0)
                                 });
                             str+=" ";
-                            str+=gettextCatalog.getPlural(this.duration(),"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                            str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
                             str+=" ";
                             str+=gettextCatalog.getString("Stacks up 5 times.");
                             return str;
@@ -2842,6 +1451,397 @@
                                 }
                             };
                             break;
+
+                        case "Disarm":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Disarm")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Takes off target weapon and some armor. Reduces target physical resistance and dodge chance for {{one}}%.",{
+                                        one: (this.variant*7).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "Walk Away":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Walk Away")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Strikes enemy with shield, deals {{one}}% of weapon damage, throws enemy away and stuns him",{
+                                        one: (this.variant*30+80).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "Sanctuary":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Sanctuary")};
+                            abilities[i].desc = function() {
+                            var str = gettextCatalog.getString(
+                                "Cast on ally target. Caster takes {{one}}% of damage taken by target ally.",{
+                                    one: (this.variant*15).toFixed(0)
+                                });
+                            str+=" ";
+                            str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                            return str;
+                            };
+                            break;
+
+                        case "The Punishment Due":
+                            abilities[i].localName = function(){return gettextCatalog.getString("The Punishment Due")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Strikes enemy, deals {{one}}% of weapon damage. After that causes bleeding for {{two}}% of dealing damage",{
+                                        one: (this.variant*10+90).toFixed(0),
+                                        two: (this.variant*10).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "Come And Get It":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Come And Get It")};
+                            abilities[i].desc = function() {
+                                return gettextCatalog.getString(
+                                    "Throws spear to enemy, deals {{one}}% of weapon damage and draws the target to caster.",{
+                                        one: (this.variant*20+50).toFixed(0)
+                                    });
+                            };
+                            break;
+
+                        case "New Faith":
+                            abilities[i].localName = function(){return gettextCatalog.getString("New Faith")};
+                            abilities[i].desc = function() {
+                                return gettextCatalog.getString("Cast on ally target. Removes 3 random negative effects, that cause periodic damage. Restore {{one}} health.",
+                                    {one: (200+this.variant*175).toFixed(0)});
+                            };
+                            break;
+
+                        //SLAYER
+
+                        case "Die By The Sword":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Die By The Sword")};
+                            abilities[i].desc = function() {
+                                return gettextCatalog.getString(
+                                    "Strikes enemy, deals {{one}}% of weapon damage.",{
+                                        one: (this.variant*35+100).toFixed(0)
+                                    });
+                            };
+                            break;
+
+                        case "Reign In Blood":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Reign In Blood")};
+                            abilities[i].desc = function() {
+                                return gettextCatalog.getString(
+                                    "Strikes enemy, deals {{one}}% of weapon damage and increases Attack Power to {{two}}% until miss. Stacks up 5 times.",{
+                                        one: (this.variant*10+80).toFixed(0),
+                                        two: (this.variant*2)
+                                    });
+                            };
+                            break;
+
+                        case "Grinder":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Grinder")};
+                            abilities[i].desc = function() {
+                                return gettextCatalog.getString(
+                                    "Strikes all enemies in 1 cell radius, deals {{one}}% of weapon damage. Ability has {{two}}% chance to restore it's cooldown immediately.",{
+                                        one: (this.variant*20+50).toFixed(0),
+                                        two: (36-this.variant*6)
+                                    });
+                            };
+                            break;
+
+                        case "Follow The Tears":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Follow The Tears")};
+                            abilities[i].desc = function() {
+                                return gettextCatalog.getString(
+                                    "Charges to enemy and deals {{one}}% of weapon damage.",{
+                                        one: (this.variant*30+50).toFixed(0)
+                                    });
+                            };
+                            break;
+
+                        case "Made In Hell":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Made In Hell")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Calls to hell and becomes immune to magical damage");
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
+                                str+=" ";
+                                str+= gettextCatalog.getString(
+                                    "Mana Regeneration increased to {{one}} %.",{
+                                        one: (this.variant*60).toFixed(0)
+                                    });
+                                return str;
+                            };
+                            break;
+
+                        case "Spill The Blood":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Spill The Blood")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Attack Power increased to {{one}}%. Health Regeneration increased to {{two}}%.",{
+                                        one: (this.variant*10).toFixed(0),
+                                        two: (this.variant*15).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "Dyers Eve":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Dyers Eve")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Ability can be used only if character health is less than 50%. Heals up caster for {{one}} and increases Critical Chance for {{two}}%.",{
+                                        one: (500+this.variant*500).toFixed(0),
+                                        two: (this.variant*20).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "I Dont Wanna Stop":
+                            abilities[i].localName = function(){return gettextCatalog.getString("I Dont Wanna Stop")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Character becomes immune to control abilities");
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
+                                str+=" ";
+                                str+= gettextCatalog.getString(
+                                    "Restores {{one}} energy.",{
+                                        one: (100+this.variant*150).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+= gettextCatalog.getString(
+                                    "This ability doesn't remove control effects, which is already on character.");
+                                return str;
+                            };
+                            break;
+
+                        //REDEEMER
+
+                        case "Shot Down In Flames":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Shot Down In Flames")};
+                            abilities[i].desc = function() {
+                                return gettextCatalog.getString(
+                                    "Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage.",{
+                                        one: ((6-this.variant)*10+60).toFixed(0),
+                                        two: (400+this.variant*50).toFixed(0)
+                                    });
+                            };
+                            break;
+
+                        case "Electric Eye":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Electric Eye")};
+                            abilities[i].desc = function() {
+                                return gettextCatalog.getString(
+                                    "Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage.",{
+                                        one: (this.variant*10+90).toFixed(0),
+                                        two: (300+this.variant*50).toFixed(0)
+                                    });
+                            };
+                            break;
+
+                        case "Lights In The Sky":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Lights In The Sky")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Cast on ally target. Increases Hit Chance for {{one}}% and Critical Chance for {{two}}%.",{
+                                        one: (15+this.variant*2).toFixed(0),
+                                        two: (25-this.variant*2).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "Thunderstruck":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Thunderstruck")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Throws lightning which deals {{one}} magical damage and stuns target",{
+                                        one: (80+this.variant*150).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "You Aint No Angel":
+                            abilities[i].localName = function(){return gettextCatalog.getString("You Aint No Angel")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Up in the air and becomes immune to physical damage");
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
+                                str+=" ";
+                                str+= gettextCatalog.getString(
+                                    "Health Regeneration increased to {{one}} %.",{
+                                        one: (this.variant*60).toFixed(0)
+                                    });
+                                return str;
+                            };
+                            break;
+
+                        case "State Of Grace":
+                            abilities[i].localName = function(){return gettextCatalog.getString("State Of Grace")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Fully restores energy. Every turn restores {{one}} health and {{two}} mana",{
+                                        one: (100+this.variant*60).toFixed(0),
+                                        two: (460-this.variant*60).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "My Last Words":
+                            abilities[i].localName = function(){return gettextCatalog.getString("My Last Words")};
+                            abilities[i].desc = function() {
+                                return gettextCatalog.getString(
+                                    "This ability can be used only against characters with less than 50% health. Shoots the enemy, deals {{one}}% of weapon damage and {{two}} magical damage.",{
+                                        one: (this.variant*20+100).toFixed(0),
+                                        two: (400+this.variant*100).toFixed(0)
+                                    });
+                            };
+                            break;
+
+                        case "Come Cover Me":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Come Cover Me")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Cast on ally target. Draws the target to caster. Every turn restores {{one}} target's health.",{
+                                        one: (100+this.variant*50).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        //RIPPER
+
+                        case "Inject The Venom":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Inject The Venom")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Strikes enemy, deals {{one}}% of weapon damage and injects the venom, what deals {{two}} magical damage",{
+                                        one: (this.variant*10+100).toFixed(0),
+                                        two: (this.variant*75)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"during next turn", "during next {{$count}} turns",{});
+                                return str;
+                            };
+                            break;
+
+                        case "Invisible":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Invisible")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Character becomes invisible. Invisibility fades if owner takes or deals damage. While character is invisible, his Attack Power increased to {{one}}%.",{
+                                        one: (this.variant*20).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "Jawbreaker":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Jawbreaker")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Strikes enemy, deals {{one}}% of weapon damage and makes target silenced",{
+                                        one: (this.variant*10+80).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "Hog Tied":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Hog Tied")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Charges to enemy, deals {{one}}% of weapon damage and immobilizes target",{
+                                        one: (this.variant*15+80).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "Running Free":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Running Free")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Decreases movement cost to {{one}} energy. Remove all immobilize effects.",{
+                                        one: (this.variant*40).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"Lasts {{$count}} turn.", "Lasts {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "Fast As The Shark":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Fast As The Shark")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Increases Luck for {{one}}% and Dodge Chance for {{two}}%",{
+                                        one: (this.variant*15).toFixed(0),
+                                        two: (this.variant*20).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "Prowler":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Prowler")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString(
+                                    "Strikes enemy, deals {{one}}% of weapon damage and stuns target",{
+                                        one: (this.variant*10+100).toFixed(0)
+                                    });
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
+                                return str;
+                            };
+                            break;
+
+                        case "Fade To Black":
+                            abilities[i].localName = function(){return gettextCatalog.getString("Fade To Black")};
+                            abilities[i].desc = function() {
+                                var str = gettextCatalog.getString("Cast on ally target. Target becomes invisible");
+                                str+=" ";
+                                str+=gettextCatalog.getPlural(this.duration,"for next turn.", "for next {{$count}} turns.",{});
+                                str+=" ";
+                                str+=gettextCatalog.getString("Effect fades if owner takes or deals damage.");
+                                return str;
+                            };
+                            break;
+
                     }
                 }
 
