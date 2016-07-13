@@ -38,7 +38,7 @@
                                     <button class="btn btn-default btn-sm" ng-click="characterClick($index)" ng-disabled="searchBattle || pending" translate>Character</button>
                                     <button class="btn btn-info btn-sm" ng-click="abilitiesClick($index)" ng-disabled="searchBattle || pending" translate>Abilities</button>
                                     <button class="btn btn-success btn-sm" ng-click="inventoryClick($index)" ng-disabled="searchBattle || pending" translate>Inventory</button>
-                                    <button class="btn btn-danger btn-sm" ng-click="burnClick($index)" ng-disabled="searchBattle || pending" translate>Burn</button>
+                                    <button class="btn btn-danger btn-sm" ng-click="burnClick(char)" ng-disabled="searchBattle || pending" translate>Burn</button>
                                 </div>
 
                                 <div class="resurrect-shards" ng-if="(char.lose && char.charName!==char._id)">
@@ -46,15 +46,15 @@
                                     <div class="shards-container">
                                         <div class="shard red-shard">
                                             <div class="shard-icon icon"></div>
-                                            <span>{{getRoleCost(char.role,'red')}}</span>
+                                            <span>{{resurectCostArray[$index].red}}</span>
                                         </div>
                                         <div class="shard green-shard">
                                             <div class="shard-icon icon"></div>
-                                            <span>{{getRoleCost(char.role,'green')}}</span>
+                                            <span>{{resurectCostArray[$index].green}}</span>
                                         </div>
                                         <div class="shard blue-shard">
                                             <div class="shard-icon icon"></div>
-                                            <span>{{getRoleCost(char.role,'blue')}}</span>
+                                            <span>{{resurectCostArray[$index].blue}}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -62,7 +62,7 @@
                                 <div class="btn-group-vertical" ng-if="(char.lose && char.charName!==char._id)">
                                     <button class="btn btn-success btn-sm"
                                             ng-click="resurrectClick(char)"
-                                            ng-disabled="checkResurrectCost(char) || pending"
+                                            ng-disabled="checkResurectCost($index) || pending"
                                             translate>
                                         Resurrect
                                     </button>

@@ -14,11 +14,11 @@
         });
 
         function setAbilities() {
-            mainSocket.emit('setChar', {
-                _id: $scope.char._id,
-                abilities: $scope.char.abilities,
-                availableAbilities: $scope.char.availableAbilities
-            }, function(char) {
+            var rawAbilities = [];
+            for(var i=0;i<$scope.char.abilities.length;i++){
+                rawAbilities.push({name: $scope.char.abilities[i].name, variant: $scope.char.abilities[i].variant})
+            }
+            mainSocket.emit('setCharAbilities', $scope.char._id, rawAbilities, function(char) {
                 $scope.char = char;
                 $scope.char.abilities = abilityService.translateAbilities($scope.char.abilities);
                 if($scope.interestingAbility){

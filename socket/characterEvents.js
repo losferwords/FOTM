@@ -67,49 +67,69 @@ module.exports = function (serverIO) {
         });
 
         socket.on('saveNewChar', function(charObj, cb){
-            if(charObj.role=='random') charObj.role = characterService.generateRandomRole(charObj.race);
-            var abilitiesArrays = characterService.generateAbilitiesArrays(charObj.role, charObj.race);
-
-            Character.setById(charObj._id, {
-                charName: charObj.charName,
-                gender: charObj.gender,
-                race: charObj.race,
-                role: charObj.role,
-                portrait: charObj.portrait,
-                abilities: abilitiesArrays[0],
-                availableAbilities: abilitiesArrays[1],
-                params: characterService.getStartParams(charObj.gender, charObj.race, charObj.role),
-                equip: characterService.getEquip(charObj.role),
-                lose: false
-            }, function(err, char){
+            Team.getById(charObj._team, function(err, team) {
                 if (err) {
                     socket.emit("customError", err);
                     return;
                 }
-                var roleCost = characterService.getRoleCost(char._doc.role);
-                Team.getById(char._doc._team, function(err, team){
-                    if (err) {
-                        socket.emit("customError", err);
-                        return;
+                if (team) {
+                    if ((team.souls.red - characterService.getRoleCost(charObj.role).red >= 0) &&
+                        (team.souls.green - characterService.getRoleCost(charObj.role).green >= 0) &&
+                        (team.souls.blue - characterService.getRoleCost(charObj.role).blue >= 0))
+                    {
+                        if(charObj.role=='random') charObj.role = characterService.generateRandomRole(charObj.race);
+                        var abilitiesArrays = characterService.generateAbilitiesArrays(charObj.role, charObj.race);
+
+                        Character.setById(charObj._id, {
+                            charName: charObj.charName,
+                            gender: charObj.gender,
+                            race: charObj.race,
+                            role: charObj.role,
+                            portrait: charObj.portrait,
+                            abilities: abilitiesArrays[0],
+                            availableAbilities: abilitiesArrays[1],
+                            params: characterService.getStartParams(charObj.gender, charObj.race, charObj.role),
+                            equip: characterService.getEquip(charObj.role),
+                            lose: false
+                        }, function(err, char){
+                            if (err) {
+                                socket.emit("customError", err);
+                                return;
+                            }
+                            var roleCost = characterService.getRoleCost(char._doc.role);
+                            Team.getById(char._doc._team, function(err, team){
+                                if (err) {
+                                    socket.emit("customError", err);
+                                    return;
+                                }
+
+                                Team.setById(team._id, {
+                                    souls: {
+                                        red: team.souls.red-roleCost.red,
+                                        green: team.souls.green-roleCost.green,
+                                        blue: team.souls.blue-roleCost.blue
+                                    }
+                                }, function(err, team) {
+                                    if (err) {
+                                        socket.emit("customError", err);
+                                        return;
+                                    }
+
+                                    cb(team._doc);
+                                });
+                            });
+
+                        });
                     }
-
-                    Team.setById(team._id, {
-                        souls: {
-                            red: team.souls.red-roleCost.red,
-                            green: team.souls.green-roleCost.green,
-                            blue: team.souls.blue-roleCost.blue
-                        }
-                    }, function(err, team) {
-                        if (err) {
-                            socket.emit("customError", err);
-                            return;
-                        }
-
-                        cb(team._doc);
-                    });
-                });
-
+                    else {
+                        socket.emit("customError", {message: "not enough souls"});
+                    }
+                }
+                else {
+                    socket.emit("customError", {message: "team not found"});
+                }
             });
+
         });
 
         socket.on('getDummyChar', function(cb){
@@ -152,6 +172,16 @@ module.exports = function (serverIO) {
             });
         });
 
+        socket.on('setCharAbilities', function(charId, abilities, cb){
+            Character.setById(charId, {abilities: abilities}, function(err, char){
+                if (err) {
+                    socket.emit("customError", err);
+                    return;
+                }
+                cb(CharacterFactory(char._doc));
+            });
+        });
+
         socket.on('calcCharByParams', function(charId, point, cb){
             if(socket.team){
                 for(var i=0;i<socket.team.characters.length;i++) {
@@ -162,6 +192,70 @@ module.exports = function (serverIO) {
                     }
                 }
             }
+        });
+
+        socket.on('getRoleCost', function(role, cb){
+            cb(characterService.getRoleCost(role));
+        });
+
+        socket.on('burnChar', function(charId, cb){
+            //Эта метка нужна для того, чтобы не удалять пока персонажа из базы, а просто пометить его, как сожжённого
+            Character.setById(charId, {charName: charId, lose: true}, function(err, char){
+                if (err) {
+                    socket.emit("customError", err);
+                    return;
+                }
+                cb(CharacterFactory(char._doc));
+            });
+        });
+
+        socket.on('resurectChar', function(charId, cb){
+            Character.setById(charId, { lose: false }, function(err, char){
+                if (err) {
+                    socket.emit("customError", err);
+                    return;
+                }
+                var resurectedChar = CharacterFactory(char._doc);
+                Team.getById(char._doc._team, function(err, team){
+                    if (err) {
+                        socket.emit("customError", err);
+                        return;
+                    }
+                    if(team){
+                        if((team.souls.red-characterService.getRoleCost(resurectedChar.role).red>=0) &&
+                            (team.souls.green-characterService.getRoleCost(resurectedChar.role).green>=0) &&
+                            (team.souls.blue-characterService.getRoleCost(resurectedChar.role).blue>=0))
+                        {
+                            Team.setById(team._id, {
+                                souls: {
+                                    red: team.souls.red-characterService.getRoleCost(resurectedChar.role).red,
+                                    green: team.souls.green-characterService.getRoleCost(resurectedChar.role).green,
+                                    blue: team.souls.blue-characterService.getRoleCost(resurectedChar.role).blue
+                                }
+                            }, function(err, team) {
+                                if (err) {
+                                    socket.emit("customError", err);
+                                    return;
+                                }
+                                if(team) {
+                                    Team.getTeamPop({id: team._id}, function(err, popTeam) {
+                                        if (err) {
+                                            socket.emit("customError", err);
+                                            return;
+                                        }
+                                        if(popTeam){
+                                            cb(popTeam._doc);
+                                        }
+                                    });
+                                }
+                            })
+                        }
+                        else {
+                            socket.emit("customError", {message: "not enough souls"});
+                        }
+                    }
+                });
+            });
         });
 
         socket.on('getAbility', function(name, cb){

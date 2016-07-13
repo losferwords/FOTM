@@ -3,6 +3,7 @@ var async = require('async');
 var User = require('models/user').User;
 var Team = require('models/team').Team;
 var Character = require('models/character').Character;
+var characterService = require('services/characterService');
 
 module.exports = function (serverIO) {
     var io = serverIO;
@@ -80,6 +81,33 @@ module.exports = function (serverIO) {
             });
         });
 
+        socket.on('addSoulsAfterRoll', function(teamId, souls){
+            Team.getById(teamId, function(err, team) {
+                if (err) {
+                    socket.emit("customError", err);
+                    return;
+                }
+                //Проверяем, сколько душ к нам пришло
+                for(var soul in souls) {
+                    if(souls[soul]<1 || souls[soul]>6) {
+                        socket.emit("customError", {message: "wrong soul number"});
+                        return;
+                    }
+                }
+                Team.setById(team._id, {
+                    souls: {
+                        red: team.souls.red+souls.red,
+                        green: team.souls.green+souls.green,
+                        blue: team.souls.blue+souls.blue
+                    }
+                }, function(err, team){
+                    if (err) {
+                        socket.emit("customError", err);
+                    }
+                });
+            });
+        });
+
         socket.on('removeDummyTeam', function(){
             Team.deleteDummies(socket.handshake.user._id, function (err, data) {
                 if (err && err.status!='no team') socket.emit("customError", err);
@@ -94,10 +122,30 @@ module.exports = function (serverIO) {
             });
         });
 
-        socket.on('checkUserTeam', function(){
+        socket.on('getTeamRoleCost', function(teamId, cb){
+            Team.getTeamPop({_id: teamId}, function(err, team){
+                if (err) {
+                    socket.emit("customError", err);
+                    return;
+                }
+                if(team) {
+                    var resArray = [];
+                    for(var i=0;i<team.characters.length;i++){
+                        resArray.push(characterService.getRoleCost(team.characters[i].role));
+                    }
+                    cb(resArray);
+                }
+            });
+
+        });
+
+        socket.on('checkUserTeam', function(cb){
             var userId = socket.handshake.user._id;
             Team.deleteDummies(userId, function (err, data) {
-                if (err && err.status!='no team') socket.emit("customError", err);
+                if (err && err.status!='no team') {
+                    socket.emit("customError", err);
+                    return;
+                }
 
                 User.getById(userId, function(err, findedUser) {
                     if (err) {
@@ -105,10 +153,10 @@ module.exports = function (serverIO) {
                         return;
                     }
                     if(findedUser.team) {
-                        socket.emit("checkUserTeamResult", findedUser.team);
+                        cb(findedUser.team);
                     }
                     else {
-                        socket.emit("checkUserTeamResult");
+                        cb(null);
                     }
                 });
             });
@@ -136,7 +184,7 @@ module.exports = function (serverIO) {
                             socket.emit("customError", err);
                             return;
                         }
-                        socket.emit("getUserTeamResult", null);
+                        cb(null);
                     });
                 }
                 else {
@@ -158,7 +206,7 @@ module.exports = function (serverIO) {
                         //Отправим (текущее время на сервере - время последнего рола)
                         var nowTime = new Date();
 
-                        socket.emit("getUserTeamResult", team, rank, (nowTime - team.lastRoll));
+                        cb(team, rank, (nowTime - team.lastRoll));
                     });
                 }
             });

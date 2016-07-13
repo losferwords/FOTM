@@ -49,7 +49,8 @@
                         gender: $scope.characterObj.gender,
                         race: $scope.characterObj.race,
                         role: $scope.characterObj.role,
-                        portrait: $scope.portraits[$scope.activePortrait.value].image
+                        portrait: $scope.portraits[$scope.activePortrait.value].image,
+                        _team: teamId
                     }, function(changedTeam) {
                         $scope.changeInfoCSS("success"); //применяем ng-class
                         $scope.info=gettextCatalog.getString("Successful");
@@ -140,7 +141,10 @@
         },true);
         $scope.$watch('characterObj.role', function() {
             updateCharInfo();
-            $scope.roleCost = characterService.getRoleCost($scope.characterObj.role);
+            mainSocket.emit('getRoleCost', $scope.characterObj.role, function(cost) {
+                $scope.roleCost = cost;
+            });
+
         });
 
         $scope.getRaceInfo = function() {
