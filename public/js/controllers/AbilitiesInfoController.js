@@ -1,7 +1,7 @@
 (function (module) {
     module.controller("AbilitiesInfoController", AbilitiesInfoController);
     //Контроллер информации о способностях
-    function AbilitiesInfoController($scope, $route, $location, mainSocket, abilityService, gettextCatalog, currentTeam) {
+    function AbilitiesInfoController($scope, $route, $location, mainSocket, abilityService, gettextCatalog, currentTeam, characterService) {
         $scope.abilityFilter = 'all';
         $scope.abilitiesBook = []; //Массив способностей
         $scope.movingAbility = undefined; //Перемещаемая способность
@@ -9,6 +9,7 @@
 
         $scope.$on('$routeChangeSuccess', function () {
             $scope.char = currentTeam.get().characters[currentTeam.getCurrentCharIndex()];
+            $scope.char.getParamTooltip = characterService.getParamTooltip;
             $scope.char.abilities = abilityService.translateAbilities($scope.char.abilities);
             $scope.populateAbilitiesBook('all');
         });
@@ -20,6 +21,7 @@
             }
             mainSocket.emit('setCharAbilities', $scope.char._id, rawAbilities, function(char) {
                 $scope.char = char;
+                $scope.char.getParamTooltip = characterService.getParamTooltip;
                 $scope.char.abilities = abilityService.translateAbilities($scope.char.abilities);
                 if($scope.interestingAbility){
                     for(var i=0;i<$scope.char.abilities.length;i++){
@@ -209,39 +211,20 @@
         //Функция выбирает цвет для способности по её роли
         $scope.getAbilityColor = function(ability) {
             if(ability) {
-                switch (ability.role) {
-                    case "void":
-                        return "#cccccc";
-                        break;
-                    case "sentinel":
-                        return "#f7f7f7";
-                        break;
-                    case "slayer":
-                        return "#ff0906";
-                        break;
-                    case "redeemer":
-                        return "#0055AF";
-                        break;
-                    case "ripper":
-                        return "#61dd45";
-                        break;
-                    case "prophet":
-                        return "#00b3ee";
-                        break;
-                    case "malefic":
-                        return "#f05800";
-                        break;
-                    case "cleric":
-                        return "#ffc520";
-                        break;
-                    case "heretic":
-                        return "#862197";
-                        break;
+                if(ability.role=="void"){
+                    return "#cccccc";
+                }
+                else {
+                    return characterService.getRoleColor(ability.role);
                 }
             }
             else {
                 return '#000';
             }
+        };
+
+        $scope.getRoleColor = function(role) {
+            return characterService.getRoleColor(role);
         }
     }
 })(angular.module("fotm"));

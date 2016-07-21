@@ -1,5 +1,6 @@
 var async = require('async');
 var util = require('util');
+var CharacterFactory = require('services/characterFactory');
 
 var mongoose = require('lib/mongoose'),
     Schema = mongoose.Schema;
@@ -53,6 +54,27 @@ var schema = new Schema({
 });
 
 //GET------------------------------------------------------------------------
+
+schema.statics.getById = function(charId, callback) {
+    this.findById(charId, callback);
+};
+
+schema.statics.getByIdFull = function(charId, callback){
+    async.waterfall([
+        function (callback) {
+            this.findById(charId, callback);
+        },
+        function (foundedChar, callback) {
+            if(!foundedChar){
+                callback(null, null); //здесь нет ошибки, просто не найдено чаров
+            }
+            else {
+                foundedChar = CharacterFactory(foundedChar);
+                callback(null, foundedChar);
+            }
+        }
+    ], callback);
+};
 
 //Выборка чара по любому условию
 schema.statics.getByAny = function(cond, callback){

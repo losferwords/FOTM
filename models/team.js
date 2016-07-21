@@ -124,6 +124,34 @@ schema.statics.getTeamPop = function(cond, callback){
     ], callback);
 };
 
+//Выборка тимы (Со всеми заполнеными персонажами)
+schema.statics.getByTeamIdFull = function(teamId, callback){
+    var Team = this;
+
+    async.waterfall([
+        function (callback) {
+            Team.findById(teamId, callback);
+        },
+        function (foundedTeam, callback) {
+            if(!foundedTeam){
+                callback(null, null); //здесь нет ошибки, просто не найдено команд
+            }
+            else {
+                foundedTeam.populate('characters', function(err, popTeam){ //заполняем команду персонажами
+                    if (err) return callback(err);
+                    async.each(popTeam.characters, function(characterInTeam, callback) {
+                        characterInTeam._doc = CharacterFactory(characterInTeam._doc);
+                        callback(null, characterInTeam);
+                    }, function(err) {
+                        if (err) callback(err);
+                        callback(null, popTeam);
+                    });
+                });
+            }
+        }
+    ], callback);
+};
+
 //Выборка тим по любому условию
 schema.statics.getAllByAny = function(cond, callback){
     this.find(cond, callback);

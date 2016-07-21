@@ -1,7 +1,7 @@
 (function (module) {
     module.controller("CharInfoController", CharInfoController);
     //Контроллер информации о персонаже
-    function CharInfoController($scope, $route, $location, mainSocket, gettextCatalog, currentTeam) {
+    function CharInfoController($scope, $route, $location, mainSocket, gettextCatalog, currentTeam, characterService) {
         var tempParamPoint; //Снимок характеристик для возможности отмены изменений
 
         //Функция выставляет ползунок статов в нужное положение
@@ -11,6 +11,7 @@
 
         $scope.$on('$routeChangeSuccess', function () {
             $scope.char = currentTeam.get().characters[currentTeam.getCurrentCharIndex()];
+            $scope.char.getParamTooltip = characterService.getParamTooltip;
             $scope.charChanged=false;
             setPointerPosition();
             tempParamPoint = {
@@ -25,6 +26,7 @@
 
             mainSocket.emit('calcCharByParams', $scope.char._id, $scope.paramPoint, function (char) {
                 $scope.char = char;
+                $scope.char.getParamTooltip = characterService.getParamTooltip;
             });
         };
 
@@ -57,6 +59,7 @@
             },
             function(char){
                 $scope.char = char;
+                $scope.char.getParamTooltip = characterService.getParamTooltip;
                 currentTeam.setChar($scope.char);
                 setPointerPosition();
                 tempParamPoint = {
@@ -71,6 +74,7 @@
         $scope.declineChangesClick = function(){
             mainSocket.emit('calcCharByParams', $scope.char._id, tempParamPoint, function (char) {
                 $scope.char = char;
+                $scope.char.getParamTooltip = characterService.getParamTooltip;
                 $scope.charChanged=false;
                 setPointerPosition();
             });

@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "async": "^1.5.2",
+    "biguint-format": "^1.0.0",
     "body-parser": "^1.15.1",
     "bower": "^1.7.9",
     "connect": "^3.4.1",
@@ -20,6 +21,7 @@
     "express": "^4.13.4",
     "express-error-handler": "^1.1.0",
     "express-session": "^1.13.0",
+    "flake-idgen": "^1.1.0",
     "gulp": "^3.9.1",
     "gulp-clean-css": "^2.0.9",
     "gulp-concat": "^2.6.0",

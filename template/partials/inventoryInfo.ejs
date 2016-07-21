@@ -8,49 +8,49 @@
                     <div class="panel doll-panel">
                         <div class="panel-body">
                             <div class="btn btn-default slot slot-md head icon"
-                                 ng-class="{'active': interestingItem.slot()=='head'}"
-                                 ng-style="{'background-image': getSlotImage('head'), 'background-color': char.getRoleColor()}"
+                                 ng-class="{'active': interestingItem.slot=='head'}"
+                                 ng-style="{'background-image': char.equip['head'].image, 'background-color': roleColor}"
                                  ng-click="chooseSlot('head')"></div>
                             <div class="btn btn-default slot slot-md chest icon"
-                                 ng-class="{'active': interestingItem.slot()=='chest'}"
-                                 ng-style="{'background-image': getSlotImage('chest'), 'background-color': char.getRoleColor()}"
+                                 ng-class="{'active': interestingItem.slot=='chest'}"
+                                 ng-style="{'background-image': char.equip['chest'].image, 'background-color': roleColor}"
                                  ng-click="chooseSlot('chest')"></div>
                             <div class="btn btn-default slot slot-md hands left icon"
-                                 ng-class="{'active': interestingItem.slot()=='hands'}"
-                                 ng-style="{'background-image': getSlotImage('hands'), 'background-color': char.getRoleColor()}"
+                                 ng-class="{'active': interestingItem.slot=='hands'}"
+                                 ng-style="{'background-image': char.equip['hands'].image, 'background-color': roleColor}"
                                  ng-click="chooseSlot('hands')"></div>
                             <div class="btn btn-default slot slot-md hands right icon"
-                                 ng-class="{'active': interestingItem.slot()=='hands'}"
-                                 ng-style="{'background-image': getSlotImage('hands'), 'background-color': char.getRoleColor()}"
+                                 ng-class="{'active': interestingItem.slot=='hands'}"
+                                 ng-style="{'background-image': char.equip['hands'].image, 'background-color': roleColor}"
                                  ng-click="chooseSlot('hands')"></div>
                             <div class="btn btn-default slot slot-md legs icon"
-                                 ng-class="{'active': interestingItem.slot()=='legs'}"
-                                 ng-style="{'background-image': getSlotImage('legs'), 'background-color': char.getRoleColor()}"
+                                 ng-class="{'active': interestingItem.slot=='legs'}"
+                                 ng-style="{'background-image': char.equip['legs'].image, 'background-color': roleColor}"
                                  ng-click="chooseSlot('legs')"></div>
                             <div class="btn btn-default slot slot-md boots icon"
-                                 ng-class="{'active': interestingItem.slot()=='boots'}"
-                                 ng-style="{'background-image': getSlotImage('boots'), 'background-color': char.getRoleColor()}"
+                                 ng-class="{'active': interestingItem.slot=='boots'}"
+                                 ng-style="{'background-image': char.equip['boots'].image, 'background-color': roleColor}"
                                  ng-click="chooseSlot('boots')"></div>
                             <div class="btn btn-default slot slot-lg mainHandWeapon icon"
-                                 ng-class="{'active': interestingItem.slot()=='mainHandWeapon'}"
-                                 ng-style="{'background-image': getSlotImage('mainHandWeapon'), 'background-color': char.getRoleColor()}"
+                                 ng-class="{'active': interestingItem.slot=='mainHandWeapon'}"
+                                 ng-style="{'background-image': char.equip['mainHandWeapon'].image, 'background-color': roleColor}"
                                  ng-click="chooseSlot('mainHandWeapon')"></div>
                             <div class="btn btn-default slot slot-lg offHandWeapon icon"
-                                 ng-disabled="char.equip['offHandWeapon'].name() == 'Void'"
-                                 ng-class="{'active': interestingItem.slot()=='offHandWeapon'}"
-                                 ng-style="{'background-image': getSlotImage('offHandWeapon'), 'background-color': char.getRoleColor()}"
+                                 ng-disabled="char.equip['offHandWeapon'].name == 'Void'"
+                                 ng-class="{'active': interestingItem.slot=='offHandWeapon'}"
+                                 ng-style="{'background-image': char.equip['offHandWeapon'].image, 'background-color': roleColor}"
                                  ng-click="chooseSlot('offHandWeapon')"></div>
                             <div class="btn btn-default slot slot-sm amulet icon"
-                                 ng-class="{'active': interestingItem.slot()=='amulet'}"
-                                 ng-style="{'background-image': getSlotImage('amulet'), 'background-color': char.getRoleColor()}"
+                                 ng-class="{'active': interestingItem.slot=='amulet'}"
+                                 ng-style="{'background-image': char.equip['amulet'].image, 'background-color': roleColor}"
                                  ng-click="chooseSlot('amulet')"></div>
                             <div class="btn btn-default slot slot-sm leftRing icon"
-                                 ng-class="{'active': interestingItem.slot()=='leftRing'}"
-                                 ng-style="{'background-image': getSlotImage('leftRing'), 'background-color': char.getRoleColor()}"
+                                 ng-class="{'active': interestingItem.slot=='leftRing'}"
+                                 ng-style="{'background-image': char.equip['leftRing'].image, 'background-color': roleColor}"
                                  ng-click="chooseSlot('leftRing')"></div>
                             <div class="btn btn-default slot slot-sm rightRing icon"
-                                 ng-class="{'active': interestingItem.slot()=='rightRing'}"
-                                 ng-style="{'background-image': getSlotImage('rightRing'), 'background-color': char.getRoleColor()}"
+                                 ng-class="{'active': interestingItem.slot=='rightRing'}"
+                                 ng-style="{'background-image': char.equip['rightRing'].image, 'background-color': roleColor}"
                                  ng-click="chooseSlot('rightRing')"></div>
                         </div>
                     </div>
@@ -61,18 +61,18 @@
                                     <h4 translate>Choose item slot in left panel</h4>
                                 </div>
                                 <div ng-show="interestingItem">
-                                    <h4>{{formatItemName(interestingItem.name())}}</h4>
-                                    <p>{{formatSlotName(interestingItem.slot())}}</p>
+                                    <h4>{{formatItemName(interestingItem.name)}}</h4>
+                                    <p>{{formatSlotName(interestingItem.slot)}}</p>
                                     <table>
-                                        <tr ng-show="interestingItem.minDamage()>0" class="text-danger">
+                                        <tr ng-show="interestingItem.minDamage>0" class="text-danger">
                                             <td translate>Damage:</td>
-                                            <td>{{interestingItem.minDamage()}}-{{interestingItem.maxDamage()}}</td>
+                                            <td>{{interestingItem.minDamage}}-{{interestingItem.maxDamage}}</td>
                                         </tr>
-                                        <tr ng-show="interestingItem.minDamage()>0" class="text-danger">
+                                        <tr ng-show="interestingItem.minDamage>0" class="text-danger">
                                             <td translate>Range distance:</td>
-                                            <td>{{interestingItem.range()}}</td>
+                                            <td>{{interestingItem.range}}</td>
                                         </tr>
-                                        <tr ng-show="interestingItem.minDamage()>0">
+                                        <tr ng-show="interestingItem.minDamage>0">
                                             <td>&nbsp;</td>
                                         </tr>
 
@@ -162,11 +162,11 @@
                                          ng-disabled="socket.gem=='Void'"
                                          dnd-droppable="true"
                                          dnd-droppable-opts = "{layer: 'layer1'}"
-                                         dnd-on-drop = "setGemToSocket(socket)">
+                                         dnd-on-drop = "setGemToSocket($index)">
 
                                         <div class="gem icon"
                                              ng-show="socket.gem!='Void'"
-                                             ng-style="{'background-color': socket.gem.bgColor()}"
+                                             ng-style="{'background-color': socket.gem.bgColor}"
                                              uib-tooltip-html="getGemTooltip(socket.gem)"
                                              tooltip-placement="bottom"
                                              tooltip-append-to-body="true"
@@ -175,7 +175,7 @@
                                              dnd-draggable-opts = "{layer: 'layer2', helper : 'clone'}"
                                              dnd-on-dragstart = "socketDragStart(socket)"
                                              dnd-on-dragend = "socketDragEnd(socket)">
-                                            <img class="bg-img" ng-src="{{socket.gem.image().slice(6).slice(0,-1)}}"/>
+                                            <img class="bg-img" ng-src="{{socket.gem.image.slice(6).slice(0,-1)}}"/>
                                         </div>
                                     </div>
                                 </div>
@@ -186,10 +186,10 @@
                         <div class="panel-body">
                             <div class="inventory-filter">
                                 <div class="btn-group">
-                                    <button class="btn btn-sm show-all icon" uib-btn-radio="'all'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
-                                    <button class="btn btn-sm show-red icon" uib-btn-radio="'red'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
-                                    <button class="btn btn-sm show-green icon" uib-btn-radio="'green'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
-                                    <button class="btn btn-sm show-blue icon" uib-btn-radio="'blue'" ng-model="gemFilter" ng-click="getGems(gemFilter)"></button>
+                                    <button class="btn btn-sm show-all icon" uib-btn-radio="'all'" ng-model="gemFilter"></button>
+                                    <button class="btn btn-sm show-red icon" uib-btn-radio="'red'" ng-model="gemFilter"></button>
+                                    <button class="btn btn-sm show-green icon" uib-btn-radio="'green'" ng-model="gemFilter"></button>
+                                    <button class="btn btn-sm show-blue icon" uib-btn-radio="'blue'" ng-model="gemFilter"></button>
                                 </div>
                             </div>
                             <div class="inventory-tab customScrollBar"
@@ -197,8 +197,8 @@
                                  dnd-droppable-opts = "{layer: 'layer2'}"
                                  dnd-on-drop = "setGemToInventory()">
                                 <div class="gem icon"
-                                     ng-repeat="gem in getGems(gemFilter) track by $index"
-                                     ng-style="{'background-color': gem.bgColor()}"
+                                     ng-repeat="gem in gemsArray track by $index"
+                                     ng-style="{'background-color': gem.bgColor}"
                                      uib-tooltip-html="getGemTooltip(gem)"
                                      tooltip-placement="top"
                                      tooltip-append-to-body="true"
@@ -207,7 +207,7 @@
                                      dnd-draggable-opts = "{layer: 'layer1', helper : 'clone'}"
                                      dnd-on-dragstart = "inventoryDragStart(gem)"
                                      dnd-on-dragend = "inventoryDragEnd()">
-                                    <img class="bg-img" ng-src="{{gem.image().slice(6).slice(0,-1)}}"/>
+                                    <img class="bg-img" ng-src="{{gem.image.slice(6).slice(0,-1)}}"/>
                                 </div>
                             </div>
                         </div>
@@ -256,7 +256,7 @@
                                                  tooltip-placement="top"
                                                  tooltip-append-to-body="true"
                                                  tooltip-animation="false"
-                                                 ng-style="{'background-image':newGem.image(), 'background-color':newGem.bgColor()}"></div>
+                                                 ng-style="{'background-image':newGem.image, 'background-color':newGem.bgColor}"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -309,7 +309,7 @@
                     </div>
                 </div>
                 <div class="content-right">
-                    <div class="panel char-desc-panel col-sm-3 col-md-12" ng-style="{'border-color': char.getRoleColor()}">
+                    <div class="panel char-desc-panel col-sm-3 col-md-12" ng-style="{'border-color': roleColor}">
                         <div class="panel-body text-left">
                             <img class="portrait" ng-src="{{char.portrait}}">
                             <div class="char-desc">

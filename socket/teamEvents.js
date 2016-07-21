@@ -4,6 +4,7 @@ var User = require('models/user').User;
 var Team = require('models/team').Team;
 var Character = require('models/character').Character;
 var characterService = require('services/characterService');
+var gemService = require('services/gemService');
 
 module.exports = function (serverIO) {
     var io = serverIO;
@@ -19,7 +20,7 @@ module.exports = function (serverIO) {
 
         socket.on('getDummyTeam', function(cb){
             var userId = socket.handshake.user._id;
-            //Пытаемся найти уже существующую dummy
+            //???????? ????? ??? ???????????? dummy
             Team.getDummy(userId, function (err, team) {
                 if (err) {
                     socket.emit("customError", err);
@@ -28,7 +29,7 @@ module.exports = function (serverIO) {
                 if(team){
                     cb(team);
                 }
-                //Если не нашли, создаём её
+                //???? ?? ?????, ?????? ?
                 else
                 {
                     Team.create(socket.handshake.user._id, function(err, newTeam){
@@ -87,11 +88,13 @@ module.exports = function (serverIO) {
                     socket.emit("customError", err);
                     return;
                 }
-                //Проверяем, сколько душ к нам пришло
+
                 for(var soul in souls) {
-                    if(souls[soul]<1 || souls[soul]>6) {
-                        socket.emit("customError", {message: "wrong soul number"});
-                        return;
+                    if(souls.hasOwnProperty(soul)){
+                        if(souls[soul]<1 || souls[soul]>6) {
+                            socket.emit("customError", {message: "wrong soul number"});
+                            return;
+                        }
                     }
                 }
                 Team.setById(team._id, {
@@ -99,7 +102,8 @@ module.exports = function (serverIO) {
                         red: team.souls.red+souls.red,
                         green: team.souls.green+souls.green,
                         blue: team.souls.blue+souls.blue
-                    }
+                    },
+                    lastRoll: new Date()
                 }, function(err, team){
                     if (err) {
                         socket.emit("customError", err);
@@ -165,7 +169,6 @@ module.exports = function (serverIO) {
         socket.on('getUserTeam', function(cb){
             var userId=0;
 
-            //ОЧИСТКА БОЕВЫХ КОМНАТ
             if(socket.serSt.battleRoom) {
                 socket.leave(socket.serSt.battleRoom);
                 socket.serSt.battleRoom=undefined;
@@ -178,7 +181,6 @@ module.exports = function (serverIO) {
                     return;
                 }
                 if(!team) {
-                    //Если тима не найдена, значит она была удалена, а ссылка на неё осталась
                     User.setById(userId, {team: undefined}, function(err, user){
                         if (err) {
                             socket.emit("customError", err);
@@ -188,27 +190,273 @@ module.exports = function (serverIO) {
                     });
                 }
                 else {
-                    //Устанавливаем команду на сокете (выбираем только документы, отсекаем методы модели)
                     var teamForSocket = team._doc;
                     var charactersForSocket = [];
-                    for(var i=0;i<team._doc.characters.length;i++){
-                        charactersForSocket.push(team._doc.characters[i]._doc);
+                    for(var i=0;i<team.characters.length;i++){
+                        charactersForSocket.push(team.characters[i]._doc);
                     }
                     teamForSocket.characters = charactersForSocket;
                     socket.team = teamForSocket;
-                    //ищем ранк
+
                     Team.findRank(team._id, function (err, rank) {
                         if (err) {
                             socket.emit("customError", err);
                             return;
                         }
 
-                        //Отправим (текущее время на сервере - время последнего рола)
                         var nowTime = new Date();
 
                         cb(team, rank, (nowTime - team.lastRoll));
                     });
                 }
+            });
+        });
+
+        socket.on('craftGem', function(teamId, color, cb){
+            Team.getById(teamId, function (err, team) {
+                if (err) {
+                    socket.emit("customError", err);
+                    return;
+                }
+
+                var newSouls = team.souls;
+
+                if(color) newSouls[color]-=4;
+                else {
+                    newSouls.red--;
+                    newSouls.green--;
+                    newSouls.blue--;
+                }
+
+                var newGem = gemService.randomizeGem(color);
+                var newInventory = team.inventory;
+                newInventory.push(newGem);
+
+                Team.setById(teamId, {inventory: newInventory, souls: newSouls}, function(err, newTeam) {
+                    if (err) {
+                        socket.emit("customError", err);
+                        return;
+                    }
+                    Team.getByTeamIdFull(teamId, function (err, newPopTeam) {
+                        if (err) {
+                            socket.emit("customError", err);
+                            return;
+                        }
+
+                        cb(newGem, newPopTeam);
+                    });
+                });
+            });
+        });
+
+        socket.on('destroyGem', function(teamId, gemToDestroy, cb){
+            Team.getById(teamId, function (err, team) {
+                if (err) {
+                    socket.emit("customError", err);
+                    return;
+                }
+
+                var found = -1;
+
+                for (var i = 0; i < team.inventory.length; i++) {
+                    if (gemToDestroy.id == team.inventory[i].id) {
+                        found = i;
+                        break;
+                    }
+                }
+
+                team.inventory.splice(found, 1);
+
+                if (found<0) {
+                    socket.emit("customError", {message: "Can't find gem in inventory"});
+                    return;
+                }
+
+                var delta;
+                var newSoul = {};
+                var rand = Math.floor(Math.random() * 6);
+                if(rand<=2) {
+                    delta=2;
+                }
+                else if(rand>2 && rand<=4) {
+                    delta=3;
+                }
+                else {
+                    delta=4
+                }
+                team.souls[gemToDestroy.color]+=delta;
+                newSoul.delta=delta;
+
+                switch(gemToDestroy.color){
+                    case 'red': newSoul.image = 'url(../images/assets/svg/view/sprites.svg#inventory--crystal-shine-red)';break;
+                    case 'green': newSoul.image = 'url(../images/assets/svg/view/sprites.svg#inventory--crystal-shine-green)';break;
+                    case 'blue': newSoul.image = 'url(../images/assets/svg/view/sprites.svg#inventory--crystal-shine-blue)';break;
+                }
+
+                Team.setById(teamId, {inventory: team.inventory, souls: team.souls}, function(err, newTeam) {
+                    if (err) {
+                        socket.emit("customError", err);
+                        return;
+                    }
+                    Team.getByTeamIdFull(teamId, function (err, newPopTeam) {
+                        if (err) {
+                            socket.emit("customError", err);
+                            return;
+                        }
+
+                        cb(newSoul, newPopTeam);
+                    });
+                });
+            });
+        });
+
+        socket.on('setGemToSocket', function(teamId, charId, slot, socketIndex, gemId, cb){
+            var startMain = new Date().getTime();
+            var startgetTeamByIdFull1 = new Date().getTime();
+            Team.getByTeamIdFull(teamId, function (err, team) {
+                var endgetTeamByIdFull1 = new Date().getTime();
+                if (err) {
+                    socket.emit("customError", err);
+                    return;
+                }
+
+                var startgetCharById = new Date().getTime();
+                Character.getById(charId, function(err, char){
+                    var endgetCharById = new Date().getTime();
+                    if (err) {
+                        socket.emit("customError", err);
+                        return;
+                    }
+                    var startCalcSection = new Date().getTime();
+
+                    if(!char.equip[slot]) {
+                        socket.emit("customError", {message: "Slot not found"});
+                        return;
+                    }
+
+                    var foundGem = -1;
+
+                    for(var i=0;i<team.inventory.length;i++){
+                        if(team.inventory[i].id == gemId) {
+                            foundGem = i;
+                            break;
+                        }
+                    }
+
+                    if (foundGem<0) {
+                        socket.emit("customError", {message: "Can't find gem in inventory"});
+                        return;
+                    }
+
+                    //Р•СЃР»Рё РІ СЃРѕРєРµС‚Рµ РµСЃС‚СЊ РєР°РјРµРЅСЊ, РІРµСЂРЅС‘Рј РµРіРѕ РІ РёРЅРІРµРЅС‚Р°СЂСЊ
+                    if(char.equip[slot].sockets[socketIndex].gem!=="Void") {
+                        team.inventory.push(char.equip[slot].sockets[socketIndex].gem);
+                    }
+
+                    char.equip[slot].sockets[socketIndex].gem = team.inventory[foundGem];
+                    //РЎРћРҐР РђРќРЇР®РўРЎРЇ Р›Р РђР‘РР›РљР Р’ РџРћР›РќРћРњ РћР‘РЄРЃРњР•?
+
+                    team.inventory.splice(foundGem, 1);
+
+                    var endCalcSection = new Date().getTime();
+                    var startsetCharById = new Date().getTime();
+                    Character.setById(charId, {equip: char.equip}, function(err, newChar) {
+                        var endsetCharById = new Date().getTime();
+                        if (err) {
+                            socket.emit("customError", err);
+                            return;
+                        }
+                        var startsetTeamById = new Date().getTime();
+                        Team.setById(teamId, {inventory: team.inventory}, function(err, newTeam) {
+                            var endsetTeamById = new Date().getTime();
+                            if (err) {
+                                socket.emit("customError", err);
+                                return;
+                            }
+                            var startgetTeamByIdFull2 = new Date().getTime();
+                            Team.getByTeamIdFull(teamId, function (err, newPopTeam) {
+                                var endgetTeamByIdFull2 = new Date().getTime();
+                                if (err) {
+                                    socket.emit("customError", err);
+                                    return;
+                                }
+                                var endMain = new Date().getTime();
+                                log.info("getTeamByIdFull1: "+(endgetTeamByIdFull1-startgetTeamByIdFull1));
+                                log.info("getCharById: "+(endgetCharById-startgetCharById));
+                                log.info("CalcSection: "+(endCalcSection-startCalcSection));
+                                log.info("setCharById: "+(endsetCharById-startsetCharById));
+                                log.info("setTeamById: "+(endsetTeamById-startsetTeamById));
+                                log.info("getTeamByIdFull2: "+(endgetTeamByIdFull2-startgetTeamByIdFull2));
+                                log.info("Main: "+(endMain-startMain));
+
+
+                                cb(newPopTeam);
+                            });
+                        });
+                    });
+                });
+
+            });
+        });
+
+        socket.on('setGemToInventory', function(teamId, charId, slot, gemId, cb){
+            Team.getByTeamIdFull(teamId, function (err, team) {
+                if (err) {
+                    socket.emit("customError", err);
+                    return;
+                }
+
+                Character.getById(charId, function(err, char){
+                    if (err) {
+                        socket.emit("customError", err);
+                        return;
+                    }
+
+                    if(!char.equip[slot]) {
+                        socket.emit("customError", {message: "Slot not found"});
+                        return;
+                    }
+
+                    var foundSocket = -1;
+
+                    for(var i=0;i<char.equip[slot].sockets.length;i++){
+                        if(char.equip[slot].sockets[i].gem.id == gemId) {
+                            foundSocket = i;
+                            break;
+                        }
+                    }
+
+                    if (foundSocket<0) {
+                        socket.emit("customError", {message: "Can't find gem in sockets"});
+                        return;
+                    }
+
+                    team.inventory.push(char.equip[slot].sockets[foundSocket].gem);
+
+                    char.equip[slot].sockets[foundSocket].gem = "Void";
+
+                    Character.setById(charId, {equip: char.equip}, function(err, newChar) {
+                        if (err) {
+                            socket.emit("customError", err);
+                            return;
+                        }
+                        Team.setById(teamId, {inventory: team.inventory}, function(err, newTeam) {
+                            if (err) {
+                                socket.emit("customError", err);
+                                return;
+                            }
+                            Team.getByTeamIdFull(teamId, function (err, newPopTeam) {
+                                if (err) {
+                                    socket.emit("customError", err);
+                                    return;
+                                }
+
+                                cb(newPopTeam);
+                            });
+                        });
+                    });
+                });
+
             });
         });
 
