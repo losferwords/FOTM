@@ -4,6 +4,7 @@ var User = require('models/user').User;
 var Team = require('models/team').Team;
 var Character = require('models/character').Character;
 var randomService = require('services/randomService');
+var arenaService = require('services/arenaService');
 
 module.exports = function (serverIO) {
     var io = serverIO;
@@ -20,11 +21,7 @@ module.exports = function (serverIO) {
                 //Формируем уникальный ключ комнаты для боя
                 socket.serSt.battleRoom = "battle:"+queue[0]+"_VS_"+queue[1];
                 if (io.sockets.connected[queue[0]] && io.sockets.connected[queue[1]]) {
-                    var groundType = Math.floor(Math.random() * 3); //Рандомим тип местности здесь, чтобы он совпал у игроков
                     var availablePositions = [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]]; //Все варианты расстановок группы
-                    var allyPositions = availablePositions[Math.floor(Math.random() * 6)];
-                    var enemyPositions = availablePositions[Math.floor(Math.random() * 6)];
-
                     //Препятствия на карте
                     var availableWallPos=[];
                     for(var i=0;i<100;i++){
@@ -32,6 +29,28 @@ module.exports = function (serverIO) {
                             availableWallPos.push(i);
                         }
                     }
+
+                    var battleData = {
+                      groundType: Math.floor(Math.random() * 3) //Рандомим тип местности
+
+                    };
+
+                    var allyPositions = availablePositions[Math.floor(Math.random() * 6)];
+                    var enemyPositions = availablePositions[Math.floor(Math.random() * 6)];
+
+                    for(i=0; i<3;i++) {
+                        var allyPosition = arenaService.getStartPosition(true, allyPositions[i]);
+                        io.sockets.connected[queue[0]].team.characters[i].position={x: allyPosition.x, y:allyPosition.y};
+                    }
+
+                    for(i=0; i<3;i++) {
+                        var enemyPosition = arenaService.getStartPosition(true, enemyPositions[i]);
+                        io.sockets.connected[queue[1]].team.characters[i].position={x: enemyPosition.x, y:enemyPosition.y};
+                    }
+
+                    battleData['team_'+io.sockets.connected[queue[0]].team._id] = io.sockets.connected[queue[0]].team;
+                    battleData['team_'+io.sockets.connected[queue[1]].team._id] = io.sockets.connected[queue[1]].team;
+
                     var shuffledWallPos= randomService.shuffle(availableWallPos);
                     var allyWallPositions = [];
                     var enemyWallPositions = [];

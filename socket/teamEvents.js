@@ -20,7 +20,6 @@ module.exports = function (serverIO) {
 
         socket.on('getDummyTeam', function(cb){
             var userId = socket.handshake.user._id;
-            //???????? ????? ??? ???????????? dummy
             Team.getDummy(userId, function (err, team) {
                 if (err) {
                     socket.emit("customError", err);
@@ -29,7 +28,6 @@ module.exports = function (serverIO) {
                 if(team){
                     cb(team);
                 }
-                //???? ?? ?????, ?????? ?
                 else
                 {
                     Team.create(socket.handshake.user._id, function(err, newTeam){
@@ -311,23 +309,17 @@ module.exports = function (serverIO) {
         });
 
         socket.on('setGemToSocket', function(teamId, charId, slot, socketIndex, gemId, cb){
-            var startMain = new Date().getTime();
-            var startgetTeamByIdFull1 = new Date().getTime();
-            Team.getByTeamIdFull(teamId, function (err, team) {
-                var endgetTeamByIdFull1 = new Date().getTime();
+            Team.getById(teamId, function (err, team) {
                 if (err) {
                     socket.emit("customError", err);
                     return;
                 }
 
-                var startgetCharById = new Date().getTime();
                 Character.getById(charId, function(err, char){
-                    var endgetCharById = new Date().getTime();
                     if (err) {
                         socket.emit("customError", err);
                         return;
                     }
-                    var startCalcSection = new Date().getTime();
 
                     if(!char.equip[slot]) {
                         socket.emit("customError", {message: "Slot not found"});
@@ -354,42 +346,26 @@ module.exports = function (serverIO) {
                     }
 
                     char.equip[slot].sockets[socketIndex].gem = team.inventory[foundGem];
-                    //СОХРАНЯЮТСЯ ЛИ АБИЛКИ В ПОЛНОМ ОБЪЁМЕ?
 
                     team.inventory.splice(foundGem, 1);
 
-                    var endCalcSection = new Date().getTime();
-                    var startsetCharById = new Date().getTime();
                     Character.setById(charId, {equip: char.equip}, function(err, newChar) {
-                        var endsetCharById = new Date().getTime();
                         if (err) {
                             socket.emit("customError", err);
                             return;
                         }
-                        var startsetTeamById = new Date().getTime();
+
                         Team.setById(teamId, {inventory: team.inventory}, function(err, newTeam) {
-                            var endsetTeamById = new Date().getTime();
                             if (err) {
                                 socket.emit("customError", err);
                                 return;
                             }
-                            var startgetTeamByIdFull2 = new Date().getTime();
+
                             Team.getByTeamIdFull(teamId, function (err, newPopTeam) {
-                                var endgetTeamByIdFull2 = new Date().getTime();
                                 if (err) {
                                     socket.emit("customError", err);
                                     return;
                                 }
-                                var endMain = new Date().getTime();
-                                log.info("getTeamByIdFull1: "+(endgetTeamByIdFull1-startgetTeamByIdFull1));
-                                log.info("getCharById: "+(endgetCharById-startgetCharById));
-                                log.info("CalcSection: "+(endCalcSection-startCalcSection));
-                                log.info("setCharById: "+(endsetCharById-startsetCharById));
-                                log.info("setTeamById: "+(endsetTeamById-startsetTeamById));
-                                log.info("getTeamByIdFull2: "+(endgetTeamByIdFull2-startgetTeamByIdFull2));
-                                log.info("Main: "+(endMain-startMain));
-
-
                                 cb(newPopTeam);
                             });
                         });
@@ -400,7 +376,7 @@ module.exports = function (serverIO) {
         });
 
         socket.on('setGemToInventory', function(teamId, charId, slot, gemId, cb){
-            Team.getByTeamIdFull(teamId, function (err, team) {
+            Team.getById(teamId, function (err, team) {
                 if (err) {
                     socket.emit("customError", err);
                     return;

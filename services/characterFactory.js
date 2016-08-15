@@ -39,30 +39,6 @@ var Character = function(char) {
                         }
                     }
                 }
-                //if(!this.equip[slot].sockets) {
-                //    //На оффхэнде нет сокетов
-                //    continue;
-                //}
-                //var socketArray = this.equip[slot].sockets;
-                ////наделяем сокеты функциями
-                //for(i=0; i<socketArray.length;i++){
-                //    if(socketArray[i].gem!=="Void"){
-                //        switch(socketArray[i].gem.color){
-                //            case "red":
-                //                socketArray[i].gem.image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--rupee)'};
-                //                socketArray[i].gem.bgColor = function() {return "#cc0000"};
-                //                break;
-                //            case "green":
-                //                socketArray[i].gem.image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--emerald)'};
-                //                socketArray[i].gem.bgColor = function() {return "#77b300"};
-                //                break;
-                //            case "blue":
-                //                socketArray[i].gem.image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--saphir)'};
-                //                socketArray[i].gem.bgColor = function() {return "#2a9fd6"};
-                //                break;
-                //        }
-                //    }
-                //}
             }
         }
     }
