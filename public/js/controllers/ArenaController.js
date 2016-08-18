@@ -2,14 +2,13 @@
     module.controller("ArenaController", ArenaController);
 
     //Контроллер выбора пати
-    function ArenaController($scope, $rootScope, $location, $timeout, $interval, character, arenaService, hotkeys, mainSocket, gettextCatalog, soundService, chatService) {
-        $scope.map = arenaService.fillMap($rootScope.currentBattle.groundType, $rootScope.currentBattle.wallPositions); //Карта - двумерный массив на стороне клиента
+    function ArenaController($scope, $rootScope, $location, $timeout, $interval, arenaService, hotkeys, mainSocket, gettextCatalog, soundService, chatService, currentTeam, characterService) {
+        $scope.map = arenaService.fillMap(arenaService.battle.groundType, arenaService.battle.wallPositions); //Карта - двумерный массив на стороне клиента
         $scope.CombatLog = []; //Массив сообщений с информацией
         $scope.myTurn = false; //переменная, показывающая, мой ли сейчас игрок ходит
         $scope.battleEnd={ended: false};
         $scope.opponentWaiting=true; //Ждём загрузки контроллера оппонента
         $scope.enemyTeamLoaded=false; //Ждём загрузки команды оппонента
-        $scope.turnsSpended=0; //Количество ходов, потраченное с начала боя
 
         //Возвращает процентные показатели ресурсов при наведении мышки
         $scope.calculateInPercent = function(cur, max) {
@@ -34,14 +33,14 @@
             var tooltip = "";
             tooltip+="<p class='name'>"+ability.localName()+" "+ability.variant+"</p>";
             tooltip+="<p class='desc'>"+ability.desc()+"</p>";
-            if(ability.needWeapon()) tooltip+=gettextCatalog.getString("<p class='tooltip-need-weapon'>Need weapon</p>");
+            if(ability.needWeapon) tooltip+=gettextCatalog.getString("<p class='tooltip-need-weapon'>Need weapon</p>");
             else tooltip+=gettextCatalog.getString("<p class='tooltip-spell'>Spell</p>");
-            if(ability.range()>0) tooltip+=gettextCatalog.getString("<p>Range: {{one}}</p>",{one: ability.range()});
+            if(ability.range>0) tooltip+=gettextCatalog.getString("<p>Range: {{one}}</p>",{one: ability.range});
             else tooltip+=gettextCatalog.getString("<p>Range: Self</p>");
-            tooltip+=gettextCatalog.getString("<p>Cooldown: {{one}}</p>",{one: ability.cooldown()});
-            if(ability.duration()>0) tooltip+=gettextCatalog.getString("<p>Duration: {{one}}</p>",{one: ability.duration()});
-            tooltip+=gettextCatalog.getString("<p>Energy Cost: {{one}}</p>",{one: ability.energyCost()});
-            tooltip+=gettextCatalog.getString("<p>Mana Cost: {{one}}</p>",{one: ability.manaCost()});
+            tooltip+=gettextCatalog.getString("<p>Cooldown: {{one}}</p>",{one: ability.cooldown});
+            if(ability.duration>0) tooltip+=gettextCatalog.getString("<p>Duration: {{one}}</p>",{one: ability.duration});
+            tooltip+=gettextCatalog.getString("<p>Energy Cost: {{one}}</p>",{one: ability.energyCost});
+            tooltip+=gettextCatalog.getString("<p>Mana Cost: {{one}}</p>",{one: ability.manaCost});
             return tooltip;
         };
 
@@ -53,34 +52,11 @@
         //Функция выбирает цвет для способности по её роли
         $scope.getAbilityColor = function(ability) {
             if(ability) {
-                switch (ability.role()) {
-                    case "void":
-                        return "#cccccc";
-                        break;
-                    case "sentinel":
-                        return "#f7f7f7";
-                        break;
-                    case "slayer":
-                        return "#ff0906";
-                        break;
-                    case "redeemer":
-                        return "#0055AF";
-                        break;
-                    case "ripper":
-                        return "#61dd45";
-                        break;
-                    case "prophet":
-                        return "#00b3ee";
-                        break;
-                    case "malefic":
-                        return "#f05800";
-                        break;
-                    case "cleric":
-                        return "#ffc520";
-                        break;
-                    case "heretic":
-                        return "#862197";
-                        break;
+                if(ability.role=="void"){
+                    return "#cccccc";
+                }
+                else {
+                    return characterService.getRoleColor(ability.role);
                 }
             }
             else {
@@ -93,7 +69,7 @@
             $scope.preparedAbility = undefined;
             resetCharOverlays();
             $scope.activeChar.turnEnded=true;
-            mainSocket.emit("turnEnded", $rootScope.currentBattle.room, $scope.activeChar, $scope.turnsSpended);
+            mainSocket.emit("turnEnded", arenaService.battle.room, $scope.activeChar, $scope.turnsSpended);
             $scope.waitServ = true;
         };
 
@@ -118,7 +94,7 @@
                 $scope.myTeam.characters[i].isDead=true;
             }
             log($scope.myTeam.teamName+" retreats!","#ffffff", true);
-            mainSocket.emit("updateTeams", $rootScope.currentBattle.room, $scope.myTeam.characters, $scope.enemyTeam.characters);
+            mainSocket.emit("updateTeams", arenaService.battle.room, $scope.myTeam.characters, $scope.enemyTeam.characters);
         };
 
         $scope.testFunction =  function(){
@@ -216,7 +192,7 @@
                     $scope.preparedAbility = undefined;
                     resetCharOverlays();
                     $scope.activeChar.position = {x: tile.x, y: tile.y};
-                    mainSocket.emit("updateActiveTeam", $rootScope.currentBattle.room, $scope.myTeam.characters);
+                    mainSocket.emit("updateActiveTeam", arenaService.battle.room, $scope.myTeam.characters);
                     cleanSoundBuffers(); //Звуки были отправлены, так что можно очищать буфер
                     showLogs();
                     mapUpdate();
@@ -227,7 +203,7 @@
                     $scope.activeChar.position = {x: tile.x, y: tile.y};
                     $scope.activeChar.playSound("move");
                     $scope.activeChar.spendEnergy($scope.activeChar.moveCost);
-                    mainSocket.emit("updateActiveTeam", $rootScope.currentBattle.room, $scope.myTeam.characters);
+                    mainSocket.emit("updateActiveTeam", arenaService.battle.room, $scope.myTeam.characters);
                     cleanSoundBuffers(); //Звуки были отправлены, так что можно очищать буфер
                     showLogs();
                     mapUpdate();
@@ -260,7 +236,7 @@
                         resetCharOverlays();
                         mapUpdate();
                         $scope.preparedAbility = undefined;
-                        mainSocket.emit("updateTeams", $rootScope.currentBattle.room, $scope.myTeam.characters, $scope.enemyTeam.characters);
+                        mainSocket.emit("updateTeams", arenaService.battle.room, $scope.myTeam.characters, $scope.enemyTeam.characters);
                         $scope.waitServ = true;
                     }
                     else if ($scope.preparedAbility.targetType() == "enemy") {
@@ -381,7 +357,7 @@
                 $scope.setCharForArrow(undefined);
                 resetCharOverlays();
                 mapUpdate();
-                mainSocket.emit("updateTeams", $rootScope.currentBattle.room, $scope.myTeam.characters, $scope.enemyTeam.characters);
+                mainSocket.emit("updateTeams", arenaService.battle.room, $scope.myTeam.characters, $scope.enemyTeam.characters);
                 $scope.waitServ = true;
             }
             return false;
@@ -402,7 +378,7 @@
             $scope.myTurn = arenaService.checkTurn($scope.myTeam.characters, $scope.queue[0]); //проверка, мой ли сейчас ход
             $scope.activeChar = $scope.queue[0]; //назначаем активного персонажа
 
-            mainSocket.emit("updateActiveTeam", $rootScope.currentBattle.room, $scope.myTeam.characters);
+            mainSocket.emit("updateActiveTeam", arenaService.battle.room, $scope.myTeam.characters);
             cleanSoundBuffers(); //Звуки были отправлены, так что можно очищать буфер
             $scope.waitServ = true;
 
@@ -472,7 +448,7 @@
             };
 
             //если указан параметр send, то сообщение посылается и противнику
-            if(send) mainSocket.emit("combatLogUpdate", $rootScope.currentBattle.room, message); //отправляем сообщение другому игроку
+            if(send) mainSocket.emit("combatLogUpdate", arenaService.battle.room, message); //отправляем сообщение другому игроку
 
             //Функция возврщает время в формате hh:mm
             function currentTime() {
@@ -744,7 +720,7 @@
                 soundService.getMusicObj().cityMusic.pause();
             }
             if(!soundService.getMusicObj().battleMusic || soundService.getMusicObj().battleMusic.paused){
-                soundService.chooseAmbient($rootScope.currentBattle.groundType);
+                soundService.chooseAmbient(arenaService.battle.groundType);
                 soundService.initMusic('battle');
             }
 
@@ -755,7 +731,7 @@
 
             var timerCount = 0;
             $scope.waitOpponentTimer=$interval(function(){
-                mainSocket.emit("checkOpponent", $rootScope.currentBattle.room);
+                mainSocket.emit("checkOpponent", arenaService.battle.room);
                 timerCount++;
                 //60 секунд ожидания другого игрока, потом покидаем битву
                 if(timerCount==60){
@@ -779,67 +755,45 @@
         //Если противник готов, начинаем первый ход
         mainSocket.on("opponentReady", function() {
             $interval.cancel($scope.waitOpponentTimer);
-            mainSocket.emit("getAlliesAndEnemies", $rootScope.currentBattle.room);
             $scope.waitServ = true;
-        });
-
-        //Ответ серверу произойдёт только когда этот контроллер загружен
-        mainSocket.on("areYouReadyToBattle", function() {
-            mainSocket.emit("areYouReadyToBattleResponse", $rootScope.currentBattle.room);
-        });
-
-        //По сути это начало первого хода
-        mainSocket.on("getAlliesAndEnemiesResult", function(myTeam, enemyTeam){
             startTurnTimer(); //Сразу включаем таймер, чтобы рассинхрон был небольшой
             if(!$scope.opponentWaiting) { //Таймер срабатывает лишний раз, так что обрываем, если бой уже начался
                 $scope.waitServ = false;
                 return;
             }
 
-            $scope.myTeam = myTeam;
-            $scope.enemyTeam = enemyTeam;
-
-            for(var i=0;i<3;i++){
-                $scope.myTeam.characters[i] = new character($scope.myTeam.characters[i]);
-                $scope.myTeam.characters[i].initChar();
-                var allyPosition = arenaService.getStartPosition(true, $rootScope.currentBattle.allyPositions[i]);
-                $scope.myTeam.characters[i].position={x: allyPosition.x, y:allyPosition.y};
-
-                $scope.enemyTeam.characters[i] = new character($scope.enemyTeam.characters[i]);
-                $scope.enemyTeam.characters[i].initChar();
-                var enemyPosition = arenaService.getStartPosition(false, $rootScope.currentBattle.enemyPositions[i]);
-                $scope.enemyTeam.characters[i].position={x: enemyPosition.x, y:enemyPosition.y};
-
-                switch (i) {
-                    case 0:
-                        $scope.myTeam.characters[i].battleColor="#2a9fd6";
-                        $scope.enemyTeam.characters[i].battleColor="#cc0000";
-                        break;
-                    case 1:
-                        $scope.myTeam.characters[i].battleColor="#0055AF";
-                        $scope.enemyTeam.characters[i].battleColor="#ff8800";
-                        break;
-                    case 2:
-                        $scope.myTeam.characters[i].battleColor="#9933cc";
-                        $scope.enemyTeam.characters[i].battleColor="#FFDD00";
-                        break;
+            $scope.myTeam = arenaService.battle["team_"+currentTeam.get()._id];
+            for(var key in arenaService.battle) {
+                if(arenaService.battle.hasOwnProperty(key) && key.indexOf("team_")>-1 && key!="team_"+currentTeam.get()._id){
+                    $scope.enemyTeam = arenaService.battle[key];
+                    $scope.enemyTeam.characters = arenaService.convertEnemyTeam($scope.enemyTeam.characters);
+                    break;
                 }
             }
 
             //ИЗМЕНЁННАЯ ВЕРСИЯ turnPrepare для первого хода
-            $scope.queue = arenaService.calcQueue($scope.myTeam.characters, $scope.enemyTeam.characters); //вычисляем очередь хода
+            $scope.queue = arenaService.battle.queue;
+            //ВСЕГДА FALSE
             $scope.myTurn = arenaService.checkTurn($scope.myTeam.characters, $scope.queue[0]); //проверка, мой ли сейчас ход
             $scope.activeChar = $scope.queue[0]; //назначаем активного персонажа
 
             showLogs(); //выводим сообщения персонажей
             mapUpdate(); //обновляем карту
-            //------------------
 
             //объявление о начале боя
             log("Battle begins! First move for "+$scope.activeChar.charName+".", $scope.activeChar.battleColor);
             $scope.opponentWaiting = false;
             $scope.waitServ = false;
-            mainSocket.emit("enemyTeamLoaded", $rootScope.currentBattle.room);
+            mainSocket.emit("enemyTeamLoaded", arenaService.battle.room);
+        });
+
+        mainSocket.on('enemyTeamLoadedResult', function(){
+            $scope.enemyTeamLoaded=true;
+        });
+
+        //Ответ серверу произойдёт только когда этот контроллер загружен
+        mainSocket.on("areYouReadyToBattle", function() {
+            mainSocket.emit("areYouReadyToBattleResponse", arenaService.battle.room);
         });
 
         mainSocket.on('enemyLeave', function(){
@@ -857,10 +811,6 @@
 
         mainSocket.on('combatLogUpdateSend', function(message){
             log(message.text, arenaService.colorSwap(message.color)); //выводим полученное от противника сообщение
-        });
-
-        mainSocket.on('enemyTeamLoadedResult', function(){
-            $scope.enemyTeamLoaded=true;
         });
 
         mainSocket.on('updateActiveTeamResult', function(chars){

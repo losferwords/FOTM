@@ -2,7 +2,7 @@
     module.controller("CityController", CityController);
 
     //Контроллер выбора пати
-    function CityController($scope, $rootScope, $location, $interval, $uibModal, $route, characterService, mainSocket, gettextCatalog, soundService, currentTeam) {
+    function CityController($scope, $location, $interval, $uibModal, $route, mainSocket, gettextCatalog, soundService, currentTeam, arenaService) {
         var searchTimer;
         var searchProcessStep=0;
         var rollDiceTimer;
@@ -165,13 +165,7 @@
         });
 
         mainSocket.on("startBattle", function(data){
-            $rootScope.currentBattle={
-                room: data.battleRoom,
-                groundType: data.groundType,
-                allyPositions: data.allyPartyPositions,
-                enemyPositions: data.enemyPartyPositions,
-                wallPositions: data.wallPositions
-            };
+            arenaService.battle = data;
             $location.path("/arena");
         });
 

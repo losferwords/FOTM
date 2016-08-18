@@ -16,13 +16,11 @@ module.exports = function (serverIO) {
             io.sockets.in(socket.serSt.serverRoom).emit('someoneJoinArena');
             var queue = Object.keys(io.nsps["/"].adapter.rooms[socket.serSt.arenaLobby].sockets);
             io.sockets.in(socket.serSt.serverRoom).emit('arenaQueueChanged', queue.length);
-            //Если найдено 2 человека в очереди
             if(queue.length>1){
-                //Формируем уникальный ключ комнаты для боя
                 socket.serSt.battleRoom = "battle:"+queue[0]+"_VS_"+queue[1];
                 if (io.sockets.connected[queue[0]] && io.sockets.connected[queue[1]]) {
-                    var availablePositions = [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]]; //Все варианты расстановок группы
-                    //Препятствия на карте
+                    var availablePositions = [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]];
+
                     var availableWallPos=[];
                     for(var i=0;i<100;i++){
                         if(!(i<=10 || i%10===0 || i%10===9 || i>=90 || i===18 || i===81)){
@@ -31,61 +29,49 @@ module.exports = function (serverIO) {
                     }
 
                     var battleData = {
-                      groundType: Math.floor(Math.random() * 3) //Рандомим тип местности
-
+                        room: socket.serSt.battleRoom,
+                        groundType: Math.floor(Math.random() * 3),
+                        wallPositions: randomService.shuffle(availableWallPos).slice(0, 10),
+                        turnsSpended: 0 //РљРѕР»РёС‡РµСЃС‚РІРѕ С…РѕРґРѕРІ, РїРѕС‚СЂР°С‡РµРЅРЅРѕРµ СЃ РЅР°С‡Р°Р»Р° Р±РѕСЏ
                     };
 
                     var allyPositions = availablePositions[Math.floor(Math.random() * 6)];
                     var enemyPositions = availablePositions[Math.floor(Math.random() * 6)];
 
                     for(i=0; i<3;i++) {
-                        var allyPosition = arenaService.getStartPosition(true, allyPositions[i]);
+                        var allyPosition = arenaService.getStartPosition(allyPositions[i]);
                         io.sockets.connected[queue[0]].team.characters[i].position={x: allyPosition.x, y:allyPosition.y};
+                        switch (i) {
+                            case 0: io.sockets.connected[queue[0]].team.characters[i].battleColor="#2a9fd6"; break;
+                            case 1: io.sockets.connected[queue[0]].team.characters[i].battleColor="#0055AF"; break;
+                            case 2: io.sockets.connected[queue[0]].team.characters[i].battleColor="#9933cc"; break;
+                        }
                     }
 
                     for(i=0; i<3;i++) {
-                        var enemyPosition = arenaService.getStartPosition(true, enemyPositions[i]);
+                        var enemyPosition = arenaService.getStartPosition(enemyPositions[i]);
                         io.sockets.connected[queue[1]].team.characters[i].position={x: enemyPosition.x, y:enemyPosition.y};
+                        switch (i) {
+                            case 0: io.sockets.connected[queue[1]].team.characters[i].battleColor="#2a9fd6"; break;
+                            case 1: io.sockets.connected[queue[1]].team.characters[i].battleColor="#0055AF"; break;
+                            case 2: io.sockets.connected[queue[1]].team.characters[i].battleColor="#9933cc"; break;
+                        }
                     }
 
                     battleData['team_'+io.sockets.connected[queue[0]].team._id] = io.sockets.connected[queue[0]].team;
                     battleData['team_'+io.sockets.connected[queue[1]].team._id] = io.sockets.connected[queue[1]].team;
 
-                    var shuffledWallPos= randomService.shuffle(availableWallPos);
-                    var allyWallPositions = [];
-                    var enemyWallPositions = [];
-                    for(i=0;i<10;i++) {
-                        allyWallPositions.push(shuffledWallPos[i]);
-                        //для противника меняем местами координаты препятствий
-                        var reversedIndex=""+Math.floor(shuffledWallPos[i]%10)+Math.floor(shuffledWallPos[i]/10);
-                        enemyWallPositions.push(+reversedIndex);
-                    }
-
-                    //Изначальные данные для битвы
-                    var allyBattleData = {
-                        battleRoom: socket.serSt.battleRoom,
-                        groundType: groundType,
-                        allyPartyPositions: allyPositions,
-                        enemyPartyPositions: enemyPositions,
-                        wallPositions: allyWallPositions
-                    };
-                    //Для НЕорганизатора боя места меняются местами
-                    var enemyBattleData = {
-                        battleRoom: socket.serSt.battleRoom,
-                        groundType: groundType,
-                        allyPartyPositions: enemyPositions,
-                        enemyPartyPositions: allyPositions,
-                        wallPositions: enemyWallPositions
-                    };
+                    battleData.queue = arenaService.calcQueue(io.sockets.connected[queue[0]].team.characters, io.sockets.connected[queue[1]].team.characters);
 
                     log.info("User "+io.sockets.connected[queue[0]].handshake.user.username+" start battle with "+io.sockets.connected[queue[1]].handshake.user.username);
-                    io.sockets.connected[queue[0]].emit('startBattle', allyBattleData);
-                    io.sockets.connected[queue[1]].emit('startBattle', enemyBattleData);
+                    io.sockets.in(socket.serSt.serverRoom).emit('startBattle', battleData);
                     io.sockets.connected[queue[0]].leave(socket.serSt.arenaLobby);
                     io.sockets.connected[queue[1]].leave(socket.serSt.arenaLobby);
                     io.sockets.in(socket.serSt.serverRoom).emit('arenaQueueChanged', 0);
                     io.sockets.connected[queue[0]].join(socket.serSt.battleRoom);
                     io.sockets.connected[queue[1]].join(socket.serSt.battleRoom);
+
+                    io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData = battleData;
                 }
             }
         });

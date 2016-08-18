@@ -61,6 +61,7 @@ Character.prototype.initChar = function(){
     self.curHealth=self.maxHealth;
     self.curEnergy=self.maxEnergy;
     self.curMana=self.maxMana;
+    self.initiativePoints = Math.round(self.initiative*10);
 };
 
 //Обновление персонажа в бою

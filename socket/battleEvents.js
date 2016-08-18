@@ -17,52 +17,52 @@ module.exports = function (serverIO) {
             socket.broadcast.to(room).emit('opponentReady');
         });
 
-        socket.on('getAlliesAndEnemies', function(room) {
-            if(!socket.serSt.battleRoom) {
-                socket.serSt.battleRoom = room; //присваивание battleRoom Для второго сокета
-            }
-            if(!room || !socket.serSt.battleRoom) return;
-            var battleSocket=Object.keys(io.nsps["/"].adapter.rooms[room].sockets);
-            var allyUserId;
-            var enemyUserId;
-            var allyTeam ={};
-            var enemyTeam ={};
-            if(battleSocket[0]==socket.id){
-                allyUserId = io.sockets.connected[battleSocket[0]].handshake.user._id;
-                enemyUserId = io.sockets.connected[battleSocket[1]].handshake.user._id;
-            }
-            else {
-                allyUserId = io.sockets.connected[battleSocket[1]].handshake.user._id;
-                enemyUserId = io.sockets.connected[battleSocket[0]].handshake.user._id;
-            }
-
-            //Сперва ищем свою команду
-            User.getById(allyUserId, function(err, allyUser){
-                if(err) socket.emit("customError", err);
-                //Наполняем её
-                Team.getTeamPop({_id: allyUser.team}, function(err, popAllyTeam){
-                    if(err) socket.emit("customError", err);
-                    allyTeam=popAllyTeam;
-                    //Если всё прошло удачно
-                    if(allyTeam){
-                        //Ищём чужую команду
-                        User.getById(enemyUserId, function(err, enemyUser) {
-                            if (err) socket.emit("customError", err);
-                            //Наполняем её
-                            Team.getTeamPop({_id: enemyUser.team}, function (err, popEnemyTeam) {
-                                if (err) socket.emit("customError", err);
-                                enemyTeam = popEnemyTeam;
-                                //если всё удачно, то отправляем тимы клиенту
-                                if(enemyTeam){
-                                    socket.batSt.battleStart=true;
-                                    socket.emit('getAlliesAndEnemiesResult', allyTeam, enemyTeam);
-                                }
-                            });
-                        });
-                    }
-                });
-            });
-        });
+        //socket.on('getAlliesAndEnemies', function(room) {
+        //    if(!socket.serSt.battleRoom) {
+        //        socket.serSt.battleRoom = room; //присваивание battleRoom Для второго сокета
+        //    }
+        //    if(!room || !socket.serSt.battleRoom) return;
+        //    var battleSocket=Object.keys(io.nsps["/"].adapter.rooms[room].sockets);
+        //    var allyUserId;
+        //    var enemyUserId;
+        //    var allyTeam ={};
+        //    var enemyTeam ={};
+        //    if(battleSocket[0]==socket.id){
+        //        allyUserId = io.sockets.connected[battleSocket[0]].handshake.user._id;
+        //        enemyUserId = io.sockets.connected[battleSocket[1]].handshake.user._id;
+        //    }
+        //    else {
+        //        allyUserId = io.sockets.connected[battleSocket[1]].handshake.user._id;
+        //        enemyUserId = io.sockets.connected[battleSocket[0]].handshake.user._id;
+        //    }
+        //
+        //    //Сперва ищем свою команду
+        //    User.getById(allyUserId, function(err, allyUser){
+        //        if(err) socket.emit("customError", err);
+        //        //Наполняем её
+        //        Team.getTeamPop({_id: allyUser.team}, function(err, popAllyTeam){
+        //            if(err) socket.emit("customError", err);
+        //            allyTeam=popAllyTeam;
+        //            //Если всё прошло удачно
+        //            if(allyTeam){
+        //                //Ищём чужую команду
+        //                User.getById(enemyUserId, function(err, enemyUser) {
+        //                    if (err) socket.emit("customError", err);
+        //                    //Наполняем её
+        //                    Team.getTeamPop({_id: enemyUser.team}, function (err, popEnemyTeam) {
+        //                        if (err) socket.emit("customError", err);
+        //                        enemyTeam = popEnemyTeam;
+        //                        //если всё удачно, то отправляем тимы клиенту
+        //                        if(enemyTeam){
+        //                            socket.batSt.battleStart=true;
+        //                            socket.emit('getAlliesAndEnemiesResult', allyTeam, enemyTeam);
+        //                        }
+        //                    });
+        //                });
+        //            }
+        //        });
+        //    });
+        //});
 
         socket.on('enemyTeamLoaded', function(room) {
             socket.broadcast.to(room).emit('enemyTeamLoadedResult');

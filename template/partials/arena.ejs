@@ -38,7 +38,7 @@
                                                      tooltip-animation="false"
                                                      tooltip-class="ability-tooltip">
                                                     <div class="ability-icon icon"
-                                                         ng-style="::{'background-image': ability.icon(), 'background-color': getAbilityColor(ability)}"
+                                                         ng-style="::{'background-image': ability.icon, 'background-color': getAbilityColor(ability)}"
                                                          ng-disabled="!checkAbilityForUse(ability, char) || waitServ || !enemyTeamLoaded"
                                                          ng-class="{'prepared': checkPreparedAbility(ability, char)}"
                                                          ng-click="prepareAbility($index)"
@@ -59,7 +59,7 @@
                                                      tooltip-animation="false"
                                                      tooltip-class="ability-tooltip">
                                                     <div class="ability-icon icon"
-                                                         ng-style="::{'background-image': ability.icon(), 'background-color': getAbilityColor(ability)}"
+                                                         ng-style="::{'background-image': ability.icon, 'background-color': getAbilityColor(ability)}"
                                                          ng-disabled="!checkAbilityForUse(ability, char) || waitServ || !enemyTeamLoaded"
                                                          ng-class="{'prepared': checkPreparedAbility(ability, char)}"
                                                          ng-click="prepareAbility($index)"
@@ -156,7 +156,7 @@
                                                      tooltip-animation="false"
                                                      tooltip-class="ability-tooltip">
                                                     <div class="ability-icon icon"
-                                                         ng-style="::{'background-image': ability.icon(), 'background-color': getAbilityColor(ability)}"
+                                                         ng-style="::{'background-image': ability.icon, 'background-color': getAbilityColor(ability)}"
                                                          ng-disabled="true"
                                                             >
                                                         <span ng-if="ability.cd>0">{{ability.cd}}</span>
@@ -175,7 +175,7 @@
                                                      tooltip-animation="false"
                                                      tooltip-class="ability-tooltip">
                                                     <div class="ability-icon icon"
-                                                         ng-style="::{'background-image': ability.icon(), 'background-color': getAbilityColor(ability)}"
+                                                         ng-style="::{'background-image': ability.icon, 'background-color': getAbilityColor(ability)}"
                                                          ng-disabled="true"
                                                             >
                                                         <span ng-if="ability.cd>0">{{ability.cd}}</span>
@@ -201,23 +201,23 @@
                 <p translate>Buffs:</p>
                 <div ng-repeat="effect in char.buffs track by $index"
                      class='buff-icon icon'
-                     ng-style="{'background-image': effect.icon(), 'background-color': getAbilityColor(effect)}"
+                     ng-style="{'background-image': effect.icon, 'background-color': getAbilityColor(effect)}"
                      uib-tooltip-html="getEffectTooltip(effect)"
                      tooltip-placement="bottom"
                      tooltip-append-to-body="true"
                      tooltip-animation="false"
-                     tooltip-class="effect-tooltip"><span ng-class="{'for-cleric': (effect.role()=='cleric')}" ng-if="effect.stacks>1">{{effect.stacks}}</span></div>
+                     tooltip-class="effect-tooltip"><span ng-class="{'for-cleric': (effect.role=='cleric')}" ng-if="effect.stacks>1">{{effect.stacks}}</span></div>
             </div>
             <div ng-if="char.debuffs.length>0">
                 <p translate>Debuffs:</p>
                 <div ng-repeat="effect in char.debuffs track by $index"
                      class='buff-icon icon'
-                     ng-style="{'background-image': effect.icon(), 'background-color': getAbilityColor(effect)}"
+                     ng-style="{'background-image': effect.icon, 'background-color': getAbilityColor(effect)}"
                      uib-tooltip-html="getEffectTooltip(effect)"
                      tooltip-placement="bottom"
                      tooltip-append-to-body="true"
                      tooltip-animation="false"
-                     tooltip-class="effect-tooltip"><span ng-class="{'for-cleric': (effect.role()=='cleric')}" ng-if="effect.stacks>1">{{effect.stacks}}</span></div>
+                     tooltip-class="effect-tooltip"><span ng-class="{'for-cleric': (effect.role=='cleric')}" ng-if="effect.stacks>1">{{effect.stacks}}</span></div>
             </div>
         </div>
     </script>
