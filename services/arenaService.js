@@ -1,6 +1,214 @@
 //Сервис для работы арены
 
+var map = [];
+
 module.exports = {
+    //поиск возможных для хода клеток
+    findMoves: function(char, myTeam, enemyTeam, walls, radius){
+        var self = this;
+        var points = self.findNearestPoints(char.position, radius);
+
+        var availablePoints = [];
+        for(var i=0;i<points.length;i++){
+            if(!self.checkTile(points[i], char, myTeam, enemyTeam, walls, true)){
+                availablePoints[availablePoints.length]=points[i];
+            }
+        }
+        return availablePoints;
+    },
+    //поиск всех клеток в заданном радиусе
+    findNearestPoints: function(position, rad) {
+        var points = [];
+        for(var i=-rad;i<=rad;i++){
+            if(position.x+i>=0 && position.x+i<=9) {
+                for(var j=-rad;j<=rad;j++){
+                    if(position.y+j>=0 && position.y+j<=9){
+                        points[points.length] = {x: position.x+i, y: position.y+j};
+                    }
+                }
+            }
+        }
+        return points;
+    },
+    //Проверка на наличие персонажа или препятствия на этом тайле
+    checkTile: function(position, char, myTeam, enemyTeam, walls, skipInvisible){
+        var self = this;
+        var queue = myTeam.concat(enemyTeam);
+        for(var i=0;i<queue.length;i++){
+            if(queue[i].position.x==position.x &&
+                queue[i].position.y==position.y &&
+                !queue[i].isDead)
+            {
+                if(skipInvisible){ //Невидимые персонажи будут считаться клетками, доступными для хода
+                    //Все
+                    if(!queue[i].invisible){
+                        return true;
+                    }
+                    else if(queue[i].invisible && queue[i].charName===char.charName){
+                        return true;
+                    }
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+
+        for(i=0;i<walls.length;i++){
+            var wallPos = self.map1Dto2D(walls[i]);
+            if(wallPos.x == position.x && wallPos.y == position.y) return true; //Проверяем на препятствие
+        }
+        return false;
+    },
+    //Функция перемещения вплотную к сопернику
+    charge: function(target, char, myTeam, enemyTeam, walls) {
+        var self = this;
+
+        var points = self.findNearestPoints(target.position, 1);
+
+        var availablePoints = [];
+
+        //Убираем себя из списка тимы, потому что на своём месте можно остаться при чардже
+        var targetEnemies = target.findEnemies(myTeam, 1);
+        for(var k=0;k<targetEnemies.length;k++){
+            if(targetEnemies[k].charName == char.charName){
+                return true;
+            }
+        }
+
+        for(var i=0;i<points.length;i++){
+            if(!self.checkTile(points[i], char, enemyTeam, myTeam, walls, false)){
+                availablePoints[availablePoints.length]=points[i];
+            }
+        }
+        if(availablePoints.length===0) return false;
+
+        availablePoints.sort(function (a, b) {
+            var aDistance = Math.sqrt(Math.pow(a.x-char.position.x,2)+Math.pow(a.y-char.position.y,2));
+            var bDistance = Math.sqrt(Math.pow(b.x-char.position.x,2)+Math.pow(b.y-char.position.y,2));
+            if (aDistance > bDistance) {
+                return 1;
+            }
+            if (aDistance < bDistance) {
+                return -1;
+            }
+            return 0;
+        });
+
+        char.position=availablePoints[0];
+        return true;
+    },
+    //Функция отбрасывания соперника на клетку назад
+    knockBack: function(target, char, myTeam, enemyTeam, walls) {
+        var self = this;
+        var direction = {x:0,y:0};
+        var direction1 = {x:0,y:0};
+        var direction2 = {x:0,y:0};
+        if (char.position.x < target.position.x)
+        {
+            direction.x = 1;
+        }
+        else if (char.position.x > target.position.x)
+        {
+            direction.x = -1;
+        }
+        else
+        {
+            direction.x = 0;
+        }
+
+        if (char.position.y < target.position.y)
+        {
+            direction.y = 1;
+            if (direction.x == 1)
+            {
+                direction1.x = 1;
+                direction1.y = 0;
+                direction2.x = 0;
+                direction2.y = 1;
+            }
+            if (direction.x == -1)
+            {
+                direction1.x = -1;
+                direction1.y = 0;
+                direction2.x = 0;
+                direction2.y = 1;
+            }
+            if (direction.x == 0)
+            {
+                direction1.x = 1;
+                direction1.y = 1;
+                direction2.x = -1;
+                direction2.y = 1;
+            }
+        }
+        else if (char.position.y > target.position.y)
+        {
+            direction.y = -1;
+            if (direction.x == 1)
+            {
+                direction1.x = 0;
+                direction1.y = -1;
+                direction2.x = 1;
+                direction2.y = 0;
+            }
+            if (direction.x == -1)
+            {
+                direction1.x = -1;
+                direction1.y = 0;
+                direction2.x = 0;
+                direction2.y = -1;
+            }
+            if (direction.x == 0)
+            {
+                direction1.x = -1;
+                direction1.y = -1;
+                direction2.x = 1;
+                direction2.y = -1;
+            }
+        }
+        else
+        {
+            direction.y = 0;
+            if (direction.x == 1)
+            {
+                direction1.x = 1;
+                direction1.y = -1;
+                direction2.x = 1;
+                direction2.y = 1;
+            }
+            if (direction.x == -1)
+            {
+                direction1.x = -1;
+                direction1.y = -1;
+                direction2.x = -1;
+                direction2.y = 1;
+            }
+        }
+
+        var newPosition = {x: target.position.x + direction.x, y: target.position.y + direction.y};
+
+        if (!target.checkTile(newPosition, char, enemyTeam, myTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
+        {
+            target.position = newPosition;
+        }
+        else
+        {
+            newPosition = {x: target.position.x + direction1.x, y: target.position.y + direction1.y};
+            if (!target.checkTile(newPosition, char, enemyTeam, myTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
+            {
+                target.position = newPosition;
+            }
+            else
+            {
+                newPosition = {x: target.position.x + direction2.x, y: target.position.y + direction2.y};
+                if (!target.checkTile(newPosition, char, enemyTeam, myTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
+                {
+                    target.position = newPosition;
+                }
+            }
+        }
+    },
     //Функция определяет начальные позиции игроков
     getStartPosition: function(pos){
         switch (pos) {
@@ -23,11 +231,7 @@ module.exports = {
     },
     //расчёт игровой очереди
     calcQueue: function(myTeam, enemyTeam) {
-
-        //var activeQueue = []; //Активная очередь
-        //var endedQueue = []; //отходившая очередь
         var queue = [];
-        //var removedActive = {};
 
         for(var i=0;i<myTeam.length;i++){
             if(!myTeam[i].isDead) queue[queue.length]=myTeam[i];
@@ -35,34 +239,6 @@ module.exports = {
         for(i=0;i<enemyTeam.length;i++){
             if(!enemyTeam[i].isDead) queue[queue.length]=enemyTeam[i];
         }
-        //
-        //if(currentChar) {
-        //    for(i = 0;i<queue.length;i++){
-        //        if(queue[i]._id==currentChar._id) {
-        //            removedActive = queue[i];
-        //            queue.splice(i,1);
-        //        }
-        //    }
-        //} //Не включаем персонажа, который в данный момент совершает ход
-        //
-        //for(i=0;i<queue.length;i++){
-        //    if(queue[i].turnEnded){
-        //        endedQueue[endedQueue.length]=queue[i];
-        //    }
-        //    else {
-        //        activeQueue[activeQueue.length]=queue[i];
-        //    }
-        //}
-        //
-        ////Если все персонажи сходили по разу, делаем их снова активными
-        //if(activeQueue.length==0){
-        //    activeQueue=endedQueue;
-        //    endedQueue = [];
-        //    for(var k=0;k<activeQueue.length;k++){
-        //        activeQueue[k].turnEnded=false;
-        //    }
-        //}
-        //
         queue.sort(function (a, b) {
             if (a.initiativePoints < b.initiativePoints) {
                 return 1;
@@ -81,51 +257,6 @@ module.exports = {
             }
             return 0;
         });
-        //activeQueue.sort(function (a, b) {
-        //    if (a.initiative < b.initiative) {
-        //        return 1;
-        //    }
-        //    if (a.initiative > b.initiative) {
-        //        return -1;
-        //    }
-        //    //если инициатива одинаковая, тогда смотрим, у кого больше id
-        //    if (a.initiative == b.initiative) {
-        //        if(a._id > b._id){
-        //            return 1;
-        //        }
-        //        else {
-        //            return -1;
-        //        }
-        //    }
-        //    return 0;
-        //});
-        //
-        //endedQueue.sort(function (a, b) {
-        //    if (a.initiative < b.initiative) {
-        //        return 1;
-        //    }
-        //    if (a.initiative > b.initiative) {
-        //        return -1;
-        //    }
-        //    //если инициатива одинаковая, тогда смотрим, у кого больше id
-        //    if (a.initiative == b.initiative) {
-        //        if(a._id > b._id){
-        //            return 1;
-        //        }
-        //        else {
-        //            return -1;
-        //        }
-        //    }
-        //    return 0;
-        //});
-        //
-        //var ready = activeQueue.concat(endedQueue);
-        //
-        ////Вставляем текущего персонажа вперёд массива
-        //if(currentChar) {
-        //    ready.unshift(removedActive);
-        //}
-
         return queue;
     },
     //Проверка, мой ли сейчас ход

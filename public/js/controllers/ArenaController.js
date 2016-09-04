@@ -64,15 +64,6 @@
             }
         };
 
-        //Завершение хода
-        $scope.endTurn =  function() {
-            $scope.preparedAbility = undefined;
-            resetCharOverlays();
-            $scope.activeChar.turnEnded=true;
-            mainSocket.emit("turnEnded", arenaService.battle.room, $scope.activeChar, $scope.turnsSpended);
-            $scope.waitServ = true;
-        };
-
         //Функция возвращает значение оставшегося до конца хода времени
         $scope.getTurnTime =  function(){
             if($scope.myTurn){
@@ -319,11 +310,11 @@
                 if(char._id == $scope.activeChar._id){ //Абилка доступна только тому, кто сейчас ходит
                     if(ability.name==="Void") return false;
                     if(ability.name==="Dyers Eve" && ($scope.activeChar.curHealth/$scope.activeChar.maxHealth)>0.5) return false;
-                    if(ability.targetType()==="move" && char.immobilized) return false;
+                    if(ability.targetType==="move" && char.immobilized) return false;
                     if(ability.cd==0){ //если она не на кулдауне
-                        if(char.curEnergy-ability.energyCost()>0){ //на неё есть энергия
-                            if(char.curMana-ability.manaCost()>0){ //и мана
-                                if(ability.needWeapon()){ //Если для абилки нужно оружие
+                        if(char.curEnergy-ability.energyCost>0){ //на неё есть энергия
+                            if(char.curMana-ability.manaCost>0){ //и мана
+                                if(ability.needWeapon){ //Если для абилки нужно оружие
                                     if(!char.disarmed){ //и персонаж не в дизарме
                                         return true;
                                     }
@@ -370,18 +361,11 @@
 
         //Функция подготавливает всё необходимое для начала хода
         function turnPrepare (){
-            for(var i=0;i<$scope.myTeam.characters.length;i++){
-                $scope.myTeam.characters[i].refreshChar($scope.myTeam.characters, $scope.enemyTeam.characters);
-            }//Обновляем своих персонажей
-
-            $scope.queue = arenaService.calcQueue($scope.myTeam.characters, $scope.enemyTeam.characters); //вычисляем очередь хода
+            $scope.queue = arenaService.battle.queue;
             $scope.myTurn = arenaService.checkTurn($scope.myTeam.characters, $scope.queue[0]); //проверка, мой ли сейчас ход
             $scope.activeChar = $scope.queue[0]; //назначаем активного персонажа
 
-            mainSocket.emit("updateActiveTeam", arenaService.battle.room, $scope.myTeam.characters);
             cleanSoundBuffers(); //Звуки были отправлены, так что можно очищать буфер
-            $scope.waitServ = true;
-
             showLogs(); //выводим сообщения персонажей
             mapUpdate(); //обновляем карту
         }
@@ -395,13 +379,11 @@
                 }
 
                 if($scope.myTurn) {
-                    if($scope.activeChar.canMove()) {
-                        //Находим точки для движения
-                        var movePoints = $scope.activeChar.findMoves($scope.myTeam.characters, $scope.enemyTeam.characters, 1);
+                    mainSocket.emit('findMovePoints', $scope.myTeam._id, $scope.enemyTeam._id, function(movePoints){
                         for (var i = 0; i < movePoints.length; i++) {
                             $scope.map[arenaService.map2Dto1D(movePoints[i])].move = true;
                         }
-                    }
+                    });
                 }
             },10);
         }
@@ -473,8 +455,6 @@
             $scope.CombatLog[$scope.CombatLog.length] = message;
         }
 
-
-
         //Функция сбрасыват всю подсветку для персонажей
         function resetCharOverlays() {
             for(var i=0;i<$scope.queue.length;i++){
@@ -519,197 +499,6 @@
         function cleanSoundBuffers(){
             for(var i=0;i<$scope.myTeam.characters.length;i++){
                 $scope.myTeam.characters[i].soundBuffer = [];
-            }
-        }
-
-        //Функция проверяет, закончен ли бой
-        function checkForWin(enemyLeave) {
-            var myDeaths=0;
-            var enemyDeaths=0;
-            var ratingChange=0;
-            var gainedSouls ={red: 0, green:0, blue: 0};
-
-            for(var i=0;i<$scope.myTeam.characters.length;i++){
-                if($scope.myTeam.characters[i].isDead) {
-                    myDeaths++;
-                }
-            }
-
-            for(i=0;i<$scope.enemyTeam.characters.length;i++){
-                if($scope.enemyTeam.characters[i].isDead || enemyLeave) {
-                    enemyDeaths++;
-                    //Добавляем душ за каждого убитого
-                    switch($scope.enemyTeam.characters[i].role){
-                        case "sentinel" : gainedSouls.red+=4;break;
-                        case "slayer" : gainedSouls.red+=4;break;
-                        case "redeemer" : gainedSouls.green+=4;break;
-                        case "ripper" : gainedSouls.green+=4;break;
-                        case "prophet" : gainedSouls.blue+=4;break;
-                        case "malefic" : gainedSouls.blue+=4;break;
-                        case "cleric" : switch(Math.floor(Math.random() * 3)) {
-                                            case 0 : gainedSouls.red+=4;break;
-                                            case 1 : gainedSouls.green+=4;break;
-                                            case 2 : gainedSouls.blue+=4;break;
-                                        }
-                                         break;
-                        case "heretic" : switch(Math.floor(Math.random() * 3)) {
-                                            case 0 : gainedSouls.red+=4;break;
-                                            case 1 : gainedSouls.green+=4;break;
-                                            case 2 : gainedSouls.blue+=4;break;
-                                         }
-                                         break;
-                    }
-                }
-            }
-
-            if(myDeaths==3){
-                makeLose();
-            }
-            else if(enemyDeaths==3){
-                makeWin();
-            }
-            //Вышло время
-            else if($scope.turnsSpended>=100){
-                if(myDeaths>enemyDeaths){
-                    makeLose();
-                }
-                else if(myDeaths<enemyDeaths){
-                    makeWin();
-                }
-                else {
-                    //Играем музыку
-                    soundService.getMusicObj().winMusic.play();
-
-                    stopTurnTimer();
-
-                    gainedSouls.red+=1;
-                    gainedSouls.green+=1;
-                    gainedSouls.blue+=1;
-
-                    $scope.myTeam.souls.red+=gainedSouls.red;
-                    $scope.myTeam.souls.green+=gainedSouls.green;
-                    $scope.myTeam.souls.blue+=gainedSouls.blue;
-
-                    $scope.battleEnd={
-                        ended: true,
-                        title: gettextCatalog.getString("Draw"),
-                        rating: $scope.myTeam.rating,
-                        ratingChange: ratingChange,
-                        souls: gainedSouls
-                    };
-
-                    mainSocket.emit('setTeam',
-                        {
-                            _id: $scope.myTeam._id,
-                            souls: $scope.myTeam.souls
-                        });
-                }
-            }
-
-            function makeWin(){
-                //Играем музыку
-                soundService.getMusicObj().winMusic.play();
-
-                stopTurnTimer();
-
-                if($scope.myTeam.rating>$scope.enemyTeam.rating){
-                    ratingChange = $scope.myTeam.rating-$scope.enemyTeam.rating;
-                    if(ratingChange>25) ratingChange=25;
-                }
-                else if ($scope.myTeam.rating<$scope.enemyTeam.rating){
-                    ratingChange = ($scope.enemyTeam.rating-$scope.myTeam.rating)*2;
-                    if(ratingChange>25) ratingChange=25;
-                }
-                else {
-                    ratingChange = 10;
-                }
-
-                $scope.myTeam.rating+=ratingChange;
-
-                gainedSouls.red+=4;
-                gainedSouls.green+=4;
-                gainedSouls.blue+=4;
-
-                $scope.myTeam.souls.red+=gainedSouls.red;
-                $scope.myTeam.souls.green+=gainedSouls.green;
-                $scope.myTeam.souls.blue+=gainedSouls.blue;
-
-                $scope.battleEnd={
-                    ended: true,
-                    title: gettextCatalog.getString("You win"),
-                    rating: $scope.myTeam.rating,
-                    ratingChange: "+"+ratingChange,
-                    souls: gainedSouls
-                };
-
-                mainSocket.emit('setTeam',
-                    {
-                        _id: $scope.myTeam._id,
-                        rating: $scope.myTeam.rating,
-                        wins: $scope.myTeam.wins+1,
-                        souls: $scope.myTeam.souls
-                    });
-            }
-
-            function makeLose() {
-                //Играем музыку
-                soundService.getMusicObj().loseMusic.play();
-
-                stopTurnTimer();
-
-                if($scope.myTeam.rating>$scope.enemyTeam.rating){
-                    ratingChange = ($scope.myTeam.rating-$scope.enemyTeam.rating)*2;
-                    if(ratingChange>25) ratingChange=25;
-                }
-                else if ($scope.myTeam.rating<$scope.enemyTeam.rating){
-                    ratingChange = $scope.enemyTeam.rating-$scope.myTeam.rating;
-                    if(ratingChange>25) ratingChange=25;
-                }
-                else {
-                    ratingChange = 10;
-                }
-
-                if($scope.myTeam.rating-ratingChange<1000) {
-                    ratingChange=$scope.myTeam.rating-1000;
-                    $scope.myTeam.rating=1000;
-                }
-                else {
-                    $scope.myTeam.rating-=ratingChange;
-                }
-
-
-                //Утешительный приз
-                gainedSouls.red+=2;
-                gainedSouls.green+=2;
-                gainedSouls.blue+=2;
-
-                $scope.myTeam.souls.red+=gainedSouls.red;
-                $scope.myTeam.souls.green+=gainedSouls.green;
-                $scope.myTeam.souls.blue+=gainedSouls.blue;
-
-                $scope.battleEnd={
-                    ended: true,
-                    title: gettextCatalog.getString("You lose"),
-                    rating: $scope.myTeam.rating,
-                    ratingChange: "-"+ratingChange,
-                    souls: gainedSouls
-                };
-
-                mainSocket.emit('setTeam',
-                    {
-                        _id: $scope.myTeam._id,
-                        rating: $scope.myTeam.rating,
-                        loses: $scope.myTeam.loses+1,
-                        souls: $scope.myTeam.souls
-                    });
-
-                //Устанавливаем флаг проигрыша для персонажей
-                for(i=0;i<$scope.myTeam.characters.length;i++){
-                    mainSocket.emit('setChar', {
-                        _id: $scope.myTeam.characters[i]._id,
-                        lose: true
-                    });
-                }
             }
         }
 
@@ -762,18 +551,16 @@
                 return;
             }
 
-            $scope.myTeam = arenaService.battle["team_"+currentTeam.get()._id];
+            $scope.myTeam = arenaService.prepareMyTeam(arenaService.battle["team_"+currentTeam.get()._id]);
             for(var key in arenaService.battle) {
                 if(arenaService.battle.hasOwnProperty(key) && key.indexOf("team_")>-1 && key!="team_"+currentTeam.get()._id){
-                    $scope.enemyTeam = arenaService.battle[key];
-                    $scope.enemyTeam.characters = arenaService.convertEnemyTeam($scope.enemyTeam.characters);
+                    $scope.enemyTeam = arenaService.prepareEnemyTeam(arenaService.battle[key]);
                     break;
                 }
             }
 
             //ИЗМЕНЁННАЯ ВЕРСИЯ turnPrepare для первого хода
             $scope.queue = arenaService.battle.queue;
-            //ВСЕГДА FALSE
             $scope.myTurn = arenaService.checkTurn($scope.myTeam.characters, $scope.queue[0]); //проверка, мой ли сейчас ход
             $scope.activeChar = $scope.queue[0]; //назначаем активного персонажа
 
@@ -785,6 +572,75 @@
             $scope.opponentWaiting = false;
             $scope.waitServ = false;
             mainSocket.emit("enemyTeamLoaded", arenaService.battle.room);
+        });
+
+        //Завершение хода
+        $scope.endTurn =  function() {
+            $scope.preparedAbility = undefined;
+            resetCharOverlays();
+            $scope.waitServ = true;
+            mainSocket.emit("turnEnded", $scope.myTeam._id, $scope.enemyTeam._id);
+        };
+
+        mainSocket.on('turnEndedResult', function(battle){
+            startTurnTimer(); //Сразу включаем таймер, чтобы рассинхрон был небольшой
+            $scope.waitServ = false;
+            arenaService.battle = battle;
+
+            $scope.myTeam = arenaService.prepareMyTeam(arenaService.battle["team_"+currentTeam.get()._id]);
+            for(var key in arenaService.battle) {
+                if(arenaService.battle.hasOwnProperty(key) && key.indexOf("team_")>-1 && key!="team_"+currentTeam.get()._id){
+                    $scope.enemyTeam = arenaService.prepareEnemyTeam(arenaService.battle[key]);
+                    break;
+                }
+            }
+
+            mainSocket.emit('checkForWin', $scope.myTeam._id, $scope.enemyTeam._id, false, function(isEnded, result, rating, ratingChange, gainedSouls){
+                if(isEnded){
+                    $scope.battleEnd= {
+                        ended: true,
+                        rating: rating,
+                        souls: gainedSouls
+                    };
+
+                    stopTurnTimer();
+
+                    if(result == "win"){
+                        soundService.getMusicObj().winMusic.play();
+                        $scope.battleEnd.title = gettextCatalog.getString("You win");
+                        $scope.battleEnd.ratingChange = "+"+ratingChange;
+                    }
+                    else if(result == "lose"){
+                        soundService.getMusicObj().loseMusic.play();
+                        $scope.battleEnd.title = gettextCatalog.getString("You lose");
+                        $scope.battleEnd.ratingChange = "-"+ratingChange;
+                    }
+                    else {
+                        soundService.getMusicObj().winMusic.play();
+                        $scope.battleEnd.title = gettextCatalog.getString("Draw");
+                        $scope.battleEnd.ratingChange = ratingChange;
+                    }
+                }
+                else {
+                    turnPrepare();
+
+                    //Если персонаж в стане
+                    if($scope.activeChar.stunned) {
+                        log($scope.activeChar.charName+" is stunned and skip turn", $scope.activeChar.battleColor);
+                    }
+                    if($scope.activeChar.stunned && $scope.myTurn) {
+                        $scope.endTurn();
+                        return;
+                    }
+
+                    //объявление о начале хода
+                    log("Now is turn of "+$scope.activeChar.charName+".", $scope.activeChar.battleColor); //<- Цвет
+                    //объявление об исходе боя в ничью
+                    if($scope.turnsSpended>=90){
+                        log("The battle ends after "+(100-$scope.turnsSpended)+" turns.");
+                    }
+                }
+            });
         });
 
         mainSocket.on('enemyTeamLoadedResult', function(){
@@ -861,50 +717,6 @@
             //Если вдруг после своего действия персонаж оказался в стане, ход сразу же завершается
             if($scope.activeChar.stunned && $scope.myTurn) {
                 $scope.endTurn();
-            }
-        });
-
-        mainSocket.on('turnEndedResult', function(char, turnsSpended){
-            $scope.turnsSpended=turnsSpended;
-            startTurnTimer(); //Сразу включаем таймер, чтобы рассинхрон был небольшой
-            $scope.waitServ = false;
-
-            var prevCharWasMine=false; //предыдущим ходил мой персонаж
-            for(var i=0;i<$scope.myTeam.characters.length;i++){
-                if($scope.myTeam.characters[i]._id==char._id){
-                    $scope.myTeam.characters[i] = new character(char);
-                    prevCharWasMine=true;
-                }
-            }
-            //если это был не мой персонаж
-            if (!prevCharWasMine) {
-                for(var j=0;j<$scope.enemyTeam.characters.length;j++){
-                    if($scope.enemyTeam.characters[j]._id==char._id){
-                        //обновляем инфо о вражеском персонаже, который ходил
-                        $scope.enemyTeam.characters[j] = new character(char); //добавляем методы для этого персонажа
-                        //делаем его вражеским
-                        $scope.enemyTeam.characters[j] = arenaService.convertEnemyChar($scope.enemyTeam.characters[j]);
-                    }
-                }
-            }
-
-            checkForWin();
-            turnPrepare();
-
-            //Если персонаж в стане
-            if($scope.activeChar.stunned) {
-                log($scope.activeChar.charName+" is stunned and skip turn", $scope.activeChar.battleColor);
-            }
-            if($scope.activeChar.stunned && $scope.myTurn) {
-                $scope.endTurn();
-                return;
-            }
-
-            //объявление о начале боя
-            log("Now is turn of "+$scope.activeChar.charName+".", $scope.activeChar.battleColor);
-            //объявление об исходе боя в ничью
-            if($scope.turnsSpended>=90){
-                log("The battle ends after "+(100-$scope.turnsSpended)+" turns.");
             }
         });
 

@@ -1,5 +1,6 @@
 var AbilityFactory = require('services/abilityFactory');
 var characterService = require('services/characterService');
+var arenaService = require('services/arenaService');
 
 //Фабрика, которая по сути является "классом" character
 var Character = function(char) {
@@ -73,6 +74,8 @@ Character.prototype.refreshChar = function(myTeam, enemyTeam){
     self.applyEffects(myTeam, enemyTeam); //Применяем все эффекты
     if(self.isDead) return; //Если сдохли от дот, больше ничего не делаем
     self.calcChar(); //Пересчитываем все параметры
+
+    self.initiativePoints += self.initiative*2;
 
     //Восстанавливаем энергию
     self.curEnergy = self.maxEnergy;
@@ -1078,68 +1081,10 @@ Character.prototype.findEffect = function (effect) {
     return -1;
 };
 
-//поиск всех клеток в заданном радиусе
-Character.prototype.findNearestPoints = function(position, rad){
-    var points = [];
-    for(var i=-rad;i<=rad;i++){
-        if(position.x+i>=0 && position.x+i<=9) {
-            for(var j=-rad;j<=rad;j++){
-                if(position.y+j>=0 && position.y+j<=9){
-                    points[points.length] = {x: position.x+i, y: position.y+j};
-                }
-            }
-        }
-    }
-    return points;
-};
-
-//Проверка на наличие персонажа или препятствия на этом тайле
-Character.prototype.checkTile = function(position, myTeam, enemyTeam, skipInvisible) {
-    var self = this;
-    var queue = myTeam.concat(enemyTeam);
-    var map = arenaService.getMap();
-    for(var i=0;i<queue.length;i++){
-        if(queue[i].position.x==position.x &&
-            queue[i].position.y==position.y &&
-            !queue[i].isDead)
-        {
-            if(skipInvisible){ //Невидимые персонажи будут считаться клетками, доступными для хода
-                //Все
-                if(!queue[i].invisible){
-                    return true;
-                }
-                else if(queue[i].invisible && queue[i].charName===self.charName){
-                    return true;
-                }
-            }
-            else {
-                return true;
-            }
-        }
-    }
-
-    if(map[Math.floor(position.x+position.y*10)].wall) return true; //Проверяем на препятствие
-    return false;
-};
-
-//поиск возможных для хода клеток
-Character.prototype.findMoves = function(myTeam, enemyTeam, radius){
-    var self = this;
-    var points = self.findNearestPoints(self.position, radius);
-
-    var availablePoints = [];
-    for(var i=0;i<points.length;i++){
-        if(!self.checkTile(points[i], myTeam, enemyTeam, true)){
-            availablePoints[availablePoints.length]=points[i];
-        }
-    }
-    return availablePoints;
-};
-
 //поиск врагов в заданном диапазоне
 Character.prototype.findEnemies = function(enemyTeam, range){
     var self = this;
-    var points = self.findNearestPoints(self.position, range);
+    var points = arenaService.findNearestPoints(self.position, range);
 
     var enemies = [];
     for(var i=0;i<points.length;i++){
@@ -1159,7 +1104,7 @@ Character.prototype.findEnemies = function(enemyTeam, range){
 //поиск союзников в заданном диапазоне
 Character.prototype.findAllies = function(myTeam, range){
     var self = this;
-    var points = self.findNearestPoints(self.position, range);
+    var points = arenaService.findNearestPoints(self.position, range);
 
     var allies = [];
     for(var i=0;i<points.length;i++){
@@ -1174,157 +1119,6 @@ Character.prototype.findAllies = function(myTeam, range){
         }
     }
     return allies;
-};
-
-//Функция перемещения вплотную к сопернику
-Character.prototype.charge = function(target, myTeam, enemyTeam) {
-    var self = this;
-
-    var points = target.findNearestPoints(target.position, 1);
-
-    var availablePoints = [];
-
-    //Убираем себя из списка тимы, потому что на своём месте можно остаться при чардже
-    var targetEnemies = target.findEnemies(myTeam, 1);
-    for(var k=0;k<targetEnemies.length;k++){
-        if(targetEnemies[k].charName===self.charName){
-            return true;
-        }
-    }
-
-    for(var i=0;i<points.length;i++){
-        if(!target.checkTile(points[i], enemyTeam, myTeam, false)){
-            availablePoints[availablePoints.length]=points[i];
-        }
-    }
-    if(availablePoints.length===0) return false;
-
-    availablePoints.sort(function (a, b) {
-        var aDistance = Math.sqrt(Math.pow(a.x-self.position.x,2)+Math.pow(a.y-self.position.y,2));
-        var bDistance = Math.sqrt(Math.pow(b.x-self.position.x,2)+Math.pow(b.y-self.position.y,2));
-        if (aDistance > bDistance) {
-            return 1;
-        }
-        if (aDistance < bDistance) {
-            return -1;
-        }
-        return 0;
-    });
-
-    self.position=availablePoints[0];
-    return true;
-};
-
-//Функция отбрасывания соперника на клетку назад
-Character.prototype.knockBack = function(target, myTeam, enemyTeam) {
-    var self = this;
-    var direction = {x:0,y:0};
-    var direction1 = {x:0,y:0};
-    var direction2 = {x:0,y:0};
-    if (self.position.x < target.position.x)
-    {
-        direction.x = 1;
-    }
-    else if (self.position.x > target.position.x)
-    {
-        direction.x = -1;
-    }
-    else
-    {
-        direction.x = 0;
-    }
-
-    if (self.position.y < target.position.y)
-    {
-        direction.y = 1;
-        if (direction.x == 1)
-        {
-            direction1.x = 1;
-            direction1.y = 0;
-            direction2.x = 0;
-            direction2.y = 1;
-        }
-        if (direction.x == -1)
-        {
-            direction1.x = -1;
-            direction1.y = 0;
-            direction2.x = 0;
-            direction2.y = 1;
-        }
-        if (direction.x == 0)
-        {
-            direction1.x = 1;
-            direction1.y = 1;
-            direction2.x = -1;
-            direction2.y = 1;
-        }
-    }
-    else if (self.position.y > target.position.y)
-    {
-        direction.y = -1;
-        if (direction.x == 1)
-        {
-            direction1.x = 0;
-            direction1.y = -1;
-            direction2.x = 1;
-            direction2.y = 0;
-        }
-        if (direction.x == -1)
-        {
-            direction1.x = -1;
-            direction1.y = 0;
-            direction2.x = 0;
-            direction2.y = -1;
-        }
-        if (direction.x == 0)
-        {
-            direction1.x = -1;
-            direction1.y = -1;
-            direction2.x = 1;
-            direction2.y = -1;
-        }
-    }
-    else
-    {
-        direction.y = 0;
-        if (direction.x == 1)
-        {
-            direction1.x = 1;
-            direction1.y = -1;
-            direction2.x = 1;
-            direction2.y = 1;
-        }
-        if (direction.x == -1)
-        {
-            direction1.x = -1;
-            direction1.y = -1;
-            direction2.x = -1;
-            direction2.y = 1;
-        }
-    }
-
-    var newPosition = {x: target.position.x + direction.x, y: target.position.y + direction.y};
-
-    if (!target.checkTile(newPosition, enemyTeam, myTeam, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
-    {
-        target.position = newPosition;
-    }
-    else
-    {
-        newPosition = {x: target.position.x + direction1.x, y: target.position.y + direction1.y};
-        if (!target.checkTile(newPosition, enemyTeam, myTeam, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
-        {
-            target.position = newPosition;
-        }
-        else
-        {
-            newPosition = {x: target.position.x + direction2.x, y: target.position.y + direction2.y};
-            if (!target.checkTile(newPosition, enemyTeam, myTeam, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
-            {
-                target.position = newPosition;
-            }
-        }
-    }
 };
 
 //Функция воспроизводит звук на клиенте и записывает его в буфер, чтобы отправить на сервер

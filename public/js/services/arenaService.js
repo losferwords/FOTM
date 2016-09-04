@@ -1,8 +1,8 @@
 //Сервис для работы арены
 (function (module) {
-    module.service('arenaService', function(gettextCatalog, randomService) {
-        var map=[];
+    module.service('arenaService', function(gettextCatalog, abilityService) {
         var battle = {};
+        var map = [];
         return {
             get battle () { return battle },
             set battle (value) { battle = value },
@@ -72,23 +72,38 @@
             //Проверка, мой ли сейчас ход
             checkTurn: function(myTeam, queue) {
                 for (var i = 0; i < myTeam.length; i++) {
-                    if (myTeam[i] == queue) return true;
+                    if (myTeam[i]._id == queue._id) return true;
                 }
                 return false;
             },
-            //Преобразование команды противника
-            convertEnemyTeam: function(team) {
-                for(var i=0;i<team.length;i++)
+            //Подготовка команды игрока
+            prepareMyTeam: function(team) {
+                var chars = team.characters;
+                for(var i=0;i<chars.length;i++)
                 {
-                    //цвет
-                    team[i].battleColor=this.colorSwap(team[i].battleColor);
-                    //положение
-                    var l = team[i].position.x;
-                    var t = team[i].position.y;
-                    team[i].position.x=t;
-                    team[i].position.y=l;
+                    //Способности
+                    chars[i].abilities = abilityService.translateAbilities(chars[i].abilities);
                 }
-            return team;
+                team.characters = chars;
+                return team;
+            },
+            //Подготовка команды противника
+            prepareEnemyTeam: function(team) {
+                var chars = team.characters;
+                for(var i=0;i<chars.length;i++)
+                {
+                    //Способности
+                    chars[i].abilities = abilityService.translateAbilities(chars[i].abilities);
+                    //цвет
+                    chars[i].battleColor=this.colorSwap(chars[i].battleColor);
+                    //положение
+                    var l = chars[i].position.x;
+                    var t = chars[i].position.y;
+                    chars[i].position.x=t;
+                    chars[i].position.y=l;
+                }
+                team.characters = chars;
+                return team;
             },
             //Преобразование игрока противника
             convertEnemyChar: function(char) {

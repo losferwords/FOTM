@@ -17,6 +17,8 @@ module.exports = function (serverIO) {
             var queue = Object.keys(io.nsps["/"].adapter.rooms[socket.serSt.arenaLobby].sockets);
             io.sockets.in(socket.serSt.serverRoom).emit('arenaQueueChanged', queue.length);
             if(queue.length>1){
+                io.sockets.connected[queue[0]].serSt.battleRoom = "battle:"+queue[0]+"_VS_"+queue[1];
+                io.sockets.connected[queue[1]].serSt.battleRoom = "battle:"+queue[0]+"_VS_"+queue[1];
                 socket.serSt.battleRoom = "battle:"+queue[0]+"_VS_"+queue[1];
                 if (io.sockets.connected[queue[0]] && io.sockets.connected[queue[1]]) {
                     var availablePositions = [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]];
@@ -38,7 +40,7 @@ module.exports = function (serverIO) {
                     var allyPositions = availablePositions[Math.floor(Math.random() * 6)];
                     var enemyPositions = availablePositions[Math.floor(Math.random() * 6)];
 
-                    for(i=0; i<3;i++) {
+                    for(i=0; i<3; i++) {
                         var allyPosition = arenaService.getStartPosition(allyPositions[i]);
                         io.sockets.connected[queue[0]].team.characters[i].position={x: allyPosition.x, y:allyPosition.y};
                         switch (i) {
@@ -48,7 +50,7 @@ module.exports = function (serverIO) {
                         }
                     }
 
-                    for(i=0; i<3;i++) {
+                    for(i=0; i<3; i++) {
                         var enemyPosition = arenaService.getStartPosition(enemyPositions[i]);
                         io.sockets.connected[queue[1]].team.characters[i].position={x: enemyPosition.x, y:enemyPosition.y};
                         switch (i) {
