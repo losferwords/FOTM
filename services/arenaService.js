@@ -33,18 +33,39 @@ module.exports = {
     //Проверка на наличие персонажа или препятствия на этом тайле
     checkTile: function(position, char, myTeam, enemyTeam, walls, skipInvisible){
         var self = this;
-        var queue = myTeam.concat(enemyTeam);
-        for(var i=0;i<queue.length;i++){
-            if(queue[i].position.x==position.x &&
-                queue[i].position.y==position.y &&
-                !queue[i].isDead)
+        //var queue = myTeam.concat(enemyTeam);
+        for(var i=0;i<myTeam.length;i++){
+            if(myTeam[i].position.x==position.x &&
+                myTeam[i].position.y==position.y &&
+                !myTeam[i].isDead)
             {
                 if(skipInvisible){ //Невидимые персонажи будут считаться клетками, доступными для хода
                     //Все
-                    if(!queue[i].invisible){
+                    if(!myTeam[i].invisible){
                         return true;
                     }
-                    else if(queue[i].invisible && queue[i].charName===char.charName){
+                    else if(myTeam[i].invisible && myTeam[i].charName==char.charName){
+                        return true;
+                    }
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+
+        for(i=0;i<enemyTeam.length;i++){
+            var convertedPos = this.convertEnemyPosition(enemyTeam[i].position.x, enemyTeam[i].position.y);
+            if(convertedPos.x==position.x &&
+                convertedPos.y==position.y &&
+                !enemyTeam[i].isDead)
+            {
+                if(skipInvisible){ //Невидимые персонажи будут считаться клетками, доступными для хода
+                    //Все
+                    if(!enemyTeam[i].invisible){
+                        return true;
+                    }
+                    else if(enemyTeam[i].invisible && enemyTeam[i].charName==char.charName){
                         return true;
                     }
                 }
@@ -257,7 +278,31 @@ module.exports = {
             }
             return 0;
         });
-        return queue;
+
+        var result = [];
+        for(i=0; i<queue.length;i++){
+            result.push({_id: queue[i]._id, charName: queue[i].charName});
+        }
+        return result;
+    },
+    //Возвращает активного персонажа из очереди
+    getActiveChar: function(active, team1, team2) {
+        var activeChar;
+        for(var i=0; i<team1.length; i++){
+            if(active._id == team1[i]._id){
+                activeChar = team1[i];
+                break;
+            }
+        }
+        if(!activeChar) {
+            for(i=0; i<team2.length; i++){
+                if(active._id == team2[i]._id){
+                    activeChar = team2[i];
+                    break;
+                }
+            }
+        }
+        return activeChar;
     },
     //Проверка, мой ли сейчас ход
     checkTurn: function(myTeam, queue) {
@@ -290,6 +335,10 @@ module.exports = {
         char.position.x=t;
         char.position.y=l;
         return char;
+    },
+    //Переворот позиции противников
+    convertEnemyPosition: function(x, y) {
+        return {x: y, y: x};
     },
     //преобразование карты к линейному массиву
     map2Dto1D: function(map2D) {
@@ -350,5 +399,14 @@ module.exports = {
         }
         //Если стенок не встретилось
         return false;
+    },
+    //Возвращаем способность по её имени для персонажа
+    getAbilityForCharByName: function(char, name) {
+        for(var i=0; i<char.abilities.length;i++){
+            if(char.abilities[i].name == name) {
+                return char.abilities[i];
+            }
+        }
+        return null;
     }
 };

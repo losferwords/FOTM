@@ -105,6 +105,30 @@
                 team.characters = chars;
                 return team;
             },
+            //Возвращает очередь, согласно серверному варианту
+            getQueue: function(myTeamChars, enemyTeamChars) {
+                var result = [];
+                for(var i=0;i<this.battle.queue.length;i++){
+                    var found = false;
+                    for(var j=0;j<myTeamChars.length;j++){
+                        if(this.battle.queue[i]._id == myTeamChars[j]._id) {
+                            result.push(myTeamChars[j]);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(!found){
+                        for(j=0;j<enemyTeamChars.length;j++){
+                            if(this.battle.queue[i]._id == enemyTeamChars[j]._id) {
+                                result.push(enemyTeamChars[j]);
+                                break;
+                            }
+                        }
+                    }
+
+                }
+                return result;
+            },
             //Преобразование игрока противника
             convertEnemyChar: function(char) {
                 //цвет

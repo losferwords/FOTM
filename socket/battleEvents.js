@@ -5,6 +5,7 @@ var Team = require('models/team').Team;
 var Character = require('models/character').Character;
 var socketUtils = require('socket/socketUtils');
 var arenaService = require('services/arenaService');
+var characterService = require('services/characterService');
 
 module.exports = function (serverIO) {
     var io = serverIO;
@@ -18,12 +19,20 @@ module.exports = function (serverIO) {
             socket.broadcast.to(room).emit('opponentReady');
         });
 
-        socket.on('findMovePoints', function(myTeamId, enemyTeamId, cb) {
+        socket.on('findMovePoints', function(myTeamId, enemyTeamId, preparedAbility, cb) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            if(battleData.queue[0].canMove()) {
-                cb(arenaService.findMoves(battleData.queue[0], myTeam.characters, enemyTeam.characters, battleData.wallPositions, 1));
+            var activeChar = arenaService.getActiveChar(battleData.queue[0], myTeam.characters, enemyTeam.characters);
+            if(activeChar.canMove()) {
+                var range = 1;
+                if(preparedAbility){
+                    var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
+                    if(ability){
+                        range = ability.range;
+                    }
+                }
+                cb(arenaService.findMoves(activeChar, myTeam.characters, enemyTeam.characters, battleData.wallPositions, range));
                 return;
             }
             cb([]);
@@ -33,8 +42,9 @@ module.exports = function (serverIO) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
+            var activeChar = arenaService.getActiveChar(battleData.queue[0], myTeam.characters, enemyTeam.characters);
             battleData.turnsSpended++;
-            battleData.queue[0].initiativePoints = battleData.queue[0].initiativePoints*0.2;
+            activeChar.initiativePoints = activeChar.initiativePoints*0.2;
             for(var i=0;i<myTeam.characters.length;i++){
                 myTeam.characters[i].refreshChar(myTeam.characters, enemyTeam.characters);
             }//Обновляем своих персонажей
@@ -44,6 +54,7 @@ module.exports = function (serverIO) {
 
             battleData.queue = arenaService.calcQueue(myTeam.characters, enemyTeam.characters);
             io.sockets.in(socket.serSt.battleRoom).emit('turnEndedResult', battleData);
+            cleanBuffers(myTeam, enemyTeam);
         });
 
         //Функция проверяет, закончен ли бой
@@ -226,6 +237,55 @@ module.exports = function (serverIO) {
                 });
             }
         });
+
+        socket.on('moveCharTo', function(tile, myTeamId, enemyTeamId, preparedAbility, cb){
+            var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
+            var myTeam = battleData['team_'+myTeamId];
+            var enemyTeam = battleData['team_'+enemyTeamId];
+            var activeChar = arenaService.getActiveChar(battleData.queue[0], myTeam.characters, enemyTeam.characters);
+            if(activeChar.canMove()) {
+                if(arenaService.checkTile({x: tile.x, y: tile.y}, activeChar, myTeam.characters, enemyTeam.characters, battleData.wallPositions, false)) {
+                    cb(null, true);
+                }
+                else if(preparedAbility){
+                    var clientAbility = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
+                    var serverAbility = characterService.abilityForServer(clientAbility);
+                    if(serverAbility){
+                        serverAbility.cast(activeChar, null, myTeam.characters, enemyTeam.characters);
+                        clientAbility = characterService.abilityForClient(serverAbility.name, serverAbility.variant);
+                        activeChar.position = {x: tile.x, y: tile.y};
+                        cb(battleData);
+                    }
+                }
+                else if(Math.abs(activeChar.position.x-tile.x)<2 && Math.abs(activeChar.position.y-tile.y)<2){
+                    activeChar.soundBuffer.push('move');
+                    activeChar.position = {x: tile.x, y: tile.y};
+                    activeChar.spendEnergy(activeChar.moveCost);
+                    cb(battleData);
+                }
+            }
+            cleanBuffers(myTeam, enemyTeam);
+        });
+
+        function cleanBuffers(myTeam, enemyTeam){
+            for(var i=0;i<myTeam.characters.length;i++){
+                if (myTeam.characters[i].logBuffer.length>0) {
+                    myTeam.characters[i].logBuffer = [];
+                }
+                if (myTeam.characters[i].soundBuffer.length>0) {
+                    myTeam.characters[i].soundBuffer = [];
+                }
+            }
+
+            for(i=0;i<enemyTeam.characters.length;i++){
+                if (enemyTeam.characters[i].logBuffer.length>0) {
+                    enemyTeam.characters[i].logBuffer = [];
+                }
+                if (enemyTeam.characters[i].soundBuffer.length>0) {
+                    enemyTeam.characters[i].soundBuffer = [];
+                }
+            }
+        }
 
         socket.on('enemyTeamLoaded', function(room) {
             socket.broadcast.to(room).emit('enemyTeamLoadedResult');

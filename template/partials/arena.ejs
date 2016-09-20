@@ -93,7 +93,13 @@
                     </div>
                     <div class="queue-info">
                         <div class="queue">
-                            <div ng-repeat="player in queue track by $index" class="portrait" ng-style="{'border-color' : player.battleColor, 'background-image': 'url('+player.portrait+')'}"></div>
+                            <div ng-repeat="player in queue track by $index"
+                                 class="portrait"
+                                 ng-style="{'border-color' : player.battleColor, 'background-image': 'url('+player.portrait+')'}"
+                                 uib-tooltip="IP: {{player.initiativePoints.toFixed(0)}}(+{{(10+player.initiative/400).toFixed(2)}})"
+                                 tooltip-placement="top"
+                                 tooltip-append-to-body="true"
+                                 tooltip-animation="false"></div>
                         </div>
                         <button class="btn btn-default btn-end-turn icon" ng-class="{'waiting' : waitServ}" ng-style="{'background-color': queue[0].battleColor}" ng-disabled="!myTurn || $scope.activeChar.turnEnded || !enemyTeamLoaded" ng-click="endTurn()">{{getTurnTime()}}</button>
                         <div class="loader" ng-if="waitServ || !enemyTeamLoaded"></div>

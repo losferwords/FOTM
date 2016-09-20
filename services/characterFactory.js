@@ -62,7 +62,7 @@ Character.prototype.initChar = function(){
     self.curHealth=self.maxHealth;
     self.curEnergy=self.maxEnergy;
     self.curMana=self.maxMana;
-    self.initiativePoints = Math.round(self.initiative*10);
+    self.initiativePoints = (10+self.initiative/400)*10;
 };
 
 //Обновление персонажа в бою
@@ -75,7 +75,7 @@ Character.prototype.refreshChar = function(myTeam, enemyTeam){
     if(self.isDead) return; //Если сдохли от дот, больше ничего не делаем
     self.calcChar(); //Пересчитываем все параметры
 
-    self.initiativePoints += self.initiative*2;
+    self.initiativePoints += 10+self.initiative/400;
 
     //Восстанавливаем энергию
     self.curEnergy = self.maxEnergy;
@@ -105,7 +105,7 @@ Character.prototype.refreshChar = function(myTeam, enemyTeam){
             if(self.checkCooldownDrop()){
                 self.abilities[i].cd=0;
                 self.logBuffer.push(self.charName+" drop cooldown for '"+self.abilities[i].name+"'");
-                self.playSound("initiative");
+                self.soundBuffer.push("initiative");
             }
             else self.abilities[i].cd--;
         }
@@ -425,7 +425,7 @@ Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam){
     if(self.checkImmune(debuff.magicEffect())){
         self.logBuffer.push(self.charName + " didn't get effect '" + debuff.name + "' because immunity.");
         self.battleTextBuffer.push({type: "other", icon: debuff.icon(), color: getAbilityColor(debuff.role()), caster: caster, text: "Immune", crit: false});
-        self.playSound("dodge");
+        self.soundBuffer.push("dodge");
         return;
     }
 
@@ -671,14 +671,14 @@ Character.prototype.takeDamage = function(value, caster, ability, canBlock, canD
     if(value===0) {
         self.logBuffer.push(self.charName + " didn't take damage from '" + ability.name + "' of " + caster.charName + ", because immunity.");
         self.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: "Immune", crit: false});
-        self.playSound("dodge");
+        self.soundBuffer.push("dodge");
         return false;
     }
 
     if(canDodge){
         if(self.checkDodge()){
             self.logBuffer.push(self.charName + " dodged from '"+ability.name+"' of "+caster.charName);
-            self.playSound("dodge");
+            self.soundBuffer.push("dodge");
             self.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: "Dodge", crit: false});
             return false;
         }
@@ -723,7 +723,7 @@ Character.prototype.takeDamage = function(value, caster, ability, canBlock, canD
         if(self.checkBlock()){
             blockedDamage = Math.round(value*self.blockChance*1.5);
             value-=blockedDamage;
-            self.playSound("block");
+            self.soundBuffer.push("block");
         }
     }
 
@@ -750,7 +750,7 @@ Character.prototype.takeDamage = function(value, caster, ability, canBlock, canD
         self.isDead=true;
         self.portrait = "./images/assets/img/portraits/death.jpg";
         self.logBuffer.push(self.charName + " is dead");
-        self.playSound("death");
+        self.soundBuffer.push("death");
     }
     return true;
 };
@@ -828,7 +828,7 @@ Character.prototype.spendEnergy = function(value) {
     var self=this;
     if(self.checkLuck()){
         self.logBuffer.push(self.charName+" is very lucky and save his energy");
-        self.playSound("luck");
+        self.soundBuffer.push("luck");
     }
     else {
         if(self.curEnergy-value>0) {
@@ -931,7 +931,7 @@ Character.prototype.afterMiss = function (target, ability, myTeam, enemyTeam, do
     var debuffsForRemove=[];
     var currentEffect;
 
-    self.playSound("miss");
+    self.soundBuffer.push("miss");
     if(!doNotLog) self.logBuffer.push(self.charName+" miss against "+target+" with '"+ability.name+"'");
     self.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: self.charName, text: "Miss", crit: false});
 
@@ -1119,13 +1119,6 @@ Character.prototype.findAllies = function(myTeam, range){
         }
     }
     return allies;
-};
-
-//Функция воспроизводит звук на клиенте и записывает его в буфер, чтобы отправить на сервер
-Character.prototype.playSound = function(sound) {
-    var self = this;
-    soundService.playSound(sound);
-    self.soundBuffer.push(sound);
 };
 
 Character.prototype.getSize = function() {

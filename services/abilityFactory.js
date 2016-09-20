@@ -1197,7 +1197,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
+                caster.soundBuffer.push(this.name);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "move"},

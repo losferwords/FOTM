@@ -987,6 +987,11 @@ module.exports = {
             cd : ServerAbility.cd
         }
     },
+    abilityForServer: function (name, variant) {
+        var ServerAbility = AbilityFactory(name);
+        ServerAbility.variant = variant;
+        return ServerAbility;
+    },
     generateRandomRole: function(race) {
         var role;
         if(race=="human"){
