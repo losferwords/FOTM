@@ -1,6 +1,6 @@
 //Сервис для работы арены
 (function (module) {
-    module.service('arenaService', function(gettextCatalog, abilityService) {
+    module.service('arenaService', function(gettextCatalog, abilityService, effectService) {
         var battle = {};
         var map = [];
         return {
@@ -82,7 +82,12 @@
                 for(var i=0;i<chars.length;i++)
                 {
                     //Способности
-                    chars[i].abilities = abilityService.translateAbilities(chars[i].abilities);
+                    chars[i].abilities = abilityService.translateAbilities(chars[i].state.abilities);
+                    //Эффекты
+                    chars[i].buffs = effectService.translateEffects(chars[i].state.buffs);
+                    chars[i].debuffs = effectService.translateEffects(chars[i].state.debuffs);
+                    //Инвентарь
+                    chars[i].equip = chars[i].state.equip;
                 }
                 team.characters = chars;
                 return team;
@@ -93,7 +98,12 @@
                 for(var i=0;i<chars.length;i++)
                 {
                     //Способности
-                    chars[i].abilities = abilityService.translateAbilities(chars[i].abilities);
+                    chars[i].abilities = abilityService.translateAbilities(chars[i].state.abilities);
+                    //Эффекты
+                    chars[i].buffs = effectService.translateEffects(chars[i].state.buffs);
+                    chars[i].debuffs = effectService.translateEffects(chars[i].state.debuffs);
+                    //Инвентарь
+                    chars[i].equip = chars[i].state.equip;
                     //цвет
                     chars[i].battleColor=this.colorSwap(chars[i].battleColor);
                     //положение

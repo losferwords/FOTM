@@ -265,7 +265,7 @@ module.exports = function (serverIO) {
         socket.on('getAbilities', function(nameArray, cb){
             var abilityArray = [];
             for(var i=0;i<nameArray.length;i++){
-                abilityArray.push(characterService.abilityForClient(AbilityFactory(nameArray[i]).name, 3));
+                abilityArray.push(characterService.abilityForClient(AbilityFactory(nameArray[i])));
             }
             cb(abilityArray);
         });

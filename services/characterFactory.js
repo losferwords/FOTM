@@ -1,6 +1,8 @@
 var AbilityFactory = require('services/abilityFactory');
 var characterService = require('services/characterService');
 var arenaService = require('services/arenaService');
+var randomService = require('services/randomService');
+var effectFactory = require('services/effectFactory');
 
 //Фабрика, которая по сути является "классом" character
 var Character = function(char) {
@@ -11,39 +13,15 @@ var Character = function(char) {
         }
     }
 
-    //Наполняем массив способностей значениями в Character Factory, чтобы отправить на клиент
-    if(this.abilities) {
-        var abilitiesForClient = [];
-        for (var i = 0; i < this.abilities.length; i++) {
-            abilitiesForClient.push(characterService.abilityForClient(this.abilities[i].name, this.abilities[i].variant));
-        }
-        this.abilities = abilitiesForClient;
-    }
+    this.state = {
+        abilities: [],
+        equip: {},
+        buffs: [],
+        debuffs: []
+    };
 
-    //Обновляем инвентарь, если он потерялся после сервера
-    if(this.equip) {
-        var equip = characterService.getEquip(this.role); //Берём стандартный инвентарь для этой роли
-        for (var slot in equip) {
-            if (equip.hasOwnProperty(slot)) {
-                if(!this.equip[slot]) {
-                    //Если такого нет, значит это оффхэнд
-                    this.equip[slot]={};
-                    this.equip[slot].name="Void";
-                    this.equip[slot].slot="offHandWeapon";
-                    continue;
-                }
-                //наделяем функциями
-                for(var slotKey in equip[slot]){
-                    if (equip[slot].hasOwnProperty(slotKey)) {
-                        if(slotKey!=="sockets"){
-                            this.equip[slot][slotKey]=equip[slot][slotKey]();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
+    this.createEquipState();
+    this.createAbilitiesState();
     this.initChar();
 };
 
@@ -66,12 +44,12 @@ Character.prototype.initChar = function(){
 };
 
 //Обновление персонажа в бою
-Character.prototype.refreshChar = function(myTeam, enemyTeam){
+Character.prototype.refreshChar = function(myTeam, enemyTeam, walls){
     var self = this;
 
     if(self.isDead) return; //Если дохлый, то уже ничего делать не надо
     self.resetState(); //Сбрасываем состояние на начально
-    self.applyEffects(myTeam, enemyTeam); //Применяем все эффекты
+    self.applyEffects(myTeam, enemyTeam, walls); //Применяем все эффекты
     if(self.isDead) return; //Если сдохли от дот, больше ничего не делаем
     self.calcChar(); //Пересчитываем все параметры
 
@@ -110,6 +88,79 @@ Character.prototype.refreshChar = function(myTeam, enemyTeam){
             else self.abilities[i].cd--;
         }
     }
+
+    self.createAbilitiesState();
+    self.createEffectsState();
+};
+
+//Функция создаёт состояние способностей для сервера
+Character.prototype.createAbilitiesState = function() {
+    //создаём стэйт способностей
+    if(this.abilities) {
+        var abilitiesForClient = [];
+        for (var i = 0; i < this.abilities.length; i++) {
+            //Если способности только что пришли из БД, заполним их методами
+            if(!this.abilities[i].cast){
+                var variant = this.abilities[i].variant;
+                this.abilities[i] = AbilityFactory(this.abilities[i].name);
+                this.abilities[i].variant = variant;
+            }
+            abilitiesForClient.push(characterService.abilityForClient(this.abilities[i]));
+        }
+        this.state.abilities = abilitiesForClient;
+    }
+};
+
+//Функция создаёт состояние инвентаря для сервера
+Character.prototype.createEquipState = function() {
+    //Создаём стэйт инвентаря
+    if(this.equip) {
+        var equip = characterService.getEquip(this.role); //Берём стандартный инвентарь для этой роли
+        for (var slot in equip) {
+            if (equip.hasOwnProperty(slot)) {
+
+                if(!this.equip[slot]) {
+                    this.state.equip[slot] = {};
+                    //Если такого нет, значит это оффхэнд
+                    this.state.equip[slot].name="Void";
+                    this.state.equip[slot].slot="offHandWeapon";
+                    continue;
+                }
+                else {
+                    this.state.equip[slot]=this.equip[slot];
+                }
+
+                //наделяем функциями
+                for(var slotKey in equip[slot]){
+                    if (equip[slot].hasOwnProperty(slotKey)) {
+                        if(slotKey!=="sockets"){
+                            this.state.equip[slot][slotKey]=equip[slot][slotKey]();
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+
+//Функция создаёт состояние эффектов для сервера
+Character.prototype.createEffectsState = function() {
+    var buffsForClient = [];
+    var debuffsForClient = [];
+
+    if(this.buffs.length>0) {
+        for (var i = 0; i < this.buffs.length; i++) {
+            buffsForClient.push(characterService.effectForClient(this.buffs[i]));
+        }
+    }
+    if(this.debuffs.length>0) {
+        for (i = 0; i < this.debuffs.length; i++) {
+            debuffsForClient.push(characterService.effectForClient(this.debuffs[i]));
+        }
+    }
+
+    this.state.buffs = buffsForClient;
+    this.state.debuffs = debuffsForClient;
 };
 
 //Функция обнуляет состояние персонажа в бою
@@ -394,7 +445,7 @@ Character.prototype.calcItem = function(item) {
 };
 
 //Добавление баффа
-Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam){
+Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls){
     var self=this;
 
     if(self.isDead) return;
@@ -407,18 +458,18 @@ Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam){
         if(self.buffs[i].name===buff.name && self.buffs[i].caster===caster){
             if(buff.stacked()) {
                 if(self.buffs[i].stacks<self.buffs[i].maxStacks()) self.buffs[i].stacks++;
-                self.buffs[i].apply(self, myTeam, enemyTeam);
+                self.buffs[i].apply(self, myTeam, enemyTeam, walls);
             }
             self.buffs[i].left=buff.duration();
             return;
         }
     }
     self.buffs.push(buff);
-    buff.apply(self, myTeam, enemyTeam);
+    buff.apply(self, myTeam, enemyTeam, walls);
 };
 
 //Добавление дебаффа
-Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam){
+Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, walls){
     var self=this;
 
     if(self.isDead) return;
@@ -437,35 +488,35 @@ Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam){
         if(self.debuffs[i].name===debuff.name && self.debuffs[i].caster===caster){
             if(debuff.stacked()) {
                 if(self.debuffs[i].stacks<self.debuffs[i].maxStacks()) self.debuffs[i].stacks++;
-                self.debuffs[i].apply(self, enemyTeam, myTeam); //При дебаффе меняются местами
+                self.debuffs[i].apply(self, enemyTeam, myTeam, walls); //При дебаффе меняются местами
             }
             self.debuffs[i].left=debuff.duration();
             return;
         }
     }
     self.debuffs.push(debuff);
-    debuff.apply(self, enemyTeam, myTeam); //При дебаффе меняются местами
+    debuff.apply(self, enemyTeam, myTeam, walls); //При дебаффе меняются местами
 };
 
 //Применение эффектов за исключением дот и хот и без снятия left
-Character.prototype.updateMods = function(myTeam, enemyTeam) {
+Character.prototype.updateMods = function(myTeam, enemyTeam, walls) {
     var self = this;
 
     for(var i=0; i<self.buffs.length; i++){
         if(self.buffs[i].onlyStat()) {
-            self.buffs[i].apply(self, myTeam, enemyTeam);
+            self.buffs[i].apply(self, myTeam, enemyTeam, walls);
         }
     }
 
     for(i=0; i<self.debuffs.length; i++){
         if(self.debuffs[i].onlyStat()) {
-            self.debuffs[i].apply(self, myTeam, enemyTeam);
+            self.debuffs[i].apply(self, myTeam, enemyTeam, walls);
         }
     }
 };
 
 //Применение эффектов
-Character.prototype.applyEffects = function(myTeam, enemyTeam) {
+Character.prototype.applyEffects = function(myTeam, enemyTeam, walls) {
     var self = this;
     var buffsForRemove = [];
     var debuffsForRemove = [];
@@ -479,11 +530,11 @@ Character.prototype.applyEffects = function(myTeam, enemyTeam) {
                 buffsForRemove.push(i);
             }
             else {
-                self.buffs[i].apply(self, myTeam, enemyTeam);
+                self.buffs[i].apply(self, myTeam, enemyTeam, walls);
             }
         }
         else {
-            self.buffs[i].apply(self, myTeam, enemyTeam);
+            self.buffs[i].apply(self, myTeam, enemyTeam, walls);
         }
     }
 
@@ -498,11 +549,11 @@ Character.prototype.applyEffects = function(myTeam, enemyTeam) {
                 debuffsForRemove.push(i);
             }
             else {
-                self.debuffs[i].apply(self, myTeam, enemyTeam);
+                self.debuffs[i].apply(self, myTeam, enemyTeam, walls);
             }
         }
         else {
-            self.debuffs[i].apply(self, myTeam, enemyTeam);
+            self.debuffs[i].apply(self, myTeam, enemyTeam, walls);
         }
     }
 
@@ -604,7 +655,7 @@ Character.prototype.removeRandomDOT = function(myTeam, enemyTeam) {
 };
 
 //Функция крадёт у цели случайные баффы
-Character.prototype.stealRandomBuff = function(target, myTeam, enemyTeam) {
+Character.prototype.stealRandomBuff = function(target, myTeam, enemyTeam, walls) {
     var self = this;
     var stealedBuffName=false;
 
@@ -613,21 +664,21 @@ Character.prototype.stealRandomBuff = function(target, myTeam, enemyTeam) {
         stealedBuffName = target.buffs[removableBuffIndex].name;
         if(target.buffs[removableBuffIndex].stacked()){
             if(target.buffs[removableBuffIndex].stacks===1){
-                self.addBuff(effectService.effect(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self.charName, myTeam, enemyTeam);
+                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self.charName, myTeam, enemyTeam, walls);
                 target.buffs.splice(removableBuffIndex,1);
             }
             else {
-                self.addBuff(effectService.effect(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self.charName, myTeam, enemyTeam);
+                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self.charName, myTeam, enemyTeam, walls);
                 target.buffs[removableBuffIndex].stacks--;
             }
         }
         else {
             //Для некоторых спелов кастером нужно оставить иммено хозяина украденного эффекта
             if(target.buffs[removableBuffIndex].name==="Sanctuary"){
-                self.addBuff(effectService.effect(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), target.buffs[removableBuffIndex].caster, myTeam, enemyTeam);
+                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), target.buffs[removableBuffIndex].caster, myTeam, enemyTeam, walls);
             }
             else {
-                self.addBuff(effectService.effect(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self.charName, myTeam, enemyTeam);
+                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self.charName, myTeam, enemyTeam, walls);
             }
             target.buffs.splice(removableBuffIndex,1);
         }
@@ -647,7 +698,7 @@ Character.prototype.stealRandomBuff = function(target, myTeam, enemyTeam) {
 
 //Функция используется тогда, когда один из эффектов добавляет другие эффекты
 Character.prototype.addEffectFromEffects = function(name, variant) {
-    return effectService.effect(name, variant);
+    return effectFactory(name, variant);
 };
 
 //может ли перснонаж двигаться
@@ -1079,46 +1130,6 @@ Character.prototype.findEffect = function (effect) {
         if(self.debuffs[i].name===effect) return i;
     }
     return -1;
-};
-
-//поиск врагов в заданном диапазоне
-Character.prototype.findEnemies = function(enemyTeam, range){
-    var self = this;
-    var points = arenaService.findNearestPoints(self.position, range);
-
-    var enemies = [];
-    for(var i=0;i<points.length;i++){
-        for(j=0;j<enemyTeam.length;j++){
-            if(points[i].x==enemyTeam[j].position.x &&
-                points[i].y==enemyTeam[j].position.y &&
-                !enemyTeam[j].isDead &&
-                !arenaService.rayTrace({x: self.position.x*32+16, y: self.position.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16})
-            ){
-                enemies[enemies.length]=enemyTeam[j];
-            }
-        }
-    }
-    return enemies;
-};
-
-//поиск союзников в заданном диапазоне
-Character.prototype.findAllies = function(myTeam, range){
-    var self = this;
-    var points = arenaService.findNearestPoints(self.position, range);
-
-    var allies = [];
-    for(var i=0;i<points.length;i++){
-        for(j=0;j<myTeam.length;j++){
-            if(points[i].x==myTeam[j].position.x &&
-                points[i].y==myTeam[j].position.y &&
-                !myTeam[j].isDead &&
-                !arenaService.rayTrace({x: self.position.x*32+16, y: self.position.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16})
-            ){
-                allies[allies.length]=myTeam[j];
-            }
-        }
-    }
-    return allies;
 };
 
 Character.prototype.getSize = function() {

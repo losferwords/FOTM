@@ -10,7 +10,8 @@
         $scope.$on('$routeChangeSuccess', function () {
             $scope.char = currentTeam.get().characters[currentTeam.getCurrentCharIndex()];
             $scope.char.getParamTooltip = characterService.getParamTooltip;
-            $scope.char.abilities = abilityService.translateAbilities($scope.char.abilities);
+            $scope.char.abilities = abilityService.translateAbilities($scope.char.state.abilities);
+            $scope.char.equip = $scope.char.state.equip;
             $scope.populateAbilitiesBook('all');
         });
 
@@ -22,7 +23,8 @@
             mainSocket.emit('setCharAbilities', $scope.char._id, rawAbilities, function(char) {
                 $scope.char = char;
                 $scope.char.getParamTooltip = characterService.getParamTooltip;
-                $scope.char.abilities = abilityService.translateAbilities($scope.char.abilities);
+                $scope.char.abilities = abilityService.translateAbilities($scope.char.state.abilities);
+                $scope.char.equip = $scope.char.state.equip;
                 if($scope.interestingAbility){
                     for(var i=0;i<$scope.char.abilities.length;i++){
                         if($scope.interestingAbility.name==$scope.char.abilities[i].name) {

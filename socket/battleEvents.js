@@ -23,13 +23,13 @@ module.exports = function (serverIO) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.getActiveChar(battleData.queue[0], myTeam.characters, enemyTeam.characters);
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
             if(activeChar.canMove()) {
                 var range = 1;
                 if(preparedAbility){
                     var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
                     if(ability){
-                        range = ability.range;
+                        range = ability.range();
                     }
                 }
                 cb(arenaService.findMoves(activeChar, myTeam.characters, enemyTeam.characters, battleData.wallPositions, range));
@@ -38,18 +38,51 @@ module.exports = function (serverIO) {
             cb([]);
         });
 
+        socket.on('findEnemies', function(myTeamId, enemyTeamId, preparedAbility, cb) {
+            var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
+            var myTeam = battleData['team_'+myTeamId];
+            var enemyTeam = battleData['team_'+enemyTeamId];
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
+            if(preparedAbility){
+                var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
+                cb(arenaService.findEnemies(activeChar, enemyTeam.characters, ability.range(), battleData.wallPositions));
+            }
+        });
+
+        socket.on('findAllies', function(myTeamId, enemyTeamId, preparedAbility, cb) {
+            var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
+            var myTeam = battleData['team_'+myTeamId];
+            var enemyTeam = battleData['team_'+enemyTeamId];
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
+            if(preparedAbility){
+                var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
+                cb(arenaService.findAllies(activeChar, myTeam.characters, ability.range(), battleData.wallPositions));
+            }
+        });
+
+        socket.on('findCharacters', function(myTeamId, enemyTeamId, preparedAbility, cb) {
+            var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
+            var myTeam = battleData['team_'+myTeamId];
+            var enemyTeam = battleData['team_'+enemyTeamId];
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
+            if(preparedAbility){
+                var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
+                cb(arenaService.findAllies(activeChar, myTeam.characters, ability.range(), battleData.wallPositions).concat(arenaService.findEnemies(activeChar, enemyTeam.characters, ability.range(), battleData.wallPositions)));
+            }
+        });
+
         socket.on('turnEnded', function(myTeamId, enemyTeamId) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.getActiveChar(battleData.queue[0], myTeam.characters, enemyTeam.characters);
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
             battleData.turnsSpended++;
             activeChar.initiativePoints = activeChar.initiativePoints*0.2;
             for(var i=0;i<myTeam.characters.length;i++){
-                myTeam.characters[i].refreshChar(myTeam.characters, enemyTeam.characters);
+                myTeam.characters[i].refreshChar(myTeam.characters, enemyTeam.characters, battleData.wallPositions);
             }//Обновляем своих персонажей
             for(i=0;i<enemyTeam.characters.length;i++){
-                enemyTeam.characters[i].refreshChar(enemyTeam.characters, myTeam.characters);
+                enemyTeam.characters[i].refreshChar(enemyTeam.characters, myTeam.characters, battleData.wallPositions);
             }//Обновляем персонажей противника
 
             battleData.queue = arenaService.calcQueue(myTeam.characters, enemyTeam.characters);
@@ -242,26 +275,48 @@ module.exports = function (serverIO) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.getActiveChar(battleData.queue[0], myTeam.characters, enemyTeam.characters);
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
             if(activeChar.canMove()) {
                 if(arenaService.checkTile({x: tile.x, y: tile.y}, activeChar, myTeam.characters, enemyTeam.characters, battleData.wallPositions, false)) {
                     cb(null, true);
                 }
                 else if(preparedAbility){
-                    var clientAbility = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
-                    var serverAbility = characterService.abilityForServer(clientAbility);
-                    if(serverAbility){
-                        serverAbility.cast(activeChar, null, myTeam.characters, enemyTeam.characters);
-                        clientAbility = characterService.abilityForClient(serverAbility.name, serverAbility.variant);
+                    var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
+                    if(ability && checkAbilityForUse(ability, activeChar)){
+                        ability.cast(activeChar, null, myTeam.characters, enemyTeam.characters, battleData.wallPositions);
+                        activeChar.createAbilitiesState();
                         activeChar.position = {x: tile.x, y: tile.y};
-                        cb(battleData);
+                        io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
+                        cb();
+
                     }
                 }
                 else if(Math.abs(activeChar.position.x-tile.x)<2 && Math.abs(activeChar.position.y-tile.y)<2){
                     activeChar.soundBuffer.push('move');
                     activeChar.position = {x: tile.x, y: tile.y};
                     activeChar.spendEnergy(activeChar.moveCost);
-                    cb(battleData);
+                    io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
+                    cb();
+                }
+            }
+            cleanBuffers(myTeam, enemyTeam);
+        });
+
+        socket.on('castAbility', function(targetId, myTeamId, enemyTeamId, preparedAbility, cb){
+            var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
+            var myTeam = battleData['team_'+myTeamId];
+            var enemyTeam = battleData['team_'+enemyTeamId];
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
+            var targetChar = arenaService.findCharInQueue(targetId, myTeam.characters, enemyTeam.characters);
+            if(preparedAbility){
+                var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
+                if(ability && checkAbilityForUse(ability, activeChar)){
+                    ability.cast(activeChar, targetChar, myTeam.characters, enemyTeam.characters, battleData.wallPositions);
+                    activeChar.createAbilitiesState();
+                    arenaService.createEffectsStates(myTeam.characters, enemyTeam.characters);
+                    arenaService.calcCharacters(myTeam.characters, enemyTeam.characters);
+                    io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
+                    cb();
                 }
             }
             cleanBuffers(myTeam, enemyTeam);
@@ -275,6 +330,9 @@ module.exports = function (serverIO) {
                 if (myTeam.characters[i].soundBuffer.length>0) {
                     myTeam.characters[i].soundBuffer = [];
                 }
+                if (myTeam.characters[i].battleTextBuffer.length>0) {
+                    myTeam.characters[i].battleTextBuffer = [];
+                }
             }
 
             for(i=0;i<enemyTeam.characters.length;i++){
@@ -284,7 +342,34 @@ module.exports = function (serverIO) {
                 if (enemyTeam.characters[i].soundBuffer.length>0) {
                     enemyTeam.characters[i].soundBuffer = [];
                 }
+                if (enemyTeam.characters[i].battleTextBuffer.length>0) {
+                    enemyTeam.characters[i].battleTextBuffer = [];
+                }
             }
+        }
+
+        //Функция проверяет, можно ли использовать способность
+        function checkAbilityForUse(ability, char) {
+            if(ability.name == "Void") return false;
+            if(ability.name == "Dyers Eve" && (char.curHealth/char.maxHealth)>0.5) return false;
+            if(ability.targetType() == "move" && char.immobilized) return false;
+            if(ability.cd == 0){ //если она не на кулдауне
+                if(char.curEnergy - ability.energyCost()>0){ //на неё есть энергия
+                    if(char.curMana - ability.manaCost()>0){ //и мана
+                        if(ability.needWeapon()){ //Если для абилки нужно оружие
+                            if(!char.disarmed){ //и персонаж не в дизарме
+                                return true;
+                            }
+                        }
+                        else { //Если это магия
+                            if(!char.silenced){ //и персонаж не в молчанке
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         socket.on('enemyTeamLoaded', function(room) {
@@ -294,14 +379,5 @@ module.exports = function (serverIO) {
         socket.on('combatLogUpdate', function(room, message) {
             socket.broadcast.to(room).emit('combatLogUpdateSend', message);
         });
-
-        socket.on('updateActiveTeam', function(room, chars) {
-            socket.broadcast.to(room).emit('updateActiveTeamResult', chars);
-        });
-
-        socket.on('updateTeams', function(room, chars1, chars2) {
-            io.sockets.in(room).emit('updateTeamsResult', chars1, chars2);
-        });
-
     });
 };

@@ -9,6 +9,7 @@
 
         $scope.$on('$routeChangeSuccess', function () {
             $scope.char = currentTeam.get().characters[currentTeam.getCurrentCharIndex()];
+            $scope.char.equip = $scope.char.state.equip;
             $scope.char.getParamTooltip = characterService.getParamTooltip;
             $scope.roleColor = characterService.getRoleColor($scope.char.role);
             $scope.inventory = currentTeam.get().inventory;
@@ -285,6 +286,8 @@
             mainSocket.emit('setGemToSocket', currentTeam.get()._id, $scope.char._id, slot, socketIndex, $scope.dragGem.id, function(team) {
                 currentTeam.set(team);
                 $scope.char = currentTeam.get().characters[currentTeam.getCurrentCharIndex()];
+                $scope.char.equip = $scope.char.state.equip;
+                $scope.char.getParamTooltip = characterService.getParamTooltip;
                 $scope.inventory = currentTeam.get().inventory;
                 $scope.interestingItem = $scope.char.equip[slot];
             });
@@ -318,6 +321,8 @@
             mainSocket.emit('setGemToInventory', currentTeam.get()._id, $scope.char._id, slot, $scope.dragSocketGem.id, function(team) {
                 currentTeam.set(team);
                 $scope.char = currentTeam.get().characters[currentTeam.getCurrentCharIndex()];
+                $scope.char.equip = $scope.char.state.equip;
+                $scope.char.getParamTooltip = characterService.getParamTooltip;
                 $scope.inventory = currentTeam.get().inventory;
                 $scope.interestingItem = $scope.char.equip[slot];
             });

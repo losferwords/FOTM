@@ -90,7 +90,7 @@ module.exports = {
         var availablePoints = [];
 
         //Убираем себя из списка тимы, потому что на своём месте можно остаться при чардже
-        var targetEnemies = target.findEnemies(myTeam, 1);
+        var targetEnemies = self.findEnemies(char, enemyTeam, 1, walls);
         for(var k=0;k<targetEnemies.length;k++){
             if(targetEnemies[k].charName == char.charName){
                 return true;
@@ -285,24 +285,42 @@ module.exports = {
         }
         return result;
     },
-    //Возвращает активного персонажа из очереди
-    getActiveChar: function(active, team1, team2) {
-        var activeChar;
-        for(var i=0; i<team1.length; i++){
-            if(active._id == team1[i]._id){
-                activeChar = team1[i];
+    //Находит персонажа в очереди по ID
+    findCharInQueue: function(id, myTeam, enemyTeam) {
+        var char;
+        for(var i=0; i<myTeam.length; i++){
+            if(id == myTeam[i]._id){
+                char = myTeam[i];
                 break;
             }
         }
-        if(!activeChar) {
-            for(i=0; i<team2.length; i++){
-                if(active._id == team2[i]._id){
-                    activeChar = team2[i];
+        if(!char) {
+            for(i=0; i<enemyTeam.length; i++){
+                if(id == enemyTeam[i]._id){
+                    char = enemyTeam[i];
                     break;
                 }
             }
         }
-        return activeChar;
+        return char;
+    },
+    //Создаёт стэйты эффектов для персонажей в очереди
+    createEffectsStates: function(myTeamChars, enemyTeamChars) {
+        for(var i=0; i<myTeamChars.length; i++){
+            myTeamChars[i].createEffectsState();
+        }
+        for(i=0; i<enemyTeamChars.length; i++){
+            enemyTeamChars[i].createEffectsState();
+        }
+    },
+    //Пересчитываем персонажей
+    calcCharacters: function(myTeamChars, enemyTeamChars) {
+        for(var i=0; i<myTeamChars.length; i++){
+            myTeamChars[i].calcChar();
+        }
+        for(i=0; i<enemyTeamChars.length; i++){
+            enemyTeamChars[i].calcChar();
+        }
     },
     //Проверка, мой ли сейчас ход
     checkTurn: function(myTeam, queue) {
@@ -348,8 +366,47 @@ module.exports = {
     map1Dto2D: function(map1D) {
         return { x: map1D%10, y: (map1D/10 | 0)}
     },
+    //поиск союзников в заданном диапазоне
+    findAllies: function(char, charArray, range, walls){
+        var self = this;
+        var points = self.findNearestPoints(char.position, range);
+
+        var result = [];
+        for(var i=0;i<points.length;i++){
+            for(var j=0;j<charArray.length;j++){
+                if(points[i].x == charArray[j].position.x &&
+                    points[i].y == charArray[j].position.y &&
+                    !charArray[j].isDead &&
+                    !self.rayTrace({x: char.position.x*32+16, y: char.position.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16}, walls)
+                ){
+                    result.push(charArray[j]);
+                }
+            }
+        }
+        return result;
+    },
+    //поиск противников в заданном диапазоне
+    findEnemies: function(char, charArray, range, walls){
+        var self = this;
+        var points = self.findNearestPoints(char.position, range);
+
+        var result = [];
+        for(var i=0;i<points.length;i++){
+            for(var j=0;j<charArray.length;j++){
+                var convertedPos = self.convertEnemyPosition(charArray[j].position.x, charArray[j].position.y);
+                if(points[i].x == convertedPos.x &&
+                    points[i].y == convertedPos.y &&
+                    !charArray[j].isDead &&
+                    !self.rayTrace({x: char.position.x*32+16, y: char.position.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16}, walls)
+                ){
+                    result.push(charArray[j]);
+                }
+            }
+        }
+        return result;
+    },
     //Функция трассировки для нахождения препятствий между двумя точками (алгоритм Брезенхема)
-    rayTrace: function(startCoordinates, endCoordinates) {
+    rayTrace: function(startCoordinates, endCoordinates, walls) {
         var coordinatesArray = [];
         //Получаем координаты
         var x1 = startCoordinates.x;
@@ -384,7 +441,6 @@ module.exports = {
             //определяем клетку на карте, которой принадлежит эта точка
             var x=coordinatesArray[i].x;
             var y=coordinatesArray[i].y;
-            var map = this.getMap();
 
             //Исключаем варианты, когда точка находится ровно в уголке тайла, чтобы исключить диагонали
             if(x%32===0 && y%32===0) continue;
@@ -395,7 +451,9 @@ module.exports = {
             };
             var mapIndex=this.map2Dto1D(tile);
 
-            if(map[mapIndex].wall) return true;
+            for(var j=0;j<walls.length;j++) {
+                if(walls[j]==mapIndex) return true
+            }
         }
         //Если стенок не встретилось
         return false;

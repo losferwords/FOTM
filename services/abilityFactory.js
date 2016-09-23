@@ -1,3 +1,6 @@
+var effectFactory = require('services/effectFactory');
+var randomService = require('services/randomService');
+var arenaService = require('services/arenaService');
 
 //Фабрика создания способностей по имени
 var Ability = function(name){
@@ -7,7 +10,7 @@ var Ability = function(name){
             role : function() {return "void"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--void)"},
             variant: 3,
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 return false;
             },
             targetType : function() { return "self"},
@@ -27,7 +30,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "sentinel"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--StrongArmOfTheLaw)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -38,9 +41,9 @@ var Ability = function(name){
                         physDamage=caster.applyCrit(physDamage);
                     }
                     physDamage=target.applyResistance(physDamage, false);
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                        target.addDebuff(effectService.effect("Strong Arm Of The Law", this.variant), caster.charName, myTeam, enemyTeam);
+                        target.addDebuff(effectFactory("Strong Arm Of The Law", this.variant), caster.charName, myTeam, enemyTeam, walls);
                     }
                 }
                 else {
@@ -63,20 +66,20 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "sentinel"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DefenderOfTheFaith)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
-                caster.playSound(this.name);
+                caster.soundBuffer.push(this.name);
                 if(this.variant===1 || this.variant===3 || this.variant===5){
                     caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                    target.addBuff(effectService.effect("Defender Of The Faith", this.variant), caster.charName, myTeam, enemyTeam);
+                    target.addBuff(effectFactory("Defender Of The Faith", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 }
                 else {
                     caster.logBuffer.push(caster.charName+" cast '"+this.name);
                     for(var i=0; i<myTeam.length;i++){
                         if(!myTeam[i].isDead) {
-                            myTeam[i].addBuff(effectService.effect("Defender Of The Faith", this.variant), caster.charName, myTeam, enemyTeam);
+                            myTeam[i].addBuff(effectFactory("Defender Of The Faith", this.variant), caster.charName, myTeam, enemyTeam, walls);
                         }
 
                     }
@@ -112,19 +115,19 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "sentinel"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Disarm)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 if(caster.checkHit()){
                     caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
 
                     if(target.controlImmune) {
                         caster.logBuffer.push(target.charName+" has immunity to control effects!");
                     }
                     else {
-                        target.addDebuff(effectService.effect("Disarm", this.variant), caster.charName, myTeam, enemyTeam);
+                        target.addDebuff(effectFactory("Disarm", this.variant), caster.charName, myTeam, enemyTeam, walls);
                     }
                 }
                 else {
@@ -147,7 +150,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "sentinel"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--WalkAway)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -159,14 +162,14 @@ var Ability = function(name){
                     }
                     physDamage=target.applyResistance(physDamage, false);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                         if(target.controlImmune) {
                             caster.logBuffer.push(target.charName+" has immunity to control effects!");
                         }
                         else {
-                            caster.knockBack(target, myTeam, enemyTeam);
-                            target.addDebuff(effectService.effect("Walk Away", this.variant), caster.charName, myTeam, enemyTeam);
+                            arenaService.knockBack(target, caster, myTeam, enemyTeam, walls);
+                            target.addDebuff(effectFactory("Walk Away", this.variant), caster.charName, myTeam, enemyTeam, walls);
                         }
                     }
                 }
@@ -190,14 +193,14 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "sentinel"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Sanctuary)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
 
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                caster.playSound(this.name);
-                target.addBuff(effectService.effect("Sanctuary", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                target.addBuff(effectFactory("Sanctuary", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "allyNotMe"},
@@ -215,7 +218,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "sentinel"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ThePunishmentDue)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -227,11 +230,11 @@ var Ability = function(name){
                     }
                     physDamage=target.applyResistance(physDamage, false);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                        var newEffect=effectService.effect("The Punishment Due", this.variant);
+                        var newEffect=effectFactory("The Punishment Due", this.variant);
                         newEffect.bleedDamage=physDamage*this.variant*0.1;
-                        target.addDebuff(newEffect, caster.charName, myTeam, enemyTeam);
+                        target.addDebuff(newEffect, caster.charName, myTeam, enemyTeam, walls);
                     }
                 }
                 else {
@@ -254,7 +257,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "sentinel"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ComeAndGetIt)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -266,13 +269,13 @@ var Ability = function(name){
                     }
                     physDamage=target.applyResistance(physDamage, false);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                         if(target.controlImmune) {
                             caster.logBuffer.push(target.charName+" has immunity to control effects!");
                         }
                         else {
-                            target.charge(caster, enemyTeam, myTeam);
+                            arenaService.charge(caster, target, enemyTeam, myTeam, walls);
                         }
                     }
                 }
@@ -296,13 +299,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "sentinel"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--NewFaith)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
 
-                caster.playSound(this.name);
+                caster.soundBuffer.push(this.name);
 
                 if(target.findEffect("Locked And Loaded")!==-1) {
                     caster.logBuffer.push("Debuffs can't be removed, because target is under 'Locked And Loaded' effect!");
@@ -339,7 +342,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "slayer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DieByTheSword)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -351,7 +354,7 @@ var Ability = function(name){
                     }
                     physDamage=target.applyResistance(physDamage, false);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                 }
                 else {
@@ -374,7 +377,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "slayer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ReignInBlood)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -386,9 +389,9 @@ var Ability = function(name){
                     }
                     physDamage=target.applyResistance(physDamage, false);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                        caster.addBuff(effectService.effect("Reign In Blood", this.variant), caster.charName, myTeam, enemyTeam);
+                        caster.addBuff(effectFactory("Reign In Blood", this.variant), caster.charName, myTeam, enemyTeam, walls);
                     }
                 }
                 else {
@@ -411,7 +414,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "slayer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Grinder)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
 
@@ -422,8 +425,8 @@ var Ability = function(name){
                     caster.logBuffer.push(caster.charName+"'s grinder looking for meat!");
                 }
 
-                caster.playSound(this.name);
-                var nearbyEnemies = caster.findEnemies(enemyTeam, 1);
+                caster.soundBuffer.push(this.name);
+                var nearbyEnemies = arenaService.findEnemies(caster, enemyTeam, 1, walls);
                 for (var i = 0; i < nearbyEnemies.length; i++) {
                     //Для той же цели не проверяем miss
                     if(caster.checkHit() || nearbyEnemies[i].charName===target.charName){
@@ -457,7 +460,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "slayer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FollowTheTears)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
 
                 if(caster.immobilized){
                     caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
@@ -465,7 +468,7 @@ var Ability = function(name){
                     return;
                 }
                 //Пробуем сделать чардж, если не удалось, пишем в лог
-                if(!caster.charge(target, myTeam, enemyTeam)) {
+                if(!arenaService.charge(target, caster, myTeam, enemyTeam, walls)) {
                     caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
                     return;
@@ -483,7 +486,7 @@ var Ability = function(name){
                     }
                     physDamage=target.applyResistance(physDamage, false);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                 }
                 else {
@@ -506,13 +509,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "slayer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--MadeInHell)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
-                caster.addBuff(effectService.effect("Made In Hell", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                caster.addBuff(effectFactory("Made In Hell", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "self"},
@@ -530,13 +533,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "slayer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--SpillTheBlood)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
-                caster.addBuff(effectService.effect("Spill The Blood", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                caster.addBuff(effectFactory("Spill The Blood", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "self"},
@@ -554,13 +557,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "slayer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DyersEve)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
-                caster.addBuff(effectService.effect("Dyers Eve", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                caster.addBuff(effectFactory("Dyers Eve", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 var heal=(500+this.variant*500)*(1+caster.spellPower);
                 var critical = caster.checkCrit();
                 if (critical) {
@@ -584,14 +587,14 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "slayer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--IDontWannaStop)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
+                caster.soundBuffer.push(this.name);
                 caster.takeEnergy(100+this.variant*150, caster, this.name, false);
-                caster.addBuff(effectService.effect("I Dont Wanna Stop", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.addBuff(effectFactory("I Dont Wanna Stop", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "self"},
@@ -611,7 +614,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "redeemer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ShotDownInFlames)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -628,7 +631,7 @@ var Ability = function(name){
 
                     var totalDamage = physDamage+magicDamage;
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                 }
                 else {
@@ -651,7 +654,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "redeemer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ElectricEye)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -668,7 +671,7 @@ var Ability = function(name){
 
                     var totalDamage = physDamage+magicDamage;
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                 }
                 else {
@@ -691,14 +694,14 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "redeemer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--LightsInTheSky)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
 
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                caster.playSound(this.name);
-                target.addBuff(effectService.effect("Lights In The Sky", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                target.addBuff(effectFactory("Lights In The Sky", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "ally"},
@@ -716,7 +719,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "redeemer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Thunderstruck)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -728,13 +731,13 @@ var Ability = function(name){
                     }
                     magicDamage=target.applyResistance(magicDamage, true);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                         if(target.controlImmune) {
                             caster.logBuffer.push(target.charName+" has immunity to control effects!");
                         }
                         else {
-                            target.addDebuff(effectService.effect("Thunderstruck", this.variant), caster.charName, myTeam, enemyTeam);
+                            target.addDebuff(effectFactory("Thunderstruck", this.variant), caster.charName, myTeam, enemyTeam, walls);
                         }
                     }
                 }
@@ -758,13 +761,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "redeemer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--YouAintNoAngel)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
-                caster.addBuff(effectService.effect("You Aint No Angel", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                caster.addBuff(effectFactory("You Aint No Angel", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "self"},
@@ -782,14 +785,14 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "redeemer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--StateOfGrace)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
+                caster.soundBuffer.push(this.name);
                 caster.takeEnergy(caster.maxEnergy, caster, this.name, false);
-                caster.addBuff(effectService.effect("State Of Grace", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.addBuff(effectFactory("State Of Grace", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "self"},
@@ -807,7 +810,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "redeemer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--MyLastWords)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -824,7 +827,7 @@ var Ability = function(name){
 
                     var totalDamage = physDamage+magicDamage;
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                 }
                 else {
@@ -847,14 +850,14 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "redeemer"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ComeCoverMe)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                caster.playSound(this.name);
-                target.charge(caster, myTeam, enemyTeam);
-                target.addBuff(effectService.effect("Come Cover Me", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                arenaService.charge(caster, target, myTeam, enemyTeam, walls);
+                target.addBuff(effectFactory("Come Cover Me", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "allyNotMe"},
@@ -874,7 +877,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "ripper"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--InjectTheVenom)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -886,9 +889,9 @@ var Ability = function(name){
                     }
                     physDamage=target.applyResistance(physDamage, false);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                        target.addDebuff(effectService.effect("Inject The Venom", this.variant), caster.charName, myTeam, enemyTeam);
+                        target.addDebuff(effectFactory("Inject The Venom", this.variant), caster.charName, myTeam, enemyTeam, walls);
                     }
                 }
                 else {
@@ -911,13 +914,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "ripper"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Invisible)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
-                caster.addBuff(effectService.effect("Invisible", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                caster.addBuff(effectFactory("Invisible", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "self"},
@@ -935,7 +938,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "ripper"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Jawbreaker)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -947,13 +950,13 @@ var Ability = function(name){
                     }
                     physDamage=target.applyResistance(physDamage, false);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                         if(target.controlImmune) {
                             caster.logBuffer.push(target.charName+" has immunity to control effects!");
                         }
                         else {
-                            target.addDebuff(effectService.effect("Jawbreaker", this.variant), caster.charName, myTeam, enemyTeam);
+                            target.addDebuff(effectFactory("Jawbreaker", this.variant), caster.charName, myTeam, enemyTeam, walls);
                         }
                     }
                 }
@@ -977,7 +980,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "ripper"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HogTied)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
 
                 if(caster.immobilized){
                     caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
@@ -985,7 +988,7 @@ var Ability = function(name){
                     return;
                 }
                 //Пробуем сделать чардж, если не удалось, пишем в лог
-                if(!caster.charge(target, myTeam, enemyTeam)) {
+                if(!arenaService.charge(target, caster, myTeam, enemyTeam, walls)) {
                     caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
                     return;
@@ -1002,13 +1005,13 @@ var Ability = function(name){
                     }
                     physDamage=target.applyResistance(physDamage, false);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                         if(target.controlImmune) {
                             caster.logBuffer.push(target.charName+" has immunity to control effects!");
                         }
                         else {
-                            target.addDebuff(effectService.effect("Hog Tied", this.variant), caster.charName, myTeam, enemyTeam);
+                            target.addDebuff(effectFactory("Hog Tied", this.variant), caster.charName, myTeam, enemyTeam, walls);
                         }
                     }
                 }
@@ -1032,13 +1035,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "ripper"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--RunningFree)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
-                caster.addBuff(effectService.effect("Running Free", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                caster.addBuff(effectFactory("Running Free", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.removeImmobilization(myTeam, enemyTeam);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -1057,13 +1060,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "ripper"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FastAsTheShark)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
-                caster.addBuff(effectService.effect("Fast As The Shark", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                caster.addBuff(effectFactory("Fast As The Shark", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "self"},
@@ -1081,7 +1084,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "ripper"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Prowler)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -1093,13 +1096,13 @@ var Ability = function(name){
                     }
                     physDamage=target.applyResistance(physDamage, false);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                         if(target.controlImmune) {
                             caster.logBuffer.push(target.charName+" has immunity to control effects!");
                         }
                         else {
-                            target.addDebuff(effectService.effect("Prowler", this.variant), caster.charName, myTeam, enemyTeam);
+                            target.addDebuff(effectFactory("Prowler", this.variant), caster.charName, myTeam, enemyTeam, walls);
                         }
                     }
                 }
@@ -1123,13 +1126,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "ripper"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FadeToBlack)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                caster.playSound(this.name);
-                target.addBuff(effectService.effect("Fade To Black", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                target.addBuff(effectFactory("Fade To Black", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "allyNotMe"},
@@ -1149,7 +1152,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "prophet"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Stargazer)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -1167,9 +1170,9 @@ var Ability = function(name){
 
                     var totalDamage = physDamage+magicDamage;
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                        caster.addBuff(effectService.effect("Stargazer", this.variant), caster.charName, myTeam, enemyTeam);
+                        caster.addBuff(effectFactory("Stargazer", this.variant), caster.charName, myTeam, enemyTeam, walls);
                     }
                 }
                 else {
@@ -1192,7 +1195,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "prophet"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--SpeedOfLight)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -1215,23 +1218,23 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "prophet"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--NeverAWord)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
 
                 if(caster.checkHit()) {
                     caster.logBuffer.push(caster.charName + " cast '" + this.name + "' on " + target.charName);
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
 
-                    var nearbyEnemies = target.findAllies(enemyTeam, 1);
+                    var nearbyEnemies = arenaService.findEnemies(target, enemyTeam, 1, walls);
                     for (var i = 0; i < nearbyEnemies.length; i++) {
                         if (caster.checkHit()) {
                             if(nearbyEnemies[i].controlImmune) {
                                 caster.logBuffer.push(nearbyEnemies[i].charName+" has immunity to control effects!");
                             }
                             else {
-                                nearbyEnemies[i].addDebuff(effectService.effect("Never A Word", this.variant), caster.charName, myTeam, enemyTeam);
+                                nearbyEnemies[i].addDebuff(effectFactory("Never A Word", this.variant), caster.charName, myTeam, enemyTeam, walls);
                             }
                         }
                         else {
@@ -1259,14 +1262,14 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "prophet"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Prophecy)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 if(caster.checkHit()){
                     caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                    caster.playSound(this.name);
-                    target.addDebuff(effectService.effect("Prophecy", this.variant), caster.charName, myTeam, enemyTeam);
+                    caster.soundBuffer.push(this.name);
+                    target.addDebuff(effectFactory("Prophecy", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 }
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
@@ -1288,18 +1291,18 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "prophet"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--LetsMeTakeIt)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                caster.playSound(this.name);
+                caster.soundBuffer.push(this.name);
                 if(target.findEffect("Locked And Loaded")!==-1) {
                     caster.logBuffer.push("Buffs can't be stolen, because target is under 'Locked And Loaded' effect!");
                     caster.afterCast(this.name, myTeam, enemyTeam);
                 }
                 else {
-                    var stealedSpell = caster.stealRandomBuff(target, myTeam, enemyTeam);
+                    var stealedSpell = caster.stealRandomBuff(target, myTeam, enemyTeam, walls);
                     if(stealedSpell==="Powerslave") caster.afterCast(this.name+"_Powerslave", myTeam, enemyTeam);
                     else caster.afterCast(this.name, myTeam, enemyTeam);
                 }
@@ -1319,7 +1322,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "prophet"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--BrainDamage)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -1336,7 +1339,7 @@ var Ability = function(name){
                     }
                     magicDamage=target.applyResistance(magicDamage, true);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                 }
                 else {
@@ -1359,13 +1362,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "prophet"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--InfiniteDreams)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                caster.playSound(this.name);
-                target.addBuff(effectService.effect("Infinite Dreams", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                target.addBuff(effectFactory("Infinite Dreams", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "ally"},
@@ -1383,14 +1386,14 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "prophet"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--CaughtSomewhereInTime)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 if(caster.checkHit()){
                     caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                    caster.playSound(this.name);
-                    target.addDebuff(effectService.effect("Caught Somewhere In Time", this.variant), caster.charName, myTeam, enemyTeam);
+                    caster.soundBuffer.push(this.name);
+                    target.addDebuff(effectFactory("Caught Somewhere In Time", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 }
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
@@ -1414,7 +1417,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "malefic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FamilyTree)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -1423,8 +1426,8 @@ var Ability = function(name){
                 var physDamage = randomService.randomInt(caster.minDamage*(this.variant*0.1+0.8), caster.maxDamage*(this.variant*0.1+0.8));
                 var magicDamage = (150+this.variant*70)*(1+caster.spellPower);
 
-                caster.playSound(this.name);
-                var nearbyEnemies = caster.findEnemies(enemyTeam, 2);
+                caster.soundBuffer.push(this.name);
+                var nearbyEnemies = arenaService.findEnemies(caster, enemyTeam, 2, walls);
                 for (var i = 0; i < nearbyEnemies.length; i++) {
                     if(caster.checkHit()){
                         var critical = caster.checkCrit();
@@ -1459,7 +1462,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "malefic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--BurningAmbition)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -1471,13 +1474,13 @@ var Ability = function(name){
                     }
                     magicDamage=target.applyResistance(magicDamage, true);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                         if(target.controlImmune) {
                             caster.logBuffer.push(target.charName+" has immunity to control effects!");
                         }
                         else {
-                            target.addDebuff(effectService.effect("Burning Ambition", this.variant), caster.charName, myTeam, enemyTeam);
+                            target.addDebuff(effectFactory("Burning Ambition", this.variant), caster.charName, myTeam, enemyTeam, walls);
                         }
                     }
                 }
@@ -1501,7 +1504,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "malefic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Fireball)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -1514,13 +1517,14 @@ var Ability = function(name){
                     }
                     magicDamage = target.applyResistance(magicDamage, true);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
 
                     //АОЕ
                     magicDamage = (1500 - this.variant * 200) * (1 + caster.spellPower);
 
-                    var nearbyEnemies = target.findAllies(enemyTeam, 1);
+                    var nearbyEnemies = arenaService.findEnemies(target, enemyTeam, 1, walls);
+
                     for (var i = 0; i < nearbyEnemies.length; i++) {
                         if (nearbyEnemies[i].charName !== target.charName) {
                             if (caster.checkHit()) {
@@ -1557,14 +1561,14 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "malefic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ThankGodForTheBomb)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 if(caster.checkHit()){
                     caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                    caster.playSound(this.name);
-                    target.addDebuff(effectService.effect("Thank God For The Bomb", this.variant), caster.charName, myTeam, enemyTeam);
+                    caster.soundBuffer.push(this.name);
+                    target.addDebuff(effectFactory("Thank God For The Bomb", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 }
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
@@ -1586,13 +1590,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "malefic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Powerslave)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
-                caster.addBuff(effectService.effect("Powerslave", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                caster.addBuff(effectFactory("Powerslave", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "self"},
@@ -1610,13 +1614,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "malefic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Cauterization)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                caster.playSound(this.name);
-                target.addBuff(effectService.effect("Cauterization", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                target.addBuff(effectFactory("Cauterization", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "ally"},
@@ -1634,13 +1638,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "malefic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--DownInFlames)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
-                caster.addBuff(effectService.effect("Down In Flames", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                caster.addBuff(effectFactory("Down In Flames", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "self"},
@@ -1658,13 +1662,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "malefic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FightFireWithFire)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
-                target.addBuff(effectService.effect("Fight Fire With Fire", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                target.addBuff(effectFactory("Fight Fire With Fire", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "ally"},
@@ -1684,7 +1688,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "cleric"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HammerOfTheGods)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -1702,7 +1706,7 @@ var Ability = function(name){
 
                     var totalDamage = physDamage+magicDamage;
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                         caster.takeMana(totalDamage*0.5, caster, this.name, critical);
                     }
@@ -1727,13 +1731,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "cleric"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--MercyfulFate)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                caster.playSound(this.name);
-                target.addBuff(effectService.effect("Mercyful Fate", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                target.addBuff(effectFactory("Mercyful Fate", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "ally"},
@@ -1751,7 +1755,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "cleric"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--LayingOnHands)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -1761,7 +1765,7 @@ var Ability = function(name){
                     heal = caster.applyCrit(heal);
                 }
 
-                caster.playSound(this.name);
+                caster.soundBuffer.push(this.name);
                 target.takeHeal(heal, caster, {name: this.name, icon: this.icon(), role: this.role()}, critical);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -1780,7 +1784,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "cleric"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HolySmoke)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -1795,7 +1799,7 @@ var Ability = function(name){
                     if (critical) {
                         heal = caster.applyCrit(heal);
                     }
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     target.takeHeal(heal, caster, {name: this.name, icon: this.icon(), role: this.role()}, critical);
                 }
                 else {
@@ -1807,7 +1811,7 @@ var Ability = function(name){
                         }
                         magicDamage=target.applyResistance(magicDamage, true);
 
-                        caster.playSound(this.name);
+                        caster.soundBuffer.push(this.name);
                         target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                     }
                     else {
@@ -1831,12 +1835,12 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "cleric"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--CleanseTheSoul)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                caster.playSound(this.name);
+                caster.soundBuffer.push(this.name);
 
                 if(target.findEffect("Locked And Loaded")!==-1) {
                     caster.logBuffer.push("Debuffs can't be removed, because target is under 'Locked And Loaded' effect!");
@@ -1864,13 +1868,13 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "cleric"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HallowedBeThyName)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                caster.playSound(this.name);
-                target.addBuff(effectService.effect("Hallowed Be Thy Name", this.variant), caster.charName, myTeam, enemyTeam);
+                caster.soundBuffer.push(this.name);
+                target.addBuff(effectFactory("Hallowed Be Thy Name", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "ally"},
@@ -1888,15 +1892,15 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "cleric"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HitTheLights)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
-                caster.playSound(this.name);
+                caster.soundBuffer.push(this.name);
 
                 var magicDamage = (775-this.variant*75)*(1+caster.spellPower);
-                var nearbyEnemies = caster.findEnemies(enemyTeam, 2);
+                var nearbyEnemies = arenaService.findEnemies(caster, enemyTeam, 2, walls);
                 for (var i = 0; i < nearbyEnemies.length; i++) {
                     if(caster.checkHit()){
                         var critical = caster.checkCrit();
@@ -1913,7 +1917,7 @@ var Ability = function(name){
                 }
 
                 var heal=(325+this.variant*75)*(1+caster.spellPower);
-                var nearbyAllies = caster.findAllies(myTeam, 2);
+                var nearbyAllies = arenaService.findAllies(caster, myTeam, 2, walls);
                 for (i = 0; i < nearbyAllies.length; i++) {
                     critical = caster.checkCrit();
                     if (critical) {
@@ -1939,16 +1943,16 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "cleric"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--HeavenCanWait)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                caster.playSound(this.name);
+                caster.soundBuffer.push(this.name);
 
                 target.removeAllDebuffs(myTeam, enemyTeam);
 
-                target.addBuff(effectService.effect("Heaven Can Wait", this.variant), caster.charName, myTeam, enemyTeam);
+                target.addBuff(effectFactory("Heaven Can Wait", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "ally"},
@@ -1968,7 +1972,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "heretic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Bloodsucker)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -1984,7 +1988,7 @@ var Ability = function(name){
                     physDamage=target.applyResistance(physDamage, false);
                     magicDamage=target.applyResistance(magicDamage, true);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     var totalDamage = physDamage+magicDamage;
 
                     if(target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
@@ -2011,7 +2015,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "heretic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--FearOfTheDark)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -2023,9 +2027,9 @@ var Ability = function(name){
                     }
                     magicDamage = target.applyResistance(magicDamage, true);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     if(target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                        target.addDebuff(effectService.effect("Fear Of The Dark", this.variant), caster.charName, myTeam, enemyTeam);
+                        target.addDebuff(effectFactory("Fear Of The Dark", this.variant), caster.charName, myTeam, enemyTeam, walls);
                     }
                 }
                 else {
@@ -2048,14 +2052,14 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "heretic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--CreepingDeath)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 if(caster.checkHit()){
                     caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                    caster.playSound(this.name);
-                    target.addDebuff(effectService.effect("Creeping Death", this.variant), caster.charName, myTeam, enemyTeam);
+                    caster.soundBuffer.push(this.name);
+                    target.addDebuff(effectFactory("Creeping Death", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 }
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
@@ -2077,14 +2081,14 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "heretic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--SpreadingTheDisease)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 if(caster.checkHit()){
                     caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                    caster.playSound(this.name);
-                    target.addDebuff(effectService.effect("Spreading The Disease", this.variant), caster.charName, myTeam, enemyTeam);
+                    caster.soundBuffer.push(this.name);
+                    target.addDebuff(effectFactory("Spreading The Disease", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 }
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
@@ -2106,12 +2110,12 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "heretic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Purgatory)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                caster.playSound(this.name);
+                caster.soundBuffer.push(this.name);
 
                 if(target.findEffect("Locked And Loaded")!==-1) {
                     caster.logBuffer.push("Buffs can't be removed, because target is under 'Locked And Loaded' effect!");
@@ -2139,15 +2143,15 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "heretic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ChildrenOfTheDamned)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
 
                 if(caster.checkHit()){
                     caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                    caster.playSound(this.name);
-                    target.addDebuff(effectService.effect("Children Of The Damned", this.variant), caster.charName, myTeam, enemyTeam);
+                    caster.soundBuffer.push(this.name);
+                    target.addDebuff(effectFactory("Children Of The Damned", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 }
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
@@ -2169,7 +2173,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "heretic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--LockedAndLoaded)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -2180,14 +2184,14 @@ var Ability = function(name){
                 }
                 if(targetIsAlly) {
                     caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                    caster.playSound(this.name);
-                    target.addDebuff(effectService.effect("Locked And Loaded", this.variant), caster.charName, enemyTeam, myTeam);
+                    caster.soundBuffer.push(this.name);
+                    target.addDebuff(effectFactory("Locked And Loaded", this.variant), caster.charName, enemyTeam, myTeam, walls);
                 }
                 else {
                     if(caster.checkHit()){
                         caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                        caster.playSound(this.name);
-                        target.addDebuff(effectService.effect("Locked And Loaded", this.variant), caster.charName, myTeam, enemyTeam);
+                        caster.soundBuffer.push(this.name);
+                        target.addDebuff(effectFactory("Locked And Loaded", this.variant), caster.charName, myTeam, enemyTeam, walls);
                     }
                     else {
                         caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
@@ -2210,7 +2214,7 @@ var Ability = function(name){
             variant: 3,
             role : function() {return "heretic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--ATouchOfEvil)"},
-            cast : function (caster, target, myTeam, enemyTeam) {
+            cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
@@ -2236,7 +2240,7 @@ var Ability = function(name){
                     physDamage=target.applyResistance(physDamage, false);
                     magicDamage=target.applyResistance(magicDamage, true);
 
-                    caster.playSound(this.name);
+                    caster.soundBuffer.push(this.name);
                     var totalDamage = physDamage+magicDamage;
 
                     target.takeDamage(totalDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);

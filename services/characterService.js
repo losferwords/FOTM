@@ -969,28 +969,37 @@ module.exports = {
     getStartAbilities: function (basicAbilities) {
         return randomService.shuffle(basicAbilities).splice(0,7);
     },
-    abilityForClient: function (name, variant) {
-        var ServerAbility = AbilityFactory(name);
-        ServerAbility.variant = variant;
+    abilityForClient: function (ability) {
         return {
-            name: ServerAbility.name,
-            role : ServerAbility.role(),
-            icon : ServerAbility.icon(),
-            variant: ServerAbility.variant,
-            targetType : ServerAbility.targetType(),
-            range : ServerAbility.range(),
-            duration: ServerAbility.duration(),
-            energyCost : ServerAbility.energyCost(),
-            manaCost : ServerAbility.manaCost(),
-            cooldown : ServerAbility.cooldown(),
-            needWeapon : ServerAbility.needWeapon(),
-            cd : ServerAbility.cd
+            name: ability.name,
+            role : ability.role(),
+            icon : ability.icon(),
+            variant: ability.variant,
+            targetType : ability.targetType(),
+            range : ability.range(),
+            duration: ability.duration(),
+            energyCost : ability.energyCost(),
+            manaCost : ability.manaCost(),
+            cooldown : ability.cooldown(),
+            needWeapon : ability.needWeapon(),
+            cd : ability.cd
         }
     },
-    abilityForServer: function (name, variant) {
-        var ServerAbility = AbilityFactory(name);
-        ServerAbility.variant = variant;
-        return ServerAbility;
+    effectForClient: function (effect) {
+        return {
+            name: effect.name,
+            role : effect.role(),
+            icon : effect.icon(),
+            variant: effect.variant,
+            duration: effect.duration(),
+            left : effect.left,
+            stacks: effect.stacks,
+            stacked: effect.stacked(),
+            infinite: effect.infinite(),
+            maxStacks: effect.maxStacks(),
+            onlyStat: effect.onlyStat(),
+            magicEffect: effect.magicEffect()
+        }
     },
     generateRandomRole: function(race) {
         var role;
