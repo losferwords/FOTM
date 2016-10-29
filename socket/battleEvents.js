@@ -24,16 +24,23 @@ module.exports = function (serverIO) {
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
             var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
-            if(activeChar.canMove()) {
-                var range = 1;
+            if(!activeChar.immobilized) {
+                var range = 0;
                 if(preparedAbility){
                     var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
                     if(ability){
                         range = ability.range();
                     }
                 }
-                cb(arenaService.findMoves(activeChar, myTeam.characters, enemyTeam.characters, battleData.wallPositions, range));
-                return;
+                else if(activeChar.canMove()){
+                    range = 1;
+                }
+
+                if(range>0)
+                {
+                    cb(arenaService.findMoves(activeChar, myTeam.characters, enemyTeam.characters, battleData.wallPositions, range));
+                    return;
+                }
             }
             cb([]);
         });
@@ -269,6 +276,10 @@ module.exports = function (serverIO) {
                     cb(true, 'draw', myTeam.rating, 0, gainedSouls);
                 });
             }
+
+            if(enemyLeave) {
+                socket.leave(socket.serSt.battleRoom);
+            }
         });
 
         socket.on('moveCharTo', function(tile, myTeamId, enemyTeamId, preparedAbility, cb){
@@ -320,6 +331,15 @@ module.exports = function (serverIO) {
                 }
             }
             cleanBuffers(myTeam, enemyTeam);
+        });
+
+        socket.on('teamRetreat', function(myTeamId){
+            var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
+            var myTeam = battleData['team_'+myTeamId];
+            for(var i=0;i<myTeam.characters.length;i++){
+                myTeam.characters[i].isDead = true;
+            }
+            io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
         });
 
         function cleanBuffers(myTeam, enemyTeam){

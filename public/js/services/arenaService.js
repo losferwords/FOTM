@@ -7,33 +7,25 @@
             get battle () { return battle },
             set battle (value) { battle = value },
             //Заполнение карты DIV-ами
-            fillMap: function(groundType, walls) {
+            fillMap: function(groundType, walls, teamLead) {
                 for (var i = 0; i < 100; i++) {
                     map[i]={};
-                    map[i].x = i%10;
-                    map[i].y = (i/10 | 0);
-                    map[i].move=false;
-                    if(walls.indexOf(i)===-1){
-                        map[i].wall=false;
-                        map[i].image= function() {
-                            var ground;
-                            switch (groundType) {
-                                case(0):
-                                    ground = "url(./images/assets/img/tiles/grass.jpg)";
-                                    break;
-                                case(1):
-                                    ground = "url(./images/assets/img/tiles/sand.jpg)";
-                                    break;
-                                case(2):
-                                    ground = "url(./images/assets/img/tiles/snow.jpg)";
-                                    break;
-                            }
-                            return ground;
-                        }();
+                    if(teamLead){
+                        map[i].x = i%10;
+                        map[i].y = (i/10 | 0);
                     }
                     else {
-                        map[i].wall=true;
-                        map[i].image= function() {
+                        map[i].y = i%10;
+                        map[i].x = (i/10 | 0);
+                    }
+                    map[i].move=false;
+                }
+
+                for(var j = 0;j<map.length;j++){
+                    var indexForWall = Number(map[j].x.toString()+map[j].y.toString());
+                    if(walls.indexOf(indexForWall) > -1){
+                        map[indexForWall].wall=true;
+                        map[indexForWall].image= function() {
                             var ground;
                             switch (groundType) {
                                 case(0):
@@ -49,7 +41,24 @@
                             return ground;
                         }();
                     }
-
+                    else {
+                        map[indexForWall].wall=false;
+                        map[indexForWall].image= function() {
+                            var ground;
+                            switch (groundType) {
+                                case(0):
+                                    ground = "url(./images/assets/img/tiles/grass.jpg)";
+                                    break;
+                                case(1):
+                                    ground = "url(./images/assets/img/tiles/sand.jpg)";
+                                    break;
+                                case(2):
+                                    ground = "url(./images/assets/img/tiles/snow.jpg)";
+                                    break;
+                            }
+                            return ground;
+                        }();
+                    }
                 }
 
                 return map;
@@ -88,6 +97,13 @@
                     chars[i].debuffs = effectService.translateEffects(chars[i].state.debuffs);
                     //Инвентарь
                     chars[i].equip = chars[i].state.equip;
+                    if(!team.lead){
+                        //положение
+                        var l = chars[i].position.x;
+                        var t = chars[i].position.y;
+                        chars[i].position.x=t;
+                        chars[i].position.y=l;
+                    }
                 }
                 team.characters = chars;
                 return team;
@@ -106,11 +122,13 @@
                     chars[i].equip = chars[i].state.equip;
                     //цвет
                     chars[i].battleColor=this.colorSwap(chars[i].battleColor);
-                    //положение
-                    var l = chars[i].position.x;
-                    var t = chars[i].position.y;
-                    chars[i].position.x=t;
-                    chars[i].position.y=l;
+                    if(team.lead){
+                        //положение
+                        var l = chars[i].position.x;
+                        var t = chars[i].position.y;
+                        chars[i].position.x=t;
+                        chars[i].position.y=l;
+                    }
                 }
                 team.characters = chars;
                 return team;

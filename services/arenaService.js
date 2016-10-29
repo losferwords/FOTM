@@ -33,39 +33,18 @@ module.exports = {
     //Проверка на наличие персонажа или препятствия на этом тайле
     checkTile: function(position, char, myTeam, enemyTeam, walls, skipInvisible){
         var self = this;
-        //var queue = myTeam.concat(enemyTeam);
-        for(var i=0;i<myTeam.length;i++){
-            if(myTeam[i].position.x==position.x &&
-                myTeam[i].position.y==position.y &&
-                !myTeam[i].isDead)
+        var queue = myTeam.concat(enemyTeam);
+        for(var i=0;i<queue.length;i++){
+            if(queue[i].position.x==position.x &&
+                queue[i].position.y==position.y &&
+                !queue[i].isDead)
             {
                 if(skipInvisible){ //Невидимые персонажи будут считаться клетками, доступными для хода
                     //Все
-                    if(!myTeam[i].invisible){
+                    if(!queue[i].invisible){
                         return true;
                     }
-                    else if(myTeam[i].invisible && myTeam[i].charName==char.charName){
-                        return true;
-                    }
-                }
-                else {
-                    return true;
-                }
-            }
-        }
-
-        for(i=0;i<enemyTeam.length;i++){
-            var convertedPos = this.convertEnemyPosition(enemyTeam[i].position.x, enemyTeam[i].position.y);
-            if(convertedPos.x==position.x &&
-                convertedPos.y==position.y &&
-                !enemyTeam[i].isDead)
-            {
-                if(skipInvisible){ //Невидимые персонажи будут считаться клетками, доступными для хода
-                    //Все
-                    if(!enemyTeam[i].invisible){
-                        return true;
-                    }
-                    else if(enemyTeam[i].invisible && enemyTeam[i].charName==char.charName){
+                    else if(queue[i].invisible && queue[i].charName==char.charName){
                         return true;
                     }
                 }
@@ -89,8 +68,8 @@ module.exports = {
 
         var availablePoints = [];
 
-        //Убираем себя из списка тимы, потому что на своём месте можно остаться при чардже
-        var targetEnemies = self.findEnemies(char, enemyTeam, 1, walls);
+        //Если уже стоим вплотную к сопернику, остаёмся на своём месте
+        var targetEnemies = self.findEnemies(target, myTeam, 1, walls);
         for(var k=0;k<targetEnemies.length;k++){
             if(targetEnemies[k].charName == char.charName){
                 return true;
@@ -99,7 +78,7 @@ module.exports = {
 
         for(var i=0;i<points.length;i++){
             if(!self.checkTile(points[i], char, enemyTeam, myTeam, walls, false)){
-                availablePoints[availablePoints.length]=points[i];
+                availablePoints.push(points[i]);
             }
         }
         if(availablePoints.length===0) return false;
@@ -125,11 +104,14 @@ module.exports = {
         var direction = {x:0,y:0};
         var direction1 = {x:0,y:0};
         var direction2 = {x:0,y:0};
-        if (char.position.x < target.position.x)
+
+        var targetPosition = target.position;
+
+        if (char.position.x < targetPosition.x)
         {
             direction.x = 1;
         }
-        else if (char.position.x > target.position.x)
+        else if (char.position.x > targetPosition.x)
         {
             direction.x = -1;
         }
@@ -138,7 +120,7 @@ module.exports = {
             direction.x = 0;
         }
 
-        if (char.position.y < target.position.y)
+        if (char.position.y < targetPosition.y)
         {
             direction.y = 1;
             if (direction.x == 1)
@@ -163,7 +145,7 @@ module.exports = {
                 direction2.y = 1;
             }
         }
-        else if (char.position.y > target.position.y)
+        else if (char.position.y > targetPosition.y)
         {
             direction.y = -1;
             if (direction.x == 1)
@@ -207,25 +189,25 @@ module.exports = {
             }
         }
 
-        var newPosition = {x: target.position.x + direction.x, y: target.position.y + direction.y};
+        var newPosition = {x: targetPosition.x + direction.x, y: targetPosition.y + direction.y};
 
-        if (!target.checkTile(newPosition, char, enemyTeam, myTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
+        if (!self.checkTile(newPosition, char, myTeam, enemyTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
         {
-            target.position = newPosition;
+            target.position = {x: newPosition.x, y: newPosition.y};
         }
         else
         {
-            newPosition = {x: target.position.x + direction1.x, y: target.position.y + direction1.y};
-            if (!target.checkTile(newPosition, char, enemyTeam, myTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
+            newPosition = {x: targetPosition.x + direction1.x, y: targetPosition.y + direction1.y};
+            if (!self.checkTile(newPosition, char, myTeam, enemyTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
             {
-                target.position = newPosition;
+                target.position = {x: newPosition.x, y: newPosition.y};
             }
             else
             {
-                newPosition = {x: target.position.x + direction2.x, y: target.position.y + direction2.y};
-                if (!target.checkTile(newPosition, char, enemyTeam, myTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
+                newPosition = {x: targetPosition.x + direction2.x, y: targetPosition.y + direction2.y};
+                if (!self.checkTile(newPosition, char, myTeam, enemyTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
                 {
-                    target.position = newPosition;
+                    target.position = {x: newPosition.x, y: newPosition.y};
                 }
             }
         }
@@ -233,20 +215,20 @@ module.exports = {
     //Функция определяет начальные позиции игроков
     getStartPosition: function(pos){
         switch (pos) {
-            case 0: return {x:0,y:7};break;
-            case 1: return {x:1,y:8};break;
-            case 2: return {x:2,y:9};break;
+            case 0: return {x:0,y:7};
+            case 1: return {x:1,y:8};
+            case 2: return {x:2,y:9};
         }
     },
     //переключение цветов для противника
     colorSwap: function (color){
         switch(color){
-            case "#2a9fd6": return "#cc0000"; break;
-            case "#0055AF": return "#ff8800"; break;
-            case "#9933cc": return "#FFDD00"; break;
-            case "#cc0000": return "#2a9fd6"; break;
-            case "#ff8800": return "#0055AF"; break;
-            case "#FFDD00": return "#9933cc"; break;
+            case "#2a9fd6": return "#cc0000";
+            case "#0055AF": return "#ff8800";
+            case "#9933cc": return "#FFDD00";
+            case "#cc0000": return "#2a9fd6";
+            case "#ff8800": return "#0055AF";
+            case "#FFDD00": return "#9933cc";
             default: return color;
         }
     },
@@ -367,9 +349,12 @@ module.exports = {
         return { x: map1D%10, y: (map1D/10 | 0)}
     },
     //поиск союзников в заданном диапазоне
+    //charArray - масив союзников
     findAllies: function(char, charArray, range, walls){
         var self = this;
-        var points = self.findNearestPoints(char.position, range);
+
+        var charPos = {x: char.position.x, y: char.position.y};
+        var points = self.findNearestPoints(charPos, range);
 
         var result = [];
         for(var i=0;i<points.length;i++){
@@ -377,7 +362,7 @@ module.exports = {
                 if(points[i].x == charArray[j].position.x &&
                     points[i].y == charArray[j].position.y &&
                     !charArray[j].isDead &&
-                    !self.rayTrace({x: char.position.x*32+16, y: char.position.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16}, walls)
+                    !self.rayTrace({x: charPos.x*32+16, y: charPos.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16}, walls)
                 ){
                     result.push(charArray[j]);
                 }
@@ -386,18 +371,20 @@ module.exports = {
         return result;
     },
     //поиск противников в заданном диапазоне
+    //charArray - масив противников
     findEnemies: function(char, charArray, range, walls){
         var self = this;
-        var points = self.findNearestPoints(char.position, range);
+
+        var charPos = {x: char.position.x, y: char.position.y};
+        var points = self.findNearestPoints(charPos, range);
 
         var result = [];
         for(var i=0;i<points.length;i++){
             for(var j=0;j<charArray.length;j++){
-                var convertedPos = self.convertEnemyPosition(charArray[j].position.x, charArray[j].position.y);
-                if(points[i].x == convertedPos.x &&
-                    points[i].y == convertedPos.y &&
+                if(points[i].x == charArray[j].position.x &&
+                    points[i].y == charArray[j].position.y &&
                     !charArray[j].isDead &&
-                    !self.rayTrace({x: char.position.x*32+16, y: char.position.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16}, walls)
+                    !self.rayTrace({x: charPos.x*32+16, y: charPos.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16}, walls)
                 ){
                     result.push(charArray[j]);
                 }

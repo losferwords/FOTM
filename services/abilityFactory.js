@@ -2,7 +2,7 @@ var effectFactory = require('services/effectFactory');
 var randomService = require('services/randomService');
 var arenaService = require('services/arenaService');
 
-//Фабрика создания способностей по имени
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 var Ability = function(name){
     switch(name){
         case "Void": return {
@@ -252,7 +252,7 @@ var Ability = function(name){
             cd : 0
         };break;
 
-        case "Come And Get It": return {
+        case "Come And Get It": return { //BUG
             name : "Come And Get It",
             variant: 3,
             role : function() {return "sentinel"},
@@ -428,7 +428,6 @@ var Ability = function(name){
                 caster.soundBuffer.push(this.name);
                 var nearbyEnemies = arenaService.findEnemies(caster, enemyTeam, 1, walls);
                 for (var i = 0; i < nearbyEnemies.length; i++) {
-                    //Для той же цели не проверяем miss
                     if(caster.checkHit() || nearbyEnemies[i].charName===target.charName){
                         var physDamage = randomService.randomInt(caster.minDamage*(0.5+this.variant*0.2), caster.maxDamage*(0.5+this.variant*0.2));
 
@@ -467,7 +466,7 @@ var Ability = function(name){
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
                     return;
                 }
-                //Пробуем сделать чардж, если не удалось, пишем в лог
+                //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ
                 if(!arenaService.charge(target, caster, myTeam, enemyTeam, walls)) {
                     caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
@@ -649,7 +648,7 @@ var Ability = function(name){
             cd : 0
         };break;
 
-        case "Electric Eye": return {
+        case "Electric Eye": return { //CHECKED
             name : "Electric Eye",
             variant: 3,
             role : function() {return "redeemer"},
@@ -856,7 +855,7 @@ var Ability = function(name){
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
                 caster.soundBuffer.push(this.name);
-                arenaService.charge(caster, target, myTeam, enemyTeam, walls);
+                arenaService.charge(caster, target, enemyTeam, myTeam, walls);
                 target.addBuff(effectFactory("Come Cover Me", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -987,7 +986,7 @@ var Ability = function(name){
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
                     return;
                 }
-                //Пробуем сделать чардж, если не удалось, пишем в лог
+                //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ
                 if(!arenaService.charge(target, caster, myTeam, enemyTeam, walls)) {
                     caster.logBuffer.push(caster.charName+" can't calculate the distance and miss with '"+this.name+"'");
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam, true);
@@ -1509,7 +1508,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 if(caster.checkHit()) {
-                    //По цели
+                    //пїЅпїЅ пїЅпїЅпїЅпїЅ
                     var magicDamage = (1250 + this.variant * 200) * (1 + caster.spellPower);
                     var critical = caster.checkCrit();
                     if (critical) {
@@ -1520,7 +1519,7 @@ var Ability = function(name){
                     caster.soundBuffer.push(this.name);
                     target.takeDamage(magicDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
 
-                    //АОЕ
+                    //пїЅпїЅпїЅ
                     magicDamage = (1500 - this.variant * 200) * (1 + caster.spellPower);
 
                     var nearbyEnemies = arenaService.findEnemies(target, enemyTeam, 1, walls);

@@ -51,7 +51,8 @@ module.exports = function (serverIO) {
                     }
 
                     for(i=0; i<3; i++) {
-                        var enemyPosition = arenaService.getStartPosition(enemyPositions[i]);
+                        var startPos = arenaService.getStartPosition(enemyPositions[i]);
+                        var enemyPosition = arenaService.convertEnemyPosition(startPos.x, startPos.y);
                         io.sockets.connected[queue[1]].team.characters[i].position={x: enemyPosition.x, y:enemyPosition.y};
                         switch (i) {
                             case 0: io.sockets.connected[queue[1]].team.characters[i].battleColor="#2a9fd6"; break;
@@ -59,6 +60,9 @@ module.exports = function (serverIO) {
                             case 2: io.sockets.connected[queue[1]].team.characters[i].battleColor="#9933cc"; break;
                         }
                     }
+
+                    io.sockets.connected[queue[0]].team.lead = true;
+                    io.sockets.connected[queue[1]].team.lead = false;
 
                     battleData['team_'+io.sockets.connected[queue[0]].team._id] = io.sockets.connected[queue[0]].team;
                     battleData['team_'+io.sockets.connected[queue[1]].team._id] = io.sockets.connected[queue[1]].team;

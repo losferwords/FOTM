@@ -232,13 +232,13 @@ module.exports = function (serverIO) {
                                     green: team.souls.green-characterService.getRoleCost(resurectedChar.role).green,
                                     blue: team.souls.blue-characterService.getRoleCost(resurectedChar.role).blue
                                 }
-                            }, function(err, team) {
+                            }, function(err, newTeam) {
                                 if (err) {
                                     socket.emit("customError", err);
                                     return;
                                 }
-                                if(team) {
-                                    Team.getTeamPop({id: team._id}, function(err, popTeam) {
+                                if(newTeam) {
+                                    Team.getByTeamIdFull(newTeam._id, function(err, popTeam) {
                                         if (err) {
                                             socket.emit("customError", err);
                                             return;

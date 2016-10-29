@@ -72,14 +72,15 @@
 
         //Получает стоимость роли в ресурсах
         $scope.checkResurectCost = function(index) {
-            if(($scope.team.souls.red-$scope.resurectCostArray[index].red>=0) &&
+            if($scope.resurectCostArray.length>0 &&
+                ($scope.team.souls.red-$scope.resurectCostArray[index].red>=0) &&
                 ($scope.team.souls.green-$scope.resurectCostArray[index].green>=0) &&
                 ($scope.team.souls.blue-$scope.resurectCostArray[index].blue>=0))
             {
-                return true;
+                return false;
             }
             else {
-                return false;
+                return true;
             }
         };
 
@@ -87,6 +88,7 @@
             $scope.pending = true;
             mainSocket.emit('resurectChar', char._id, function(team) {
                 $scope.pending = false;
+                $scope.team = team;
                 currentTeam.set(team);
             });
         };

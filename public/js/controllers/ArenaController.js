@@ -3,7 +3,7 @@
 
     //Контроллер выбора пати
     function ArenaController($scope, $rootScope, $location, $timeout, $interval, arenaService, hotkeys, mainSocket, gettextCatalog, soundService, chatService, currentTeam, characterService) {
-        $scope.map = arenaService.fillMap(arenaService.battle.groundType, arenaService.battle.wallPositions); //Карта - двумерный массив на стороне клиента
+        $scope.map = arenaService.fillMap(arenaService.battle.groundType, arenaService.battle.wallPositions, arenaService.battle["team_"+currentTeam.get()._id].lead); //Карта - двумерный массив на стороне клиента
         $scope.CombatLog = []; //Массив сообщений с информацией
         $scope.myTurn = false; //переменная, показывающая, мой ли сейчас игрок ходит
         $scope.battleEnd={ended: false};
@@ -81,11 +81,8 @@
 
         //Кнопка покинуть поле боя
         $scope.retreatClick =  function(){
-            for(var i=0;i<3;i++){
-                $scope.myTeam.characters[i].isDead=true;
-            }
             log($scope.myTeam.teamName+" retreats!","#ffffff", true);
-            mainSocket.emit("updateTeams", arenaService.battle.room, $scope.myTeam.characters, $scope.enemyTeam.characters);
+            mainSocket.emit("teamRetreat", $scope.myTeam._id);
         };
 
         $scope.testFunction =  function(){
@@ -173,7 +170,8 @@
         //Функция перемещает персонажа на указанную клетку
         $scope.moveToTile = function(tile) {
             if(tile.move){
-                mainSocket.emit("moveCharTo", tile, $scope.myTeam._id, $scope.enemyTeam._id, $scope.preparedAbility ? $scope.preparedAbility.name : null, function(invisible){
+                //ПЕРЕВОРОТ ДЛЯ НЕ LEAD
+                mainSocket.emit("moveCharTo", $scope.myTeam.lead ? {x: tile.x, y: tile.y} : {x: tile.y, y: tile.x}, $scope.myTeam._id, $scope.enemyTeam._id, $scope.preparedAbility ? $scope.preparedAbility.name : null, function(invisible){
                     if(invisible) {
                         log("Someone invisible stands on that cell!", $scope.activeChar.battleColor,false);
                     }
@@ -578,7 +576,7 @@
 
             mainSocket.emit('checkForWin', $scope.myTeam._id, $scope.enemyTeam._id, false, function(isEnded, result, rating, ratingChange, gainedSouls){
                 if(isEnded){
-                    battleEnd(rating, gainedSouls)
+                    battleEnd(result, rating, gainedSouls)
                 }
                 else {
                     turnPrepare();
@@ -616,7 +614,7 @@
                 mainSocket.emit('checkForWin', $scope.myTeam._id, $scope.enemyTeam._id, true, function(isEnded, result, rating, ratingChange, gainedSouls){
                     $interval.cancel($scope.waitOpponentTimer);
                     $rootScope.showInfoMessage(gettextCatalog.getString("Your enemy was disconnected"));
-                    battleEnd(rating, gainedSouls);
+                    battleEnd(result, rating, ratingChange, gainedSouls);
                 });
             }
             else {
@@ -654,7 +652,7 @@
 
             mainSocket.emit('checkForWin', $scope.myTeam._id, $scope.enemyTeam._id, false, function(isEnded, result, rating, ratingChange, gainedSouls){
                 if(isEnded){
-                    battleEnd(rating, gainedSouls);
+                    battleEnd(result, rating, ratingChange, gainedSouls);
                 }
                 else {
                     //Если вдруг после своего действия персонаж оказался в стане, ход сразу же завершается
@@ -666,7 +664,7 @@
         }
 
         //Завершение боя
-        function battleEnd(rating, gainedSouls) {
+        function battleEnd(result, rating, ratingChange, gainedSouls) {
             $scope.battleEnd= {
                 ended: true,
                 rating: rating,
