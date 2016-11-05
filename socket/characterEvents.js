@@ -259,7 +259,7 @@ module.exports = function (serverIO) {
         });
 
         socket.on('getAbility', function(name, cb){
-            cb(characterService.abilityForClient(AbilityFactory(name).name, 3));
+            cb(characterService.abilityForClient(AbilityFactory(name).name));
         });
 
         socket.on('getAbilities', function(nameArray, cb){
@@ -268,6 +268,10 @@ module.exports = function (serverIO) {
                 abilityArray.push(characterService.abilityForClient(AbilityFactory(nameArray[i])));
             }
             cb(abilityArray);
+        });
+
+        socket.on('getRoleAbilities', function(role, cb){
+            cb(characterService.getRoleAbilities(role));
         });
 
     });

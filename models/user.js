@@ -160,6 +160,7 @@ schema.statics.setById = function(userId, setter, callback) {
 exports.User = mongoose.model('User', schema);
 
 
+
 function CustomError(message) {
     Error.apply(this, arguments);
     Error.captureStackTrace(this, CustomError);

@@ -144,3 +144,20 @@ module.exports = function (server) {
 
     return io;
 };
+
+//ОЧИСТКА ПОСЛЕ ВАЙПА
+//User.find({}, function(err, users){
+//    if (err) socket.emit("customError", err);
+//    log.info("Total users: "+users.length);
+//    users.forEach(function(user, i) {
+//        if(user.team)
+//        {
+//            user.team = undefined;
+//            user.save(function(err, user){
+//                log.info("team clean ready for "+i+": "+user.username);
+//                if (err) socket.emit("customError", err);
+//            });
+//        }
+//    });
+//    log.info("READY");
+//});
