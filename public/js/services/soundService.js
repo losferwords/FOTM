@@ -32,7 +32,7 @@
                 newSound.volume=0.1;
                 newSound.play();
                 $timeout(function(){
-                    newSound.destroy();
+                    newSound = undefined;
                 },500);
             },
             loadSounds: function(){
@@ -131,7 +131,7 @@
             },
             chooseAmbient: function(type) {
                 if(musicObj.battleAmbience){
-                    musicObj.battleAmbience.destroy();
+                    musicObj.battleAmbience = undefined;
                 }
                 switch(type){
                     case 0: musicObj.battleAmbience = ngAudio.load("sounds/music/ambience/grass.mp3"); break;
