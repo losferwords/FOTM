@@ -998,7 +998,8 @@ module.exports = {
             infinite: effect.infinite(),
             maxStacks: effect.maxStacks(),
             onlyStat: effect.onlyStat(),
-            magicEffect: effect.magicEffect()
+            magicEffect: effect.magicEffect(),
+            caster: effect.caster
         }
     },
     generateRandomRole: function(race) {
