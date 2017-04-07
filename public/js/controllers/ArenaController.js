@@ -3,7 +3,9 @@
 
     //Контроллер выбора пати
     function ArenaController($scope, $rootScope, $location, $timeout, $interval, arenaService, hotkeys, mainSocket, gettextCatalog, soundService, chatService, currentTeam, characterService) {
-        $scope.map = arenaService.fillMap(arenaService.battle.groundType, arenaService.battle.wallPositions, arenaService.battle["team_"+currentTeam.get()._id].lead); //Карта - двумерный массив на стороне клиента
+        var botBattle = arenaService.battle.bots;
+        var currentTeamId = arenaService.battle.bots ? arenaService.battle.team1Id : currentTeam.get()._id;
+        $scope.map = arenaService.fillMap(arenaService.battle.groundType, arenaService.battle.wallPositions, arenaService.battle["team_"+currentTeamId].lead); //Карта - двумерный массив на стороне клиента
         $scope.CombatLog = []; //Массив сообщений с информацией
         $scope.myTurn = false; //переменная, показывающая, мой ли сейчас игрок ходит
         $scope.battleEnd={ended: false};
@@ -171,15 +173,7 @@
         $scope.moveToTile = function(tile) {
             if(tile.move){
                 //ПЕРЕВОРОТ ДЛЯ НЕ LEAD
-                mainSocket.emit("moveCharTo", $scope.myTeam.lead ? {x: tile.x, y: tile.y} : {x: tile.y, y: tile.x}, $scope.myTeam._id, $scope.enemyTeam._id, $scope.preparedAbility ? $scope.preparedAbility.name : null, function(invisible){
-                    if(invisible) {
-                        log("Someone invisible stands on that cell!", $scope.activeChar.battleColor,false);
-                    }
-                    else {
-                        $scope.preparedAbility = undefined;
-                        resetCharOverlays();
-                    }
-                });
+                mainSocket.emit("moveCharTo", $scope.myTeam.lead ? {x: tile.x, y: tile.y} : {x: tile.y, y: tile.x}, $scope.myTeam._id, $scope.enemyTeam._id, $scope.preparedAbility ? $scope.preparedAbility.name : null);
             }
         };
 
@@ -495,18 +489,23 @@
             soundService.loadSounds(); //Загружаем все необходимые для боя звуки
 
             chatService.clearMessages('arena');
-            $scope.opponentWaiting=true;
 
-            var timerCount = 0;
-            $scope.waitOpponentTimer=$interval(function(){
-                mainSocket.emit("checkOpponent", arenaService.battle.room);
-                timerCount++;
-                //60 секунд ожидания другого игрока, потом покидаем битву
-                if(timerCount==60){
-                    $location.path('/city');
-                    $rootScope.showInfoMessage(gettextCatalog.getString("Your enemy not ready to battle"));
-                }
-            },1000);
+            if(botBattle){
+                opponentReadyForBattle();
+            }
+            else{
+                $scope.opponentWaiting=true;
+                var timerCount = 0;
+                $scope.waitOpponentTimer=$interval(function(){
+                    mainSocket.emit("checkOpponent", arenaService.battle.room);
+                    timerCount++;
+                    //60 секунд ожидания другого игрока, потом покидаем битву
+                    if(timerCount==60){
+                        $location.path('/city');
+                        $rootScope.showInfoMessage(gettextCatalog.getString("Your enemy not ready to battle"));
+                    }
+                },1000);
+            }
         });
 
         $scope.$watch(function(){
@@ -521,7 +520,9 @@
         });
 
         //Если противник готов, начинаем первый ход
-        mainSocket.on("opponentReady", function() {
+        mainSocket.on("opponentReady", opponentReadyForBattle);
+
+        function opponentReadyForBattle() {
             $interval.cancel($scope.waitOpponentTimer);
             $scope.waitServ = true;
             startTurnTimer(); //Сразу включаем таймер, чтобы рассинхрон был небольшой
@@ -530,9 +531,9 @@
                 return;
             }
 
-            $scope.myTeam = arenaService.prepareMyTeam(arenaService.battle["team_"+currentTeam.get()._id]);
+            $scope.myTeam = arenaService.prepareMyTeam(arenaService.battle["team_"+currentTeamId]);
             for(var key in arenaService.battle) {
-                if(arenaService.battle.hasOwnProperty(key) && key.indexOf("team_")>-1 && key!="team_"+currentTeam.get()._id){
+                if(arenaService.battle.hasOwnProperty(key) && key.indexOf("team_")>-1 && key!="team_"+currentTeamId){
                     $scope.enemyTeam = arenaService.prepareEnemyTeam(arenaService.battle[key]);
                     break;
                 }
@@ -550,8 +551,20 @@
             log("Battle begins! First move for "+$scope.activeChar.charName+".", $scope.activeChar.battleColor);
             $scope.opponentWaiting = false;
             $scope.waitServ = false;
-            mainSocket.emit("enemyTeamLoaded", arenaService.battle.room);
-        });
+            if(botBattle) {
+                $scope.enemyTeamLoaded=true;
+                //меняем местами ведущую команду бота
+                if($scope.activeChar._team !== currentTeamId){
+                    mainSocket.emit("botAction", $scope.enemyTeam._id, $scope.myTeam._id);
+                }
+                else {
+                    mainSocket.emit("botAction", $scope.myTeam._id, $scope.enemyTeam._id);
+                }
+            }
+            else{
+                mainSocket.emit("enemyTeamLoaded", arenaService.battle.room);
+            }
+        }
 
         //Завершение хода
         $scope.endTurn =  function() {
@@ -566,9 +579,9 @@
             $scope.waitServ = false;
             arenaService.battle = battle;
 
-            $scope.myTeam = arenaService.prepareMyTeam(arenaService.battle["team_"+currentTeam.get()._id]);
+            $scope.myTeam = arenaService.prepareMyTeam(arenaService.battle["team_"+currentTeamId]);
             for(var key in arenaService.battle) {
-                if(arenaService.battle.hasOwnProperty(key) && key.indexOf("team_")>-1 && key!="team_"+currentTeam.get()._id){
+                if(arenaService.battle.hasOwnProperty(key) && key.indexOf("team_")>-1 && key!="team_"+currentTeamId){
                     $scope.enemyTeam = arenaService.prepareEnemyTeam(arenaService.battle[key]);
                     break;
                 }
@@ -595,6 +608,16 @@
                     //объявление об исходе боя в ничью
                     if($scope.turnsSpended>=90){
                         log("The battle ends after "+(100-$scope.turnsSpended)+" turns.");
+                    }
+
+                    if(botBattle) {
+                        //меняем местами ведущую команду бота
+                        if($scope.activeChar._team !== currentTeamId){
+                            mainSocket.emit("botAction", $scope.enemyTeam._id, $scope.myTeam._id);
+                        }
+                        else {
+                            mainSocket.emit("botAction", $scope.myTeam._id, $scope.enemyTeam._id);
+                        }
                     }
                 }
             });
@@ -628,6 +651,16 @@
             log(message.text, arenaService.colorSwap(message.color)); //выводим полученное от противника сообщение
         });
 
+        mainSocket.on('moveCharToResult', function(invisible){
+            if(invisible) {
+                log("Someone invisible stands on that cell!", $scope.activeChar.battleColor,false);
+            }
+            else {
+                $scope.preparedAbility = undefined;
+                resetCharOverlays();
+            }
+        });
+
         mainSocket.on('updateTeams', updateTeams);
 
         function updateTeams(battle) {
@@ -635,9 +668,9 @@
 
             arenaService.battle = battle;
 
-            $scope.myTeam = arenaService.prepareMyTeam(arenaService.battle["team_"+currentTeam.get()._id]);
+            $scope.myTeam = arenaService.prepareMyTeam(arenaService.battle["team_"+currentTeamId]);
             for(var key in arenaService.battle) {
-                if(arenaService.battle.hasOwnProperty(key) && key.indexOf("team_")>-1 && key!="team_"+currentTeam.get()._id){
+                if(arenaService.battle.hasOwnProperty(key) && key.indexOf("team_")>-1 && key!="team_"+currentTeamId){
                     $scope.enemyTeam = arenaService.prepareEnemyTeam(arenaService.battle[key]);
                     break;
                 }
@@ -658,6 +691,16 @@
                     //Если вдруг после своего действия персонаж оказался в стане, ход сразу же завершается
                     if($scope.activeChar.stunned && $scope.myTurn) {
                         $scope.endTurn();
+                        return;
+                    }
+                    if(botBattle) {
+                        //меняем местами ведущую команду бота
+                        if($scope.activeChar._team !== currentTeamId){
+                            mainSocket.emit("botAction", $scope.enemyTeam._id, $scope.myTeam._id);
+                        }
+                        else {
+                            mainSocket.emit("botAction", $scope.myTeam._id, $scope.enemyTeam._id);
+                        }
                     }
                 }
             });

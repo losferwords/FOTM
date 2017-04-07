@@ -113,28 +113,29 @@ Character.prototype.createAbilitiesState = function() {
 
 //Функция создаёт состояние инвентаря для сервера
 Character.prototype.createEquipState = function() {
+    var self=this;
     //Создаём стэйт инвентаря
-    if(this.equip) {
-        var equip = characterService.getEquip(this.role); //Берём стандартный инвентарь для этой роли
+    if(self.equip) {
+        var equip = characterService.getEquip(self.role); //Берём стандартный инвентарь для этой роли
         for (var slot in equip) {
             if (equip.hasOwnProperty(slot)) {
 
-                if(!this.equip[slot]) {
-                    this.state.equip[slot] = {};
+                if(!self.equip[slot]) {
+                    self.state.equip[slot] = {};
                     //Если такого нет, значит это оффхэнд
-                    this.state.equip[slot].name="Void";
-                    this.state.equip[slot].slot="offHandWeapon";
+                    self.state.equip[slot].name="Void";
+                    self.state.equip[slot].slot="offHandWeapon";
                     continue;
                 }
                 else {
-                    this.state.equip[slot]=this.equip[slot];
+                    self.state.equip[slot]=self.equip[slot];
                 }
 
                 //наделяем функциями
                 for(var slotKey in equip[slot]){
                     if (equip[slot].hasOwnProperty(slotKey)) {
                         if(slotKey!=="sockets"){
-                            this.state.equip[slot][slotKey]=equip[slot][slotKey]();
+                            self.state.equip[slot][slotKey]=equip[slot][slotKey]();
                         }
                     }
                 }

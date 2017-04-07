@@ -10,6 +10,7 @@
     "biguint-format": "^1.0.0",
     "body-parser": "^1.15.2",
     "bower": "^1.7.9",
+    "chance": "^1.0.6",
     "connect": "^3.5.0",
     "connect-mongo": "^0.8.2",
     "cookie": "^0.2.4",

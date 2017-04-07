@@ -153,7 +153,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 enemy-abilities ability-group" ng-if="$index!==2">
-                                            <div class="btn-group" ng-if="char.underProphecy">
+                                            <div class="btn-group" ng-if="char.underProphecy || char.isBot">
                                                 <div class="ability-wrapper btn btn-default"
                                                      ng-repeat="ability in char.abilities track by $index"
                                                      uib-tooltip-html="getAbilityTooltip(ability)"
@@ -172,11 +172,11 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 enemy-abilities ability-group" ng-if="$index===2">
-                                            <div class="btn-group" ng-if="char.underProphecy">
+                                            <div class="btn-group" ng-if="char.underProphecy || char.isBot">
                                                 <div class="ability-wrapper btn btn-default"
                                                      ng-repeat="ability in char.abilities track by $index"
                                                      uib-tooltip-html="getAbilityTooltip(ability)"
-                                                     tooltip-placement="bottom"
+                                                     tooltip-placement="top"
                                                      tooltip-append-to-body="true"
                                                      tooltip-animation="false"
                                                      tooltip-class="ability-tooltip">

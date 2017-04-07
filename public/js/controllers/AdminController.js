@@ -1,7 +1,7 @@
 (function (module) {
     module.controller("AdminController", AdminController);
     //Контроллер администратора
-    function AdminController($scope, $rootScope, $location, $timeout, mainSocket, abilityService, characterService, gettextCatalog, $route) {
+    function AdminController($scope, $rootScope, $location, $timeout, mainSocket, abilityService, characterService, gettextCatalog, $route, arenaService) {
         var teamsLoad=false; //Загрузка тим уже была вызвана
         $scope.roleChart = {};
         $scope.currentUser = {user: undefined};
@@ -96,6 +96,15 @@
             if(!teamsLoad) return;
             mainSocket.emit("removeUsersDummies");
         };
+
+        $scope.startBotsBattle = function() {
+            mainSocket.emit("startBotsBattle");
+        };
+
+        mainSocket.on("startBattle", function(data){
+            arenaService.battle = data;
+            $location.path("/arena");
+        });
 
         $scope.chooseRole = function chooseRole(event){
             $scope.chosenRole=undefined;
