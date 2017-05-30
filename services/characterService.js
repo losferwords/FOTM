@@ -1069,7 +1069,7 @@ module.exports = {
 
         var abilitiesObjectsArr = [];
         for(var i=0;i<abilitiesArr.length;i++){
-            abilitiesObjectsArr.push({name: abilitiesArr[i], variant: 3});
+            abilitiesObjectsArr.push({name: abilitiesArr[i], variant: randomService.randomInt(1,5)});
         }
 
         return [abilitiesObjectsArr, availableAbilitiesArr];

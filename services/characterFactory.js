@@ -172,7 +172,6 @@ Character.prototype.resetState = function() {
     self.moveCost = 300; //стоимость энергии для передвижения
 
     //Состояния
-    self.immobilize = false; //обездвижен
     self.isDead = false; //мёртв
     self.clearCast = false; //Клиркаст (бесплатные заклинания)
     self.invisible = false; //Инвиз
@@ -491,6 +490,7 @@ Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, wall
                 if(self.debuffs[i].stacks<self.debuffs[i].maxStacks()) self.debuffs[i].stacks++;
                 self.debuffs[i].apply(self, enemyTeam, myTeam, walls); //При дебаффе меняются местами
             }
+            if(self.isDead) return;
             self.debuffs[i].left=debuff.duration();
             return;
         }

@@ -453,5 +453,50 @@ module.exports = {
             }
         }
         return null;
+    },
+    //Функция проверяет, можно ли использовать способность
+    checkAbilityForUse: function(ability, char) {
+        if(ability.name == "Void") return false;
+        if(ability.name == "Dyers Eve" && (char.curHealth/char.maxHealth)>0.5) return false;
+        if(ability.targetType() == "move" && char.immobilized) return false;
+        if(ability.cd == 0){ //если она не на кулдауне
+            if(char.curEnergy - ability.energyCost()>0){ //на неё есть энергия
+                if(char.curMana - ability.manaCost()>0){ //и мана
+                    if(ability.needWeapon()){ //Если для абилки нужно оружие
+                        if(!char.disarmed){ //и персонаж не в дизарме
+                            return true;
+                        }
+                    }
+                    else { //Если это магия
+                        if(!char.silenced){ //и персонаж не в молчанке
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    },
+    intDistanceBetweenPoints: function(start, end){
+        var maxX = Math.abs(end.x - start.x);
+        var maxY = Math.abs(end.y - start.y);
+        return maxX > maxY ? maxX : maxY;
+    },
+    calculatePositionWeight: function(position, char, myTeam, enemyTeam, optimalRange, walls){
+        var self = this;
+        var weight = [0,0];
+
+        for(i=0;i<enemyTeam.length;i++){
+            if(enemyTeam[i].isDead) continue;
+            weight[0] += 0.3 - Math.abs(optimalRange - self.intDistanceBetweenPoints(position, enemyTeam[i].position))/30 - Number(self.rayTrace(position, myTeam[i].position, walls))*0.1;
+        }
+        if(weight[0] < 0) weight[0] = 0;
+
+        for(var i=0;i<myTeam.length;i++){
+            if(myTeam[i]._id == char._id || myTeam[i].isDead) continue;
+            weight[1] += 0.5 - Math.abs(optimalRange - self.intDistanceBetweenPoints(position, myTeam[i].position))/20 - Number(self.rayTrace(position, myTeam[i].position, walls))*0.1;
+        }
+        if(weight[1] < 0) weight[1] = 0;
+        return weight;
     }
 };

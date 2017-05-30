@@ -3,7 +3,7 @@
 
     //Контроллер выбора пати
     function ArenaController($scope, $rootScope, $location, $timeout, $interval, arenaService, hotkeys, mainSocket, gettextCatalog, soundService, chatService, currentTeam, characterService) {
-        var botBattle = arenaService.battle.bots;
+        $scope.botBattle = arenaService.battle.bots;
         var currentTeamId = arenaService.battle.bots ? arenaService.battle.team1Id : currentTeam.get()._id;
         $scope.map = arenaService.fillMap(arenaService.battle.groundType, arenaService.battle.wallPositions, arenaService.battle["team_"+currentTeamId].lead); //Карта - двумерный массив на стороне клиента
         $scope.CombatLog = []; //Массив сообщений с информацией
@@ -68,7 +68,7 @@
 
         //Функция возвращает значение оставшегося до конца хода времени
         $scope.getTurnTime =  function(){
-            if($scope.myTurn){
+            if($scope.myTurn && !$scope.botBattle){
                 if($scope.secondsForTurn<=30){
                     return $scope.secondsForTurn;
                 }
@@ -280,7 +280,7 @@
 
         //Функция проверяет, можно ли использовать способность
         $scope.checkAbilityForUse = function(ability, char) {
-            if ($scope.myTurn) {
+            if ($scope.myTurn || $scope.botBattle) {
                 if(char._id == $scope.activeChar._id){ //Абилка доступна только тому, кто сейчас ходит
                     if(ability.name==="Void") return false;
                     if(ability.name==="Dyers Eve" && ($scope.activeChar.curHealth/$scope.activeChar.maxHealth)>0.5) return false;
@@ -350,7 +350,7 @@
                     $scope.map[j].move=false;
                 }
 
-                if($scope.myTurn) {
+                if($scope.myTurn || $scope.botBattle) {
                     mainSocket.emit('findMovePoints', $scope.myTeam._id, $scope.enemyTeam._id, null, function(movePoints){
                         for (var i = 0; i < movePoints.length; i++) {
                             $scope.map[arenaService.map2Dto1D(movePoints[i])].move = true;
@@ -475,6 +475,16 @@
             }
         }
 
+        function chooseAction(){
+            $scope.waitServ = true;
+            if($scope.activeChar._team !== currentTeamId){
+                mainSocket.emit("botAction", $scope.enemyTeam._id, $scope.myTeam._id);
+            }
+            else {
+                mainSocket.emit("botAction", $scope.myTeam._id, $scope.enemyTeam._id);
+            }
+        }
+
         //После загрузки контроллера проверяем, загрузился ли контроллер у противника
         $scope.$on('$routeChangeSuccess', function () {
             //Музыка
@@ -490,7 +500,7 @@
 
             chatService.clearMessages('arena');
 
-            if(botBattle){
+            if($scope.botBattle){
                 opponentReadyForBattle();
             }
             else{
@@ -551,15 +561,9 @@
             log("Battle begins! First move for "+$scope.activeChar.charName+".", $scope.activeChar.battleColor);
             $scope.opponentWaiting = false;
             $scope.waitServ = false;
-            if(botBattle) {
+            if($scope.botBattle) {
                 $scope.enemyTeamLoaded=true;
-                //меняем местами ведущую команду бота
-                if($scope.activeChar._team !== currentTeamId){
-                    mainSocket.emit("botAction", $scope.enemyTeam._id, $scope.myTeam._id);
-                }
-                else {
-                    mainSocket.emit("botAction", $scope.myTeam._id, $scope.enemyTeam._id);
-                }
+                chooseAction();
             }
             else{
                 mainSocket.emit("enemyTeamLoaded", arenaService.battle.room);
@@ -610,14 +614,8 @@
                         log("The battle ends after "+(100-$scope.turnsSpended)+" turns.");
                     }
 
-                    if(botBattle) {
-                        //меняем местами ведущую команду бота
-                        if($scope.activeChar._team !== currentTeamId){
-                            mainSocket.emit("botAction", $scope.enemyTeam._id, $scope.myTeam._id);
-                        }
-                        else {
-                            mainSocket.emit("botAction", $scope.myTeam._id, $scope.enemyTeam._id);
-                        }
+                    if($scope.botBattle) {
+                        chooseAction();
                     }
                 }
             });
@@ -693,14 +691,8 @@
                         $scope.endTurn();
                         return;
                     }
-                    if(botBattle) {
-                        //меняем местами ведущую команду бота
-                        if($scope.activeChar._team !== currentTeamId){
-                            mainSocket.emit("botAction", $scope.enemyTeam._id, $scope.myTeam._id);
-                        }
-                        else {
-                            mainSocket.emit("botAction", $scope.myTeam._id, $scope.enemyTeam._id);
-                        }
+                    if($scope.botBattle) {
+                        chooseAction();
                     }
                 }
             });
