@@ -3,6 +3,7 @@ var characterService = require('services/characterService');
 var randomService = require('services/randomService');
 var Chance = require('chance');
 var chance = new Chance();
+var arenaService = require('services/arenaService');
 
 module.exports = {
     //создание команды ботов
@@ -46,66 +47,26 @@ module.exports = {
         //ToDo: create random gems here
         return CharacterFactory(char);
     },
-    //нормализация игровой ситуации
-    normalizeSituation: function(battleData, myTeam, enemyTeam, activeChar){
-        var self = this;
-        var situation = [];
-
-        var activeCharState = self.charState(battleData, myTeam, enemyTeam, activeChar);
-        var myTeamStates = [];
-        for(var i=0; i<myTeam.characters.length;i++){
-            if(myTeam.characters[i]._id == activeChar._id) continue;
-            myTeamStates.push(self.charState(battleData, myTeam, enemyTeam, myTeam.characters[i]));
-        }
-        var enemyTeamStates = [];
-        for(i=0; i<enemyTeam.characters.length;i++){
-            if(enemyTeam.characters[i]._id == activeChar._id) continue;
-            enemyTeamStates.push(self.charState(battleData, enemyTeam, myTeam, enemyTeam.characters[i]));
-        }
-
-        for(var key in activeCharState){
-            if(activeCharState.hasOwnProperty(key)){
-                situation.push(activeCharState[key]);
-            }
-        }
-
-        for(i=0; i<myTeamStates.length;i++){
-            for(key in myTeamStates[i]){
-                if(myTeamStates[i].hasOwnProperty(key)){
-                    situation.push(myTeamStates[i][key]);
-                }
-            }
-        }
-
-        for(i=0; i<enemyTeamStates.length;i++){
-            for(key in enemyTeamStates[i]){
-                if(enemyTeamStates[i].hasOwnProperty(key)){
-                    situation.push(enemyTeamStates[i][key]);
-                }
-            }
-        }
-        return situation;
-    },
-    createSituation: function(battleData, myTeam, enemyTeam, activeChar){
+    createSituation: function(wallPositions, myTeam, enemyTeam, activeChar){
         var self = this;
         var situation = {};
 
-        situation.activeChar = self.charState(battleData, myTeam, enemyTeam, activeChar);
+        situation.activeChar = self.charState(wallPositions, myTeam, enemyTeam, activeChar);
         var myTeamStates = [];
         for(var i=0; i<myTeam.characters.length;i++){
             if(myTeam.characters[i]._id == activeChar._id) continue;
-            myTeamStates.push(self.charState(battleData, myTeam, enemyTeam, myTeam.characters[i]));
+            myTeamStates.push(self.charState(wallPositions, myTeam, enemyTeam, myTeam.characters[i]));
         }
         situation.myTeamStates = myTeamStates;
         var enemyTeamStates = [];
         for(i=0; i<enemyTeam.characters.length;i++){
             if(enemyTeam.characters[i]._id == activeChar._id) continue;
-            enemyTeamStates.push(self.charState(battleData, enemyTeam, myTeam, enemyTeam.characters[i]));
+            enemyTeamStates.push(self.charState(wallPositions, enemyTeam, myTeam, enemyTeam.characters[i]));
         }
         situation.enemyTeamStates = enemyTeamStates;
         return situation;
     },
-    charState: function(battleData, myTeam, enemyTeam, char){
+    charState: function(wallPositions, myTeam, enemyTeam, char){
         var self = this;
         var allChars = myTeam.characters.concat(enemyTeam.characters);
         var state = {
@@ -144,7 +105,7 @@ module.exports = {
             optimalRange: self.getOptimalRange(char)
         };
 
-        var positionWeights = arenaService.calculatePositionWeight(char.position, char, myTeam.characters, enemyTeam.characters, state.optimalRange, battleData.wallPositions);
+        var positionWeights = arenaService.calculatePositionWeight(char.position, char, myTeam.characters, enemyTeam.characters, state.optimalRange, wallPositions);
         state.positionWeightOff = positionWeights[0];
         state.positionWeightDef = positionWeights[1];
 
@@ -162,8 +123,8 @@ module.exports = {
 
         //active
         score+=situation.activeChar.curHealth * 110;
-        score+=situation.activeChar.positionWeightOff * 110;
-        score+=situation.activeChar.positionWeightDef * 110;
+        score+=situation.activeChar.positionWeightOff * 150;
+        score+=situation.activeChar.positionWeightDef * 100;
 
         //myTeam
         for(var i=0; i<situation.myTeamStates.length;i++){
@@ -184,8 +145,8 @@ module.exports = {
             switch(actionList[i].type){
                 case 'move':
                     newSituation = extend({}, situation);
-                    newSituation.activeChar.
-                        actionList[i].weight = moveOWeight>= moveDWeight ? moveOWeight : moveDWeight;
+                    //newSituation.activeChar.
+                    //    actionList[i].weight = moveOWeight>= moveDWeight ? moveOWeight : moveDWeight;
                     break;
                 case 'cast':
                     var ability = arenaService.getAbilityForCharByName(activeChar, actionList[i].ability);

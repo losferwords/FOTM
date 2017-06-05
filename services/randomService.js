@@ -27,4 +27,19 @@ exports.randomFloat = function (min, max, digits){
     return (Math.random() * (max - min) + min).toFixed(digits);
 };
 
+exports.clone = function(obj) {
+    var copy = Object.create(Object.getPrototypeOf(obj));
+    update(copy, obj);
+    return copy;
+};
 
+function update(target) {
+    var sources = [].slice.call(arguments, 1);
+    sources.forEach(function (source) {
+        Object.getOwnPropertyNames(source).forEach(function(propName) {
+            Object.defineProperty(target, propName,
+                Object.getOwnPropertyDescriptor(source, propName));
+        });
+    });
+    return target;
+}

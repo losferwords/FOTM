@@ -7,7 +7,7 @@ var arenaService = require('services/arenaService');
 var characterService = require('services/characterService');
 var botService = require('services/botService');
 var randomService = require('services/randomService');
-var extend = require('util')._extend;
+var characterFactory = require('services/characterFactory');
 
 module.exports = function (serverIO) {
     var io = serverIO;
@@ -114,6 +114,29 @@ module.exports = function (serverIO) {
                 }
             }
             cb(result);
+            return result;
+        }
+
+        function findMovePointsSimulation(myTeam, enemyTeam, activeChar, preparedAbility, wallPositions){
+            var result = [];
+            if(!activeChar.immobilized) {
+                var range = 0;
+                if(preparedAbility){
+                    var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
+                    if(ability){
+                        range = ability.range();
+                    }
+                }
+                else if(activeChar.canMove()){
+                    range = 1;
+                }
+
+                if(range>0)
+                {
+                    result = arenaService.findMoves(activeChar, myTeam.characters, enemyTeam.characters, wallPositions, range);
+                    return result;
+                }
+            }
             return result;
         }
 
@@ -414,6 +437,31 @@ module.exports = function (serverIO) {
             cleanBuffers(myTeam, enemyTeam);
         }
 
+        function moveCharSimulation(tile, myTeamOrig, enemyTeamOrig, activeCharOrig, preparedAbility, wallPositions){
+            var myTeam = randomService.clone(myTeamOrig);
+            var enemyTeam = randomService.clone(enemyTeamOrig);
+            var activeChar = randomService.clone(activeCharOrig);
+            if(activeChar.canMove()) {
+                if(arenaService.checkTile({x: tile.x, y: tile.y}, activeChar, myTeam.characters, enemyTeam.characters, wallPositions, false)) {
+                    //invisible char on tile
+                }
+                else if(preparedAbility){
+                    var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
+                    if(ability && arenaService.checkAbilityForUse(ability, activeChar)){
+                        ability.cast(activeChar, null, myTeam.characters, enemyTeam.characters, wallPositions);
+                        activeChar.createAbilitiesState();
+                        activeChar.position = {x: tile.x, y: tile.y};
+                    }
+                }
+                else if(Math.abs(activeChar.position.x-tile.x)<2 && Math.abs(activeChar.position.y-tile.y)<2){
+                    activeChar.position = {x: tile.x, y: tile.y};
+                    activeChar.spendEnergy(activeChar.moveCost);
+                }
+            }
+            cleanBuffers(myTeam, enemyTeam);
+            return {myTeam: myTeam, enemyTeam: enemyTeam, activeChar: activeChar};
+        }
+
         socket.on('castAbility', castAbility);
 
         function castAbility(targetId, myTeamId, enemyTeamId, preparedAbility, cb){
@@ -434,6 +482,24 @@ module.exports = function (serverIO) {
                 }
             }
             cleanBuffers(myTeam, enemyTeam);
+        }
+
+        function castAbilitySimulation(myTeamOrig, enemyTeamOrig, activeCharOrig, targetCharOrig, preparedAbility, wallPositions){
+            var myTeam = randomService.clone(myTeamOrig);
+            var enemyTeam = randomService.clone(enemyTeamOrig);
+            var activeChar = randomService.clone(activeCharOrig);
+            var targetChar = randomService.clone(targetCharOrig);
+            if(preparedAbility){
+                var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
+                if(ability && arenaService.checkAbilityForUse(ability, activeChar)){
+                    ability.cast(activeChar, targetChar, myTeam.characters, enemyTeam.characters, wallPositions);
+                    activeChar.createAbilitiesState();
+                    arenaService.createEffectsStates(myTeam.characters, enemyTeam.characters);
+                    arenaService.calcCharacters(myTeam.characters, enemyTeam.characters);
+                }
+            }
+            cleanBuffers(myTeam, enemyTeam);
+            return {myTeam: myTeam, enemyTeam: enemyTeam, activeChar: activeChar};
         }
 
         socket.on('teamRetreat', function(myTeamId){
@@ -479,146 +545,171 @@ module.exports = function (serverIO) {
             socket.broadcast.to(room).emit('combatLogUpdateSend', message);
         });
 
-        function chooseAction(myTeamId, enemyTeamId){
-            var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
-            var myTeam = battleData['team_'+myTeamId];
-            var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
+
+
+        function buildActionBranch(myTeamOrig, enemyTeamOrig, activeCharOrig, wallPositions, parentAction){
+            var myTeam = randomService.clone(myTeamOrig);
+            var enemyTeam = randomService.clone(enemyTeamOrig);
+            var activeChar = randomService.clone(activeCharOrig);
 
             var actionList = [];
-            var situation = botService.createSituation(battleData, myTeam, enemyTeam, activeChar);
-            var newSituation;
-            var nextPositionWeights;
-            var movePoints = findMovePoints(myTeamId, enemyTeamId, false, function(){});
+            var situation = botService.createSituation(wallPositions, myTeam, enemyTeam, activeChar);
+            var movePoints = findMovePointsSimulation(myTeam, enemyTeam, activeChar, false, wallPositions);
             for(var i=0;i<movePoints.length;i++){
-                newSituation = extend({}, situation);
-                nextPositionWeights = arenaService.calculatePositionWeight(movePoints[i], activeChar, myTeam.characters, enemyTeam.characters, botService.getOptimalRange(activeChar)*0.1, battleData.wallPositions);
-                newSituation.activeChar.positionWeightOff = nextPositionWeights[0];
-                newSituation.activeChar.positionWeightDef = nextPositionWeights[1];
+                var newSituationObject = moveCharSimulation(movePoints[i], myTeam, enemyTeam, activeChar, false, wallPositions);
                 actionList.push({
                     type: "move",
                     point: movePoints[i],
-                    score: botService.situationCost(newSituation)
-                })
+                    score: parentAction.score + botService.situationCost(botService.createSituation(wallPositions, newSituationObject.myTeam, newSituationObject.enemyTeam, newSituationObject.activeChar)),
+                    myTeamState: newSituationObject.myTeam,
+                    enemyTeamState: newSituationObject.enemyTeam,
+                    activeCharState: newSituationObject.activeChar
+                });
             }
-            for(var v=0;v<activeChar.abilities.length;v++){
-                var checkedAbility = activeChar.abilities[v];
-                var enemies;
-                var allies;
-                var characters;
-                if(arenaService.checkAbilityForUse(checkedAbility, activeChar)){
-                    switch(checkedAbility.targetType()){
-                        case "self":
-                            actionList.push({
-                                type: "cast",
-                                ability: checkedAbility.name,
-                                score: 0
-                            }); break;
-                        case "enemy":
-                            enemies = findEnemies(myTeamId, enemyTeamId, checkedAbility.name, function(){});
-                            for (i = 0; i < enemies.length; i++) {
-                                for (var j = 0; j < enemyTeam.characters.length; j++) {
-                                    if(!checkedAbility.usageLogic(activeChar, enemyTeam.characters[j], myTeam.characters, enemyTeam.characters, battleData.wallPositions)) continue;
-                                    if(checkedAbility.name == "My Last Words" && enemyTeam.characters[j]._id == enemies[i]._id && (enemies[i].curHealth/enemies[i].maxHealth)<=0.5) {
-                                        actionList.push({
-                                            type: "cast",
-                                            ability: checkedAbility.name,
-                                            target: enemyTeam.characters[j]._id,
-                                            score: 0
-                                        });
-                                    }
-                                    else if (enemyTeam.characters[j]._id == enemies[i]._id) {
-                                        actionList.push({
-                                            type: "cast",
-                                            ability: checkedAbility.name,
-                                            target: enemyTeam.characters[j]._id,
-                                            score: 0
-                                        });
-                                    }
-                                }
-                            }
-                            break;
-                        case "ally":
-                            allies = findAllies(myTeamId, enemyTeamId, checkedAbility.name, function(){});
-                            for (i = 0; i < allies.length; i++) {
-                                for (j = 0; j < myTeam.characters.length; j++) {
-                                    if(!checkedAbility.usageLogic(activeChar, myTeam.characters[j], myTeam.characters, enemyTeam.characters, battleData.wallPositions)) continue;
-                                    if (myTeam.characters[j]._id == allies[i]._id) {
-                                        actionList.push({
-                                            type: "cast",
-                                            ability: checkedAbility.name,
-                                            target: myTeam.characters[j]._id,
-                                            score: 0
-                                        });
-                                    }
-                                }
-                            }
-                            break;
-                        case "allyNotMe":
-                            allies = findAllies(myTeamId, enemyTeamId, checkedAbility.name, function(){});
-                            for (i = 0; i < allies.length; i++) {
-                                for (j = 0; j < myTeam.characters.length; j++) {
-                                    if(!checkedAbility.usageLogic(activeChar, myTeam.characters[j], myTeam.characters, enemyTeam.characters, battleData.wallPositions)) continue;
-                                    if (myTeam.characters[j]._id == allies[i]._id && activeChar._id != allies[i]._id) {
-                                        actionList.push({
-                                            type: "cast",
-                                            ability: checkedAbility.name,
-                                            target: myTeam.characters[j]._id,
-                                            score: 0
-                                        });
-                                    }
-                                }
-                            }
-                            break;
-                        case "ally&enemy":
-                            characters = findCharacters(myTeamId, enemyTeamId, checkedAbility.name, function(){});
-                            for (i = 0; i < characters.length; i++) {
-                                for (j = 0; j < enemyTeam.characters.length; j++) {
-                                    if(!checkedAbility.usageLogic(activeChar, enemyTeam.characters[j], myTeam.characters, enemyTeam.characters, battleData.wallPositions)) continue;
-                                    if (enemyTeam.characters[j]._id == characters[i]._id) {
-                                        actionList.push({
-                                            type: "cast",
-                                            ability: checkedAbility.name,
-                                            target: enemyTeam.characters[j]._id,
-                                            score: 0
-                                        });
-                                    }
-                                }
-                                for (j = 0; j < myTeam.characters.length; j++) {
-                                    if(!checkedAbility.usageLogic(activeChar, myTeam.characters[j], myTeam.characters, enemyTeam.characters, battleData.wallPositions)) continue;
-                                    if (myTeam.characters[j]._id == characters[i]._id) {
-                                        actionList.push({
-                                            type: "cast",
-                                            ability: checkedAbility.name,
-                                            target: myTeam.characters[j]._id,
-                                            score: 0
-                                        });
-                                    }
-                                }
-                            }
-                            break;
-                        case "move":
-                            var abilityMovePoints = findMovePoints(myTeamId, enemyTeamId, checkedAbility.name, function(){});
-                            for(i=0;i<abilityMovePoints.length;i++){
-                                newSituation = extend({}, situation);
-                                nextPositionWeights = arenaService.calculatePositionWeight(abilityMovePoints[i], activeChar, myTeam.characters, enemyTeam.characters, botService.getOptimalRange(activeChar)*0.1, battleData.wallPositions);
-                                newSituation.activeChar.positionWeightOff = nextPositionWeights[0];
-                                newSituation.activeChar.positionWeightDef = nextPositionWeights[1];
-                                actionList.push({
-                                    type: "move",
-                                    point: abilityMovePoints[i],
-                                    score: botService.situationCost(newSituation)
-                                })
-                            }
-                            break;
-                    }
-                }
-            }
+            //for(var v=0;v<activeChar.abilities.length;v++){
+            //    var checkedAbility = activeChar.abilities[v];
+            //    var enemies;
+            //    var allies;
+            //    var characters;
+            //    var targetChar;
+            //    var totalScore = 0;
+            //    var predictionCount = 10;
+            //    if(arenaService.checkAbilityForUse(checkedAbility, activeChar)){
+            //        switch(checkedAbility.targetType()){
+            //            case "self":
+            //                for(var p=0; p<predictionCount; p++){
+            //                    totalScore += castAbilitySimulation(myTeam, enemyTeam, activeChar, activeChar, checkedAbility.name, wallPositions);
+            //                }
+            //                actionList.push({
+            //                    type: "cast",
+            //                    ability: checkedAbility.name,
+            //                    score: totalScore/predictionCount
+            //                }); break;
+            //            case "enemy":
+            //                enemies = findEnemies(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
+            //                for (i = 0; i < enemies.length; i++) {
+            //                    for (var j = 0; j < enemyTeam.characters.length; j++) {
+            //                        if(!checkedAbility.usageLogic(activeChar, enemyTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
+            //                        if(enemyTeam.characters[j]._id == enemies[i]._id) {
+            //                            targetChar = clone(arenaService.findCharInQueue(enemyTeam.characters[j]._id, myTeam.characters, enemyTeam.characters));
+            //                            totalScore = 0;
+            //                            for(p=0; p<predictionCount; p++){
+            //                                totalScore += castAbilitySimulation(myTeam, enemyTeam, activeChar, targetChar, checkedAbility.name, wallPositions);
+            //                            }
+            //                            actionList.push({
+            //                                type: "cast",
+            //                                ability: checkedAbility.name,
+            //                                target: enemyTeam.characters[j]._id,
+            //                                score: totalScore/predictionCount
+            //                            });
+            //                        }
+            //                    }
+            //                }
+            //                break;
+            //            case "ally":
+            //                allies = findAllies(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
+            //                for (i = 0; i < allies.length; i++) {
+            //                    for (j = 0; j < myTeam.characters.length; j++) {
+            //                        if(!checkedAbility.usageLogic(activeChar, myTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
+            //                        if (myTeam.characters[j]._id == allies[i]._id) {
+            //                            targetChar = randomService.clone(arenaService.findCharInQueue(myTeam.characters[j]._id, myTeam.characters, enemyTeam.characters));
+            //                            totalScore = 0;
+            //                            for(p=0; p<predictionCount; p++){
+            //                                totalScore += castAbilitySimulation(myTeam, enemyTeam, activeChar, targetChar, checkedAbility.name, wallPositions);
+            //                            }
+            //                            actionList.push({
+            //                                type: "cast",
+            //                                ability: checkedAbility.name,
+            //                                target: myTeam.characters[j]._id,
+            //                                score: totalScore/predictionCount
+            //                            });
+            //                        }
+            //                    }
+            //                }
+            //                break;
+            //            case "allyNotMe":
+            //                allies = findAllies(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
+            //                for (i = 0; i < allies.length; i++) {
+            //                    for (j = 0; j < myTeam.characters.length; j++) {
+            //                        if(!checkedAbility.usageLogic(activeChar, myTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
+            //                        if (myTeam.characters[j]._id == allies[i]._id && activeChar._id != allies[i]._id) {
+            //                            targetChar = randomService.clone(arenaService.findCharInQueue(myTeam.characters[j]._id, myTeam.characters, enemyTeam.characters));
+            //                            totalScore = 0;
+            //                            for(p=0; p<predictionCount; p++){
+            //                                totalScore += castAbilitySimulation(myTeam, enemyTeam, activeChar, targetChar, checkedAbility.name, wallPositions);
+            //                            }
+            //                            actionList.push({
+            //                                type: "cast",
+            //                                ability: checkedAbility.name,
+            //                                target: myTeam.characters[j]._id,
+            //                                score: totalScore/predictionCount
+            //                            });
+            //                        }
+            //                    }
+            //                }
+            //                break;
+            //            case "ally&enemy":
+            //                characters = findCharacters(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
+            //                for (i = 0; i < characters.length; i++) {
+            //                    for (j = 0; j < enemyTeam.characters.length; j++) {
+            //                        if(!checkedAbility.usageLogic(activeChar, enemyTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
+            //                        if (enemyTeam.characters[j]._id == characters[i]._id) {
+            //                            targetChar = randomService.clone(arenaService.findCharInQueue(enemyTeam.characters[j]._id, myTeam.characters, enemyTeam.characters));
+            //                            totalScore = 0;
+            //                            for(p=0; p<predictionCount; p++){
+            //                                totalScore += castAbilitySimulation(myTeam, enemyTeam, activeChar, targetChar, checkedAbility.name, wallPositions);
+            //                            }
+            //                            actionList.push({
+            //                                type: "cast",
+            //                                ability: checkedAbility.name,
+            //                                target: enemyTeam.characters[j]._id,
+            //                                score: totalScore/predictionCount
+            //                            });
+            //                        }
+            //                    }
+            //                    for (j = 0; j < myTeam.characters.length; j++) {
+            //                        if(!checkedAbility.usageLogic(activeChar, myTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
+            //                        if (myTeam.characters[j]._id == characters[i]._id) {
+            //                            targetChar = randomService.clone(arenaService.findCharInQueue(myTeam.characters[j]._id, myTeam.characters, enemyTeam.characters));
+            //                            totalScore = 0;
+            //                            for(p=0; p<predictionCount; p++){
+            //                                totalScore += castAbilitySimulation(myTeam, enemyTeam, activeChar, targetChar, checkedAbility.name, wallPositions);
+            //                            }
+            //                            actionList.push({
+            //                                type: "cast",
+            //                                ability: checkedAbility.name,
+            //                                target: myTeam.characters[j]._id,
+            //                                score: totalScore/predictionCount
+            //                            });
+            //                        }
+            //                    }
+            //                }
+            //                break;
+            //            case "move":
+            //                var abilityMovePoints = findMovePoints(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
+            //                for(i=0;i<abilityMovePoints.length;i++){
+            //                    totalScore = moveCharSimulation(abilityMovePoints[i], myTeam, enemyTeam, activeChar, checkedAbility.name, wallPositions);
+            //                    actionList.push({
+            //                        type: "move",
+            //                        point: abilityMovePoints[i],
+            //                        score: totalScore
+            //                    });
+            //                }
+            //                break;
+            //        }
+            //    }
+            //}
 
             actionList.push({
                 type: "endTurn",
-                score: botService.situationCost(situation)
+                score: parentAction.score + botService.situationCost(situation)
             });
+
+            for(i=0;i<actionList.length;i++){
+                if(actionList[i].type != "endTurn"){
+                    actionList[i].branch = buildActionBranch(actionList[i].myTeamState, actionList[i].enemyTeamState, actionList[i].activeCharState, wallPositions, actionList[i]);
+                }
+            }
 
             actionList.sort(function (a, b) {
                 if (a.score <= b.score) {
@@ -629,18 +720,36 @@ module.exports = function (serverIO) {
                 }
             });
 
-            return actionList[0];
+            if(parentAction.score<actionList[0].score) parentAction.score=actionList[0].score;
+
+            return actionList;
         }
 
         socket.on('botAction', function(myTeamId, enemyTeamId) {
             setTimeout(function(){
                 var chooseActionTimeStart = new Date();
+                var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
+                var myTeam = battleData['team_'+myTeamId];
+                var enemyTeam = battleData['team_'+enemyTeamId];
+                var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
 
-                var action = chooseAction(myTeamId, enemyTeamId);
+                var maxScoreAction = {score: 0};
+                var actions = buildActionBranch(myTeam, enemyTeam, activeChar, battleData.wallPositions, maxScoreAction);
+
+                actions.sort(function (a, b) {
+                    if (a.score <= b.score) {
+                        return 1;
+                    }
+                    else if (a.score > b.score) {
+                        return -1;
+                    }
+                });
+
+                var action = actions[0];
 
                 var chooseActionTimeEnd = new Date();
 
-                //console.log("Think time: " + (chooseActionTimeEnd.getTime() - chooseActionTimeStart.getTime()) + "ms");
+                console.log("Think time: " + (chooseActionTimeEnd.getTime() - chooseActionTimeStart.getTime()) + "ms");
 
                 switch(action.type){
                     case "move":

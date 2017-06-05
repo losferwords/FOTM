@@ -888,7 +888,7 @@ var Ability = function(name){
             needWeapon : function() {return true},
             cd : 0,
             usage: function() { return {direct: 1, damage: 1} },
-            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune) }
+            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune || (target.curHealth/target.maxHealth)>0.5) }
         };break;
 
         case "Come Cover Me": return {
