@@ -437,10 +437,10 @@ module.exports = function (serverIO) {
             cleanBuffers(myTeam, enemyTeam);
         }
 
-        function moveCharSimulation(tile, myTeamOrig, enemyTeamOrig, activeCharOrig, preparedAbility, wallPositions){
-            var myTeam = randomService.clone(myTeamOrig);
-            var enemyTeam = randomService.clone(enemyTeamOrig);
-            var activeChar = randomService.clone(activeCharOrig);
+        function moveCharSimulation(tile, myTeamOrig, enemyTeamOrig, activeCharId, preparedAbility, wallPositions){
+            var myTeam = arenaService.cloneTeam(myTeamOrig);
+            var enemyTeam = arenaService.cloneTeam(enemyTeamOrig);
+            var activeChar = arenaService.findCharInMyTeam(activeCharId, myTeam.characters);
             if(activeChar.canMove()) {
                 if(arenaService.checkTile({x: tile.x, y: tile.y}, activeChar, myTeam.characters, enemyTeam.characters, wallPositions, false)) {
                     //invisible char on tile
@@ -455,7 +455,7 @@ module.exports = function (serverIO) {
                 }
                 else if(Math.abs(activeChar.position.x-tile.x)<2 && Math.abs(activeChar.position.y-tile.y)<2){
                     activeChar.position = {x: tile.x, y: tile.y};
-                    activeChar.spendEnergy(activeChar.moveCost);
+                    activeChar.spendEnergy(activeChar.moveCost, true);
                 }
             }
             cleanBuffers(myTeam, enemyTeam);
@@ -484,11 +484,11 @@ module.exports = function (serverIO) {
             cleanBuffers(myTeam, enemyTeam);
         }
 
-        function castAbilitySimulation(myTeamOrig, enemyTeamOrig, activeCharOrig, targetCharOrig, preparedAbility, wallPositions){
-            var myTeam = randomService.clone(myTeamOrig);
-            var enemyTeam = randomService.clone(enemyTeamOrig);
-            var activeChar = randomService.clone(activeCharOrig);
-            var targetChar = randomService.clone(targetCharOrig);
+        function castAbilitySimulation(myTeamOrig, enemyTeamOrig, activeCharId, targetCharId, preparedAbility, wallPositions){
+            var myTeam = arenaService.cloneTeam(myTeamOrig);
+            var enemyTeam = arenaService.cloneTeam(enemyTeamOrig);
+            var activeChar = arenaService.findCharInMyTeam(activeCharId, myTeam.characters);
+            var targetChar = arenaService.findCharInQueue(targetCharId, myTeam.characters, enemyTeam.characters);
             if(preparedAbility){
                 var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
                 if(ability && arenaService.checkAbilityForUse(ability, activeChar)){
@@ -547,20 +547,20 @@ module.exports = function (serverIO) {
 
 
 
-        function buildActionBranch(myTeamOrig, enemyTeamOrig, activeCharOrig, wallPositions, parentAction){
-            var myTeam = randomService.clone(myTeamOrig);
-            var enemyTeam = randomService.clone(enemyTeamOrig);
-            var activeChar = randomService.clone(activeCharOrig);
+        function buildActionBranch(myTeam, enemyTeam, activeCharId, wallPositions, parentAction){
+            var activeChar = arenaService.findCharInMyTeam(activeCharId, myTeam.characters);
+            var score = 0;
 
             var actionList = [];
             var situation = botService.createSituation(wallPositions, myTeam, enemyTeam, activeChar);
             var movePoints = findMovePointsSimulation(myTeam, enemyTeam, activeChar, false, wallPositions);
             for(var i=0;i<movePoints.length;i++){
-                var newSituationObject = moveCharSimulation(movePoints[i], myTeam, enemyTeam, activeChar, false, wallPositions);
+                var newSituationObject = moveCharSimulation(movePoints[i], myTeam, enemyTeam, activeCharId, false, wallPositions);
+                score = parentAction.score + botService.situationCost(botService.createSituation(wallPositions, newSituationObject.myTeam, newSituationObject.enemyTeam, newSituationObject.activeChar));
                 actionList.push({
                     type: "move",
                     point: movePoints[i],
-                    score: parentAction.score + botService.situationCost(botService.createSituation(wallPositions, newSituationObject.myTeam, newSituationObject.enemyTeam, newSituationObject.activeChar)),
+                    score: score,
                     myTeamState: newSituationObject.myTeam,
                     enemyTeamState: newSituationObject.enemyTeam,
                     activeCharState: newSituationObject.activeChar
@@ -707,7 +707,7 @@ module.exports = function (serverIO) {
 
             for(i=0;i<actionList.length;i++){
                 if(actionList[i].type != "endTurn"){
-                    actionList[i].branch = buildActionBranch(actionList[i].myTeamState, actionList[i].enemyTeamState, actionList[i].activeCharState, wallPositions, actionList[i]);
+                    actionList[i].branch = buildActionBranch(actionList[i].myTeamState, actionList[i].enemyTeamState, actionList[i].activeCharState._id, wallPositions, actionList[i]);
                 }
             }
 
@@ -720,7 +720,7 @@ module.exports = function (serverIO) {
                 }
             });
 
-            if(parentAction.score<actionList[0].score) parentAction.score=actionList[0].score;
+            parentAction.score = actionList[0].score;
 
             return actionList;
         }
@@ -733,17 +733,8 @@ module.exports = function (serverIO) {
                 var enemyTeam = battleData['team_'+enemyTeamId];
                 var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
 
-                var maxScoreAction = {score: 0};
-                var actions = buildActionBranch(myTeam, enemyTeam, activeChar, battleData.wallPositions, maxScoreAction);
-
-                actions.sort(function (a, b) {
-                    if (a.score <= b.score) {
-                        return 1;
-                    }
-                    else if (a.score > b.score) {
-                        return -1;
-                    }
-                });
+                var parentAction = {score: 0};
+                var actions = buildActionBranch(myTeam, enemyTeam, activeChar._id, battleData.wallPositions, parentAction);
 
                 var action = actions[0];
 

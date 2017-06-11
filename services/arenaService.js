@@ -286,6 +286,43 @@ module.exports = {
         }
         return char;
     },
+    //Находит персонажа в команде по ID
+    findCharInMyTeam: function(id, myTeam) {
+        var char;
+        for(var i=0; i<myTeam.length; i++){
+            if(id == myTeam[i]._id){
+                char = myTeam[i];
+                break;
+            }
+        }
+        return char;
+    },
+    //делает копию команды
+    cloneTeam: function(team){
+        var self = this;
+        var newTeam = Object.create(Object.getPrototypeOf(team));
+        var newCharacters = [];
+        self.clone(newTeam, team);
+
+        for(var i=0; i<team.characters.length; i++){
+            var charCopy = Object.create(Object.getPrototypeOf(team.characters[i]));
+            self.clone(charCopy, team.characters[i]);
+            newCharacters.push(charCopy);
+        }
+
+        newTeam.characters = newCharacters;
+        return newTeam;
+    },
+    clone: function(target){
+        var sources = [].slice.call(arguments, 1);
+        sources.forEach(function (source) {
+            Object.getOwnPropertyNames(source).forEach(function(propName) {
+                Object.defineProperty(target, propName,
+                    Object.getOwnPropertyDescriptor(source, propName));
+            });
+        });
+        return target;
+    },
     //Создаёт стэйты эффектов для персонажей в очереди
     createEffectsStates: function(myTeamChars, enemyTeamChars) {
         for(var i=0; i<myTeamChars.length; i++){

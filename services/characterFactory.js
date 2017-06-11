@@ -876,9 +876,9 @@ Character.prototype.takeMana = function(value, caster, ability, isCritical){
 };
 
 //Функция траты энергии
-Character.prototype.spendEnergy = function(value) {
+Character.prototype.spendEnergy = function(value, simulation) {
     var self=this;
-    if(self.checkLuck()){
+    if(!simulation && self.checkLuck()){
         self.logBuffer.push(self.charName+" is very lucky and save his energy");
         self.soundBuffer.push("luck");
     }
