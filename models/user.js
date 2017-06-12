@@ -41,13 +41,11 @@ var schema = new Schema({
 //GET---------------------------------------------------------------------
 
 schema.statics.getById = function(userId, callback) {
-    var User = this;
-    User.findById(userId, callback); //находим юзера
+    this.findById(userId, callback); //находим юзера
 };
 
 schema.statics.getAll = function(callback) {
-    var User = this;
-    User.find({}, callback); //находим всех юзеров
+    this.find({}, callback); //находим всех юзеров
 };
 
 schema.statics.authorize = function (username, password, callback) {
@@ -152,15 +150,15 @@ schema.statics.register = function (username, password, email, callback) {
 //UPDATE---------------------------------------------------------------------
 
 schema.statics.setById = function(userId, setter, callback) {
-    var User = this;
-    User.findByIdAndUpdate(userId,
-        {$set: setter}, {upsert: true},
+    this.findByIdAndUpdate(userId,
+        {$set: setter}, {upsert: true, new: true},
         callback);
 };
 
 //DELETE---------------------------------------------------------------------
 
 exports.User = mongoose.model('User', schema);
+
 
 
 function CustomError(message) {

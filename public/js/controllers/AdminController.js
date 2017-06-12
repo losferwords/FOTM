@@ -1,7 +1,7 @@
 (function (module) {
     module.controller("AdminController", AdminController);
     //Контроллер администратора
-    function AdminController($scope, $rootScope, $location, $timeout, mainSocket, character, characterService, gettextCatalog, $route) {
+    function AdminController($scope, $rootScope, $location, $timeout, mainSocket, abilityService, characterService, gettextCatalog, $route) {
         var teamsLoad=false; //Загрузка тим уже была вызвана
         $scope.roleChart = {};
         $scope.currentUser = {user: undefined};
@@ -43,16 +43,39 @@
         };
 
         $scope.$on('$routeChangeSuccess', function () {
-            mainSocket.emit("getAllUsersPop");
+            getUsers();
         });
+
+        function getUsers() {
+            mainSocket.emit("getAllUsersPop", function(users) {
+                users.sort(function (a, b) {
+                    if(a.username.toLowerCase() < b.username.toLowerCase()){
+                        return -1;
+                    }
+                    else if(a.username.toLowerCase() > b.username.toLowerCase()){
+                        return 1;
+                    }
+                    return 0;
+                });
+                $scope.users = users;
+                $scope.teamList = [];
+                for(var i=0;i<$scope.users.length;i++){
+                    if(users[i].team) {
+                        for(var j=0;j<users[i].team.characters.length;j++){
+                            users[i].team.characters[j].abilities = abilityService.translateAbilities(users[i].team.characters[j].state.abilities);
+                        }
+                        users[i].team.username = users[i].username;
+                        $scope.teamList.push($scope.users[i].team);
+                    }
+                }
+                updateRoleStat();
+                calculateRankings();
+            });
+        }
 
         $scope.loadTeam = function(user){
             if(user.team){
                 $scope.chosenTeam = user.team;
-                for(var i=0;i<$scope.chosenTeam.characters.length;i++){
-                    $scope.chosenTeam.characters[i] = new character($scope.chosenTeam.characters[i]);
-                    $scope.chosenTeam.characters[i].initChar();
-                }
             }
             else {
                 $scope.chosenTeam = undefined;
@@ -61,7 +84,11 @@
 
         $scope.deleteUser = function(user) {
             if(user){
-                mainSocket.emit("deleteUser", user._id);
+                mainSocket.emit("deleteUser", user._id, function() {
+                    $rootScope.showInfoMessage("Successfully deleted");
+                    $scope.chosenTeam = undefined;
+                    getUsers();
+                });
             }
         };
 
@@ -74,26 +101,28 @@
             $scope.chosenRole=undefined;
             $scope.chosenLevel=undefined;
             var chosenRole = event[0].label.toLowerCase();
-            $scope.abilitiesLabels = characterService.getRoleAbilities(chosenRole);
-            $scope.abilitiesData = [[0,0,0,0,0,0,0,0]];
-            for(var i=0;i<$scope.abilitiesLabels.length;i++){
-                for(var j=0;j<$scope.teamList.length;j++){
-                    for(var k=0;k<$scope.teamList[j].characters.length;k++){
-                        for(var l=0;l<$scope.teamList[j].characters[k].abilities.length;l++){
-                            if($scope.abilitiesLabels[i]===$scope.teamList[j].characters[k].abilities[l].name){
-                                $scope.abilitiesData[0][i]++;
-                                break;
+            mainSocket.emit("getRoleAbilities", chosenRole, function(labels) {
+                $scope.abilitiesLabels = labels;
+                $scope.abilitiesData = [[0,0,0,0,0,0,0,0]];
+                for(var i=0;i<$scope.abilitiesLabels.length;i++){
+                    for(var j=0;j<$scope.teamList.length;j++){
+                        for(var k=0;k<$scope.teamList[j].characters.length;k++){
+                            for(var l=0;l<$scope.teamList[j].characters[k].abilities.length;l++){
+                                if($scope.abilitiesLabels[i]===$scope.teamList[j].characters[k].abilities[l].name){
+                                    $scope.abilitiesData[0][i]++;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-            }
-            for(i=0;i<$scope.abilitiesColors.length;i++){
-                $scope.abilitiesColors[i]=$scope.getAbilityColor(chosenRole, true);
-            }
-            $timeout(function(){
-                $scope.chosenRole=chosenRole;
-            },100);
+                for(i=0;i<$scope.abilitiesColors.length;i++){
+                    $scope.abilitiesColors[i]=$scope.getAbilityColor(chosenRole, true);
+                }
+                $timeout(function(){
+                    $scope.chosenRole=chosenRole;
+                },100);
+            });
         };
 
         $scope.chooseAbility = function chooseAbility(event){
@@ -263,43 +292,13 @@
         };
 
         //Функция выбирает цвет для способности по её роли
-        $scope.getAbilityColor = function(ability, string) {
-            if(ability) {
-                var str="";
-                if(string){
-                    str=ability;
+        $scope.getAbilityColor = function(role) {
+            if(role) {
+                if(role=="void"){
+                    return "#cccccc";
                 }
                 else {
-                    str=ability.role();
-                }
-                switch (str) {
-                    case "void":
-                        return "#cccccc";
-                        break;
-                    case "sentinel":
-                        return "#f7f7f7";
-                        break;
-                    case "slayer":
-                        return "#ff0906";
-                        break;
-                    case "redeemer":
-                        return "#0055AF";
-                        break;
-                    case "ripper":
-                        return "#61dd45";
-                        break;
-                    case "prophet":
-                        return "#00b3ee";
-                        break;
-                    case "malefic":
-                        return "#f05800";
-                        break;
-                    case "cleric":
-                        return "#ffc520";
-                        break;
-                    case "heretic":
-                        return "#862197";
-                        break;
+                    return characterService.getRoleColor(role);
                 }
             }
             else {
@@ -313,14 +312,14 @@
             var tooltip = "";
             tooltip+="<p class='name'>"+ability.localName()+" "+ability.variant+"</p>";
             tooltip+="<p class='desc'>"+ability.desc()+"</p>";
-            if(ability.needWeapon()) tooltip+=gettextCatalog.getString("<p class='tooltip-need-weapon'>Need weapon</p>");
+            if(ability.needWeapon) tooltip+=gettextCatalog.getString("<p class='tooltip-need-weapon'>Need weapon</p>");
             else tooltip+=gettextCatalog.getString("<p class='tooltip-spell'>Spell</p>");
-            if(ability.range()>0) tooltip+=gettextCatalog.getString("<p>Range: {{one}}</p>",{one: ability.range()});
+            if(ability.range>0) tooltip+=gettextCatalog.getString("<p>Range: {{one}}</p>",{one: ability.range});
             else tooltip+=gettextCatalog.getString("<p>Range: Self</p>");
-            tooltip+=gettextCatalog.getString("<p>Cooldown: {{one}}</p>",{one: ability.cooldown()});
-            if(ability.duration()>0) tooltip+=gettextCatalog.getString("<p>Duration: {{one}}</p>",{one: ability.duration()});
-            tooltip+=gettextCatalog.getString("<p>Energy Cost: {{one}}</p>",{one: ability.energyCost()});
-            tooltip+=gettextCatalog.getString("<p>Mana Cost: {{one}}</p>",{one: ability.manaCost()});
+            tooltip+=gettextCatalog.getString("<p>Cooldown: {{one}}</p>",{one: ability.cooldown});
+            if(ability.duration>0) tooltip+=gettextCatalog.getString("<p>Duration: {{one}}</p>",{one: ability.duration});
+            tooltip+=gettextCatalog.getString("<p>Energy Cost: {{one}}</p>",{one: ability.energyCost});
+            tooltip+=gettextCatalog.getString("<p>Mana Cost: {{one}}</p>",{one: ability.manaCost});
             return tooltip;
         };
 
@@ -363,34 +362,5 @@
                 return 0;
             });
         }
-
-        mainSocket.on('getAllUsersPopResult', function(users){
-            users.sort(function (a, b) {
-                if(a.username.toLowerCase() < b.username.toLowerCase()){
-                    return -1;
-                }
-                else if(a.username.toLowerCase() > b.username.toLowerCase()){
-                    return 1;
-                }
-                return 0;
-            });
-            $scope.users = users;
-            $scope.teamList = [];
-            for(var i=0;i<$scope.users.length;i++){
-                if(users[i].team) {
-                    users[i].team.username = users[i].username;
-                    $scope.teamList.push($scope.users[i].team);
-                }
-            }
-            updateRoleStat();
-            calculateRankings();
-        });
-
-        mainSocket.on('deleteUserResult', function(){
-            $rootScope.showInfoMessage("Successfully deleted");
-            $scope.chosenTeam = undefined;
-            mainSocket.emit("getAllUsersPop");
-        });
-
     }
 })(angular.module("fotm"));

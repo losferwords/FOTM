@@ -2,7 +2,7 @@
     module.controller("CreateCharacterController", CreateCharacterController);
 
     //Контроллер создания персонажа
-    function CreateCharacterController($scope, $rootScope, $location, mainSocket, characterService, abilityService, randomService, gettextCatalog) {
+    function CreateCharacterController($scope, $location, mainSocket, characterService, randomService, gettextCatalog, currentTeam) {
         var defaultGenderIndex = randomService.randomInt(0,1);
         var defaultGender = "";
         switch(defaultGenderIndex) {
@@ -35,122 +35,67 @@
 
         //Кнопка сохранения персонажа на экране создания персонажа
         $scope.submitCharClick = function() {
-            mainSocket.emit("getChar", {charName: $scope.characterObj.charName});
             $scope.createCharPending = true;
+            mainSocket.emit("checkCharBeforeCreate", {charName: $scope.characterObj.charName}, function(char) {
+                if(char){
+                    $scope.changeInfoCSS("error"); //применяем ng-class
+                    $scope.info=gettextCatalog.getString("Name {{one}} is already in use", {one: $scope.characterObj.charName});
+                    $scope.createCharPending = false;
+                }
+                else {
+                    mainSocket.emit('saveNewChar', {
+                        _id: $scope.characterObj._id,
+                        charName: $scope.characterObj.charName,
+                        gender: $scope.characterObj.gender,
+                        race: $scope.characterObj.race,
+                        role: $scope.characterObj.role,
+                        portrait: $scope.portraits[$scope.activePortrait.value].image,
+                        _team: teamId
+                    }, function(changedTeam) {
+                        $scope.changeInfoCSS("success"); //применяем ng-class
+                        $scope.info=gettextCatalog.getString("Successful");
+                        if(currentTeam.get().rating){
+                            $location.path('/city');
+                        }
+                        else{
+                            $location.path('/createTeam');
+                        }
+                    });
+                }
+            });
         };
 
         //При нажатии на "отмена" dummy персонаж должен удалиться
         $scope.cancelCharClick = function() {
-            if($rootScope.interestingChar){
+            //Только у созданной тимы есть рейтинг, проверка на то, куда вернуться
+            if(currentTeam.get().rating){
                 $location.path('/city');
             }
-            else{
-                mainSocket.emit("removeChar", teamId, $scope.characterObj._id);
-                $scope.createCharPending = true;
-            }
-        };
-        mainSocket.on("removeCharResult", function() {
-            $location.path('/createTeam');
-        });
-
-        //Получаем результаты проверки персонажа
-        mainSocket.on("getCharResult", function (char) {
-            if(char){
-                $scope.changeInfoCSS("error"); //применяем ng-class
-                $scope.info=gettextCatalog.getString("Name {{one}} is already in use", {one: $scope.characterObj.charName});
-                $scope.createCharPending = false;
-            }
             else {
-                //Набираем базовые скилы для данной роли
-                if($scope.characterObj.role==="random"){
-                    if($scope.characterObj.race==="human"){
-                        switch (randomService.randomInt(0,7)) {
-                            case 0: $scope.characterObj.role="sentinel"; break;
-                            case 1: $scope.characterObj.role="slayer"; break;
-                            case 2: $scope.characterObj.role="redeemer"; break;
-                            case 3: $scope.characterObj.role="ripper"; break;
-                            case 4: $scope.characterObj.role="prophet"; break;
-                            case 5: $scope.characterObj.role="malefic"; break;
-                            case 6: $scope.characterObj.role="cleric"; break;
-                            case 7: $scope.characterObj.role="heretic"; break;
-                        }
-                    }
-                    else if($scope.characterObj.race==="nephilim"){
-                        switch (randomService.randomInt(0,3)) {
-                            case 0: $scope.characterObj.role="sentinel"; break;
-                            case 1: $scope.characterObj.role="redeemer"; break;
-                            case 2: $scope.characterObj.role="prophet"; break;
-                            case 3: $scope.characterObj.role="cleric"; break;
-                        }
-                    }
-                    else {
-                        switch (randomService.randomInt(0,3)) {
-                            case 0: $scope.characterObj.role="slayer"; break;
-                            case 1: $scope.characterObj.role="ripper"; break;
-                            case 2: $scope.characterObj.role="malefic"; break;
-                            case 3: $scope.characterObj.role="heretic"; break;
-                        }
-                    }
-                }
-                updateCharInfo();
-                var availableAbilitiesArr = characterService.getBasicAbilities($scope.characterObj.role, $scope.characterObj.race);
-                var abilitiesArr = characterService.getStartAbilities(availableAbilitiesArr.slice());
-
-                var abilitiesObjectsArr = [];
-                for(var i=0;i<abilitiesArr.length;i++){
-                    abilitiesObjectsArr.push(abilityService.ability(abilitiesArr[i]));
-                }
-                mainSocket.emit('setChar', {
-                    _id: $scope.characterObj._id,
-                    charName: $scope.characterObj.charName,
-                    gender: $scope.characterObj.gender,
-                    race: $scope.characterObj.race,
-                    role: $scope.characterObj.role,
-                    portrait: $scope.portraits[$scope.activePortrait.value].image,
-                    params: $scope.params,
-                    equip: characterService.getEquip($scope.characterObj.role),
-                    abilities: abilitiesObjectsArr,
-                    availableAbilities: availableAbilitiesArr,
-                    lose: false
+                $scope.createCharPending = true;
+                mainSocket.emit("removeChar", teamId, $scope.characterObj._id, function() {
+                    $location.path('/createTeam');
                 });
             }
-        });
-        mainSocket.on("setCharResult", function () {
-            mainSocket.emit('setTeam', {
-                _id: teamId,
-                souls: {
-                    red: $scope.teamSouls.red-$scope.roleCost.red,
-                    green: $scope.teamSouls.green-$scope.roleCost.green,
-                    blue: $scope.teamSouls.blue-$scope.roleCost.blue
-                }
-            });
-        });
-        mainSocket.on("setTeamResult", function () {
-            $scope.changeInfoCSS("success"); //применяем ng-class
-            $scope.info=gettextCatalog.getString("Successful");
-            if($rootScope.interestingChar){
-                $location.path('/city');
-            }
-            else{
-                $location.path('/createTeam');
-            }
-        });
+        };
 
         $scope.$on('$routeChangeSuccess', function () {
-            if($rootScope.interestingChar){
-                $scope.characterObj._id=$rootScope.interestingChar._id;
-                $scope.teamSouls=$rootScope.interestingTeam.souls;
-                teamId = $rootScope.interestingTeam._id;
+            //Только у созданной тимы есть рейтинг
+            if(currentTeam.get().rating){
+                //попали сюда из City
+                $scope.characterObj._id=currentTeam.get().characters[currentTeam.getCurrentCharIndex()]._id;
+                $scope.teamSouls=currentTeam.get().souls;
+                teamId = currentTeam.get()._id;
             }
             else {
+                //Если не нашли, значит это создание команды
                 //Получаем dummy персонажа
-                mainSocket.emit("getDummyChar");
+                mainSocket.emit("getDummyChar", function(dummyChar) {
+                    $scope.characterObj._id=dummyChar._id;
+                    $scope.teamSouls=dummyChar._team.souls;
+                    teamId = dummyChar._team._id;
+                });
             }
-        });
-        mainSocket.on("getDummyCharResult", function(dummyChar){
-            $scope.characterObj._id=dummyChar._id;
-            $scope.teamSouls=dummyChar._team.souls;
-            teamId = dummyChar._team._id;
         });
 
         $scope.races=["nephilim","human","cambion"];
@@ -196,7 +141,10 @@
         },true);
         $scope.$watch('characterObj.role', function() {
             updateCharInfo();
-            $scope.roleCost = characterService.getRoleCost($scope.characterObj.role);
+            mainSocket.emit('getRoleCost', $scope.characterObj.role, function(cost) {
+                $scope.roleCost = cost;
+            });
+
         });
 
         $scope.getRaceInfo = function() {
@@ -210,7 +158,9 @@
         //Функция обновляет информацию о персонаже
         function updateCharInfo(){
             if($scope.characterObj.role!=="random"){
-                $scope.params = characterService.getStartParams($scope.characterObj.gender, $scope.characterObj.race, $scope.characterObj.role);
+                mainSocket.emit('getStartParams', $scope.characterObj.gender, $scope.characterObj.race, $scope.characterObj.role, function(params) {
+                    $scope.params = params;
+                });
             }
         }
 

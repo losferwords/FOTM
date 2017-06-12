@@ -30,7 +30,7 @@
                         <div class="portrait" ng-style="{'background-image': getCharPortrait(createdChars[0])}" ng-if="createdChars[0]">
                             <div class="role-in-portrait icon" ng-class="[createdChars[0].role+'-icon']"></div>
                         </div>
-                        <button class="btn btn-primary" ng-if="!createdChars[0]" ng-click="createCharClick()" ng-disabled="createCharPending" translate>Create</button>
+                        <button class="btn btn-primary" ng-if="!createdChars[0]" ng-click="createCharClick(0)" ng-disabled="createCharPending" translate>Create</button>
                     </div>
                 </div>
                 <div class="col-sm-4 panel panel-primary">
@@ -39,7 +39,7 @@
                         <div class="portrait" ng-style="{'background-image': getCharPortrait(createdChars[1])}" ng-if="createdChars[1]">
                             <div class="role-in-portrait icon" ng-class="[createdChars[1].role+'-icon']"></div>
                         </div>
-                        <button class="btn btn-primary" ng-if="!createdChars[1]" ng-click="createCharClick()" ng-disabled="!createdChars[0] || createCharPending" translate>Create</button>
+                        <button class="btn btn-primary" ng-if="!createdChars[1]" ng-click="createCharClick(1)" ng-disabled="!createdChars[0] || createCharPending" translate>Create</button>
                     </div>
                 </div>
                 <div class="col-sm-4 panel panel-primary">
@@ -48,7 +48,7 @@
                         <div class="portrait" ng-style="{'background-image': getCharPortrait(createdChars[2])}" ng-if="createdChars[2]">
                             <div class="role-in-portrait icon" ng-class="[createdChars[2].role+'-icon']"></div>
                         </div>
-                        <button class="btn btn-primary" ng-if="!createdChars[2]" ng-click="createCharClick()" ng-disabled="!createdChars[1] || createCharPending" translate>Create</button>
+                        <button class="btn btn-primary" ng-if="!createdChars[2]" ng-click="createCharClick(2)" ng-disabled="!createdChars[1] || createCharPending" translate>Create</button>
                     </div>
                 </div>
             </div>

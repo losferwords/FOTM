@@ -2,37 +2,30 @@
     module.controller("InventoryInfoController", InventoryInfoController);
 
     //Контроллер инвентаря
-    function InventoryInfoController($scope, $rootScope, $route, $location, $timeout, mainSocket, character, randomService, gettextCatalog) {
+    function InventoryInfoController($scope, $route, $location, $timeout, mainSocket, randomService, gettextCatalog, currentTeam, characterService) {
         var craftTimer; //Таймер информации о созданном камне
         var disTimer; //Таймер информации о разрушенном камне
         $scope.gemFilter = "all";
 
         $scope.$on('$routeChangeSuccess', function () {
-            $scope.char = new character($rootScope.interestingChar);
-            $scope.char.initChar();
-            $scope.inventory = $rootScope.interestingTeam.inventory;
+            $scope.char = currentTeam.get().characters[currentTeam.getCurrentCharIndex()];
+            $scope.char.equip = $scope.char.state.equip;
+            $scope.char.getParamTooltip = characterService.getParamTooltip;
+            $scope.roleColor = characterService.getRoleColor($scope.char.role);
+            $scope.inventory = currentTeam.get().inventory;
             $scope.interestingItem = undefined;
 
-            for(var i=0; i<$scope.inventory.length;i++){ //наделяем камни инвентаря функциями
-                if($scope.inventory[i].name!=="Void"){
-                    switch($scope.inventory[i].color){
-                        case "red":
-                            $scope.inventory[i].image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--rupee)'};
-                            $scope.inventory[i].bgColor = function() {return "#cc0000"};
-                            break;
-                        case "green":
-                            $scope.inventory[i].image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--emerald)'};
-                            $scope.inventory[i].bgColor = function() {return "#77b300"};
-                            break;
-                        case "blue":
-                            $scope.inventory[i].image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--saphir)'};
-                            $scope.inventory[i].bgColor = function() {return "#2a9fd6"};
-                            break;
-                    }
-                }
-            }
-            $scope.souls = $rootScope.interestingTeam.souls;
+            $scope.souls = currentTeam.get().souls;
+
         });
+
+        $scope.$watch('gemFilter', function(newVal) {
+            if(newVal) $scope.gemsArray = $scope.getGems(newVal);
+        });
+
+        $scope.$watch('inventory', function(newVal) {
+            if(newVal) $scope.gemsArray = $scope.getGems($scope.gemFilter);
+        }, true);
 
         $scope.getCharRace=function(){
             switch ($scope.char.race) {
@@ -55,15 +48,10 @@
             }
         };
 
-        //Функция берёт картинку для ылотов инвентаря
-        $scope.getSlotImage = function(slot) {
-            if($scope.char.equip[slot].name()!=="Void") return $scope.char.equip[slot].image();
-        };
-
         //Функция выбирает предмет, чтобы показать информацию о нём
         $scope.chooseSlot = function(slot) {
             if($scope.interestingItem) {
-                if ($scope.interestingItem.slot() === slot) {
+                if ($scope.interestingItem.slot == slot) {
                     $scope.interestingItem = undefined;
                     return;
                 }
@@ -161,7 +149,6 @@
         $scope.getGems = function(color) {
             var gems = [];
             for (var i = 0; i < $scope.inventory.length; i++) {
-                $scope.inventory[i].index=i;
                 if(color!='all'){
                     if ($scope.inventory[i].color == color) {
                         gems.push($scope.inventory[i]);
@@ -203,14 +190,6 @@
             return gems;
         };
 
-        //Функция создаёт случайный камень
-        $scope.addGem = function() {
-            for(var i=0;i<10;i++) {
-                $scope.inventory.push(randomizeTopGem());
-            }
-            $scope.getGems($scope.gemFilter);
-        };
-
         //Функция формирует подсказку для камней
         $scope.getGemTooltip = function(gem) {
             if(gem) {
@@ -245,7 +224,7 @@
         }
 
         function transformTooltip(gem) {
-            if(gem.name==="Void") return "";
+            if(gem.name=="Void") return "";
 
             switch(gem.name){
                 case "Soul Of Strength": return gettextCatalog.getString("Strength: + {{one}}",{one: gem.str});
@@ -284,9 +263,13 @@
         };
 
         //Взяли камень из инвентаря
-        $scope.inventoryDragStart = function(gem, arg1, arg2, arg3) {
+        $scope.inventoryDragStart = function(gem) {
             $scope.dragGem = gem; //запоминаем перемещаемый камень
-            $scope.inventory.splice(gem.index,1); //временно удаляем его из вкладки
+            var found = -1;
+            for(var i=0;i<$scope.inventory.length;i++){
+                if(gem.id==$scope.inventory[i].id) found = i;
+            }
+            if(found>=0) $scope.inventory.splice(found,1); //временно удаляем его из вкладки
         };
 
         //Если он никуда не положился
@@ -298,26 +281,30 @@
         };
 
         //Присваиваем сокету камень
-        $scope.setGemToSocket = function(socket) {
+        $scope.setGemToSocket = function(socketIndex) {
+            var slot = $scope.interestingItem.slot;
+            mainSocket.emit('setGemToSocket', currentTeam.get()._id, $scope.char._id, slot, socketIndex, $scope.dragGem.id, function(team) {
+                currentTeam.set(team);
+                $scope.char = currentTeam.get().characters[currentTeam.getCurrentCharIndex()];
+                $scope.char.equip = $scope.char.state.equip;
+                $scope.char.getParamTooltip = characterService.getParamTooltip;
+                $scope.inventory = currentTeam.get().inventory;
+                $scope.interestingItem = $scope.char.equip[slot];
+            });
+
+            //Предсказание до ответа от сервера
             //Если в сокете есть камень, вернём его в инвентарь
-            if(socket.gem!=="Void") {
-                $scope.inventory.push(socket.gem);
+            if($scope.char.equip[slot].sockets[socketIndex].gem!=="Void") {
+                $scope.inventory.push($scope.char.equip[slot].sockets[socketIndex].gem);
             }
-            socket.gem = $scope.dragGem;
-            delete socket.gem.index; //удаляем свойство index для камня, который попал в сокет
+            $scope.char.equip[slot].sockets[socketIndex].gem = angular.copy($scope.dragGem);
             $scope.dragGem = undefined;
-            $scope.interestingItem = $scope.char.calcItem($scope.interestingItem);
-            $scope.char.initChar();
-            mainSocket.emit('setChar', {_id: $scope.char._id, equip: $scope.char.equip});
-            mainSocket.emit('setTeam', {_id: $rootScope.interestingTeam._id, inventory: $scope.inventory});
         };
 
         //Берём камень из сокета
         $scope.socketDragStart = function(socket) {
             $scope.dragSocketGem = socket.gem; //запоминаем перемещаемый камень
             socket.gem="Void";
-            $scope.interestingItem = $scope.char.calcItem($scope.interestingItem);
-            $scope.char.initChar();
         };
 
         //Если он никуда не положился
@@ -326,71 +313,54 @@
                 socket.gem=$scope.dragSocketGem; //Помещаем камень обратно в сокет
             }
             $scope.dragSocketGem=undefined;
-            $scope.interestingItem = $scope.char.calcItem($scope.interestingItem);
-            $scope.char.initChar();
         };
 
         //Возвращаем камень из сокета в инвентарь
-        $scope.setGemToInventory = function(socket) {
+        $scope.setGemToInventory = function() {
+            var slot = $scope.interestingItem.slot;
+            mainSocket.emit('setGemToInventory', currentTeam.get()._id, $scope.char._id, slot, $scope.dragSocketGem.id, function(team) {
+                currentTeam.set(team);
+                $scope.char = currentTeam.get().characters[currentTeam.getCurrentCharIndex()];
+                $scope.char.equip = $scope.char.state.equip;
+                $scope.char.getParamTooltip = characterService.getParamTooltip;
+                $scope.inventory = currentTeam.get().inventory;
+                $scope.interestingItem = $scope.char.equip[slot];
+            });
+
+            //Предсказание до ответа от сервера
             $scope.inventory.push($scope.dragSocketGem);
             $scope.dragSocketGem=undefined;
-            mainSocket.emit('setChar', {_id: $scope.char._id, equip: $scope.char.equip});
-            mainSocket.emit('setTeam', {_id: $rootScope.interestingTeam._id, inventory: $scope.inventory});
         };
 
         //Разрушение камня
         $scope.destroyGem = function() {
-            var delta;
-            $scope.newSoul = {};
-            var rand =Math.floor(Math.random() * 6);
-            if(rand<=2) {
-                delta=2;
-            }
-            else if(rand>2 && rand<=4) {
-                delta=3;
-            }
-            else {
-                delta=4
-            }
-            $scope.souls[$scope.dragGem.color]+=delta;
-            $scope.newSoul.delta=delta;
+            mainSocket.emit('destroyGem', currentTeam.get()._id, $scope.dragGem, function(newSoul, team) {
+                currentTeam.set(team);
+                $scope.inventory = currentTeam.get().inventory;
+                $scope.souls = currentTeam.get().souls;
+                $scope.newSoul = newSoul;
 
-            switch($scope.dragGem.color){
-                case 'red': $scope.newSoul.image = 'url(../images/assets/svg/view/sprites.svg#inventory--crystal-shine-red)';break;
-                case 'green': $scope.newSoul.image = 'url(../images/assets/svg/view/sprites.svg#inventory--crystal-shine-green)';break;
-                case 'blue': $scope.newSoul.image = 'url(../images/assets/svg/view/sprites.svg#inventory--crystal-shine-blue)';break;
-            }
-
-            $scope.dragGem=undefined;
-
-            mainSocket.emit('setTeam', {_id: $rootScope.interestingTeam._id, inventory: $scope.inventory, souls: $scope.souls});
-
-            $timeout.cancel(disTimer);
-            disTimer = $timeout(function(){
-                $scope.newSoul=undefined;
-            },5000);
+                $timeout.cancel(disTimer);
+                disTimer = $timeout(function(){
+                    $scope.newSoul=undefined;
+                },5000);
+            });
+            $scope.dragGem = undefined;
         };
 
         //Создание камня
         $scope.craftGem = function(color) {
-            $scope.newGem = {};
-            var gem;
-            if(color) $scope.souls[color]-=4;
-            else {
-                $scope.souls.red--;
-                $scope.souls.green--;
-                $scope.souls.blue--;
-            }
-            gem = randomizeGem(color);
-            $scope.newGem = gem;
-            $scope.inventory.push(gem);
+            mainSocket.emit('craftGem', currentTeam.get()._id, color, function(newGem, team) {
+                currentTeam.set(team);
+                $scope.inventory = currentTeam.get().inventory;
+                $scope.souls = currentTeam.get().souls;
+                $scope.newGem = newGem;
 
-            mainSocket.emit('setTeam', {_id: $rootScope.interestingTeam._id, inventory: $scope.inventory, souls: $scope.souls});
-
-            $timeout.cancel(craftTimer);
-            craftTimer=$timeout(function(){
-                $scope.newGem=undefined;
-            },5000);
+                $timeout.cancel(craftTimer);
+                craftTimer=$timeout(function(){
+                    $scope.newGem=undefined;
+                },5000);
+            });
         };
 
         //Функция переносит нас в окно навыков
@@ -410,358 +380,23 @@
 
         //Функция переносит нас на предыдущего персонажа
         $scope.prevCharClick = function(){
-            var index;
-            var prevCharIndex;
-            for(var i=0;i<$rootScope.interestingTeam.characters.length;i++){
-                if($rootScope.interestingChar._id===$rootScope.interestingTeam.characters[i]._id){
-                    index=i;
-                    break;
-                }
-            }
-            switch(index){
-                case 0:
-                    if(!$rootScope.interestingTeam.characters[2].lose) {
-                        prevCharIndex=2;
-                    }
-                    else {
-                        prevCharIndex=1;
-                    }
-                    break;
-                case 1:
-                    if(!$rootScope.interestingTeam.characters[0].lose) {
-                        prevCharIndex=0;
-                    }
-                    else {
-                        prevCharIndex=2;
-                    }
-                    break;
-                case 2:
-                    if(!$rootScope.interestingTeam.characters[1].lose) {
-                        prevCharIndex=1;
-                    }
-                    else {
-                        prevCharIndex=0;
-                    }
-                    break;
-            }
-            if($rootScope.interestingTeam.characters[prevCharIndex]){
-                $rootScope.interestingChar = $rootScope.interestingTeam.characters[prevCharIndex];
-                $route.reload();
-            }
+            currentTeam.selectPrevChar();
+            $route.reload();
         };
 
         //Функция переносит нас на следующего персонажа
         $scope.nextCharClick = function(){
-            var index;
-            var nextCharIndex;
-            for(var i=0;i<$rootScope.interestingTeam.characters.length;i++){
-                if($rootScope.interestingChar._id===$rootScope.interestingTeam.characters[i]._id){
-                    index=i;
-                    break;
-                }
-            }
-            switch(index){
-                case 0:
-                    if(!$rootScope.interestingTeam.characters[1].lose) {
-                        nextCharIndex=1;
-                    }
-                    else {
-                        nextCharIndex=2;
-                    }
-                    break;
-                case 1:
-                    if(!$rootScope.interestingTeam.characters[2].lose) {
-                        nextCharIndex=2;
-                    }
-                    else {
-                        nextCharIndex=0;
-                    }
-                    break;
-                case 2:
-                    if(!$rootScope.interestingTeam.characters[0].lose) {
-                        nextCharIndex=0;
-                    }
-                    else {
-                        nextCharIndex=1;
-                    }
-                    break;
-            }
-            if($rootScope.interestingTeam.characters[nextCharIndex]){
-                $rootScope.interestingChar=$rootScope.interestingTeam.characters[nextCharIndex];
-                $route.reload();
-            }
+            currentTeam.selectNextChar();
+            $route.reload();
         };
 
         //Функция проверяет, живы ли другие участники команды
         $scope.checkForLosers = function(){
-            var index;
-            for(var i=0;i<$rootScope.interestingTeam.characters.length;i++){
-                if($rootScope.interestingChar._id===$rootScope.interestingTeam.characters[i]._id){
-                    index=i;
-                    break;
-                }
-            }
-            switch(index){
-                case 0: return ($rootScope.interestingTeam.characters[1].lose && $rootScope.interestingTeam.characters[2].lose); break;
-                case 1: return ($rootScope.interestingTeam.characters[0].lose && $rootScope.interestingTeam.characters[2].lose); break;
-                case 2: return ($rootScope.interestingTeam.characters[0].lose && $rootScope.interestingTeam.characters[1].lose); break;
+            switch(currentTeam.getCurrentCharIndex()){
+                case 0: return (currentTeam.get().characters[1].lose && currentTeam.get().characters[2].lose); break;
+                case 1: return (currentTeam.get().characters[0].lose && currentTeam.get().characters[2].lose); break;
+                case 2: return (currentTeam.get().characters[0].lose && currentTeam.get().characters[1].lose); break;
             }
         };
-
-        //Функция создаёт случайный камень
-        function randomizeGem(color){
-            var newGem = {};
-            if(color){
-                newGem.color=color;
-            }
-            else {
-                switch(Math.floor(Math.random() * 3)){
-                    case 0: newGem.color='red';break;
-                    case 1: newGem.color='green';break;
-                    case 2: newGem.color='blue';break;
-                }
-            }
-
-            switch(newGem.color){
-                case 'red':
-                newGem.image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--rupee)'};
-                newGem.bgColor=function() { return "#cc0000"};
-                switch(Math.floor(Math.random() * 6)){
-                    case 0:
-                        newGem.str=randomService.randomInt(5, 10);
-                        newGem.quality=newGem.str/10;
-                        newGem.name="Soul Of Strength";
-                        break;
-                    case 1:
-                        newGem.attackPower=randomService.randomFloat(0.0165, 0.0333, 4);
-                        newGem.quality=newGem.attackPower/0.0333;
-                        newGem.name="Soul Of Power";
-                        break;
-                    case 2:
-                        newGem.maxHealth=randomService.randomInt(250, 500);
-                        newGem.quality=newGem.maxHealth/500;
-                        newGem.name="Soul Of Vitality";
-                        break;
-                    case 3:
-                        newGem.healthReg=randomService.randomFloat(0.001, 0.002, 4);
-                        newGem.quality=newGem.healthReg/0.002;
-                        newGem.name="Soul Of Regeneration";
-                        break;
-                    case 4:
-                        newGem.physRes=randomService.randomFloat(0.0075, 0.015, 4);
-                        newGem.quality=newGem.physRes/0.015;
-                        newGem.name="Soul Of Stone";
-                        break;
-                    case 5:
-                        newGem.blockChance=randomService.randomFloat(0.00625, 0.0125, 4);
-                        newGem.quality=newGem.blockChance/0.0125;
-                        newGem.name="Soul Of Wall";
-                        break;
-                }
-                break;
-                case 'green':
-                    newGem.image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--emerald)'};
-                    newGem.bgColor=function() { return "#77b300"};
-                    switch(Math.floor(Math.random() * 6)){
-                        case 0:
-                            newGem.dxt=randomService.randomInt(5, 10);
-                            newGem.quality=newGem.dxt/10;
-                            newGem.name="Soul Of Dexterity";
-                            break;
-                        case 1:
-                            newGem.critChance=randomService.randomFloat(0.004165, 0.00833, 4);
-                            newGem.quality=newGem.critChance/0.00833;
-                            newGem.name="Soul Of Extremum";
-                            break;
-                        case 2:
-                            newGem.maxEnergy=randomService.randomInt(25, 50);
-                            newGem.quality=newGem.maxEnergy/50;
-                            newGem.name="Soul Of Energy";
-                            break;
-                        case 3:
-                            newGem.hitChance=randomService.randomFloat(0.00375, 0.0075, 4);
-                            newGem.quality=newGem.hitChance/0.0075;
-                            newGem.name="Soul Of Accuracy";
-                            break;
-                        case 4:
-                            newGem.dodgeChance=randomService.randomFloat(0.0075, 0.015, 4);
-                            newGem.quality=newGem.dodgeChance/0.015;
-                            newGem.name="Soul Of Swiftness";
-                            break;
-                        case 5:
-                            newGem.luck=randomService.randomFloat(0.00625, 0.0125, 4);
-                            newGem.quality=newGem.luck/0.0125;
-                            newGem.name="Soul Of Destiny";
-                            break;
-                    }
-                    break;
-                case 'blue':
-                    newGem.image = function() { return 'url(../images/assets/svg/view/sprites.svg#inventory--saphir)'};
-                    newGem.bgColor= function() {return "#2a9fd6"};
-                    switch(Math.floor(Math.random() * 6)){
-                        case 0:
-                            newGem.int=randomService.randomInt(5, 10);
-                            newGem.quality=newGem.int/10;
-                            newGem.name="Soul Of Intellect";
-                            break;
-                        case 1:
-                            newGem.spellPower=randomService.randomFloat(0.025, 0.05, 4);
-                            newGem.quality=newGem.spellPower/0.05;
-                            newGem.name="Soul Of Magic";
-                            break;
-                        case 2:
-                            newGem.maxMana=randomService.randomInt(200, 400);
-                            newGem.quality=newGem.maxMana/400;
-                            newGem.name="Soul Of Wisdom";
-                            break;
-                        case 3:
-                            newGem.manaReg=randomService.randomFloat(0.00125, 0.0025, 4);
-                            newGem.quality=newGem.manaReg/0.0025;
-                            newGem.name="Soul Of Meditation";
-                            break;
-                        case 4:
-                            newGem.magicRes=randomService.randomFloat(0.0075, 0.015, 4);
-                            newGem.quality=newGem.magicRes/0.015;
-                            newGem.name="Soul Of Will";
-                            break;
-                        case 5:
-                            newGem.initiative=randomService.randomInt(9, 17);
-                            newGem.quality=newGem.initiative/17;
-                            newGem.name="Soul Of Tactic";
-                            break;
-                    }
-                    break;
-            }
-
-            return newGem;
-        }
-
-        //Функция создаёт случайный топовый камень
-        function randomizeTopGem(color){
-            var newGem = {};
-            if(color){
-                newGem.color=color;
-            }
-            else {
-                switch(Math.floor(Math.random() * 3)){
-                    case 0: newGem.color='red';break;
-                    case 1: newGem.color='green';break;
-                    case 2: newGem.color='blue';break;
-                }
-            }
-
-            switch(newGem.color){
-                case 'red':
-                    newGem.image = function(){return 'url(../images/assets/svg/view/sprites.svg#inventory--rupee)'};
-                    newGem.bgColor=function(){return "#cc0000"};
-                    switch(Math.floor(Math.random() * 6)){
-                        case 0:
-                            newGem.str=10;
-                            newGem.quality=newGem.str/10;
-                            newGem.name="Soul Of Strength";
-                            break;
-                        case 1:
-                            newGem.attackPower=0.0333;
-                            newGem.quality=newGem.attackPower/0.0333;
-                            newGem.name="Soul Of Power";
-                            break;
-                        case 2:
-                            newGem.maxHealth=500;
-                            newGem.quality=newGem.maxHealth/500;
-                            newGem.name="Soul Of Vitality";
-                            break;
-                        case 3:
-                            newGem.healthReg=0.002;
-                            newGem.quality=newGem.healthReg/0.002;
-                            newGem.name="Soul Of Regeneration";
-                            break;
-                        case 4:
-                            newGem.physRes=0.015;
-                            newGem.quality=newGem.physRes/0.015;
-                            newGem.name="Soul Of Stone";
-                            break;
-                        case 5:
-                            newGem.blockChance=0.0125;
-                            newGem.quality=newGem.blockChance/0.0125;
-                            newGem.name="Soul Of Wall";
-                            break;
-                    }
-                    break;
-                case 'green':
-                    newGem.image = function(){return 'url(../images/assets/svg/view/sprites.svg#inventory--emerald)'};
-                    newGem.bgColor=function(){return "#77b300"};
-                    switch(Math.floor(Math.random() * 6)){
-                        case 0:
-                            newGem.dxt=10;
-                            newGem.quality=newGem.dxt/10;
-                            newGem.name="Soul Of Dexterity";
-                            break;
-                        case 1:
-                            newGem.critChance=0.00833;
-                            newGem.quality=newGem.critChance/0.00833;
-                            newGem.name="Soul Of Extremum";
-                            break;
-                        case 2:
-                            newGem.maxEnergy=50;
-                            newGem.quality=newGem.maxEnergy/50;
-                            newGem.name="Soul Of Energy";
-                            break;
-                        case 3:
-                            newGem.hitChance=0.0075;
-                            newGem.quality=newGem.hitChance/0.0075;
-                            newGem.name="Soul Of Accuracy";
-                            break;
-                        case 4:
-                            newGem.dodgeChance=0.015;
-                            newGem.quality=newGem.dodgeChance/0.015;
-                            newGem.name="Soul Of Swiftness";
-                            break;
-                        case 5:
-                            newGem.luck=0.0125;
-                            newGem.quality=newGem.luck/0.0125;
-                            newGem.name="Soul Of Destiny";
-                            break;
-                    }
-                    break;
-                case 'blue':
-                    newGem.image = function(){return 'url(../images/assets/svg/view/sprites.svg#inventory--saphir)'};
-                    newGem.bgColor=function(){return "#2a9fd6"};
-                    switch(Math.floor(Math.random() * 6)){
-                        case 0:
-                            newGem.int=10;
-                            newGem.quality=newGem.int/10;
-                            newGem.name="Soul Of Intellect";
-                            break;
-                        case 1:
-                            newGem.spellPower=0.05;
-                            newGem.quality=newGem.spellPower/0.05;
-                            newGem.name="Soul Of Magic";
-                            break;
-                        case 2:
-                            newGem.maxMana=400;
-                            newGem.quality=newGem.maxMana/400;
-                            newGem.name="Soul Of Wisdom";
-                            break;
-                        case 3:
-                            newGem.manaReg=0.0025;
-                            newGem.quality=newGem.manaReg/0.0025;
-                            newGem.name="Soul Of Meditation";
-                            break;
-                        case 4:
-                            newGem.magicRes=0.015;
-                            newGem.quality=newGem.magicRes/0.015;
-                            newGem.name="Soul Of Will";
-                            break;
-                        case 5:
-                            newGem.initiative=17;
-                            newGem.quality=newGem.initiative/17;
-                            newGem.name="Soul Of Tactic";
-                            break;
-                    }
-                    break;
-            }
-
-            return newGem;
-        }
     }
 })(angular.module("fotm"));

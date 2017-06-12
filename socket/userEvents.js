@@ -22,10 +22,13 @@ module.exports = function (serverIO) {
             });
         });
 
-        socket.on('getAllUsersPop', function(){
+        socket.on('getAllUsersPop', function(cb){
             var usersList = [];
             User.getAll(function(err, users){
-                if (err) socket.emit("customError", err);
+                if (err) {
+                    socket.emit("customError", err);
+                    return;
+                }
                 var serverSockets = io.of('/').in(socket.serSt.serverRoom).connected;
                 async.each(users, function(user, callback) {
                     var currentUser = user;
@@ -40,44 +43,51 @@ module.exports = function (serverIO) {
                         }
                     }
                     if(user.team){
-                        user.populate('team', function(err, userWithTeam){
-                            if (err) return callback(err);
-                            currentUser = userWithTeam;
-                            currentUser.team.populate('characters', function(err, teamWithChars){
-                                if (err) return callback(err);
-                                currentUser.team = teamWithChars;
-                                usersList.push(currentUser);
-                                callback(null);
-                            });
-                        })
+                        Team.getByUserIdFull(user._id, function(err, fullTeam) {
+                            currentUser.team = fullTeam;
+                            usersList.push(currentUser._doc);
+                            callback(null);
+                        });
                     }
                     else {
-                        usersList.push(currentUser);
+                        usersList.push(currentUser._doc);
                         callback(null);
                     }
                 }, function(err){
-                    if (err) socket.emit("customError", err);
-                    socket.emit('getAllUsersPopResult', usersList);
+                    if (err) {
+                        socket.emit("customError", err);
+                        return;
+                    }
+                    cb(usersList);
                 });
             });
         });
 
-        socket.on('deleteUser', function(id) {
+        socket.on('deleteUser', function(id, cb) {
             var userId = id;
             User.getById(userId, function(err, foundedUser) {
                 if(foundedUser.team) {
                     Team.deleteTeam(foundedUser.team, function(err){
-                        if (err) socket.emit("customError", err);
+                        if (err) {
+                            socket.emit("customError", err);
+                            return;
+                        }
                         User.remove({_id: userId}, function(err) {
-                            if (err) socket.emit("customError", err);
+                            if (err) {
+                                socket.emit("customError", err);
+                                return;
+                            }
                             socket.emit("deleteUserResult");
                         });
                     });
                 }
                 else {
                     User.remove({_id: userId}, function(err) {
-                        if (err) socket.emit("customError", err);
-                        socket.emit("deleteUserResult");
+                        if (err) {
+                            socket.emit("customError", err);
+                            return;
+                        }
+                        cb()
                     });
                 }
 

@@ -64,10 +64,6 @@ module.exports = function (server) {
             arenaLobby: "",
             battleRoom: ""
         };
-        //Battle State для сокета
-        socket.batSt = {
-            battleStart: ""
-        };
         socket.serSt.username = socket.handshake.user.username;
         //Первоначально юзер входит в комнату всего сервера
         socket.serSt.serverRoom = "server:room";
@@ -86,7 +82,9 @@ module.exports = function (server) {
 
         //Обновляем у пользователя время последнего визита
         User.setById(socket.handshake.user._id, {lastVisit: new Date()}, function(err, user) {
-            if (err) socket.emit("customError", err);
+            if (err) {
+                socket.emit("customError", err);
+            }
         });
 
         socket.on('disconnect', function () {
@@ -96,30 +94,39 @@ module.exports = function (server) {
                 log.info("User "+socket.serSt.username+" leave game");
                 //И выкидываем из боя оппонента, если сами вышли
                 if (socket.serSt.battleRoom) {
-                    if(socket.batSt.battleStart){
-                        //Вылетевшей команде засчитываем поражение
-                        var userId = socket.handshake.user._id;
-                        Team.getByUserIdPop(userId, function(err, team){
-                            if (err) socket.emit("customError", err);
-                            var rateChange = 0;
-                            if(team.rating-25>=1000) rateChange=25;
-                            Team.setById(team._id, {
-                                rating: team.rating-rateChange,
-                                souls: {red: team.souls.red+2, green: team.souls.green+2, blue: team.souls.blue+2},
-                                loses: team.loses+1
-                            }, function(err, team){
-                                if (err) socket.emit("customError", err);
-                                Character.getAllByAny({_team: team._id}, function(err, chars){
-                                    if (err) socket.emit("customError", err);
-                                    for(var i=0;i<chars.length;i++){
-                                        Character.setById(chars[i]._id, {lose: true}, function(err){
-                                            if (err) socket.emit("customError", err);
-                                        });
-                                    }
-                                });
+                    //Вылетевшей команде засчитываем поражение
+                    var userId = socket.handshake.user._id;
+                    Team.getByUserIdFull(userId, function(err, team){
+                        if (err) {
+                            socket.emit("customError", err);
+                            return;
+                        }
+                        var rateChange = 0;
+                        if(team.rating-25>=1000) rateChange=25;
+                        Team.setById(team._id, {
+                            rating: team.rating-rateChange,
+                            souls: {red: team.souls.red+2, green: team.souls.green+2, blue: team.souls.blue+2},
+                            loses: team.loses+1
+                        }, function(err, team){
+                            if (err) {
+                                socket.emit("customError", err);
+                                return;
+                            }
+                            Character.getAllByAny({_team: team._id}, function(err, chars){
+                                if (err) {
+                                    socket.emit("customError", err);
+                                    return;
+                                }
+                                for(var i=0;i<chars.length;i++){
+                                    Character.setById(chars[i]._id, {lose: true}, function(err){
+                                        if (err) {
+                                            socket.emit("customError", err);
+                                        }
+                                    });
+                                }
                             });
                         });
-                    }
+                    });
 
                     //Выкидываем оппонента
                     if(io.nsps["/"].adapter.rooms[socket.serSt.battleRoom]){
@@ -127,7 +134,6 @@ module.exports = function (server) {
                     }
                     if (battleSockets) {
                         socket.broadcast.to(socket.serSt.battleRoom).emit('enemyLeave');
-                        io.sockets.connected[battleSockets[0]].leave(socket.serSt.battleRoom);
                     }
                 }
             }
@@ -138,3 +144,20 @@ module.exports = function (server) {
 
     return io;
 };
+
+//ОЧИСТКА ПОСЛЕ ВАЙПА
+//User.find({}, function(err, users){
+//    if (err) socket.emit("customError", err);
+//    log.info("Total users: "+users.length);
+//    users.forEach(function(user, i) {
+//        if(user.team)
+//        {
+//            user.team = undefined;
+//            user.save(function(err, user){
+//                log.info("team clean ready for "+i+": "+user.username);
+//                if (err) socket.emit("customError", err);
+//            });
+//        }
+//    });
+//    log.info("READY");
+//});

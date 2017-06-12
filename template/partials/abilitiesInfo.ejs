@@ -18,7 +18,7 @@
                                                 <p translate>Role: {{getCharRole()}}</p>
                                             </div>
                                         </div>
-                                        <div class="ability-slot-container btn-group"">
+                                        <div class="ability-slot-container btn-group">
                                             <div class="ability-slot btn icon"
                                                  ng-repeat="ability in char.abilities track by $index"
                                                  ng-class="{'active': interestingAbility.name===ability.name, 'dropable': movingAbility}"
@@ -37,7 +37,7 @@
                                                  dnd-droppable-opts = "{layer: 'layer1'}"
                                                  dnd-on-drop = "addAbilityToPanel($index)"
                                                  ng-click = "chooseAbilityForTune(ability)">
-                                                <img class="bg-img" ng-src="{{ability.icon().slice(6).slice(0,-1)}}"/>
+                                                <img class="bg-img" ng-src="{{ability.icon.slice(6).slice(0,-1)}}"/>
                                             </div>
                                         </div>
                                         <div class="ability-switch btn icon" ng-class="{'tune':tuneMode, 'move':!tuneMode}" ng-click="changeTuneAbilitiesMode()"></div>
@@ -50,27 +50,27 @@
                                             <span class="text-warning" ng-if="!interestingAbility" translate>Choose ability for tune</span>
                                             <div class="arrow-container" ng-if="interestingAbility">
                                                 <div class="btn btn-success arrow" ng-click="prevVersion()" ng-disabled="interestingAbility.variant===1"><i class="glyphicon glyphicon-chevron-left"></i></div>
-                                                <div class="ability-slot icon" ng-style="{'background-image': interestingAbility.icon(), 'background-color' : getAbilityColor(interestingAbility)}"></div>
+                                                <div class="ability-slot icon" ng-style="{'background-image': interestingAbility.icon, 'background-color' : getAbilityColor(interestingAbility)}"></div>
                                                 <div class="btn btn-success arrow" ng-click="nextVersion()" ng-disabled="interestingAbility.variant===5"><i class="glyphicon glyphicon-chevron-right"></i></div>
                                             </div>
                                         </div>
                                         <div class="description" ng-if="interestingAbility">
                                             <span class="name">{{interestingAbility.localName()}} {{interestingAbility.variant}}</span>
                                             <span class="desc">{{interestingAbility.desc()}}</span>
-                                            <span class="tooltip-need-weapon" ng-if="interestingAbility.needWeapon()" translate>Need weapon</span>
-                                            <span class="tooltip-spell" ng-if="!interestingAbility.needWeapon()" translate>Spell</span>
-                                            <span ng-if="interestingAbility.range()==0" translate>Range: Self</span>
-                                            <span ng-if="interestingAbility.range()>0" translate>Range: {{interestingAbility.range()}}</span>
-                                            <span translate>Cooldown: {{interestingAbility.cooldown()}}</span>
-                                            <span ng-if="interestingAbility.duration()" translate>Duration: {{interestingAbility.duration()}}</span>
-                                            <span translate>Energy cost: {{interestingAbility.energyCost()}}</span>
-                                            <span translate>Mana cost: {{interestingAbility.manaCost()}}</span>
+                                            <span class="tooltip-need-weapon" ng-if="interestingAbility.needWeapon" translate>Need weapon</span>
+                                            <span class="tooltip-spell" ng-if="!interestingAbility.needWeapon" translate>Spell</span>
+                                            <span ng-if="interestingAbility.range==0" translate>Range: Self</span>
+                                            <span ng-if="interestingAbility.range>0" translate>Range: {{interestingAbility.range}}</span>
+                                            <span translate>Cooldown: {{interestingAbility.cooldown}}</span>
+                                            <span ng-if="interestingAbility.duration" translate>Duration: {{interestingAbility.duration}}</span>
+                                            <span translate>Energy cost: {{interestingAbility.energyCost}}</span>
+                                            <span translate>Mana cost: {{interestingAbility.manaCost}}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="panel" ng-style="{'border-color': char.getRoleColor()}">
+                        <div class="panel" ng-style="{'border-color': getRoleColor(char.role)}">
                             <div class="panel-body">
                                 <div class="ability-book">
                                     <div class="ability-filter">
@@ -103,7 +103,7 @@
                                              dnd-draggable-opts = "{layer: 'layer1', helper : 'clone'}"
                                              dnd-on-dragstart = "abilityDragStart(ability, 'book')"
                                              dnd-on-dragend = "abilityDragEnd('book')">
-                                            <img class="bg-img" ng-src="{{ability.icon().slice(6).slice(0,-1)}}"/>
+                                            <img class="bg-img" ng-src="{{ability.icon.slice(6).slice(0,-1)}}"/>
                                         </div>
                                     </div>
                                 </div>

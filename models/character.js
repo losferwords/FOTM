@@ -1,5 +1,6 @@
 var async = require('async');
 var util = require('util');
+var CharacterFactory = require('services/characterFactory');
 
 var mongoose = require('lib/mongoose'),
     Schema = mongoose.Schema;
@@ -54,16 +55,35 @@ var schema = new Schema({
 
 //GET------------------------------------------------------------------------
 
+schema.statics.getById = function(charId, callback) {
+    this.findById(charId, callback);
+};
+
+schema.statics.getByIdFull = function(charId, callback){
+    async.waterfall([
+        function (callback) {
+            this.findById(charId, callback);
+        },
+        function (foundedChar, callback) {
+            if(!foundedChar){
+                callback(null, null); //здесь нет ошибки, просто не найдено чаров
+            }
+            else {
+                foundedChar = CharacterFactory(foundedChar);
+                callback(null, foundedChar);
+            }
+        }
+    ], callback);
+};
+
 //Выборка чара по любому условию
 schema.statics.getByAny = function(cond, callback){
-    var Character = this;
-    Character.findOne(cond, callback);
+    this.findOne(cond, callback);
 };
 
 //Выборка чаров по любому условию
 schema.statics.getAllByAny = function(cond, callback){
-    var Character = this;
-    Character.find(cond, callback);
+    this.find(cond, callback);
 };
 
 //CREATE---------------------------------------------------------------------
@@ -98,17 +118,15 @@ schema.statics.create = function(teamId, callback){
 //UPDATE---------------------------------------------------------------------
 
 schema.statics.setById = function(charId, setter, callback) {
-    var Character = this;
-    Character.findByIdAndUpdate(charId,
-        {$set: setter}, {upsert: true},
+    this.findByIdAndUpdate(charId,
+        {$set: setter}, {upsert: true, new: true},
         callback);
 };
 
 //DELETE---------------------------------------------------------------------
 
 schema.statics.deleteById = function(charId, callback) {
-    var Character = this;
-    Character.findByIdAndRemove(charId, callback);
+    this.findByIdAndRemove(charId, callback);
 };
 
 exports.Character = mongoose.model('Character', schema);

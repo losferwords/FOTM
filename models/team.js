@@ -2,6 +2,7 @@ var async = require('async');
 var util = require('util');
 var Character = require('models/character').Character;
 var User = require('models/user').User;
+var CharacterFactory = require('services/characterFactory');
 
 var mongoose = require('lib/mongoose'),
     Schema = mongoose.Schema;
@@ -58,8 +59,12 @@ var schema = new Schema({
 
 //GET---------------------------------------------------------------------------
 
+schema.statics.getById = function(teamId, callback) {
+    this.findById(teamId, callback); //находим тиму
+};
+
 //Получение заполненной активной команды со всеми персонажами
-schema.statics.getByUserIdPop = function(userId, callback){
+schema.statics.getByUserIdFull = function(userId, callback){
     var Team = this;
     async.waterfall([
         function (callback) {
@@ -80,7 +85,13 @@ schema.statics.getByUserIdPop = function(userId, callback){
             if(team){
                 team.populate('characters', function(err, popTeam){ //заполняем команду персонажами
                     if (err) return callback(err);
-                    callback(null, popTeam);
+                    async.each(popTeam.characters, function(characterInTeam, callback) {
+                        characterInTeam._doc = CharacterFactory(characterInTeam._doc);
+                        callback(null, characterInTeam);
+                    }, function(err) {
+                        if (err) callback(err);
+                        callback(null, popTeam);
+                    });
                 });
             }
             else {
@@ -113,16 +124,42 @@ schema.statics.getTeamPop = function(cond, callback){
     ], callback);
 };
 
+//Выборка тимы (Со всеми заполнеными персонажами)
+schema.statics.getByTeamIdFull = function(teamId, callback){
+    var Team = this;
+
+    async.waterfall([
+        function (callback) {
+            Team.findById(teamId, callback);
+        },
+        function (foundedTeam, callback) {
+            if(!foundedTeam){
+                callback(null, null); //здесь нет ошибки, просто не найдено команд
+            }
+            else {
+                foundedTeam.populate('characters', function(err, popTeam){ //заполняем команду персонажами
+                    if (err) return callback(err);
+                    async.each(popTeam.characters, function(characterInTeam, callback) {
+                        characterInTeam._doc = CharacterFactory(characterInTeam._doc);
+                        callback(null, characterInTeam);
+                    }, function(err) {
+                        if (err) callback(err);
+                        callback(null, popTeam);
+                    });
+                });
+            }
+        }
+    ], callback);
+};
+
 //Выборка тим по любому условию
 schema.statics.getAllByAny = function(cond, callback){
-    var Team = this;
-    Team.find(cond, callback);
+    this.find(cond, callback);
 };
 
 //Выборка тимы по любому условию
 schema.statics.getByAny = function(cond, callback){
-    var Team = this;
-    Team.findOne(cond, callback);
+    this.findOne(cond, callback);
 };
 
 //Вычисляем ранг команды
@@ -254,9 +291,8 @@ schema.statics.create = function(userId, callback){
 //UPDATE---------------------------------------------------------------------
 
 schema.statics.setById = function(teamId, setter, callback) {
-    var Team = this;
-    Team.findByIdAndUpdate(teamId,
-        {$set: setter}, {upsert: true},
+    this.findByIdAndUpdate(teamId,
+        {$set: setter}, {upsert: true, new: true},
         callback);
 };
 
