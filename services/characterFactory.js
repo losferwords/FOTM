@@ -445,7 +445,7 @@ Character.prototype.calcItem = function(item) {
 };
 
 //Добавление баффа
-Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls){
+Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls, simulation){
     var self=this;
 
     if(self.isDead) return;
@@ -458,7 +458,7 @@ Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls){
         if(self.buffs[i].name===buff.name && self.buffs[i].caster===caster){
             if(buff.stacked()) {
                 if(self.buffs[i].stacks<self.buffs[i].maxStacks()) self.buffs[i].stacks++;
-                self.buffs[i].apply(self, myTeam, enemyTeam, walls);
+                if(!simulation) self.buffs[i].apply(self, myTeam, enemyTeam, walls);
             }
             self.buffs[i].left=buff.duration();
             return;
@@ -469,11 +469,11 @@ Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls){
 };
 
 //Добавление дебаффа
-Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, walls){
+Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, walls, simulation){
     var self=this;
 
     if(self.isDead) return;
-    if(self.checkImmune(debuff.magicEffect())){
+    if(self.checkImmune(debuff.magicEffect()) && !simulation){
         self.logBuffer.push(self.charName + " didn't get effect '" + debuff.name + "' because immunity.");
         self.battleTextBuffer.push({type: "other", icon: debuff.icon(), color: getAbilityColor(debuff.role()), caster: caster, text: "Immune", crit: false});
         self.soundBuffer.push("dodge");
@@ -488,7 +488,7 @@ Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, wall
         if(self.debuffs[i].name===debuff.name && self.debuffs[i].caster===caster){
             if(debuff.stacked()) {
                 if(self.debuffs[i].stacks<self.debuffs[i].maxStacks()) self.debuffs[i].stacks++;
-                self.debuffs[i].apply(self, enemyTeam, myTeam, walls); //При дебаффе меняются местами
+                if(!simulation) self.debuffs[i].apply(self, enemyTeam, myTeam, walls); //При дебаффе меняются местами
             }
             if(self.isDead) return;
             self.debuffs[i].left=debuff.duration();

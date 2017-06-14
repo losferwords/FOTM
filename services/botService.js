@@ -126,16 +126,20 @@ module.exports = {
         score+=situation.activeChar.positionWeightOff * 150;
         score+=situation.activeChar.positionWeightDef * 100;
 
+        score+=situation.activeChar.spellPower * 15;
+
         //myTeam
         for(var i=0; i<situation.myTeamStates.length;i++){
             var ally = situation.myTeamStates[i];
             score+=ally.curHealth * 100;
+            score+=ally.spellPower * 10;
         }
 
         //enemyTeam
         for(i=0; i<situation.enemyTeamStates.length;i++){
             var enemy = situation.enemyTeamStates[i];
             score-=enemy.curHealth * 100;
+            score-=enemy.spellPower * 10;
         }
         return score;
     },

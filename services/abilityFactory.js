@@ -1694,6 +1694,13 @@ var Ability = function(name){
                 caster.addBuff(effectFactory("Powerslave", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost());
+                this.cd=this.cooldown();
+                caster.addBuff(effectFactory("Powerslave", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "self"},
             range : function(){return 0},
             duration: function(){return 0},
@@ -1702,7 +1709,6 @@ var Ability = function(name){
             cooldown : function(){return 18+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };break;
 
