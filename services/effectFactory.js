@@ -1,6 +1,6 @@
 var arenaService = require('services/arenaService');
 
-//Фабрика создания эффектов по имени
+//Factory for ability effects
 var Effect = function(name, abilityVariant) {
     switch (name) {
 
@@ -20,8 +20,14 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var effectModifier = owner.hitChance * (1 + this.variant * 0.07) * 10;
+                var leftModifier = this.left * 5;
+                var score = effectModifier + leftModifier;
+                return score;
+            }
+        };
 
         case "Defender Of The Faith": return {
             name : "Defender Of The Faith",
@@ -31,32 +37,23 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 switch(this.variant){
                     case 1:
-                        owner.blockChanceMod+=0.1;
-                        owner.physResMod+=0.1;
-                        owner.magicResMod+=0.1;
-                        break;
                     case 2:
                         owner.blockChanceMod+=0.1;
                         owner.physResMod+=0.1;
                         owner.magicResMod+=0.1;
                         break;
                     case 3:
-                        owner.blockChanceMod+=0.2;
-                        owner.physResMod+=0.2;
-                        owner.magicResMod+=0.2;
-                        break;
                     case 4:
                         owner.blockChanceMod+=0.2;
                         owner.physResMod+=0.2;
                         owner.magicResMod+=0.2;
-                        break;
+                        break;                    
                     case 5:
                         owner.blockChanceMod+=0.4;
                         owner.physResMod+=0.4;
                         owner.magicResMod+=0.4;
                         break;
                 }
-
             },
             duration: function(){return 22-this.variant*2},
             left : 0,
@@ -65,8 +62,26 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                switch(this.variant){
+                    case 1:
+                    case 2:
+                        var effectModifier = owner.blockChance * 3.3 + owner.physRes * 3.3 + magicRes * 3.3;
+                        break;
+                    case 3:
+                    case 4:
+                        effectModifier = owner.blockChance * 3.6 + owner.physRes * 3.6 + magicRes * 3.6;
+                        break;                    
+                    case 5:
+                        effectModifier = owner.blockChance * 4.2 + owner.physRes * 4.2 + magicRes * 4.2;
+                        break;
+                }                
+                var leftModifier = this.left * 5;
+                var score = effectModifier + leftModifier;
+                return score;
+            }
+        };
 
         case "Disarm": return {
             name : "Disarm",
@@ -85,8 +100,14 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var effectModifier = owner.physRes * (1 + this.variant * 0.07) * 7 + owner.dodgeChance * (1 + this.variant * 0.07) * 7;
+                var leftModifier = this.left * 5;
+                var score = effectModifier + leftModifier;
+                return score;
+            }
+        };
 
         case "Walk Away": return {
             name : "Walk Away",
@@ -103,8 +124,11 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                return this.left * 15;
+            }
+        };
 
         case "Sanctuary": return {
             name : "Sanctuary",
@@ -121,8 +145,11 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                return this.left * 12;
+            }
+        };
 
         case "The Punishment Due": return {
             name : "The Punishment Due",
@@ -149,8 +176,20 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var debuffer = {};
+                for(var i=0;i<enemyTeam.length;i++){
+                    if(enemyTeam[i]._id===this.caster._id) debuffer=enemyTeam[i];
+                }
+                var physicalDamage = this.bleedDamage * (1 + debuffer.attackPower);
+                physicalDamage = arenaService.calculateExpectedDamage(physicalDamage, caster);
+                physicalDamage = owner.applyResistance(physicalDamage, false);
+                var leftModifier = Math.pow(this.left, 2) * 0.5;
+                var score = physicalDamage * leftModifier;
+                return score;
+            }
+        };
 
         //SLAYER
 
@@ -170,7 +209,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 5},
             onlyStat: function() {return true},
             magicEffect: function() {return false}
-        };break;
+        };
 
         case "Made In Hell": return {
             name : "Made In Hell",
@@ -189,7 +228,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Spill The Blood": return {
             name : "Spill The Blood",
@@ -208,7 +247,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return false}
-        };break;
+        };
 
         case "Dyers Eve": return {
             name : "Dyers Eve",
@@ -226,7 +265,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return false}
-        };break;
+        };
 
         case "I Dont Wanna Stop": return {
             name : "I Dont Wanna Stop",
@@ -244,7 +283,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return false}
-        };break;
+        };
 
         //REDEEMER
 
@@ -265,7 +304,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Thunderstruck": return {
             name : "Thunderstruck",
@@ -283,7 +322,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "You Aint No Angel": return {
             name : "You Aint No Angel",
@@ -302,7 +341,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "State Of Grace": return {
             name : "State Of Grace",
@@ -331,7 +370,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Come Cover Me": return {
             name : "Come Cover Me",
@@ -358,7 +397,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
             magicEffect: function() {return true}
-        };break;
+        };
 
         //RIPPER
 
@@ -388,7 +427,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Invisible": return {
             name : "Invisible",
@@ -407,7 +446,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return false}
-        };break;
+        };
 
         case "Jawbreaker": return {
             name : "Jawbreaker",
@@ -425,7 +464,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return false}
-        };break;
+        };
 
         case "Hog Tied": return {
             name : "Hog Tied",
@@ -443,7 +482,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return false}
-        };break;
+        };
 
         case "Running Free": return {
             name : "Running Free",
@@ -451,7 +490,7 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "ripper"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--RunningFree)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                //На первом тике удалим все обездвиживающие эффекты (это нужно, если бафф украли)
+                //пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ)
                 if(this.left===this.duration()) owner.removeImmobilization(myTeam, enemyTeam);
                 owner.moveCost = 300-this.variant*40;
             },
@@ -463,7 +502,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return false}
-        };break;
+        };
 
         case "Fast As The Shark": return {
             name : "Fast As The Shark",
@@ -482,7 +521,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return false}
-        };break;
+        };
 
         case "Prowler": return {
             name : "Prowler",
@@ -500,7 +539,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return false}
-        };break;
+        };
 
         case "Fade To Black": return {
             name : "Fade To Black",
@@ -518,7 +557,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return false}
-        };break;
+        };
 
         //PROPHET
 
@@ -538,7 +577,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 5},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Never A Word": return {
             name : "Never A Word",
@@ -556,7 +595,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Prophecy": return {
             name : "Prophecy",
@@ -576,7 +615,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Infinite Dreams": return {
             name : "Infinite Dreams",
@@ -595,7 +634,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Caught Somewhere In Time": return {
             name : "Caught Somewhere In Time",
@@ -624,7 +663,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
             magicEffect: function() {return true}
-        };break;
+        };
 
         //MALEFIC
 
@@ -644,7 +683,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Thank God For The Bomb": return {
             name : "Thank God For The Bomb",
@@ -695,7 +734,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Thank God For The Bomb (Stun)": return {
             name : "Thank God For The Bomb (Stun)",
@@ -713,7 +752,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Powerslave": return {
             name : "Powerslave",
@@ -731,8 +770,14 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return true},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var effectModifier = owner.spellPower * (1 + this.variant * 0.15) * 10;
+                var positionModifier = owner.positionWeightOff * 30;
+                var score = effectModifier + positionModifier;
+                return score;
+            }
+        };
 
         case "Cauterization": return {
             name : "Cauterization",
@@ -763,7 +808,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Down In Flames": return {
             name: "Down In Flames",
@@ -775,7 +820,7 @@ var Effect = function(name, abilityVariant) {
                 return "url(../images/assets/svg/view/sprites.svg#abilities--DownInFlames)"
             },
             apply: function (owner, myTeam, enemyTeam, walls) {
-                //т.к. кд=0, сначала убавим значение у персонажа, а потом прибавим снова
+                //пїЅ.пїЅ. пїЅпїЅ=0, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
                 if (this.stacks > 1) {
                     owner.spellPowerMod -= 0.03 * this.variant * (this.stacks - 1);
                     owner.critChanceMod -= 0.03 * this.variant * (this.stacks - 1);
@@ -794,7 +839,6 @@ var Effect = function(name, abilityVariant) {
             onlyStat: function () {return true},
             magicEffect: function () {return true}
         };
-        break;
 
         case "Fight Fire With Fire": return {
             name : "Fight Fire With Fire",
@@ -811,7 +855,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         //CLERIC
 
@@ -840,7 +884,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 3},
             onlyStat: function() {return false},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Hallowed Be Thy Name": return {
             name : "Hallowed Be Thy Name",
@@ -880,7 +924,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Heaven Can Wait": return {
             name : "Heaven Can Wait",
@@ -900,7 +944,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         //HERETIC
 
@@ -930,7 +974,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Creeping Death": return {
             name : "Creeping Death",
@@ -958,7 +1002,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 5},
             onlyStat: function() {return false},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Spreading The Disease": return {
             name : "Spreading The Disease",
@@ -999,7 +1043,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 5},
             onlyStat: function() {return false},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Children Of The Damned": return {
             name : "Children Of The Damned",
@@ -1039,7 +1083,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
         case "Locked And Loaded": return {
             name : "Locked And Loaded",
@@ -1056,7 +1100,7 @@ var Effect = function(name, abilityVariant) {
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
             magicEffect: function() {return true}
-        };break;
+        };
 
     }
 };

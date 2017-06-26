@@ -493,8 +493,6 @@ module.exports = function (serverIO) {
                 var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
                 if(ability && arenaService.checkAbilityForUse(ability, activeChar) && ability.castSimulation){
                     ability.castSimulation(activeChar, targetChar, myTeam.characters, enemyTeam.characters, wallPositions);
-                    //activeChar.createAbilitiesState();
-                    //arenaService.createEffectsStates(myTeam.characters, enemyTeam.characters);
                     arenaService.calcCharacters(myTeam.characters, enemyTeam.characters);
                 }
             }
@@ -553,11 +551,10 @@ module.exports = function (serverIO) {
             var newSituationObject;
 
             var actionList = [];
-            var situation = botService.createSituation(wallPositions, myTeam, enemyTeam, activeChar);
             var movePoints = findMovePointsSimulation(myTeam, enemyTeam, activeChar, false, wallPositions);
             for(var i=0;i<movePoints.length;i++){
                 newSituationObject = moveCharSimulation(movePoints[i], myTeam, enemyTeam, activeCharId, false, wallPositions);
-                score = parentAction.score + botService.situationCost(botService.createSituation(wallPositions, newSituationObject.myTeam, newSituationObject.enemyTeam, newSituationObject.activeChar));
+                score = parentAction.score + botService.situationCost(newSituationObject.activeChar, newSituationObject.myTeam, newSituationObject.enemyTeam, wallPositions);
                 actionList.push({
                     type: "move",
                     point: movePoints[i],
@@ -574,124 +571,125 @@ module.exports = function (serverIO) {
                 var characters;
                 var targetChar;
                 var predictionCount = 10;
-                if(checkedAbility.name == "Powerslave" && arenaService.checkAbilityForUse(checkedAbility, activeChar)){
+                if(arenaService.checkAbilityForUse(checkedAbility, activeChar) && checkedAbility.castSimulation){
                     switch(checkedAbility.targetType()){
                         case "self":
                             newSituationObject = castAbilitySimulation(myTeam, enemyTeam, activeChar._id, activeChar._id, checkedAbility.name, wallPositions);
-                            score = botService.situationCost(botService.createSituation(wallPositions, newSituationObject.myTeam, newSituationObject.enemyTeam, newSituationObject.activeChar));
+                            score = botService.situationCost(newSituationObject.activeChar, newSituationObject.myTeam, newSituationObject.enemyTeam, wallPositions);
                             actionList.push({
                                 type: "cast",
                                 ability: checkedAbility.name,
                                 score: parentAction.score + score,
+                                target: activeChar._id,
                                 myTeamState: newSituationObject.myTeam,
                                 enemyTeamState: newSituationObject.enemyTeam,
                                 activeCharState: newSituationObject.activeChar
                             }); break;
-                        //case "enemy":
-                        //    enemies = findEnemies(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
-                        //    for (i = 0; i < enemies.length; i++) {
-                        //        for (var j = 0; j < enemyTeam.characters.length; j++) {
-                        //            if(!checkedAbility.usageLogic(activeChar, enemyTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
-                        //            if(enemyTeam.characters[j]._id == enemies[i]._id) {
-                        //                targetChar = clone(arenaService.findCharInQueue(enemyTeam.characters[j]._id, myTeam.characters, enemyTeam.characters));
-                        //                totalScore = 0;
-                        //                for(p=0; p<predictionCount; p++){
-                        //                    totalScore += castAbilitySimulation(myTeam, enemyTeam, activeChar._id, targetChar._id, checkedAbility.name, wallPositions);
-                        //                }
-                        //                actionList.push({
-                        //                    type: "cast",
-                        //                    ability: checkedAbility.name,
-                        //                    target: enemyTeam.characters[j]._id,
-                        //                    score: totalScore/predictionCount
-                        //                });
-                        //            }
-                        //        }
-                        //    }
-                        //    break;
-                        //case "ally":
-                        //    allies = findAllies(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
-                        //    for (i = 0; i < allies.length; i++) {
-                        //        for (j = 0; j < myTeam.characters.length; j++) {
-                        //            if(!checkedAbility.usageLogic(activeChar, myTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
-                        //            if (myTeam.characters[j]._id == allies[i]._id) {
-                        //                targetChar = randomService.clone(arenaService.findCharInQueue(myTeam.characters[j]._id, myTeam.characters, enemyTeam.characters));
-                        //                totalScore = 0;
-                        //                for(p=0; p<predictionCount; p++){
-                        //                    totalScore += castAbilitySimulation(myTeam, enemyTeam, activeChar._id, targetChar._id, checkedAbility.name, wallPositions);
-                        //                }
-                        //                actionList.push({
-                        //                    type: "cast",
-                        //                    ability: checkedAbility.name,
-                        //                    target: myTeam.characters[j]._id,
-                        //                    score: totalScore/predictionCount
-                        //                });
-                        //            }
-                        //        }
-                        //    }
-                        //    break;
-                        //case "allyNotMe":
-                        //    allies = findAllies(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
-                        //    for (i = 0; i < allies.length; i++) {
-                        //        for (j = 0; j < myTeam.characters.length; j++) {
-                        //            if(!checkedAbility.usageLogic(activeChar, myTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
-                        //            if (myTeam.characters[j]._id == allies[i]._id && activeChar._id != allies[i]._id) {
-                        //                targetChar = randomService.clone(arenaService.findCharInQueue(myTeam.characters[j]._id, myTeam.characters, enemyTeam.characters));
-                        //                totalScore = 0;
-                        //                for(p=0; p<predictionCount; p++){
-                        //                    totalScore += castAbilitySimulation(myTeam, enemyTeam, activeChar._id, targetChar._id, checkedAbility.name, wallPositions);
-                        //                }
-                        //                actionList.push({
-                        //                    type: "cast",
-                        //                    ability: checkedAbility.name,
-                        //                    target: myTeam.characters[j]._id,
-                        //                    score: totalScore/predictionCount
-                        //                });
-                        //            }
-                        //        }
-                        //    }
-                        //    break;
-                        //case "ally&enemy":
-                        //    characters = findCharacters(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
-                        //    for (i = 0; i < characters.length; i++) {
-                        //        for (j = 0; j < enemyTeam.characters.length; j++) {
-                        //            if(!checkedAbility.usageLogic(activeChar, enemyTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
-                        //            if (enemyTeam.characters[j]._id == characters[i]._id) {
-                        //                targetChar = randomService.clone(arenaService.findCharInQueue(enemyTeam.characters[j]._id, myTeam.characters, enemyTeam.characters));
-                        //                totalScore = 0;
-                        //                for(p=0; p<predictionCount; p++){
-                        //                    totalScore += castAbilitySimulation(myTeam, enemyTeam, activeChar._id, targetChar._id, checkedAbility.name, wallPositions);
-                        //                }
-                        //                actionList.push({
-                        //                    type: "cast",
-                        //                    ability: checkedAbility.name,
-                        //                    target: enemyTeam.characters[j]._id,
-                        //                    score: totalScore/predictionCount
-                        //                });
-                        //            }
-                        //        }
-                        //        for (j = 0; j < myTeam.characters.length; j++) {
-                        //            if(!checkedAbility.usageLogic(activeChar, myTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
-                        //            if (myTeam.characters[j]._id == characters[i]._id) {
-                        //                targetChar = randomService.clone(arenaService.findCharInQueue(myTeam.characters[j]._id, myTeam.characters, enemyTeam.characters));
-                        //                totalScore = 0;
-                        //                for(p=0; p<predictionCount; p++){
-                        //                    totalScore += castAbilitySimulation(myTeam, enemyTeam, activeChar._id, targetChar._id, checkedAbility.name, wallPositions);
-                        //                }
-                        //                actionList.push({
-                        //                    type: "cast",
-                        //                    ability: checkedAbility.name,
-                        //                    target: myTeam.characters[j]._id,
-                        //                    score: totalScore/predictionCount
-                        //                });
-                        //            }
-                        //        }
-                        //    }
-                        //    break;
+                        case "enemy":
+                            enemies = findEnemies(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
+                            for (i = 0; i < enemies.length; i++) {
+                                for (var j = 0; j < enemyTeam.characters.length; j++) {
+                                    if(!checkedAbility.usageLogic(activeChar, enemyTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
+                                    if(enemyTeam.characters[j]._id == enemies[i]._id) {
+                                        newSituationObject = castAbilitySimulation(myTeam, enemyTeam, activeChar._id, enemies[i]._id, checkedAbility.name, wallPositions);
+                                        score = botService.situationCost(newSituationObject.activeChar, newSituationObject.myTeam, newSituationObject.enemyTeam, wallPositions);
+                                        actionList.push({
+                                            type: "cast",
+                                            ability: checkedAbility.name,
+                                            score: parentAction.score + score,
+                                            target: enemyTeam.characters[j]._id,
+                                            myTeamState: newSituationObject.myTeam,
+                                            enemyTeamState: newSituationObject.enemyTeam,
+                                            activeCharState: newSituationObject.activeChar
+                                        });
+                                    }
+                                }
+                            }
+                            break;
+                        case "ally":
+                           allies = findAllies(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
+                           for (i = 0; i < allies.length; i++) {
+                                for (j = 0; j < myTeam.characters.length; j++) {
+                                    if(!checkedAbility.usageLogic(activeChar, myTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
+                                    if (myTeam.characters[j]._id == allies[i]._id) {
+                                        newSituationObject = castAbilitySimulation(myTeam, enemyTeam, activeChar._id, allies[i]._id, checkedAbility.name, wallPositions);
+                                        score = botService.situationCost(newSituationObject.activeChar, newSituationObject.myTeam, newSituationObject.enemyTeam, wallPositions);
+                                        actionList.push({
+                                            type: "cast",
+                                            ability: checkedAbility.name,
+                                            score: parentAction.score + score,
+                                            target: myTeam.characters[j]._id,
+                                            myTeamState: newSituationObject.myTeam,
+                                            enemyTeamState: newSituationObject.enemyTeam,
+                                            activeCharState: newSituationObject.activeChar
+                                        });
+                                    }
+                                }
+                           }
+                           break;
+                        case "allyNotMe":
+                            allies = findAllies(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
+                            for (i = 0; i < allies.length; i++) {
+                                for (j = 0; j < myTeam.characters.length; j++) {
+                                    if(!checkedAbility.usageLogic(activeChar, myTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
+                                    if (myTeam.characters[j]._id == allies[i]._id && activeChar._id != allies[i]._id) {
+                                        newSituationObject = castAbilitySimulation(myTeam, enemyTeam, activeChar._id, allies[i]._id, checkedAbility.name, wallPositions);
+                                        score = botService.situationCost(newSituationObject.activeChar, newSituationObject.myTeam, newSituationObject.enemyTeam, wallPositions);
+                                        actionList.push({
+                                            type: "cast",
+                                            ability: checkedAbility.name,
+                                            score: parentAction.score + score,
+                                            target: myTeam.characters[j]._id,
+                                            myTeamState: newSituationObject.myTeam,
+                                            enemyTeamState: newSituationObject.enemyTeam,
+                                            activeCharState: newSituationObject.activeChar
+                                        });
+                                    }
+                                }
+                           }
+                           break;
+                        case "ally&enemy":
+                            characters = findCharacters(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
+                            for (i = 0; i < characters.length; i++) {
+                                for (j = 0; j < enemyTeam.characters.length; j++) {
+                                   if(!checkedAbility.usageLogic(activeChar, enemyTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
+                                   if (enemyTeam.characters[j]._id == characters[i]._id) {
+                                        newSituationObject = castAbilitySimulation(myTeam, enemyTeam, activeChar._id, enemies[i]._id, checkedAbility.name, wallPositions);
+                                        score = botService.situationCost(newSituationObject.activeChar, newSituationObject.myTeam, newSituationObject.enemyTeam, wallPositions);
+                                        actionList.push({
+                                            type: "cast",
+                                            ability: checkedAbility.name,
+                                            score: parentAction.score + score,
+                                            target: enemyTeam.characters[j]._id,
+                                            myTeamState: newSituationObject.myTeam,
+                                            enemyTeamState: newSituationObject.enemyTeam,
+                                            activeCharState: newSituationObject.activeChar
+                                        });
+                                    }
+                                }
+                                for (j = 0; j < myTeam.characters.length; j++) {
+                                   if(!checkedAbility.usageLogic(activeChar, myTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
+                                   if (myTeam.characters[j]._id == characters[i]._id) {
+                                        newSituationObject = castAbilitySimulation(myTeam, enemyTeam, activeChar._id, allies[i]._id, checkedAbility.name, wallPositions);
+                                        score = botService.situationCost(newSituationObject.activeChar, newSituationObject.myTeam, newSituationObject.enemyTeam, wallPositions);
+                                        actionList.push({
+                                            type: "cast",
+                                            ability: checkedAbility.name,
+                                            score: parentAction.score + score,
+                                            target: myTeam.characters[j]._id,
+                                            myTeamState: newSituationObject.myTeam,
+                                            enemyTeamState: newSituationObject.enemyTeam,
+                                            activeCharState: newSituationObject.activeChar
+                                        });
+                                    }
+                                }
+                           }
+                           break;
                         case "move":
                             var abilityMovePoints = findMovePoints(myTeam._id, enemyTeam._id, checkedAbility.name, function(){});
                             for(i=0;i<abilityMovePoints.length;i++){
                                 newSituationObject = moveCharSimulation(abilityMovePoints[i], myTeam, enemyTeam, activeCharId, checkedAbility.name, wallPositions);
-                                score = parentAction.score + botService.situationCost(botService.createSituation(wallPositions, newSituationObject.myTeam, newSituationObject.enemyTeam, newSituationObject.activeChar));
+                                score = parentAction.score + botService.situationCost(newSituationObject.activeChar, newSituationObject.myTeam, newSituationObject.enemyTeam, wallPositions);
                                 actionList.push({
                                     type: "move",
                                     point: abilityMovePoints[i],
@@ -705,7 +703,7 @@ module.exports = function (serverIO) {
 
             actionList.push({
                 type: "endTurn",
-                score: parentAction.score + botService.situationCost(situation)
+                score: parentAction.score + botService.situationCost(activeChar, myTeam, enemyTeam, wallPositions)
             });
 
             for(i=0;i<actionList.length;i++){

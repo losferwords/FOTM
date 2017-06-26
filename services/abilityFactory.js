@@ -20,7 +20,7 @@ var Ability = function(name){
             cooldown : function() {return 6},
             needWeapon : function() {return false},
             cd : 0
-        };break;
+        };
 
         //SENTINEL
 
@@ -42,11 +42,23 @@ var Ability = function(name){
                     physDamage=target.applyResistance(physDamage, false);
                     caster.soundBuffer.push(this.name);
                     if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
-                        target.addDebuff(effectFactory("Strong Arm Of The Law", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                        target.addDebuff(effectFactory("Strong Arm Of The Law", this.variant), caster, myTeam, enemyTeam, walls);
                     }
                 }
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost());
+                this.cd=this.cooldown();
+                var physDamage = (caster.minDamage*(1+this.variant*0.2) + caster.maxDamage*(1+this.variant*0.2))/2;
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster);                
+                physDamage=target.applyResistance(physDamage, false);
+                if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
+                    target.addDebuff(effectFactory("Strong Arm Of The Law", this.variant), caster, myTeam, enemyTeam, walls);
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -58,9 +70,8 @@ var Ability = function(name){
             cooldown : function(){return 1},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {damage: 1, direct: 1, debuff: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.physImmune }
-        };break;
+        };
 
         case "Defender Of The Faith": return {
             name : "Defender Of The Faith",
@@ -74,13 +85,30 @@ var Ability = function(name){
                 caster.soundBuffer.push(this.name);
                 if(this.variant===1 || this.variant===3 || this.variant===5){
                     caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
-                    target.addBuff(effectFactory("Defender Of The Faith", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                    target.addBuff(effectFactory("Defender Of The Faith", this.variant), caster, myTeam, enemyTeam, walls);
                 }
                 else {
                     caster.logBuffer.push(caster.charName+" cast '"+this.name);
                     for(var i=0; i<myTeam.length;i++){
                         if(!myTeam[i].isDead) {
-                            myTeam[i].addBuff(effectFactory("Defender Of The Faith", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                            myTeam[i].addBuff(effectFactory("Defender Of The Faith", this.variant), caster, myTeam, enemyTeam, walls);
+                        }
+
+                    }
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost());
+                this.cd=this.cooldown();
+                if(this.variant===1 || this.variant===3 || this.variant===5){
+                    target.addBuff(effectFactory("Defender Of The Faith", this.variant), caster, myTeam, enemyTeam, walls);
+                }
+                else {
+                    for(var i=0; i<myTeam.length;i++){
+                        if(!myTeam[i].isDead) {
+                            myTeam[i].addBuff(effectFactory("Defender Of The Faith", this.variant), caster, myTeam, enemyTeam, walls);
                         }
 
                     }
@@ -109,9 +137,8 @@ var Ability = function(name){
             cooldown : function(){return 12+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {aoe: 1, buff: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Disarm": return {
             name : "Disarm",
@@ -130,12 +157,19 @@ var Ability = function(name){
                         caster.logBuffer.push(target.charName+" has immunity to control effects!");
                     }
                     else {
-                        target.addDebuff(effectFactory("Disarm", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                        target.addDebuff(effectFactory("Disarm", this.variant), caster, myTeam, enemyTeam, walls);
                     }
                 }
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                 }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost());
+                this.cd=this.cooldown();
+                target.addDebuff(effectFactory("Disarm", this.variant), caster, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "enemy"},
@@ -146,9 +180,8 @@ var Ability = function(name){
             cooldown : function(){return 11+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {debuff: 1, defensive: 1, disarm: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.controlImmune || target.magicImmune) }
-        };break;
+        };
 
         case "Walk Away": return {
             name : "Walk Away",
@@ -174,12 +207,25 @@ var Ability = function(name){
                         }
                         else {
                             arenaService.knockBack(target, caster, myTeam, enemyTeam, walls);
-                            target.addDebuff(effectFactory("Walk Away", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                            target.addDebuff(effectFactory("Walk Away", this.variant), caster, myTeam, enemyTeam, walls);
                         }
                     }
                 }
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost());
+                this.cd=this.cooldown();
+                var physDamage = (caster.minDamage*(0.8+this.variant*0.3) + caster.maxDamage*(0.8+this.variant*0.3))/2;
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster); 
+                physDamage=target.applyResistance(physDamage, false);
+                if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
+                    arenaService.knockBack(target, caster, myTeam, enemyTeam, walls);
+                    target.addDebuff(effectFactory("Walk Away", this.variant), caster, myTeam, enemyTeam, walls);
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -191,9 +237,8 @@ var Ability = function(name){
             cooldown : function(){return 12+this.variant},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, damage: 1, debuff: 1, push: 1, stun: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.controlImmune || target.physImmune) }
-        };break;
+        };
 
         case "Sanctuary": return {
             name : "Sanctuary",
@@ -207,7 +252,14 @@ var Ability = function(name){
 
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
                 caster.soundBuffer.push(this.name);
-                target.addBuff(effectFactory("Sanctuary", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                target.addBuff(effectFactory("Sanctuary", this.variant), caster, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost());
+                this.cd=this.cooldown();
+                target.addBuff(effectFactory("Sanctuary", this.variant), caster, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "allyNotMe"},
@@ -218,9 +270,8 @@ var Ability = function(name){
             cooldown : function(){return 10+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "The Punishment Due": return {
             name : "The Punishment Due",
@@ -243,11 +294,25 @@ var Ability = function(name){
                     if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                         var newEffect=effectFactory("The Punishment Due", this.variant);
                         newEffect.bleedDamage=physDamage*this.variant*0.1;
-                        target.addDebuff(newEffect, caster.charName, myTeam, enemyTeam, walls);
+                        target.addDebuff(newEffect, caster, myTeam, enemyTeam, walls);
                     }
                 }
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost());
+                this.cd=this.cooldown();
+                var physDamage = (caster.minDamage*(0.9+this.variant*0.1) + caster.maxDamage*(0.9+this.variant*0.1))/2;
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster); 
+                physDamage=target.applyResistance(physDamage, false);
+                if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
+                    var newEffect=effectFactory("The Punishment Due", this.variant);
+                    newEffect.bleedDamage = physDamage * this.variant * 0.1;
+                    target.addDebuff(newEffect, caster, myTeam, enemyTeam, walls);
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -259,11 +324,10 @@ var Ability = function(name){
             cooldown : function(){return 7+this.variant},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, overTime: 1, damage: 1, debuff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.physImmune }
-        };break;
+        };
 
-        case "Come And Get It": return { //BUG
+        case "Come And Get It": return {
             name : "Come And Get It",
             variant: 3,
             role : function() {return "sentinel"},
@@ -295,6 +359,18 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost());
+                this.cd=this.cooldown();
+                var physDamage = (caster.minDamage*(0.5+this.variant*0.2) + caster.maxDamage*(0.5+this.variant*0.2))/2;
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster);
+                physDamage=target.applyResistance(physDamage, false);
+                if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
+                    arenaService.charge(caster, target, enemyTeam, myTeam, walls);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 3},
             duration: function(){return 0},
@@ -303,9 +379,8 @@ var Ability = function(name){
             cooldown : function(){return 11+this.variant},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, damage: 1, pull: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.controlImmune || target.physImmune) }
-        };break;
+        };
 
         case "New Faith": return {
             name : "New Faith",
@@ -338,6 +413,22 @@ var Ability = function(name){
 
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost());
+                this.cd=this.cooldown();
+
+                if(target.findEffect("Locked And Loaded")==-1) {
+                    for(var i=0;i<3;i++) {
+                        target.removeRandomDOT(myTeam, enemyTeam);
+                    }
+                }
+
+                var heal=(200+this.variant*175)*(1+caster.spellPower);
+                heal = arenaService.calculateExpectedHeal(heal, caster);
+                target.takeHealSimulation(heal);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "ally"},
             range : function(){return 3},
             duration: function(){return 0},
@@ -346,9 +437,8 @@ var Ability = function(name){
             cooldown : function(){return 5+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {overTime: 1, heal: 1, removeDebuffs: 1, buff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.findEffect("Locked And Loaded")!==-1) }
-        };break;
+        };
 
         //SLAYER
 
@@ -387,7 +477,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {direct: 1, damage: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.physImmune }
-        };break;
+        };
 
         case "Reign In Blood": return {
             name : "Reign In Blood",
@@ -426,7 +516,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {direct: 1, damage: 1, buff: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.physImmune }
-        };break;
+        };
 
         case "Grinder": return {
             name : "Grinder",
@@ -476,7 +566,7 @@ var Ability = function(name){
                 var nearbyEnemies = arenaService.findEnemies(caster, enemyTeam, 1, walls);
                 return nearbyEnemies.length>0;
             }
-        };break;
+        };
 
         case "Follow The Tears": return {
             name : "Follow The Tears",
@@ -526,7 +616,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {direct: 1, damage: 1, charge: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.physImmune }
-        };break;
+        };
 
         case "Made In Hell": return {
             name : "Made In Hell",
@@ -552,7 +642,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Spill The Blood": return {
             name : "Spill The Blood",
@@ -578,7 +668,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, offensive: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Dyers Eve": return {
             name : "Dyers Eve",
@@ -610,7 +700,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, heal: 1, direct: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "I Dont Wanna Stop": return {
             name : "I Dont Wanna Stop",
@@ -637,7 +727,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, offensive: 1, defensive: 1, manaRestore: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         //REDEEMER
 
@@ -681,7 +771,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {direct: 1, damage: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune) }
-        };break;
+        };
 
         case "Electric Eye": return {
             name : "Electric Eye",
@@ -723,7 +813,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {direct: 1, damage: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune) }
-        };break;
+        };
 
         case "Lights In The Sky": return {
             name : "Lights In The Sky",
@@ -750,7 +840,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Thunderstruck": return {
             name : "Thunderstruck",
@@ -794,7 +884,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {direct: 1, damage: 1, debuff: 1, stun: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.controlImmune || target.magicImmune) }
-        };break;
+        };
 
         case "You Aint No Angel": return {
             name : "You Aint No Angel",
@@ -820,7 +910,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "State Of Grace": return {
             name : "State Of Grace",
@@ -847,7 +937,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {overTime: 1, buff: 1, heal: 1, manaRestore: 1, energyRestore: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(caster.curEnergy == caster.maxEnergy) }
-        };break;
+        };
 
         case "My Last Words": return {
             name : "My Last Words",
@@ -889,7 +979,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {direct: 1, damage: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune || (target.curHealth/target.maxHealth)>0.5) }
-        };break;
+        };
 
         case "Come Cover Me": return {
             name : "Come Cover Me",
@@ -916,7 +1006,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {overTime: 1, heal: 1, buff: 1, pull: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         //RIPPER
 
@@ -957,7 +1047,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {direct: 1, overTime: 1, damage: 1, debuff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.physImmune }
-        };break;
+        };
 
         case "Invisible": return {
             name : "Invisible",
@@ -983,7 +1073,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, invisible: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Jawbreaker": return {
             name : "Jawbreaker",
@@ -1027,7 +1117,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {direct: 1, overTime: 1, damage: 1, debuff: 1, silence: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.controlImmune || target.physImmune) }
-        };break;
+        };
 
         case "Hog Tied": return {
             name : "Hog Tied",
@@ -1083,7 +1173,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {direct: 1, damage: 1, debuff: 1, immobilize: 1, charge: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.controlImmune || target.physImmune) }
-        };break;
+        };
 
         case "Running Free": return {
             name : "Running Free",
@@ -1110,7 +1200,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, energyRestore: 1, removeDebuffs: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Fast As The Shark": return {
             name : "Fast As The Shark",
@@ -1136,7 +1226,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Prowler": return {
             name : "Prowler",
@@ -1180,7 +1270,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {direct: 1, damage: 1, debuff: 1, stun: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.controlImmune || target.physImmune) }
-        };break;
+        };
 
         case "Fade To Black": return {
             name : "Fade To Black",
@@ -1206,7 +1296,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, invisible: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         //PROPHET
 
@@ -1253,7 +1343,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {direct: 1, damage: 1, buff: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune) }
-        };break;
+        };
 
         case "Speed Of Light": return {
             name : "Speed Of Light",
@@ -1278,7 +1368,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Never A Word": return {
             name : "Never A Word",
@@ -1324,7 +1414,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {aoe: 1, silence: 1, debuff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.controlImmune }
-        };break;
+        };
 
         case "Prophecy": return {
             name : "Prophecy",
@@ -1355,7 +1445,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {debuff: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Lets Me Take It": return {
             name : "Lets Me Take It",
@@ -1388,7 +1478,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {stealBuffs: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.buffs.length==0 || target.findEffect("Locked And Loaded")!==-1) }
-        };break;
+        };
 
         case "Brain Damage": return {
             name : "Brain Damage",
@@ -1437,7 +1527,7 @@ var Ability = function(name){
                 }
                 return magicDamage>=10;
             }
-        };break;
+        };
 
         case "Infinite Dreams": return {
             name : "Infinite Dreams",
@@ -1463,7 +1553,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, defensive: 1, manaRestore: 0} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Caught Somewhere In Time": return {
             name : "Caught Somewhere In Time",
@@ -1494,7 +1584,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {overTime: 1, damage: 1, debuff: 1, immobilize: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.magicImmune }
-        };break;
+        };
 
         //MALEFIC
 
@@ -1546,7 +1636,7 @@ var Ability = function(name){
                 var nearbyEnemies = arenaService.findEnemies(caster, enemyTeam, 2, walls);
                 return nearbyEnemies.length>0;
             }
-        };break;
+        };
 
         case "Burning Ambition": return {
             name : "Burning Ambition",
@@ -1590,7 +1680,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {damage: 1, direct: 1, debuff: 1, disarm: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.controlImmune) }
-        };break;
+        };
 
         case "Fireball": return {
             name : "Fireball",
@@ -1598,7 +1688,7 @@ var Ability = function(name){
             role : function() {return "malefic"},
             icon : function() { return "url(../images/assets/svg/view/sprites.svg#abilities--Fireball)"},
             cast : function (caster, target, myTeam, enemyTeam, walls) {
-                caster.spendEnergy(this.energyCost());
+                caster.spendEnergy(this.energyCost(), true);
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 if(caster.checkHit()) {
@@ -1637,6 +1727,29 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost());
+                this.cd=this.cooldown();
+                var magicDamage = (1250 + this.variant * 200) * (1 + caster.spellPower);
+                magicDamage = arenaService.calculateExpectedDamage(magicDamage, caster);
+                magicDamage = target.applyResistance(magicDamage, true);
+
+                target.takeDamageSimulation(magicDamage, caster, true, true, myTeam, enemyTeam);
+
+                magicDamage = (1500 - this.variant * 200) * (1 + caster.spellPower);
+
+                var nearbyEnemies = arenaService.findEnemies(target, enemyTeam, 1, walls);
+
+                for (var i = 0; i < nearbyEnemies.length; i++) {
+                    if (nearbyEnemies[i].charName !== target.charName) {
+                        magicDamage = arenaService.calculateExpectedDamage(magicDamage, caster);
+                        magicDamage = nearbyEnemies[i].applyResistance(magicDamage, true);
+                        nearbyEnemies[i].takeDamageSimulation(magicDamage, caster, true, true, myTeam, enemyTeam);
+                    }
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 3},
             duration: function(){return 0},
@@ -1645,9 +1758,8 @@ var Ability = function(name){
             cooldown : function(){return 12},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {damage: 1, direct: 1, aoe: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.magicImmune }
-        };break;
+        };
 
         case "Thank God For The Bomb": return {
             name : "Thank God For The Bomb",
@@ -1678,7 +1790,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {damage: 1, overTime: 1, aoe: 1, debuff: 1, stun: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.magicImmune }
-        };break;
+        };
 
         case "Powerslave": return {
             name : "Powerslave",
@@ -1710,7 +1822,7 @@ var Ability = function(name){
             needWeapon : function() {return false},
             cd : 0,
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Cauterization": return {
             name : "Cauterization",
@@ -1736,7 +1848,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {heal: 1, overTime: 1, buff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Down In Flames": return {
             name : "Down In Flames",
@@ -1762,7 +1874,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Fight Fire With Fire": return {
             name : "Fight Fire With Fire",
@@ -1788,7 +1900,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         //CLERIC
 
@@ -1835,7 +1947,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {damage: 1, direct: 1, manaRestore: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune) }
-        };break;
+        };
 
         case "Mercyful Fate": return {
             name : "Mercyful Fate",
@@ -1861,7 +1973,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {heal: 1, overTime: 1, buff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Laying On Hands": return {
             name : "Laying On Hands",
@@ -1892,7 +2004,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {heal: 1, direct: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Holy Smoke": return {
             name : "Holy Smoke",
@@ -1950,7 +2062,7 @@ var Ability = function(name){
                     if(myTeam[i].charName===target.charName) targetIsAlly=true;
                 }
                 return !(!targetIsAlly && target.magicImmune) }
-        };break;
+        };
 
         case "Cleanse The Soul": return {
             name : "Cleanse The Soul",
@@ -1985,7 +2097,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {removeDebuffs: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.debuffs.length==0 || target.findEffect("Locked And Loaded")!==-1) }
-        };break;
+        };
 
         case "Hallowed Be Thy Name": return {
             name : "Hallowed Be Thy Name",
@@ -2011,7 +2123,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, offensive: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Hit The Lights": return {
             name : "Hit The Lights",
@@ -2068,7 +2180,7 @@ var Ability = function(name){
                 var nearbyAllies = arenaService.findAllies(caster, myTeam, 2, walls);
                 return nearbyEnemies.length>0 || nearbyAllies.length>0;
             }
-        };break;
+        };
 
         case "Heaven Can Wait": return {
             name : "Heaven Can Wait",
@@ -2097,7 +2209,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, defensive: 1, removeDebuffs: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         //HERETIC
 
@@ -2144,7 +2256,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {damage: 1, direct: 1, heal: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune) }
-        };break;
+        };
 
         case "Fear Of The Dark": return {
             name : "Fear Of The Dark",
@@ -2183,7 +2295,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {damage: 1, direct: 1, overTime: 1, debuff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.magicImmune }
-        };break;
+        };
 
         case "Creeping Death": return {
             name : "Creeping Death",
@@ -2214,7 +2326,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {damage: 1, overTime: 1, debuff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.magicImmune }
-        };break;
+        };
 
         case "Spreading The Disease": return {
             name : "Spreading The Disease",
@@ -2245,7 +2357,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {damage: 1, overTime: 1, aoe: 1, debuff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.magicImmune }
-        };break;
+        };
 
         case "Purgatory": return {
             name : "Purgatory",
@@ -2280,7 +2392,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {removeBuffs: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.buffs.length==0 || target.findEffect("Locked And Loaded")!==-1) }
-        };break;
+        };
 
         case "Children Of The Damned": return {
             name : "Children Of The Damned",
@@ -2312,7 +2424,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {debuff: 1, offensive: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "Locked And Loaded": return {
             name : "Locked And Loaded",
@@ -2355,7 +2467,7 @@ var Ability = function(name){
             cd : 0,
             usage: function() { return {buff: 1, debuff: 1, freezeEffects: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
-        };break;
+        };
 
         case "A Touch Of Evil": return {
             name : "A Touch Of Evil",
@@ -2421,7 +2533,7 @@ var Ability = function(name){
 
                 return totalEffects>=3;
             }
-        };break;
+        };
 
     }
 };

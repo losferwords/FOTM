@@ -535,5 +535,11 @@ module.exports = {
         }
         if(weight[1] < 0) weight[1] = 0;
         return weight;
+    },
+    calculateExpectedDamage: function(damage, caster){
+        return (caster.hitChance) * ((1 - caster.critChance) * damage + caster.critChance * (1.5 + caster.critChance) * damage);
+    },
+    calculateExpectedHeal: function(heal, caster){
+        return (1 - caster.critChance) * heal + caster.critChance * (1.5 + caster.critChance) * heal;
     }
 };
