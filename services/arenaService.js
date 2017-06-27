@@ -519,6 +519,17 @@ module.exports = {
         var maxY = Math.abs(end.y - start.y);
         return maxX > maxY ? maxX : maxY;
     },
+    getOptimalRange: function(activeChar){
+        var rangeSum = 0;
+        var rangeCount = 0;
+        for(var i=0;i<activeChar.abilities.length;i++){
+            if(activeChar.abilities[i].range() != 'self'){
+                rangeSum+=activeChar.abilities[i].range();
+                rangeCount++;
+            }
+        }
+        return rangeSum/rangeCount;
+    },
     calculatePositionWeight: function(position, char, myTeam, enemyTeam, optimalRange, walls){
         var self = this;
         var weight = [0,0];

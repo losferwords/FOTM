@@ -52,7 +52,7 @@ module.exports = {
         //active
         score += activeChar.curHealth/activeChar.maxHealth * 110;
         score += activeChar.curMana/activeChar.maxMana * 55;
-        var positionWeights = arenaService.calculatePositionWeight(activeChar.position, activeChar, myTeam.characters, enemyTeam.characters, self.getOptimalRange(activeChar), wallPositions);
+        var positionWeights = arenaService.calculatePositionWeight(activeChar.position, activeChar, myTeam.characters, enemyTeam.characters, arenaService.getOptimalRange(activeChar), wallPositions);
         score += positionWeights[0] * 150;
         score += positionWeights[1] * 100;;
 
@@ -117,16 +117,5 @@ module.exports = {
             }
         }
         return score;
-    },    
-    getOptimalRange: function(activeChar){
-        var rangeSum = 0;
-        var rangeCount = 0;
-        for(var i=0;i<activeChar.abilities.length;i++){
-            if(activeChar.abilities[i].range() != 'self'){
-                rangeSum+=activeChar.abilities[i].range();
-                rangeCount++;
-            }
-        }
-        return rangeSum/rangeCount;
-    }
+    }    
 };

@@ -67,11 +67,11 @@ var Effect = function(name, abilityVariant) {
                 switch(this.variant){
                     case 1:
                     case 2:
-                        var effectModifier = owner.blockChance * 3.3 + owner.physRes * 3.3 + magicRes * 3.3;
+                        var effectModifier = owner.blockChance * 3.3 + owner.physRes * 3.3 + owner.magicRes * 3.3;
                         break;
                     case 3:
                     case 4:
-                        effectModifier = owner.blockChance * 3.6 + owner.physRes * 3.6 + magicRes * 3.6;
+                        effectModifier = owner.blockChance * 3.6 + owner.physRes * 3.6 + owner.magicRes * 3.6;
                         break;                    
                     case 5:
                         effectModifier = owner.blockChance * 4.2 + owner.physRes * 4.2 + magicRes * 4.2;
@@ -773,7 +773,8 @@ var Effect = function(name, abilityVariant) {
             magicEffect: function() {return true},
             score: function(owner, myTeam, enemyTeam, walls) {
                 var effectModifier = owner.spellPower * (1 + this.variant * 0.15) * 10;
-                var positionModifier = owner.positionWeightOff * 30;
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                var positionModifier = positionWeights[0] * 30;
                 var score = effectModifier + positionModifier;
                 return score;
             }
