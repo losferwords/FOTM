@@ -67,17 +67,17 @@ var Effect = function(name, abilityVariant) {
                 switch(this.variant){
                     case 1:
                     case 2:
-                        var effectModifier = owner.blockChance * 3.3 + owner.physRes * 3.3 + owner.magicRes * 3.3;
+                        var effectModifier = owner.blockChance * 330 + owner.physRes * 330 + owner.magicRes * 330;
                         break;
                     case 3:
                     case 4:
-                        effectModifier = owner.blockChance * 3.6 + owner.physRes * 3.6 + owner.magicRes * 3.6;
+                        effectModifier = owner.blockChance * 360 + owner.physRes * 360 + owner.magicRes * 360;
                         break;                    
                     case 5:
-                        effectModifier = owner.blockChance * 4.2 + owner.physRes * 4.2 + magicRes * 4.2;
+                        effectModifier = owner.blockChance * 420 + owner.physRes * 420 + owner.magicRes * 420;
                         break;
                 }                
-                var leftModifier = this.left * 5;
+                var leftModifier = this.left * 2;
                 var score = effectModifier + leftModifier;
                 return score;
             }

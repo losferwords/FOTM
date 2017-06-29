@@ -304,12 +304,20 @@ module.exports = {
         var newCharacters = [];
         self.clone(newTeam, team);
 
-        for(var i=0; i<team.characters.length; i++){
+        for(var i = 0; i < team.characters.length; i++){
             var charCopy = Object.create(Object.getPrototypeOf(team.characters[i]));
             self.clone(charCopy, team.characters[i]);
+
+            var newAbilities = [];
+
+            for(var j = 0; j < charCopy.abilities.length; j++) {
+                var abilityCopy = Object.create(Object.getPrototypeOf(charCopy.abilities[j]));
+                self.clone(abilityCopy, charCopy.abilities[j]);
+                newAbilities.push(abilityCopy);
+            }
+            charCopy.abilities = newAbilities;
             newCharacters.push(charCopy);
         }
-
         newTeam.characters = newCharacters;
         return newTeam;
     },
