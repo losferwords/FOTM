@@ -59,7 +59,7 @@ module.exports = {
         for(var i=0; i<activeChar.buffs.length; i++){
             if(activeChar.buffs[i].score) {
                 effectScore = activeChar.buffs[i].score(activeChar, myTeam.characters, enemyTeam.characters, wallPositions);
-                console.log("Active char Buff " + activeChar.buffs[i].name +" score: +" + effectScore);
+                //console.log("Active char Buff " + activeChar.buffs[i].name +" score: +" + effectScore);
                 score += effectScore;
             }
         }
@@ -67,7 +67,7 @@ module.exports = {
         for(i=0; i<activeChar.debuffs.length; i++){
             if(activeChar.debuffs[i].score) {
                 effectScore = activeChar.debuffs[i].score(activeChar, myTeam.characters, enemyTeam.characters, wallPositions);
-                console.log("Active char Debuff " + activeChar.buffs[i].name +" score: -" + effectScore);
+                //console.log("Active char Debuff " + activeChar.buffs[i].name +" score: -" + effectScore);
                 score -= effectScore;
             }
         }
@@ -80,7 +80,7 @@ module.exports = {
             for(var j=0; i<ally.buffs.length; i++){
                 if(ally.buffs[i].score) {
                     effectScore = ally.buffs[i].score(ally, myTeam.characters, enemyTeam.characters, wallPositions);
-                    console.log("Ally Buff " + ally.buffs[i].name +" score: +" + effectScore);
+                    //console.log("Ally Buff " + ally.buffs[i].name +" score: +" + effectScore);
                     score += effectScore;
                 }
             }
@@ -88,7 +88,7 @@ module.exports = {
             for(j=0; i<ally.debuffs.length; i++){
                 if(ally.debuffs[i].score) {
                     effectScore = ally.debuffs[i].score(ally, myTeam.characters, enemyTeam.characters, wallPositions);
-                    console.log("Ally Debuff " + ally.buffs[i].name +" score: -" + effectScore);
+                    //console.log("Ally Debuff " + ally.buffs[i].name +" score: -" + effectScore);
                     score -= effectScore;
                 }
             }
@@ -103,7 +103,7 @@ module.exports = {
             for(j=0; i<enemy.buffs.length; i++){
                 if(enemy.buffs[i].score) {
                     effectScore = enemy.buffs[i].score(enemy, enemyTeam.characters, myTeam.characters, wallPositions);
-                    console.log("Enemy Buff " + enemy.buffs[i].name +" score: -" + effectScore);
+                    //console.log("Enemy Buff " + enemy.buffs[i].name +" score: -" + effectScore);
                     score -= effectScore;
                 }
             }
@@ -111,7 +111,7 @@ module.exports = {
             for(j=0; i<ally.debuffs.length; i++){
                 if(enemy.debuffs[i].score) {
                     effectScore = enemy.debuffs[i].score(enemy, enemyTeam.characters, myTeam.characters, wallPositions);
-                    console.log("Enemy Debuff " + enemy.buffs[i].name +" score: +" + effectScore);
+                    //console.log("Enemy Debuff " + enemy.buffs[i].name +" score: +" + effectScore);
                     score += effectScore;
                 }
             }

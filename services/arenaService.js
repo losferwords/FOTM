@@ -309,13 +309,30 @@ module.exports = {
             self.clone(charCopy, team.characters[i]);
 
             var newAbilities = [];
+            var newBuffs = [];
+            var newDebuffs = [];
 
             for(var j = 0; j < charCopy.abilities.length; j++) {
                 var abilityCopy = Object.create(Object.getPrototypeOf(charCopy.abilities[j]));
                 self.clone(abilityCopy, charCopy.abilities[j]);
                 newAbilities.push(abilityCopy);
             }
+
+            for(var j = 0; j < charCopy.buffs.length; j++) {
+                var buffCopy = Object.create(Object.getPrototypeOf(charCopy.buffs[j]));
+                self.clone(buffCopy, charCopy.buffs[j]);
+                newBuffs.push(buffCopy);
+            }
+
+            for(var j = 0; j < charCopy.debuffs.length; j++) {
+                var debuffCopy = Object.create(Object.getPrototypeOf(charCopy.debuffs[j]));
+                self.clone(debuffCopy, charCopy.debuffs[j]);
+                newDebuffs.push(debuffCopy);
+            }
+
             charCopy.abilities = newAbilities;
+            charCopy.buffs = newBuffs;
+            charCopy.debuffs = newDebuffs;
             newCharacters.push(charCopy);
         }
         newTeam.characters = newCharacters;

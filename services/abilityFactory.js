@@ -52,7 +52,7 @@ var Ability = function(name){
             },
             castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost(), true);
-                caster.spendMana(this.manaCost());
+                caster.spendMana(this.manaCost(), true);
                 this.cd=this.cooldown();
                 var physDamage = (caster.minDamage*(1+this.variant*0.2) + caster.maxDamage*(1+this.variant*0.2))/2;
                 physDamage = arenaService.calculateExpectedDamage(physDamage, caster);                
@@ -100,7 +100,7 @@ var Ability = function(name){
             },
             castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost(), true);
-                caster.spendMana(this.manaCost());
+                caster.spendMana(this.manaCost(), true);
                 this.cd=this.cooldown();
                 if(this.variant===1 || this.variant===3 || this.variant===5){
                     target.addBuff(effectFactory("Defender Of The Faith", this.variant), caster, myTeam, enemyTeam, walls);
@@ -167,7 +167,7 @@ var Ability = function(name){
             },
             castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost(), true);
-                caster.spendMana(this.manaCost());
+                caster.spendMana(this.manaCost(), true);
                 this.cd=this.cooldown();
                 target.addDebuff(effectFactory("Disarm", this.variant), caster, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
@@ -218,7 +218,7 @@ var Ability = function(name){
             },
             castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost(), true);
-                caster.spendMana(this.manaCost());
+                caster.spendMana(this.manaCost(), true);
                 this.cd=this.cooldown();
                 var physDamage = (caster.minDamage*(0.8+this.variant*0.3) + caster.maxDamage*(0.8+this.variant*0.3))/2;
                 physDamage = arenaService.calculateExpectedDamage(physDamage, caster); 
@@ -257,7 +257,7 @@ var Ability = function(name){
             },
             castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost(), true);
-                caster.spendMana(this.manaCost());
+                caster.spendMana(this.manaCost(), true);
                 this.cd=this.cooldown();
                 target.addBuff(effectFactory("Sanctuary", this.variant), caster, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
@@ -304,7 +304,7 @@ var Ability = function(name){
             },
             castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost(), true);
-                caster.spendMana(this.manaCost());
+                caster.spendMana(this.manaCost(), true);
                 this.cd=this.cooldown();
                 var physDamage = (caster.minDamage*(0.9+this.variant*0.1) + caster.maxDamage*(0.9+this.variant*0.1))/2;
                 physDamage = arenaService.calculateExpectedDamage(physDamage, caster); 
@@ -361,7 +361,7 @@ var Ability = function(name){
             },
             castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost(), true);
-                caster.spendMana(this.manaCost());
+                caster.spendMana(this.manaCost(), true);
                 this.cd=this.cooldown();
                 var physDamage = (caster.minDamage*(0.5+this.variant*0.2) + caster.maxDamage*(0.5+this.variant*0.2))/2;
                 physDamage = arenaService.calculateExpectedDamage(physDamage, caster);
@@ -415,7 +415,7 @@ var Ability = function(name){
             },
             castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost(), true);
-                caster.spendMana(this.manaCost());
+                caster.spendMana(this.manaCost(), true);
                 this.cd=this.cooldown();
 
                 if(target.findEffect("Locked And Loaded")==-1) {
@@ -1729,7 +1729,7 @@ var Ability = function(name){
             },
             castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost(), true);
-                caster.spendMana(this.manaCost());
+                caster.spendMana(this.manaCost(), true);
                 this.cd=this.cooldown();
                 var magicDamage = (1250 + this.variant * 200) * (1 + caster.spellPower);
                 magicDamage = arenaService.calculateExpectedDamage(magicDamage, caster);
@@ -1808,7 +1808,7 @@ var Ability = function(name){
             },
             castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost(), true);
-                caster.spendMana(this.manaCost());
+                caster.spendMana(this.manaCost(), true);
                 this.cd=this.cooldown();
                 caster.addBuff(effectFactory("Powerslave", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);

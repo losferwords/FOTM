@@ -451,11 +451,11 @@ Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls, s
     if(self.isDead) return;
 
     if(buff.stacked()) buff.stacks=1;
-    buff.caster=caster;
+    buff.caster=caster._id;
     buff.left=buff.duration();
 
     for(var i=0;i<self.buffs.length;i++){
-        if(self.buffs[i].name===buff.name && self.buffs[i].caster._id === caster._id){
+        if(self.buffs[i].name===buff.name && self.buffs[i].caster === caster){
             if(buff.stacked()) {
                 if(self.buffs[i].stacks<self.buffs[i].maxStacks()) self.buffs[i].stacks++;
                 if(!simulation) self.buffs[i].apply(self, myTeam, enemyTeam, walls);
@@ -481,11 +481,11 @@ Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, wall
     }
 
     if(debuff.stacked()) debuff.stacks=1;
-    debuff.caster=caster;
+    debuff.caster=caster._id;
     debuff.left=debuff.duration();
 
     for(var i=0;i<self.debuffs.length;i++){
-        if(self.debuffs[i].name===debuff.name && self.debuffs[i].caster._id === caster._id){
+        if(self.debuffs[i].name===debuff.name && self.debuffs[i].caster === caster){
             if(debuff.stacked()) {
                 if(self.debuffs[i].stacks<self.debuffs[i].maxStacks()) self.debuffs[i].stacks++;
                 if(!simulation) self.debuffs[i].apply(self, enemyTeam, myTeam, walls); //��� ������� �������� �������
@@ -964,9 +964,9 @@ Character.prototype.spendEnergy = function(value, simulation) {
 };
 
 //������� ����� ����
-Character.prototype.spendMana = function(value) {
+Character.prototype.spendMana = function(value, simulation) {
     var self=this;
-    if(self.clearCast){
+    if(self.clearCast && !simulation){
         self.logBuffer.push(self.charName+" is in clearcasting state and save mana");
     }
     else {
