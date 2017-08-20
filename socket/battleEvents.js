@@ -543,7 +543,7 @@ module.exports = function (serverIO) {
             socket.broadcast.to(room).emit('combatLogUpdateSend', message);
         });
 
-        function buildActionBranch(myTeam, enemyTeam, activeCharId, wallPositions, parentAction){
+        function buildActionBranch(myTeam, enemyTeam, activeCharId, wallPositions, parentAction, callback){
             var activeChar = arenaService.findCharInMyTeam(activeCharId, myTeam.characters);
             var score = 0;
             var newSituationObject;
@@ -662,24 +662,38 @@ module.exports = function (serverIO) {
                 score: parentAction.score > 0 ? parentAction.score : botService.situationCost(activeChar, myTeam, enemyTeam, wallPositions) 
             });
 
-            for(i=0;i<actionList.length;i++){
-                if(actionList[i].type != "endTurn"){
-                    actionList[i].branch = buildActionBranch(actionList[i].myTeamState, actionList[i].enemyTeamState, actionList[i].activeCharState._id, wallPositions, actionList[i]);
+            async.each(actionList, function(actionInList, callback) {
+                if(actionInList.type != "endTurn"){
+                    buildActionBranch(actionInList.myTeamState, actionInList.enemyTeamState, actionInList.activeCharState._id, wallPositions, actionInList, function(actions){
+                        actionInList.branch = actions;
+                        callback(null);
+                    });
                 }
-            }
+            }, function(err){
+                if (err) {
+                    socket.emit("customError", err);
+                    return;
+                }
 
-            actionList.sort(function (a, b) {
-                if (a.score <= b.score) {
-                    return 1;
-                }
-                else if (a.score > b.score) {
-                    return -1;
-                }
+                actionList.sort(function (a, b) {
+                    if (a.score <= b.score) {
+                        return 1;
+                    }
+                    else if (a.score > b.score) {
+                        return -1;
+                    }
+                });
+    
+                parentAction.score = actionList[0].score;
+    
+                callback(actionList);
             });
 
-            parentAction.score = actionList[0].score;
-
-            return actionList;
+            // for(i=0;i<actionList.length;i++){
+            //     if(actionList[i].type != "endTurn"){
+            //         actionList[i].branch = buildActionBranch(actionList[i].myTeamState, actionList[i].enemyTeamState, actionList[i].activeCharState._id, wallPositions, actionList[i]);
+            //     }
+            // }            
         }
 
         socket.on('botAction', function(myTeamId, enemyTeamId) {
@@ -691,26 +705,25 @@ module.exports = function (serverIO) {
                 var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
 
                 var parentAction = {score: 0};
-                var actions = buildActionBranch(myTeam, enemyTeam, activeChar._id, battleData.wallPositions, parentAction);
 
-                var action = actions[0];
-
-                var chooseActionTimeEnd = new Date();
-
-                console.log("Think time: " + (chooseActionTimeEnd.getTime() - chooseActionTimeStart.getTime()) + "ms");
-
-                switch(action.type){
-                    case "move":
-                        moveCharTo(action.point, myTeamId, enemyTeamId, action.ability ? action.ability : false);
-                        break;
-                    case "cast":
-                        castAbility(action.target._id, myTeamId, enemyTeamId, action.ability, function(){});
-                        break;
-                    case "endTurn":
-                        turnEnded(myTeamId, enemyTeamId);
-                        break;
-                }
-
+                var actions = buildActionBranch(myTeam, enemyTeam, activeChar._id, battleData.wallPositions, parentAction, function(actions) {
+                    var action = actions[0];                    
+                    var chooseActionTimeEnd = new Date();
+    
+                    console.log("Think time: " + (chooseActionTimeEnd.getTime() - chooseActionTimeStart.getTime()) + "ms");
+    
+                    switch(action.type){
+                        case "move":
+                            moveCharTo(action.point, myTeamId, enemyTeamId, action.ability ? action.ability : false);
+                            break;
+                        case "cast":
+                            castAbility(action.target._id, myTeamId, enemyTeamId, action.ability, function(){});
+                            break;
+                        case "endTurn":
+                            turnEnded(myTeamId, enemyTeamId);
+                            break;
+                    }
+                }).bind(this);               
             }, 2000);
         });
     });
