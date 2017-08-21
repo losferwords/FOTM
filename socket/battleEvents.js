@@ -496,7 +496,6 @@ module.exports = function (serverIO) {
                     arenaService.calcCharacters(myTeam.characters, enemyTeam.characters);
                 }
             }
-            cleanBuffers(myTeam, enemyTeam);
             return {myTeam: myTeam, enemyTeam: enemyTeam, activeChar: activeChar};
         }
 
@@ -663,11 +662,14 @@ module.exports = function (serverIO) {
             });
 
             async.each(actionList, function(actionInList, callback) {
-                if(actionInList.type != "endTurn"){
+                if(actionInList.type != "endTurn") {
                     buildActionBranch(actionInList.myTeamState, actionInList.enemyTeamState, actionInList.activeCharState._id, wallPositions, actionInList, function(actions){
                         actionInList.branch = actions;
                         callback(null);
                     });
+                }
+                else {
+                    callback(null);
                 }
             }, function(err){
                 if (err) {
@@ -687,13 +689,7 @@ module.exports = function (serverIO) {
                 parentAction.score = actionList[0].score;
     
                 callback(actionList);
-            });
-
-            // for(i=0;i<actionList.length;i++){
-            //     if(actionList[i].type != "endTurn"){
-            //         actionList[i].branch = buildActionBranch(actionList[i].myTeamState, actionList[i].enemyTeamState, actionList[i].activeCharState._id, wallPositions, actionList[i]);
-            //     }
-            // }            
+            });        
         }
 
         socket.on('botAction', function(myTeamId, enemyTeamId) {
@@ -707,8 +703,9 @@ module.exports = function (serverIO) {
                 var parentAction = {score: 0};
 
                 var actions = buildActionBranch(myTeam, enemyTeam, activeChar._id, battleData.wallPositions, parentAction, function(actions) {
+                    cleanBuffers(myTeam, enemyTeam);
                     var action = actions[0];                    
-                    var chooseActionTimeEnd = new Date();
+                    var chooseActionTimeEnd = new Date();                    
     
                     console.log("Think time: " + (chooseActionTimeEnd.getTime() - chooseActionTimeStart.getTime()) + "ms");
     
@@ -723,7 +720,7 @@ module.exports = function (serverIO) {
                             turnEnded(myTeamId, enemyTeamId);
                             break;
                     }
-                }).bind(this);               
+                });               
             }, 2000);
         });
     });

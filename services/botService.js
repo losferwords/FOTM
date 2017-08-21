@@ -108,7 +108,7 @@ module.exports = {
                 }
             }
 
-            for(j=0; i<ally.debuffs.length; i++){
+            for(j=0; i<enemy.debuffs.length; i++){
                 if(enemy.debuffs[i].score) {
                     effectScore = enemy.debuffs[i].score(enemy, enemyTeam.characters, myTeam.characters, wallPositions);
                     //console.log("Enemy Debuff " + enemy.buffs[i].name +" score: +" + effectScore);

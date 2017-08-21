@@ -452,6 +452,7 @@ Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls, s
 
     if(buff.stacked()) buff.stacks=1;
     buff.caster=caster._id;
+    buff.casterName = caster.charName;
     buff.left=buff.duration();
 
     for(var i=0;i<self.buffs.length;i++){
@@ -482,6 +483,7 @@ Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, wall
 
     if(debuff.stacked()) debuff.stacks=1;
     debuff.caster=caster._id;
+    debuff.casterName = caster.charName;
     debuff.left=debuff.duration();
 
     for(var i=0;i<self.debuffs.length;i++){

@@ -69,7 +69,7 @@
                             return gettextCatalog.getString("Sanctuary")
                         };
                         effects[i].desc = function() {
-                            var str = this.caster;
+                            var str = this.casterName;
                             str+=" ";
                             str+=gettextCatalog.getString(
                                 "takes {{one}}% of damage from this character.",{

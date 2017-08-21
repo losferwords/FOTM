@@ -3,7 +3,7 @@ var randomService = require('services/randomService');
 var Chance = require('chance');
 var chance = new Chance();
 
-//Сервис для создания персонажа
+//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 var genderParams = {
     male: {str:5, dxt:0, int:5},
     female: {str:0, dxt:5, int:5}
@@ -676,7 +676,7 @@ var roleEquip = function(role){
     }
 };
 
-//Доступные способности для каждой роли
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 var roleAvailableAbilities = {
     sentinel:   [
         'Strong Arm Of The Law',
@@ -760,7 +760,7 @@ var roleAvailableAbilities = {
     ]
 };
 
-//Функция набирает из имеющихся способностей дополнительные, которые доступны расе
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 var raceAvailableAbilities = function (role, race){
     var totalAbilities = [];
     var abilities = {
@@ -843,7 +843,7 @@ var raceAvailableAbilities = function (role, race){
     return totalAbilities;
 };
 
-//Функция выбирает из имеющихся рассовых способностей только 4 случайных
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 4 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 var getRandomExtraAbilities = function(extraAbilitiesArray){
     var extraAbilitiesIndexes = [];
     var totalArray=[];
@@ -932,7 +932,7 @@ var startAbilities = {
 };
 
 module.exports = {
-    //Получение параметров персонажа при создании
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     getStartParams: function (gender,race,role) {
         return {
             strMax: genderParams[gender].str+raceParams[race].str+roleParams[role].str,
@@ -944,15 +944,15 @@ module.exports = {
             paramPoint: {left: 70, top: 81}
         };
     },
-    //Стоимости ролей персонажа
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     getRoleCost: function (role) {
         return roleCosts[role];
     },
-    //обмундирование
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     getEquip: function (role) {
         return roleEquip(role);
     },
-    //способности
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     getBasicAbilities: function (role, race) {
         var roleAbilities = roleAvailableAbilities[role];
         var raceAbilities = getRandomExtraAbilities(raceAvailableAbilities(role, race));
@@ -961,11 +961,11 @@ module.exports = {
     getRoleAbilities: function (role) {
         return roleAvailableAbilities[role];
     },
-    //стартовые способности
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     getStartAbilities: function (basicAbilities) {
         return randomService.shuffle(basicAbilities).splice(0,7);
     },
-    //преобразование способностей для клиента
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     abilityForClient: function (ability) {
         return {
             name: ability.name,
@@ -982,25 +982,38 @@ module.exports = {
             cd : ability.cd
         }
     },
-    //преобразование эффектов для клиента
+    //get effect state for client
     effectForClient: function (effect) {
-        return {
-            name: effect.name,
-            role : effect.role(),
-            icon : effect.icon(),
-            variant: effect.variant,
-            duration: effect.duration(),
-            left : effect.left,
-            stacks: effect.stacks,
-            stacked: effect.stacked(),
-            infinite: effect.infinite(),
-            maxStacks: effect.maxStacks(),
-            onlyStat: effect.onlyStat(),
-            magicEffect: effect.magicEffect(),
-            caster: effect.caster
+        var clientEffect = {};
+        for(var key in effect){
+            //console.log(key + " " + typeof effect[key]);
+            if(typeof effect[key] == 'function' && key !== 'apply' && key !== 'score'){
+                clientEffect[key] = effect[key]();
+            }
+            if(typeof effect[key] != 'function') {
+                clientEffect[key] = effect[key];
+            }
         }
+        return clientEffect;
+        // return {
+        //     name: effect.name,
+        //     role : effect.role(),
+        //     icon : effect.icon(),
+        //     variant: effect.variant,
+        //     duration: effect.duration(),
+        //     left : effect.left,
+        //     stacks: effect.stacks,
+        //     stacked: effect.stacked(),
+        //     infinite: effect.infinite(),
+        //     maxStacks: effect.maxStacks(),
+        //     onlyStat: effect.onlyStat(),
+        //     magicEffect: effect.magicEffect(),
+        //     caster: effect.caster,
+        //     casterName: effect.casterName,
+        //     bleedingDamage: effect.bleedingDamage
+        // }
     },
-    //генерация случайной роли
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
     generateRandomRole: function(race) {
         var role;
         if(race=="human"){
@@ -1033,7 +1046,7 @@ module.exports = {
         }
         return role;
     },
-    //генерация случайного пола
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
     generateRandomGender: function() {
         var gender;
         switch (randomService.randomInt(0,1)) {
@@ -1042,7 +1055,7 @@ module.exports = {
         }
         return gender;
     },
-    //генерация случайной расы
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
     generateRandomRace: function() {
         var race;
         switch (randomService.randomInt(0,2)) {
@@ -1052,7 +1065,7 @@ module.exports = {
         }
         return race;
     },
-    //генерация случайного портрета
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     getRandomPortrait: function(race, gender) {
         var portraits=[];
         for(var i=1;i<=4;i++){
@@ -1060,10 +1073,10 @@ module.exports = {
         }
         return portraits[randomService.randomInt(0,3)];
     },
-    //формирование активных и доступных способностей
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     generateAbilitiesArrays: function(role, race) {
         var self = this;
-        //Набираем базовые скилы для данной роли
+        //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         var availableAbilitiesArr = self.getBasicAbilities(role, race);
         var abilitiesArr = self.getStartAbilities(availableAbilitiesArr.slice());
 
