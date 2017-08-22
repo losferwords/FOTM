@@ -961,32 +961,28 @@ module.exports = {
     getRoleAbilities: function (role) {
         return roleAvailableAbilities[role];
     },
-    //��������� �����������
+    //randomize positions of basic abilities
     getStartAbilities: function (basicAbilities) {
         return randomService.shuffle(basicAbilities).splice(0,7);
     },
-    //�������������� ������������ ��� �������
+    //get ability state for client
     abilityForClient: function (ability) {
-        return {
-            name: ability.name,
-            role : ability.role(),
-            icon : ability.icon(),
-            variant: ability.variant,
-            targetType : ability.targetType(),
-            range : ability.range(),
-            duration: ability.duration(),
-            energyCost : ability.energyCost(),
-            manaCost : ability.manaCost(),
-            cooldown : ability.cooldown(),
-            needWeapon : ability.needWeapon(),
-            cd : ability.cd
+        var clientAbility = {};
+        for(var key in ability){
+            console.log(key + " " + typeof ability[key]);
+            if(typeof ability[key] == 'function' && key !== 'cast' && key !== 'castSimulation' && key !== 'usageLogic'){
+                clientAbility[key] = ability[key]();
+            }
+            if(typeof ability[key] != 'function') {
+                clientAbility[key] = ability[key];
+            }
         }
+        return clientAbility;
     },
     //get effect state for client
     effectForClient: function (effect) {
         var clientEffect = {};
         for(var key in effect){
-            //console.log(key + " " + typeof effect[key]);
             if(typeof effect[key] == 'function' && key !== 'apply' && key !== 'score'){
                 clientEffect[key] = effect[key]();
             }
@@ -995,25 +991,7 @@ module.exports = {
             }
         }
         return clientEffect;
-        // return {
-        //     name: effect.name,
-        //     role : effect.role(),
-        //     icon : effect.icon(),
-        //     variant: effect.variant,
-        //     duration: effect.duration(),
-        //     left : effect.left,
-        //     stacks: effect.stacks,
-        //     stacked: effect.stacked(),
-        //     infinite: effect.infinite(),
-        //     maxStacks: effect.maxStacks(),
-        //     onlyStat: effect.onlyStat(),
-        //     magicEffect: effect.magicEffect(),
-        //     caster: effect.caster,
-        //     casterName: effect.casterName,
-        //     bleedingDamage: effect.bleedingDamage
-        // }
     },
-    //��������� ��������� ����
     generateRandomRole: function(race) {
         var role;
         if(race=="human"){

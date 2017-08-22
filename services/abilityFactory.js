@@ -450,7 +450,7 @@ var Ability = function(name){
             cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
-                this.cd=this.cooldown();
+                this.cd = this.cooldown();
                 if(caster.checkHit()){
                     var physDamage = randomService.randomInt(caster.minDamage*(1+this.variant*0.35), caster.maxDamage*(1+this.variant*0.35));
                     var critical = caster.checkCrit();
@@ -467,6 +467,17 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                var physDamage = (caster.minDamage * (1 + this.variant * 0.35) + caster.maxDamage * (1 + this.variant * 0.35)) / 2;
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster);                
+                physDamage=target.applyResistance(physDamage, false);
+
+                target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 1},
             duration: function(){return 0},
@@ -475,7 +486,6 @@ var Ability = function(name){
             cooldown : function(){return 11+this.variant},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, damage: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.physImmune }
         };
 
@@ -489,12 +499,12 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost());
                 this.cd=this.cooldown();
                 if(caster.checkHit()){
-                    var physDamage = randomService.randomInt(caster.minDamage*(0.8+this.variant*0.1), caster.maxDamage*(0.8+this.variant*0.1));
+                    var physDamage = randomService.randomInt(caster.minDamage * (0.8 + this.variant * 0.1), caster.maxDamage * (0.8 + this.variant * 0.1));
                     var critical = caster.checkCrit();
                     if(critical){
-                        physDamage=caster.applyCrit(physDamage);
+                        physDamage = caster.applyCrit(physDamage);
                     }
-                    physDamage=target.applyResistance(physDamage, false);
+                    physDamage = target.applyResistance(physDamage, false);
 
                     caster.soundBuffer.push(this.name);
                     if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
@@ -506,6 +516,19 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                var physDamage =(caster.minDamage * (0.8 + this.variant * 0.1) + caster.maxDamage * (0.8 + this.variant * 0.1)) / 2;
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster);                
+                physDamage = target.applyResistance(physDamage, false);
+
+                if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
+                    caster.addBuff(effectFactory("Reign In Blood", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 1},
             duration: function(){return 0},
@@ -514,7 +537,6 @@ var Ability = function(name){
             cooldown : function(){return 1},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, damage: 1, buff: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.physImmune }
         };
 
@@ -527,8 +549,8 @@ var Ability = function(name){
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
 
-                if(Math.random()>=((36-this.variant*6)*0.01)) {
-                    this.cd=this.cooldown();
+                if(Math.random()>=((36 - this.variant * 6) * 0.01)) {
+                    this.cd = this.cooldown();
                 }
                 else {
                     caster.logBuffer.push(caster.charName+"'s grinder looking for meat!");
@@ -537,19 +559,37 @@ var Ability = function(name){
                 caster.soundBuffer.push(this.name);
                 var nearbyEnemies = arenaService.findEnemies(caster, enemyTeam, 1, walls);
                 for (var i = 0; i < nearbyEnemies.length; i++) {
-                    if(caster.checkHit() || nearbyEnemies[i].charName===target.charName){
-                        var physDamage = randomService.randomInt(caster.minDamage*(0.5+this.variant*0.2), caster.maxDamage*(0.5+this.variant*0.2));
+                    if(caster.checkHit()){
+                        var physDamage = randomService.randomInt(caster.minDamage * (0.5 + this.variant * 0.2), caster.maxDamage * (0.5 + this.variant * 0.2));
 
                         var critical = caster.checkCrit();
                         if(critical){
                             physDamage=caster.applyCrit(physDamage);
                         }
-                        physDamage=nearbyEnemies[i].applyResistance(physDamage, false);
+                        physDamage = nearbyEnemies[i].applyResistance(physDamage, false);
                         nearbyEnemies[i].takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
                     }
                     else {
                         caster.afterMiss(nearbyEnemies[i].charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                     }
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+
+                if(Math.random()>=((36 - this.variant * 6) * 0.01)) {
+                    this.cd = this.cooldown();
+                }
+
+                var nearbyEnemies = arenaService.findEnemies(caster, enemyTeam, 1, walls);
+                var physDamage = (caster.minDamage * (0.5 + this.variant * 0.2) + caster.maxDamage * (0.5 + this.variant * 0.2)) / 2;
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster);                
+                
+                for (var i = 0; i < nearbyEnemies.length; i++) {                   
+                    physDamage = nearbyEnemies[i].applyResistance(physDamage, false);
+                    nearbyEnemies[i].takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam);
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -561,10 +601,9 @@ var Ability = function(name){
             cooldown : function(){return 11+this.variant},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, aoe: 1, damage: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) {
                 var nearbyEnemies = arenaService.findEnemies(caster, enemyTeam, 1, walls);
-                return nearbyEnemies.length>0;
+                return nearbyEnemies.length > 0;
             }
         };
 
@@ -606,6 +645,30 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                
+                arenaService.charge(target, caster, myTeam, enemyTeam, walls);
+
+                caster.spendEnergy(this.energyCost());
+                caster.spendMana(this.manaCost());
+                this.cd=this.cooldown();
+
+                if(caster.checkHit()){
+                    var physDamage = randomService.randomInt(caster.minDamage*(0.5+this.variant*0.3), caster.maxDamage*(0.5+this.variant*0.3));
+                    var critical = caster.checkCrit();
+                    if(critical){
+                        physDamage=caster.applyCrit(physDamage);
+                    }
+                    physDamage=target.applyResistance(physDamage, false);
+
+                    caster.soundBuffer.push(this.name);
+                    target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
+                }
+                else {
+                    caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 3},
             duration: function(){return 0},
@@ -614,8 +677,7 @@ var Ability = function(name){
             cooldown : function(){return 11+this.variant},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, damage: 1, charge: 1} },
-            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.physImmune }
+            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(caster.immobilized || target.physImmune) }
         };
 
         case "Made In Hell": return {
@@ -640,7 +702,6 @@ var Ability = function(name){
             cooldown : function(){return 16+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -666,7 +727,6 @@ var Ability = function(name){
             cooldown : function(){return 12+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, offensive: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -698,7 +758,6 @@ var Ability = function(name){
             cooldown : function(){return 12+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, heal: 1, direct: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -725,7 +784,6 @@ var Ability = function(name){
             cooldown : function(){return 12+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, offensive: 1, defensive: 1, manaRestore: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -769,7 +827,6 @@ var Ability = function(name){
             cooldown : function(){return 6},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, damage: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune) }
         };
 
@@ -811,7 +868,6 @@ var Ability = function(name){
             cooldown : function(){return 17+this.variant},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, damage: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune) }
         };
 
@@ -838,7 +894,6 @@ var Ability = function(name){
             cooldown : function(){return 18},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -882,7 +937,6 @@ var Ability = function(name){
             cooldown : function(){return 6+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {direct: 1, damage: 1, debuff: 1, stun: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.controlImmune || target.magicImmune) }
         };
 
@@ -908,7 +962,6 @@ var Ability = function(name){
             cooldown : function(){return 16+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -935,8 +988,7 @@ var Ability = function(name){
             cooldown : function(){return 24},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {overTime: 1, buff: 1, heal: 1, manaRestore: 1, energyRestore: 1} },
-            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(caster.curEnergy == caster.maxEnergy) }
+            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return caster.curEnergy <= caster.maxEnergy }
         };
 
         case "My Last Words": return {
@@ -977,7 +1029,6 @@ var Ability = function(name){
             cooldown : function(){return 10+this.variant*2},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, damage: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune || (target.curHealth/target.maxHealth)>0.5) }
         };
 
@@ -1004,7 +1055,6 @@ var Ability = function(name){
             cooldown : function(){return 7+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {overTime: 1, heal: 1, buff: 1, pull: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -1045,7 +1095,6 @@ var Ability = function(name){
             cooldown : function(){return 5+this.variant},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, overTime: 1, damage: 1, debuff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.physImmune }
         };
 
@@ -1071,7 +1120,6 @@ var Ability = function(name){
             cooldown : function(){return 3+this.variant*3},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, invisible: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -1115,7 +1163,6 @@ var Ability = function(name){
             cooldown : function(){return 15+this.variant},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, overTime: 1, damage: 1, debuff: 1, silence: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.controlImmune || target.physImmune) }
         };
 
@@ -1171,7 +1218,6 @@ var Ability = function(name){
             cooldown : function(){return 15+this.variant*2},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, damage: 1, debuff: 1, immobilize: 1, charge: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.controlImmune || target.physImmune) }
         };
 
@@ -1198,7 +1244,6 @@ var Ability = function(name){
             cooldown : function(){return 12+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, energyRestore: 1, removeDebuffs: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -1224,7 +1269,6 @@ var Ability = function(name){
             cooldown : function(){return 10+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -1268,7 +1312,6 @@ var Ability = function(name){
             cooldown : function(){return 12+this.variant*2},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, damage: 1, debuff: 1, stun: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.controlImmune || target.physImmune) }
         };
 
@@ -1294,7 +1337,6 @@ var Ability = function(name){
             cooldown : function(){return 3+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, invisible: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -1341,7 +1383,6 @@ var Ability = function(name){
             cooldown : function(){return 1},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {direct: 1, damage: 1, buff: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune) }
         };
 
@@ -1366,7 +1407,6 @@ var Ability = function(name){
             cooldown : function(){return 12+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -1412,7 +1452,6 @@ var Ability = function(name){
             cooldown : function(){return 11+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {aoe: 1, silence: 1, debuff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.controlImmune }
         };
 
@@ -1443,7 +1482,6 @@ var Ability = function(name){
             cooldown : function(){return 5+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {debuff: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -1476,7 +1514,6 @@ var Ability = function(name){
             cooldown : function(){return 15-this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {stealBuffs: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.buffs.length==0 || target.findEffect("Locked And Loaded")!==-1) }
         };
 
@@ -1518,7 +1555,6 @@ var Ability = function(name){
             cooldown : function(){return 8+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {direct: 1, damage: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) {
                 if(target.magicImmune) return false;
                 var magicDamage=0;
@@ -1551,7 +1587,6 @@ var Ability = function(name){
             cooldown : function(){return 11+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, defensive: 1, manaRestore: 0} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -1582,7 +1617,6 @@ var Ability = function(name){
             cooldown : function(){return 15},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {overTime: 1, damage: 1, debuff: 1, immobilize: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.magicImmune }
         };
 
@@ -1631,7 +1665,6 @@ var Ability = function(name){
             cooldown : function(){return 5+this.variant},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {damage: 1, direct: 1, aoe: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) {
                 var nearbyEnemies = arenaService.findEnemies(caster, enemyTeam, 2, walls);
                 return nearbyEnemies.length>0;
@@ -1678,7 +1711,6 @@ var Ability = function(name){
             cooldown : function(){return 10+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {damage: 1, direct: 1, debuff: 1, disarm: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.controlImmune) }
         };
 
@@ -1788,7 +1820,6 @@ var Ability = function(name){
             cooldown : function(){return 5+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {damage: 1, overTime: 1, aoe: 1, debuff: 1, stun: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.magicImmune }
         };
 
@@ -1846,7 +1877,6 @@ var Ability = function(name){
             cooldown : function(){return 10+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {heal: 1, overTime: 1, buff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -1872,7 +1902,6 @@ var Ability = function(name){
             cooldown : function(){return 0},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, offensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -1898,7 +1927,6 @@ var Ability = function(name){
             cooldown : function(){return 13+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -1945,7 +1973,6 @@ var Ability = function(name){
             cooldown : function(){return 5+this.variant},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {damage: 1, direct: 1, manaRestore: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune) }
         };
 
@@ -1971,7 +1998,6 @@ var Ability = function(name){
             cooldown : function(){return 0},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {heal: 1, overTime: 1, buff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -2002,7 +2028,6 @@ var Ability = function(name){
             cooldown : function(){return 15+this.variant*3},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {heal: 1, direct: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -2055,7 +2080,6 @@ var Ability = function(name){
             cooldown : function(){return 5+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {heal: 1, damage: 1, direct: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) {
                 var targetIsAlly=false;
                 for(var i=0;i<myTeam.length;i++){
@@ -2095,7 +2119,6 @@ var Ability = function(name){
             cooldown : function(){return 5+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {removeDebuffs: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.debuffs.length==0 || target.findEffect("Locked And Loaded")!==-1) }
         };
 
@@ -2121,7 +2144,6 @@ var Ability = function(name){
             cooldown : function(){return 12},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, offensive: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -2174,7 +2196,6 @@ var Ability = function(name){
             cooldown : function(){return 12},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {damage: 1, heal: 1, direct: 1, aoe: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) {
                 var nearbyEnemies = arenaService.findEnemies(caster, enemyTeam, 2, walls);
                 var nearbyAllies = arenaService.findAllies(caster, myTeam, 2, walls);
@@ -2207,7 +2228,6 @@ var Ability = function(name){
             cooldown : function(){return 28-this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, defensive: 1, removeDebuffs: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -2254,7 +2274,6 @@ var Ability = function(name){
             cooldown : function(){return 5+this.variant},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {damage: 1, direct: 1, heal: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.magicImmune || target.physImmune) }
         };
 
@@ -2293,7 +2312,6 @@ var Ability = function(name){
             cooldown : function(){return 12+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {damage: 1, direct: 1, overTime: 1, debuff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.magicImmune }
         };
 
@@ -2324,7 +2342,6 @@ var Ability = function(name){
             cooldown : function(){return 0},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {damage: 1, overTime: 1, debuff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.magicImmune }
         };
 
@@ -2355,7 +2372,6 @@ var Ability = function(name){
             cooldown : function(){return  8-this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {damage: 1, overTime: 1, aoe: 1, debuff: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !target.magicImmune }
         };
 
@@ -2390,7 +2406,6 @@ var Ability = function(name){
             cooldown : function(){return 5+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {removeBuffs: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.buffs.length==0 || target.findEffect("Locked And Loaded")!==-1) }
         };
 
@@ -2422,7 +2437,6 @@ var Ability = function(name){
             cooldown : function(){return 12},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {debuff: 1, offensive: 1, defensive: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -2465,7 +2479,6 @@ var Ability = function(name){
             cooldown : function(){return 20+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usage: function() { return {buff: 1, debuff: 1, freezeEffects: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
         };
 
@@ -2518,7 +2531,6 @@ var Ability = function(name){
             cooldown : function(){return 7+this.variant},
             needWeapon : function() {return true},
             cd : 0,
-            usage: function() { return {damage: 1, direct: 1} },
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) {
                 if(target.magicImmune) return false;
                 var totalEffects=0;

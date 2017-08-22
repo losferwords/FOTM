@@ -11,9 +11,9 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "sentinel"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--StrongArmOfTheLaw)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.hitChanceMod-=this.variant*0.07;
+                owner.hitChanceMod -= this.variant * 0.07;
             },
-            duration: function(){return 18-this.variant*2},
+            duration: function(){ return 18 - this.variant * 2 },
             left : 0,
             stacks: 0,
             stacked: function() {return false},
@@ -159,7 +159,7 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var debuffer = {};
                 for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i]._id===this.caster) debuffer=enemyTeam[i];
+                    if(enemyTeam[i]._id===this.casterId) debuffer=enemyTeam[i];
                 }
                 var physicalDamage = this.bleedDamage*(1+debuffer.attackPower);
                 var critical = debuffer.checkCrit();
@@ -180,7 +180,7 @@ var Effect = function(name, abilityVariant) {
             score: function(owner, myTeam, enemyTeam, walls) {
                 var debuffer = {};
                 for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i]._id===this.caster) debuffer=enemyTeam[i];
+                    if(enemyTeam[i]._id===this.casterId) debuffer=enemyTeam[i];
                 }
                 var physicalDamage = this.bleedDamage * (1 + debuffer.attackPower);
                 physicalDamage = arenaService.calculateExpectedDamage(physicalDamage, debuffer);
@@ -199,7 +199,7 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "slayer"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--ReignInBlood)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.attackPowerMod+=0.02*this.variant*this.stacks;
+                owner.attackPowerMod += 0.02 * this.variant * this.stacks;
             },
             duration: function(){return 0},
             left : 0,
@@ -208,7 +208,10 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return true},
             maxStacks: function() {return 5},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                return owner.attackPower * 0.02 * this.variant * this.stacks;
+            }
         };
 
         case "Made In Hell": return {
@@ -351,7 +354,7 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var buffer = {};
                 for(var i=0;i<myTeam.length;i++){
-                    if(myTeam[i]._id===this.caster) buffer=myTeam[i];
+                    if(myTeam[i]._id===this.casterId) buffer=myTeam[i];
                 }
                 var heal = (100+this.variant*60)*(1+buffer.spellPower);
                 var mana = (460-this.variant*60);
@@ -380,7 +383,7 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var buffer = {};
                 for(var i=0;i<myTeam.length;i++){
-                    if(myTeam[i]._id===this.caster) buffer=myTeam[i];
+                    if(myTeam[i]._id===this.casterId) buffer=myTeam[i];
                 }
                 var heal = (100+this.variant*50)*(1+buffer.spellPower);
                 var critical = buffer.checkCrit();
@@ -409,7 +412,7 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var debuffer = {};
                 for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i]._id===this.caster) debuffer=enemyTeam[i];
+                    if(enemyTeam[i]._id===this.casterId) debuffer=enemyTeam[i];
                 }
                 var magicDamage = 75*this.variant*(1+debuffer.spellPower);
                 var critical = debuffer.checkCrit();
@@ -645,7 +648,7 @@ var Effect = function(name, abilityVariant) {
                 owner.immobilized=true;
                 var debuffer = {};
                 for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i]._id===this.caster) debuffer=enemyTeam[i];
+                    if(enemyTeam[i]._id===this.casterId) debuffer=enemyTeam[i];
                 }
                 var magicDamage = (75*this.variant+(75*this.variant)*((35-this.variant*5)*0.01)*(this.duration()-this.left))*(1+debuffer.spellPower);
                 var critical = debuffer.checkCrit();
@@ -693,7 +696,7 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var debuffer = {};
                 for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i]._id===this.caster) debuffer=enemyTeam[i];
+                    if(enemyTeam[i]._id===this.casterId) debuffer=enemyTeam[i];
                 }
                 if(this.left>1) {
                     var magicDamage = (this.variant * 100) * (1 + debuffer.spellPower);
@@ -788,7 +791,7 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var buffer = {};
                 for (var i = 0; i < myTeam.length; i++) {
-                    if (myTeam[i]._id === this.caster) buffer = myTeam[i];
+                    if (myTeam[i]._id === this.casterId) buffer = myTeam[i];
                 }
 
                 var heal = (this.variant*80)*(1+buffer.spellPower);
@@ -868,7 +871,7 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var buffer = {};
                 for(var i=0;i<myTeam.length;i++){
-                    if(myTeam[i]._id===this.caster) buffer=myTeam[i];
+                    if(myTeam[i]._id===this.casterId) buffer=myTeam[i];
                 }
                 var heal = (75+this.variant*15)*(1+buffer.spellPower)*this.stacks;
                 var critical = buffer.checkCrit();
@@ -957,7 +960,7 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var debuffer = {};
                 for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i]._id===this.caster) debuffer=enemyTeam[i];
+                    if(enemyTeam[i]._id===this.casterId) debuffer=enemyTeam[i];
                 }
                 var magicDamage = (40+this.variant*60)*(1+debuffer.spellPower);
                 var critical = debuffer.checkCrit();
@@ -985,7 +988,7 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var debuffer = {};
                 for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i]._id===this.caster) debuffer=enemyTeam[i];
+                    if(enemyTeam[i]._id===this.casterId) debuffer=enemyTeam[i];
                 }
                 var magicDamage = 30*this.variant*(1+debuffer.spellPower)*this.stacks;
                 var critical = debuffer.checkCrit();
@@ -1013,7 +1016,7 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var debuffer = {};
                 for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i]._id===this.caster) debuffer=enemyTeam[i];
+                    if(enemyTeam[i]._id===this.casterId) debuffer=enemyTeam[i];
                 }
                 var magicDamage = 20*this.variant*(1+debuffer.spellPower)*this.stacks;
                 var critical = debuffer.checkCrit();

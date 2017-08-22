@@ -450,10 +450,10 @@ Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls, s
 
     if(self.isDead) return;
 
-    if(buff.stacked()) buff.stacks=1;
-    buff.caster=caster._id;
+    if(buff.stacked()) buff.stacks = 1;
+    buff.casterId = caster._id;
     buff.casterName = caster.charName;
-    buff.left=buff.duration();
+    buff.left = buff.duration();
 
     for(var i=0;i<self.buffs.length;i++){
         if(self.buffs[i].name===buff.name && self.buffs[i].caster === caster){
@@ -461,7 +461,7 @@ Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls, s
                 if(self.buffs[i].stacks<self.buffs[i].maxStacks()) self.buffs[i].stacks++;
                 if(!simulation) self.buffs[i].apply(self, myTeam, enemyTeam, walls);
             }
-            self.buffs[i].left=buff.duration();
+            self.buffs[i].left = buff.duration();
             return;
         }
     }
@@ -481,10 +481,10 @@ Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, wall
         return;
     }
 
-    if(debuff.stacked()) debuff.stacks=1;
-    debuff.caster=caster._id;
+    if(debuff.stacked()) debuff.stacks = 1;
+    debuff.casterId = caster._id;
     debuff.casterName = caster.charName;
-    debuff.left=debuff.duration();
+    debuff.left = debuff.duration();
 
     for(var i=0;i<self.debuffs.length;i++){
         if(self.debuffs[i].name===debuff.name && self.debuffs[i].caster === caster){
@@ -678,7 +678,7 @@ Character.prototype.stealRandomBuff = function(target, myTeam, enemyTeam, walls)
         else {
             //��� ��������� ������ �������� ����� �������� ������ ������� ����������� �������
             if(target.buffs[removableBuffIndex].name==="Sanctuary"){
-                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), target.buffs[removableBuffIndex].caster, myTeam, enemyTeam, walls);
+                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), target.buffs[removableBuffIndex].casterId, myTeam, enemyTeam, walls);
             }
             else {
                 self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self._id, myTeam, enemyTeam, walls);
