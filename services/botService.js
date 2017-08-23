@@ -4,6 +4,7 @@ var randomService = require('services/randomService');
 var Chance = require('chance');
 var chance = new Chance();
 var arenaService = require('services/arenaService');
+var fs = require('fs');
 
 module.exports = {
     generateBotTeam: function(){
@@ -50,72 +51,82 @@ module.exports = {
         var effectScore = 0;
 
         //active
-        score += activeChar.curHealth/activeChar.maxHealth * 110;
-        score += activeChar.curMana/activeChar.maxMana * 55;
+        score += activeChar.curHealth / activeChar.maxHealth * 110;
+        score += activeChar.curMana / activeChar.maxMana * 55;
         var positionWeights = arenaService.calculatePositionWeight(activeChar.position, activeChar, myTeam.characters, enemyTeam.characters, arenaService.getOptimalRange(activeChar), wallPositions);
         score += positionWeights[0] * 150;
         score += positionWeights[1] * 100;
 
-        for(var i=0; i<activeChar.buffs.length; i++){
-            if(activeChar.buffs[i].score) {
-                effectScore = activeChar.buffs[i].score(activeChar, myTeam.characters, enemyTeam.characters, wallPositions);
-                //console.log("Active char Buff " + activeChar.buffs[i].name +" score: +" + effectScore);
-                score += effectScore;
+        for(var j = 0; j < activeChar.buffs.length; j++){
+            if(activeChar.buffs[j].score) {
+                effectScores = activeChar.buffs[j].score(activeChar, myTeam.characters, enemyTeam.characters, wallPositions);
+                score += this.calculateEffectScore(effectScores, activeChar.buffs[j].name);
             }
         }
 
-        for(i=0; i<activeChar.debuffs.length; i++){
-            if(activeChar.debuffs[i].score) {
-                effectScore = activeChar.debuffs[i].score(activeChar, myTeam.characters, enemyTeam.characters, wallPositions);
-                //console.log("Active char Debuff " + activeChar.buffs[i].name +" score: -" + effectScore);
-                score -= effectScore;
+        for(j = 0; j < activeChar.debuffs.length; j++){
+            if(activeChar.debuffs[j].score) {
+                effectScores = activeChar.debuffs[j].score(activeChar, myTeam.characters, enemyTeam.characters, wallPositions);
+                score -= this.calculateEffectScore(effectScores, activeChar.debuffs[j].name);
             }
         }
 
         //myTeam
-        for(i=0; i<myTeam.characters.length;i++){
+        for(var i = 0; i < myTeam.characters.length; i++){
             var ally = myTeam.characters[i];
             score += ally.curHealth/ally.maxHealth * 100;
             score += ally.curMana/ally.maxMana * 50;
-            for(var j=0; i<ally.buffs.length; i++){
-                if(ally.buffs[i].score) {
-                    effectScore = ally.buffs[i].score(ally, myTeam.characters, enemyTeam.characters, wallPositions);
-                    //console.log("Ally Buff " + ally.buffs[i].name +" score: +" + effectScore);
-                    score += effectScore;
+            for(j = 0; j < ally.buffs.length; j++){
+                if(ally.buffs[j].score) {
+                    effectScores = ally.buffs[j].score(ally, myTeam.characters, enemyTeam.characters, wallPositions);
+                    score += this.calculateEffectScore(effectScores, ally.buffs[j].name);
                 }
             }
 
-            for(j=0; i<ally.debuffs.length; i++){
-                if(ally.debuffs[i].score) {
-                    effectScore = ally.debuffs[i].score(ally, myTeam.characters, enemyTeam.characters, wallPositions);
-                    //console.log("Ally Debuff " + ally.buffs[i].name +" score: -" + effectScore);
-                    score -= effectScore;
+            for(j = 0; j < ally.debuffs.length; j++){
+                if(ally.debuffs[j].score) {
+                    effectScores = ally.debuffs[j].score(ally, myTeam.characters, enemyTeam.characters, wallPositions);
+                    score -= this.calculateEffectScore(effectScores, ally.debuffs[j].name);
                 }
             }
         }
 
         //enemyTeam
-        for(i=0; i<enemyTeam.characters.length;i++){
+        for(i = 0; i < enemyTeam.characters.length; i++){
             var enemy = enemyTeam.characters[i];
             score -= enemy.curHealth/enemy.maxHealth * 100;
             score -= enemy.curMana/enemy.maxMana * 50;
 
-            for(j=0; i<enemy.buffs.length; i++){
-                if(enemy.buffs[i].score) {
-                    effectScore = enemy.buffs[i].score(enemy, enemyTeam.characters, myTeam.characters, wallPositions);
-                    //console.log("Enemy Buff " + enemy.buffs[i].name +" score: -" + effectScore);
-                    score -= effectScore;
+            for(j = 0; j < enemy.buffs.length; j++){
+                if(enemy.buffs[j].score) {
+                    effectScores = enemy.buffs[j].score(enemy, enemyTeam.characters, myTeam.characters, wallPositions);
+                    score -= this.calculateEffectScore(effectScores, enemy.buffs[j].name);
                 }
             }
 
-            for(j=0; i<enemy.debuffs.length; i++){
-                if(enemy.debuffs[i].score) {
-                    effectScore = enemy.debuffs[i].score(enemy, enemyTeam.characters, myTeam.characters, wallPositions);
-                    //console.log("Enemy Debuff " + enemy.buffs[i].name +" score: +" + effectScore);
-                    score += effectScore;
+            for(j = 0; j < enemy.debuffs.length; j++){
+                if(enemy.debuffs[j].score) {
+                    effectScores = enemy.debuffs[j].score(enemy, enemyTeam.characters, myTeam.characters, wallPositions);
+                    score += this.calculateEffectScore(effectScores, enemy.debuffs[j].name);
                 }
             }
         }
         return score;
+    },
+    calculateEffectScore(effectScores, name){
+        var totalScore = 0;
+        var str = "\n" + name;
+        for(var key in effectScores){
+            totalScore += effectScores[key] ? effectScores[key] : 0;
+        }
+        str += "\t " + (effectScores['effectScore'] ? Math.round(effectScores['effectScore']) : 0);
+        str += "\t " + (effectScores['leftScore'] ? Math.round(effectScores['leftScore']) : 0);
+        str += "\t " + (effectScores['offensivePositionScore'] ? Math.round(effectScores['offensivePositionScore']) : 0);
+        str += "\t " + (effectScores['defensivePositionScore'] ? Math.round(effectScores['defensivePositionScore']) : 0);
+        str += "\t " + (effectScores['healthScore'] ? Math.round(effectScores['healthScore']) : 0);
+        str += "\t " + (effectScores['manaScore'] ? Math.round(effectScores['manaScore']) : 0);
+        str += "\t " + (Math.round(totalScore));
+        fs.appendFile("./effectLog.txt", str, function() {});
+        return totalScore;
     }    
 };

@@ -906,7 +906,7 @@ Character.prototype.takeHealSimulation = function(value){
     else self.curHealth += value;    
 };
 
-//������� ��������� �������
+//Get some energy
 Character.prototype.takeEnergy = function(value, caster, ability, isCritical){
     var self = this;
     var str = "";
@@ -927,7 +927,14 @@ Character.prototype.takeEnergy = function(value, caster, ability, isCritical){
     self.logBuffer.push(str);
 };
 
-//������� ��������� ����
+Character.prototype.takeEnergySimulation = function(value){
+    var self = this;
+
+    if(self.curEnergy + value >= self.maxEnergy) self.curEnergy = self.maxEnergy;
+    else self.curEnergy += value;
+};
+
+//Get some mana
 Character.prototype.takeMana = function(value, caster, ability, isCritical){
     var self = this;
     var str = "";

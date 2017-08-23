@@ -969,7 +969,6 @@ module.exports = {
     abilityForClient: function (ability) {
         var clientAbility = {};
         for(var key in ability){
-            console.log(key + " " + typeof ability[key]);
             if(typeof ability[key] == 'function' && key !== 'cast' && key !== 'castSimulation' && key !== 'usageLogic'){
                 clientAbility[key] = ability[key]();
             }

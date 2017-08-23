@@ -248,7 +248,7 @@ var Ability = function(name){
             cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
-                this.cd=this.cooldown();
+                this.cd = this.cooldown();
 
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
                 caster.soundBuffer.push(this.name);
@@ -258,7 +258,7 @@ var Ability = function(name){
             castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost(), true);
                 caster.spendMana(this.manaCost(), true);
-                this.cd=this.cooldown();
+                this.cd = this.cooldown();
                 target.addBuff(effectFactory("Sanctuary", this.variant), caster, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -416,15 +416,15 @@ var Ability = function(name){
             castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost(), true);
                 caster.spendMana(this.manaCost(), true);
-                this.cd=this.cooldown();
+                this.cd = this.cooldown();
 
-                if(target.findEffect("Locked And Loaded")==-1) {
-                    for(var i=0;i<3;i++) {
+                if(target.findEffect("Locked And Loaded") == -1) {
+                    for(var i=0; i < 3; i++) {
                         target.removeRandomDOT(myTeam, enemyTeam);
                     }
                 }
 
-                var heal=(200+this.variant*175)*(1+caster.spellPower);
+                var heal = (200 + this.variant * 175) * (1 + caster.spellPower);
                 heal = arenaService.calculateExpectedHeal(heal, caster);
                 target.takeHealSimulation(heal);
                 caster.afterCast(this.name, myTeam, enemyTeam);
@@ -646,27 +646,16 @@ var Ability = function(name){
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
-                
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
                 arenaService.charge(target, caster, myTeam, enemyTeam, walls);
 
-                caster.spendEnergy(this.energyCost());
-                caster.spendMana(this.manaCost());
-                this.cd=this.cooldown();
+                var physDamage = (caster.minDamage * (0.5 + this.variant * 0.3) + caster.maxDamage * (0.5 + this.variant * 0.3)) / 2;
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster);  
+                physDamage = target.applyResistance(physDamage, false);
 
-                if(caster.checkHit()){
-                    var physDamage = randomService.randomInt(caster.minDamage*(0.5+this.variant*0.3), caster.maxDamage*(0.5+this.variant*0.3));
-                    var critical = caster.checkCrit();
-                    if(critical){
-                        physDamage=caster.applyCrit(physDamage);
-                    }
-                    physDamage=target.applyResistance(physDamage, false);
-
-                    caster.soundBuffer.push(this.name);
-                    target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam);
-                }
-                else {
-                    caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
-                }
+                target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "enemy"},
@@ -688,9 +677,16 @@ var Ability = function(name){
             cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
-                this.cd=this.cooldown();
-                caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
+                this.cd = this.cooldown();
+                caster.logBuffer.push(caster.charName + " cast '" + this.name + "'");
                 caster.soundBuffer.push(this.name);
+                caster.addBuff(effectFactory("Made In Hell", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
                 caster.addBuff(effectFactory("Made In Hell", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -719,6 +715,13 @@ var Ability = function(name){
                 caster.addBuff(effectFactory("Spill The Blood", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                caster.addBuff(effectFactory("Spill The Blood", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "self"},
             range : function(){return 0},
             duration: function(){return 12+this.variant},
@@ -738,16 +741,27 @@ var Ability = function(name){
             cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
-                this.cd=this.cooldown();
-                caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
+                this.cd = this.cooldown();
+                caster.logBuffer.push(caster.charName + " cast '" + this.name + "'");
                 caster.soundBuffer.push(this.name);
                 caster.addBuff(effectFactory("Dyers Eve", this.variant), caster.charName, myTeam, enemyTeam, walls);
-                var heal=(500+this.variant*500)*(1+caster.spellPower);
+                var heal = (500 + this.variant * 500) * (1 + caster.spellPower);
                 var critical = caster.checkCrit();
                 if (critical) {
                     heal = caster.applyCrit(heal);
                 }
                 caster.takeHeal(heal, caster, {name: this.name, icon: this.icon(), role: this.role()}, critical);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+
+                caster.addBuff(effectFactory("Dyers Eve", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                var heal = (500 + this.variant * 500) * (1 + caster.spellPower);
+                heal = arenaService.calculateExpectedHeal(heal, caster);
+                target.takeHealSimulation(heal);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "self"},
@@ -769,10 +783,21 @@ var Ability = function(name){
             cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
-                this.cd=this.cooldown();
-                caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
+                this.cd = this.cooldown();
+
+                caster.logBuffer.push(caster.charName + " cast '" + this.name + "'");
                 caster.soundBuffer.push(this.name);
-                caster.takeEnergy(100+this.variant*150, caster, this.name, false);
+
+                caster.takeEnergy(100 + this.variant * 150, caster, this.name, false);
+                caster.addBuff(effectFactory("I Dont Wanna Stop", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+
+                caster.takeEnergySimulation(100 + this.variant * 150);
                 caster.addBuff(effectFactory("I Dont Wanna Stop", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
