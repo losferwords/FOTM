@@ -1252,6 +1252,13 @@ var Ability = function(name){
                 caster.addBuff(effectFactory("Invisible", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                caster.addBuff(effectFactory("Invisible", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "self"},
             range : function(){return 0},
             duration: function(){return 3+this.variant*3},
@@ -1292,6 +1299,19 @@ var Ability = function(name){
                 }
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                var physDamage = (caster.minDamage * (0.8 + this.variant * 0.1) + caster.maxDamage * (0.8 + this.variant * 0.1)) / 2;
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster); 
+                physDamage = target.applyResistance(physDamage, false);
+
+                if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
+                    target.addDebuff(effectFactory("Jawbreaker", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -1350,6 +1370,21 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                arenaService.charge(target, caster, myTeam, enemyTeam, walls);
+
+                var physDamage = (caster.minDamage * (0.8 + this.variant * 0.15) + caster.maxDamage * (0.8 + this.variant * 0.15)) / 2;
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster); 
+                physDamage = target.applyResistance(physDamage, false);
+
+                if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
+                    target.addDebuff(effectFactory("Hog Tied", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 2},
             duration: function(){return 7+this.variant},
@@ -1358,7 +1393,7 @@ var Ability = function(name){
             cooldown : function(){return 15+this.variant*2},
             needWeapon : function() {return true},
             cd : 0,
-            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.controlImmune || target.physImmune) }
+            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(caster.immobilized || target.controlImmune || target.physImmune) }
         };
 
         case "Running Free": return {
@@ -1372,6 +1407,14 @@ var Ability = function(name){
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
                 caster.soundBuffer.push(this.name);
+                caster.addBuff(effectFactory("Running Free", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                caster.removeImmobilization(myTeam, enemyTeam);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
                 caster.addBuff(effectFactory("Running Free", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.removeImmobilization(myTeam, enemyTeam);
                 caster.afterCast(this.name, myTeam, enemyTeam);
@@ -1398,6 +1441,13 @@ var Ability = function(name){
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
                 caster.soundBuffer.push(this.name);
+                caster.addBuff(effectFactory("Fast As The Shark", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
                 caster.addBuff(effectFactory("Fast As The Shark", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -1444,6 +1494,20 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+
+                var physDamage = (caster.minDamage * (1 + this.variant * 0.1) + caster.maxDamage * (1 + this.variant * 0.1)) / 2;
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster); 
+                physDamage = target.applyResistance(physDamage, false);
+
+                if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
+                    target.addDebuff(effectFactory("Prowler", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 1},
             duration: function(){return 4+this.variant},
@@ -1466,6 +1530,13 @@ var Ability = function(name){
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
                 caster.soundBuffer.push(this.name);
+                target.addBuff(effectFactory("Fade To Black", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
                 target.addBuff(effectFactory("Fade To Black", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
