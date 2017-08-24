@@ -803,7 +803,7 @@ var Ability = function(name){
             },
             targetType : function() { return "self"},
             range : function(){return 0},
-            duration: function(){return 6+this.variant},
+            duration: function(){return 6 + this.variant},
             energyCost : function(){return 300},
             manaCost : function(){return 100+this.variant*50},
             cooldown : function(){return 12+this.variant*2},
@@ -842,6 +842,24 @@ var Ability = function(name){
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                 }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                var physDamage = (caster.minDamage * (0.6 + (6 - this.variant) * 0.1) + caster.maxDamage * (0.6 + (6 - this.variant) * 0.1)) / 2;
+                var magicDamage = (400 + this.variant * 50) * (1 + caster.spellPower);
+
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster); 
+                magicDamage = arenaService.calculateExpectedDamage(magicDamage, caster);
+
+                physDamage = target.applyResistance(physDamage, false);
+                magicDamage = target.applyResistance(magicDamage, true);
+
+                var totalDamage = physDamage + magicDamage;
+
+                target.takeDamageSimulation(totalDamage, caster, true, true, myTeam, enemyTeam);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "enemy"},
@@ -885,6 +903,25 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+
+                var physDamage = (caster.minDamage * (0.9 + this.variant * 0.1) + caster.maxDamage * (0.9 + this.variant * 0.1));
+                var magicDamage = (300 + this.variant * 50) * (1 + caster.spellPower);
+
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster); 
+                magicDamage = arenaService.calculateExpectedDamage(magicDamage, caster);
+
+                physDamage = target.applyResistance(physDamage, false);
+                magicDamage = target.applyResistance(magicDamage, true);
+
+                var totalDamage = physDamage + magicDamage;
+
+                target.takeDamageSimulation(totalDamage, caster, true, true, myTeam, enemyTeam);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 4},
             duration: function(){return 0},
@@ -904,10 +941,18 @@ var Ability = function(name){
             cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
-                this.cd=this.cooldown();
+                this.cd = this.cooldown();
 
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
                 caster.soundBuffer.push(this.name);
+                target.addBuff(effectFactory("Lights In The Sky", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(),  true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+
                 target.addBuff(effectFactory("Lights In The Sky", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -954,6 +999,20 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+
+                var magicDamage = (80 + this.variant * 150) * (1 + caster.spellPower);
+                magicDamage = arenaService.calculateExpectedDamage(magicDamage, caster);
+                magicDamage = target.applyResistance(magicDamage, true);
+
+                if(target.takeDamageSimulation(magicDamage, caster, true, true, myTeam, enemyTeam)){
+                    target.addDebuff(effectFactory("Thunderstruck", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 3},
             duration: function(){return 2+this.variant},
@@ -976,6 +1035,13 @@ var Ability = function(name){
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
                 caster.soundBuffer.push(this.name);
+                caster.addBuff(effectFactory("You Aint No Angel", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
                 caster.addBuff(effectFactory("You Aint No Angel", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -1005,6 +1071,14 @@ var Ability = function(name){
                 caster.addBuff(effectFactory("State Of Grace", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                caster.takeEnergySimulation(caster.maxEnergy);
+                caster.addBuff(effectFactory("State Of Grace", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "self"},
             range : function(){return 0},
             duration: function(){return 7},
@@ -1030,11 +1104,11 @@ var Ability = function(name){
                     var magicDamage = (400+this.variant*100)*(1+caster.spellPower);
                     var critical = caster.checkCrit();
                     if(critical){
-                        physDamage=caster.applyCrit(physDamage);
-                        magicDamage=caster.applyCrit(magicDamage);
+                        physDamage = caster.applyCrit(physDamage);
+                        magicDamage = caster.applyCrit(magicDamage);
                     }
-                    physDamage=target.applyResistance(physDamage, false);
-                    magicDamage=target.applyResistance(magicDamage, true);
+                    physDamage = target.applyResistance(physDamage, false);
+                    magicDamage = target.applyResistance(magicDamage, true);
 
                     var totalDamage = physDamage+magicDamage;
 
@@ -1044,6 +1118,25 @@ var Ability = function(name){
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                 }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd=this.cooldown();
+
+                var physDamage = (caster.minDamage * (1 + this.variant * 0.2) + caster.maxDamage * (1 + this.variant * 0.2)) / 2;
+                var magicDamage = (400 + this.variant * 100) * (1 + caster.spellPower);
+
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster); 
+                magicDamage = arenaService.calculateExpectedDamage(magicDamage, caster);
+
+                physDamage = target.applyResistance(physDamage, false);
+                magicDamage = target.applyResistance(magicDamage, true);
+
+                var totalDamage = physDamage + magicDamage;
+
+                target.takeDamageSimulation(totalDamage, caster, true, true, myTeam, enemyTeam);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "enemy"},
@@ -1068,6 +1161,15 @@ var Ability = function(name){
                 this.cd=this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
                 caster.soundBuffer.push(this.name);
+                arenaService.charge(caster, target, enemyTeam, myTeam, walls);
+                target.addBuff(effectFactory("Come Cover Me", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+
                 arenaService.charge(caster, target, enemyTeam, myTeam, walls);
                 target.addBuff(effectFactory("Come Cover Me", this.variant), caster.charName, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
