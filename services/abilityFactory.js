@@ -1214,6 +1214,19 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                var physDamage = (caster.minDamage * (1 + this.variant * 0.1) + caster.maxDamage * (1 + this.variant * 0.1));
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster); 
+                physDamage = target.applyResistance(physDamage, false);
+
+                if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
+                    target.addDebuff(effectFactory("Inject The Venom", this.variant), caster.charName, myTeam, enemyTeam, walls);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 1},
             duration: function(){return 16-this.variant*2},

@@ -489,7 +489,7 @@ var Effect = function(name, abilityVariant) {
                 }
                 owner.takeHeal(heal, buffer, {name: this.name, icon: this.icon(), role: this.role()}, critical);
             },
-            duration: function(){return 10-this.variant},
+            duration: function(){return 10 - this.variant},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
@@ -499,8 +499,8 @@ var Effect = function(name, abilityVariant) {
             magicEffect: function() {return true},
             score: function(owner, myTeam, enemyTeam, walls) {
                 var buffer = {};
-                for(var i=0;i<myTeam.length;i++){
-                    if(myTeam[i]._id===this.casterId) buffer=myTeam[i];
+                for(var i = 0;i < myTeam.length; i++){
+                    if(myTeam[i]._id == this.casterId) buffer = myTeam[i];
                 }
                 var heal = (100 + this.variant * 50) * (1 + buffer.spellPower);
                 heal = arenaService.calculateExpectedHeal(heal, buffer);
@@ -542,7 +542,21 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
-            magicEffect: function() {return true}
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var debuffer = {};
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i]._id == this.casterId) debuffer = enemyTeam[i];
+                }
+                var magicDamage = 75 * this.variant * (1 + debuffer.spellPower);
+                magicDamage = arenaService.calculateExpectedDamage(physicalDamage, debuffer);
+                magicDamage = owner.applyResistance(physicalDamage, true);
+                
+                return {
+                    effectScore: magicDamage / 9,
+                    leftScore: this.left * 3
+                };
+            }
         };
 
         case "Invisible": return {
