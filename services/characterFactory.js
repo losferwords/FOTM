@@ -444,8 +444,7 @@ Character.prototype.calcItem = function(item) {
     return item;
 };
 
-//���������� �����
-Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls, simulation){
+Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls){
     var self=this;
 
     if(self.isDead) return;
@@ -455,26 +454,25 @@ Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls, s
     buff.casterName = caster.charName;
     buff.left = buff.duration();
 
-    for(var i=0;i<self.buffs.length;i++){
-        if(self.buffs[i].name===buff.name && self.buffs[i].caster === caster){
+    for(var i = 0; i < self.buffs.length; i++){
+        if(self.buffs[i].name === buff.name && self.buffs[i].casterId === caster._id){
             if(buff.stacked()) {
-                if(self.buffs[i].stacks<self.buffs[i].maxStacks()) self.buffs[i].stacks++;
-                if(!simulation) self.buffs[i].apply(self, myTeam, enemyTeam, walls);
+                if(self.buffs[i].stacks < self.buffs[i].maxStacks()) self.buffs[i].stacks++;
+                self.buffs[i].apply(self, myTeam, enemyTeam, walls);
             }
             self.buffs[i].left = buff.duration();
             return;
         }
     }
     self.buffs.push(buff);
-    if(!simulation) buff.apply(self, myTeam, enemyTeam, walls);
+    buff.apply(self, myTeam, enemyTeam, walls);
 };
 
-//���������� �������
-Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, walls, simulation){
+Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, walls){
     var self=this;
 
     if(self.isDead) return;
-    if(self.checkImmune(debuff.magicEffect()) && !simulation){
+    if(self.checkImmune(debuff.magicEffect())){
         self.logBuffer.push(self.charName + " didn't get effect '" + debuff.name + "' because immunity.");
         self.battleTextBuffer.push({type: "other", icon: debuff.icon(), color: getAbilityColor(debuff.role()), caster: caster.charName, text: "Immune", crit: false});
         self.soundBuffer.push("dodge");
@@ -486,11 +484,11 @@ Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, wall
     debuff.casterName = caster.charName;
     debuff.left = debuff.duration();
 
-    for(var i=0;i<self.debuffs.length;i++){
-        if(self.debuffs[i].name===debuff.name && self.debuffs[i].caster === caster){
+    for(var i = 0; i < self.debuffs.length; i++){
+        if(self.debuffs[i].name === debuff.name && self.debuffs[i].casterId === caster._id){
             if(debuff.stacked()) {
-                if(self.debuffs[i].stacks<self.debuffs[i].maxStacks()) self.debuffs[i].stacks++;
-                if(!simulation) self.debuffs[i].apply(self, enemyTeam, myTeam, walls); //��� ������� �������� �������
+                if(self.debuffs[i].stacks < self.debuffs[i].maxStacks()) self.debuffs[i].stacks++;
+                self.debuffs[i].apply(self, enemyTeam, myTeam, walls);
             }
             if(self.isDead) return;
             self.debuffs[i].left=debuff.duration();
@@ -498,7 +496,52 @@ Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, wall
         }
     }
     self.debuffs.push(debuff);
-    debuff.apply(self, enemyTeam, myTeam, walls); //��� ������� �������� �������
+    debuff.apply(self, enemyTeam, myTeam, walls);
+};
+
+Character.prototype.addBuffSimulation = function(buff, caster, myTeam, enemyTeam, walls){
+    var self=this;
+
+    if(self.isDead) return;
+
+    if(buff.stacked()) buff.stacks = 1;
+    buff.casterId = caster._id;
+    buff.casterName = caster.charName;
+    buff.left = buff.duration();
+
+    for(var i = 0; i < self.buffs.length; i++){
+        if(self.buffs[i].name === buff.name && self.buffs[i].casterId === caster._id){
+            if(buff.stacked()) {
+                if(self.buffs[i].stacks < self.buffs[i].maxStacks()) self.buffs[i].stacks++;
+            }
+            self.buffs[i].left = buff.duration();
+            return;
+        }
+    }
+    self.buffs.push(buff);
+};
+
+Character.prototype.addDebuffSimulation = function(debuff, caster, myTeam, enemyTeam, walls){
+    var self = this;
+
+    if(self.isDead) return;
+
+    if(debuff.stacked()) debuff.stacks = 1;
+    debuff.casterId = caster._id;
+    debuff.casterName = caster.charName;
+    debuff.left = debuff.duration();
+
+    for(var i = 0; i < self.debuffs.length; i++){
+        if(self.debuffs[i].name === debuff.name && self.debuffs[i].casterId === caster._id){
+            if(debuff.stacked()) {
+                if(self.debuffs[i].stacks < self.debuffs[i].maxStacks()) self.debuffs[i].stacks++;
+            }
+            if(self.isDead) return;
+            self.debuffs[i].left=debuff.duration();
+            return;
+        }
+    }
+    self.debuffs.push(debuff);
 };
 
 //���������� �������� �� ����������� ��� � ��� � ��� ������ left
@@ -657,66 +700,107 @@ Character.prototype.removeRandomDOT = function(myTeam, enemyTeam) {
     }
 };
 
-//������� ����� � ���� ��������� �����
 Character.prototype.stealRandomBuff = function(target, myTeam, enemyTeam, walls) {
     var self = this;
-    var stealedBuffName=false;
+    var stealedBuffName = false;
 
-    if(target.buffs.length>0){
-        var removableBuffIndex = randomService.randomInt(0, target.buffs.length-1);
+    if(target.buffs.length > 0){
+        var removableBuffIndex = randomService.randomInt(0, target.buffs.length - 1);
         stealedBuffName = target.buffs[removableBuffIndex].name;
         if(target.buffs[removableBuffIndex].stacked()){
-            if(target.buffs[removableBuffIndex].stacks===1){
-                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self._id, myTeam, enemyTeam, walls);
-                target.buffs.splice(removableBuffIndex,1);
+            if(target.buffs[removableBuffIndex].stacks === 1){
+                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self, myTeam, enemyTeam, walls);
+                target.buffs.splice(removableBuffIndex, 1);
             }
             else {
-                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self._id, myTeam, enemyTeam, walls);
+                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self, myTeam, enemyTeam, walls);
                 target.buffs[removableBuffIndex].stacks--;
             }
         }
         else {
-            //��� ��������� ������ �������� ����� �������� ������ ������� ����������� �������
-            if(target.buffs[removableBuffIndex].name==="Sanctuary"){
-                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), target.buffs[removableBuffIndex].casterId, myTeam, enemyTeam, walls);
+            if(target.buffs[removableBuffIndex].name === "Sanctuary"){
+                var debuffer = {};
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i]._id == target.buffs[removableBuffIndex].casterId) {
+                        debuffer = enemyTeam[i];
+                        break;
+                    }
+                }
+                if(debuffer){
+                    self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), debuffer, myTeam, enemyTeam, walls);
+                }                
             }
             else {
-                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self._id, myTeam, enemyTeam, walls);
+                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self, myTeam, enemyTeam, walls);
             }
-            target.buffs.splice(removableBuffIndex,1);
+            target.buffs.splice(removableBuffIndex, 1);
         }
 
-        //��������� ������� �� ����
         target.resetState();
         target.updateMods(myTeam, enemyTeam);
         target.calcChar();
-
-        //��������� ������� �� ����
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
     }
     return stealedBuffName;
 };
 
-//������� ������������ �����, ����� ���� �� �������� ��������� ������ �������
+Character.prototype.stealRandomBuffSimulation = function(target, myTeam, enemyTeam, walls) {
+    var self = this;
+    var stealedBuffName = false;
+
+    if(target.buffs.length > 0){
+        var removableBuffIndex = randomService.randomInt(0, target.buffs.length - 1);
+        stealedBuffName = target.buffs[removableBuffIndex].name;
+        if(target.buffs[removableBuffIndex].stacked()){
+            if(target.buffs[removableBuffIndex].stacks === 1){
+                self.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self, myTeam, enemyTeam, walls);
+                target.buffs.splice(removableBuffIndex, 1);
+            }
+            else {
+                self.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self, myTeam, enemyTeam, walls);
+                target.buffs[removableBuffIndex].stacks--;
+            }
+        }
+        else {
+            if(target.buffs[removableBuffIndex].name === "Sanctuary"){
+                var debuffer = {};
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i]._id == target.buffs[removableBuffIndex].casterId) {
+                        debuffer = enemyTeam[i];
+                        break;
+                    }
+                }
+                if(debuffer){
+                    self.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), debuffer, myTeam, enemyTeam, walls);
+                }                
+            }
+            else {
+                self.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self, myTeam, enemyTeam, walls);
+            }
+            target.buffs.splice(removableBuffIndex, 1);
+        }
+
+        target.resetState();
+        target.updateMods(myTeam, enemyTeam);
+        target.calcChar();
+    }
+    return stealedBuffName;
+};
+
 Character.prototype.addEffectFromEffects = function(name, variant) {
     return effectFactory(name, variant);
 };
 
-//����� �� ��������� ���������
 Character.prototype.canMove = function(){
     var self = this;
-    if(self.immobilized){ //���� ����������
+    if(self.immobilized){
         return false;
     }
-    else if((self.curEnergy-self.moveCost)<0){ //���� �� ������ �������
+    else if((self.curEnergy - self.moveCost) < 0){
         return false;
     }
     return true;
 };
 
-//������� ��������� �����
 Character.prototype.takeDamage = function(value, caster, ability, canBlock, canDodge, isCritical, myTeam, enemyTeam){
     var self = this;
     var blockedDamage = 0;
@@ -745,14 +829,14 @@ Character.prototype.takeDamage = function(value, caster, ability, canBlock, canD
             var sanctValue = value*sanctBuff.variant*0.15;
             value-=sanctValue;
             for(var j=0;j<enemyTeam.length;j++){
-                if(enemyTeam[j].charName===sanctBuff.caster && !enemyTeam[j].isDead && enemyTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
+                if(enemyTeam[j]._id == sanctBuff.casterId && !enemyTeam[j].isDead && enemyTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
                     var sanctCaster = enemyTeam[j];
                     sanctCaster.takeDamage(sanctValue, caster, {name: ability.name+" (Sanctuary)", icon: ability.icon, role: ability.role}, canBlock, canDodge, isCritical, myTeam, enemyTeam);
                 }
             }
             //�� ������ ������ ���������, ����� ��� ��� �������
             for(j=0;j<myTeam.length;j++){
-                if(myTeam[j].charName===sanctBuff.caster && !myTeam[j].isDead && myTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
+                if(myTeam[j]._id == sanctBuff.casterId && !myTeam[j].isDead && myTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
                     sanctCaster = myTeam[j];
                     sanctCaster.takeDamage(sanctValue, caster, {name: ability.name+" (Sanctuary)", icon: ability.icon, role: ability.role}, canBlock, canDodge, isCritical, enemyTeam, myTeam);
                 }
@@ -824,17 +908,16 @@ Character.prototype.takeDamageSimulation = function(value, caster, canBlock, can
     for(var i=0;i<self.buffs.length;i++){
         if(self.buffs[i].name==="Sanctuary") {
             var sanctBuff=self.buffs[i];
-            var sanctValue = value*sanctBuff.variant*0.15;
+            var sanctValue = value * sanctBuff.variant * 0.15;
             value-=sanctValue;
             for(var j=0;j<enemyTeam.length;j++){
-                if(enemyTeam[j].charName===sanctBuff.caster && !enemyTeam[j].isDead && enemyTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
+                if(enemyTeam[j]._id === sanctBuff.casterId && !enemyTeam[j].isDead && enemyTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
                     var sanctCaster = enemyTeam[j];
                     sanctCaster.takeDamageSimulation(sanctValue, caster, canBlock, canDodge, myTeam, enemyTeam);
                 }
-            }
-            //�� ������ ������ ���������, ����� ��� ��� �������
+            }            
             for(j=0;j<myTeam.length;j++){
-                if(myTeam[j].charName===sanctBuff.caster && !myTeam[j].isDead && myTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
+                if(myTeam[j]._id == sanctBuff.casterId && !myTeam[j].isDead && myTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
                     sanctCaster = myTeam[j];
                     sanctCaster.takeDamageSimulation(sanctValue, caster, canBlock, canDodge, enemyTeam, myTeam);
                 }
@@ -886,7 +969,7 @@ Character.prototype.takeHeal = function(value, caster, ability, isCritical){
     //battleText
     self.battleTextBuffer.push({type: "heal", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: value, crit: isCritical});
 
-    if(self.charName===caster.charName){
+    if(self._id === caster._id){
         str+=self.charName + " healed for "+value;
         if(isCritical) str+= " (CRITICAL)";
         str+=" with '"+ability.name+"'";
@@ -916,7 +999,7 @@ Character.prototype.takeEnergy = function(value, caster, ability, isCritical){
     if(self.curEnergy+value>=self.maxEnergy) self.curEnergy=self.maxEnergy;
     else self.curEnergy += value;
 
-    if(self.charName===caster.charName){
+    if(self._id === caster._id){
         str+=self.charName + " restore "+value;
         str+=" energy with '"+ability+"'";
     }
@@ -944,7 +1027,7 @@ Character.prototype.takeMana = function(value, caster, ability, isCritical){
     if(self.curMana+value>=self.maxMana) self.curMana=self.maxMana;
     else self.curMana += value;
 
-    if(self.charName===caster.charName){
+    if(self._id === caster._id){
         str+=self.charName + " restore "+value;
         str+=" mana with '"+ability+"'";
     }
@@ -1056,7 +1139,6 @@ Character.prototype.afterDamageTaken = function (myTeam, enemyTeam) {
     }
 };
 
-//������� ��������� ����� ��������, ���� �������� ��������
 Character.prototype.afterMiss = function (target, ability, myTeam, enemyTeam, doNotLog) {
     var self=this;
     var buffsForRemove=[];
