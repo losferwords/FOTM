@@ -608,22 +608,21 @@ Character.prototype.applyEffects = function(myTeam, enemyTeam, walls) {
     }
 };
 
-//������� ������� � ������ ��������� �������
 Character.prototype.removeRandomBuff = function(myTeam, enemyTeam) {
     var self = this;
 
     if(self.buffs.length>0){
-        var removableBuffIndex = randomService.randomInt(0, self.buffs.length-1);
+        var removableBuffIndex = randomService.randomInt(0, self.buffs.length - 1);
         if(self.buffs[removableBuffIndex].stacked()){
-            if(self.buffs[removableBuffIndex].stacks===1){
-                self.buffs.splice(removableBuffIndex,1);
+            if(self.buffs[removableBuffIndex].stacks === 1){
+                self.buffs.splice(removableBuffIndex, 1);
             }
             else {
                 self.buffs[removableBuffIndex].stacks--;
             }
         }
         else {
-            self.buffs.splice(removableBuffIndex,1);
+            self.buffs.splice(removableBuffIndex, 1);
         }
 
         self.resetState();
@@ -632,22 +631,21 @@ Character.prototype.removeRandomBuff = function(myTeam, enemyTeam) {
     }
 };
 
-//������� ������� � ������ ��������� �������
 Character.prototype.removeRandomDebuff = function(myTeam, enemyTeam) {
     var self = this;
 
-    if(self.debuffs.length>0){
-        var removableDebuffIndex = randomService.randomInt(0, self.debuffs.length-1);
+    if(self.debuffs.length > 0){
+        var removableDebuffIndex = randomService.randomInt(0, self.debuffs.length - 1);
         if(self.debuffs[removableDebuffIndex].stacked()){
-            if(self.debuffs[removableDebuffIndex].stacks===1){
-                self.debuffs.splice(removableDebuffIndex,1);
+            if(self.debuffs[removableDebuffIndex].stacks === 1){
+                self.debuffs.splice(removableDebuffIndex, 1);
             }
             else {
                 self.debuffs[removableDebuffIndex].stacks--;
             }
         }
         else {
-            self.debuffs.splice(removableDebuffIndex,1);
+            self.debuffs.splice(removableDebuffIndex, 1);
         }
 
         self.resetState();
@@ -656,41 +654,39 @@ Character.prototype.removeRandomDebuff = function(myTeam, enemyTeam) {
     }
 };
 
-//������� ������� � ������ ��� �������
 Character.prototype.removeAllDebuffs = function(myTeam, enemyTeam) {
     var self = this;
 
-    if(self.debuffs.length>0){
-        self.debuffs=[];
+    if(self.debuffs.length > 0){
+        self.debuffs = [];
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
         self.calcChar();
     }
 };
 
-//������� ������� � ������ ��������� ����
 Character.prototype.removeRandomDOT = function(myTeam, enemyTeam) {
     var self = this;
 
     if(self.debuffs.length>0){
         var DOTS = [];
-        for(var i=0;i<self.debuffs.length;i++){
+        for(var i=0; i<self.debuffs.length; i++){
             if(!self.debuffs[i].onlyStat()) DOTS.push({index: i, dot: self.debuffs[i]});
         }
 
-        if(DOTS.length>0){
-            var removableDOTIndex = randomService.randomInt(0, DOTS.length-1);
+        if(DOTS.length > 0){
+            var removableDOTIndex = randomService.randomInt(0, DOTS.length - 1);
             var removableDebuffIndex = DOTS[removableDOTIndex].index;
             if(self.debuffs[removableDebuffIndex].stacked()){
-                if(self.debuffs[removableDebuffIndex].stacks===1){
-                    self.debuffs.splice(removableDebuffIndex,1);
+                if(self.debuffs[removableDebuffIndex].stacks === 1){
+                    self.debuffs.splice(removableDebuffIndex, 1);
                 }
                 else {
                     self.debuffs[removableDebuffIndex].stacks--;
                 }
             }
             else {
-                self.debuffs.splice(removableDebuffIndex,1);
+                self.debuffs.splice(removableDebuffIndex, 1);
             }
 
             self.resetState();
@@ -1036,6 +1032,14 @@ Character.prototype.takeMana = function(value, caster, ability, isCritical){
         str+=" mana with '"+ability+"' used by "+caster.charName;
     }
     self.logBuffer.push(str);
+};
+
+//Get some mana (simulation)
+Character.prototype.takeManaSimulation = function(value){
+    var self = this;
+
+    if(self.curMana+value >= self.maxMana) self.curMana = self.maxMana;
+    else self.curMana += value;
 };
 
 //������� ����� �������
