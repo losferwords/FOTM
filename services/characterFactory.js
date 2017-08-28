@@ -544,7 +544,6 @@ Character.prototype.addDebuffSimulation = function(debuff, caster, myTeam, enemy
     self.debuffs.push(debuff);
 };
 
-//���������� �������� �� ����������� ��� � ��� � ��� ������ left
 Character.prototype.updateMods = function(myTeam, enemyTeam, walls) {
     var self = this;
 
@@ -561,13 +560,12 @@ Character.prototype.updateMods = function(myTeam, enemyTeam, walls) {
     }
 };
 
-//���������� ��������
 Character.prototype.applyEffects = function(myTeam, enemyTeam, walls) {
     var self = this;
     var buffsForRemove = [];
     var debuffsForRemove = [];
 
-    self.battleTextBuffer = []; //������� �����, �.�. � �� ������ ���� ����� ����� ����������� �����
+    self.battleTextBuffer = [];
 
     for(var i=0; i<self.buffs.length; i++){
         if(!self.buffs[i].infinite()) {
@@ -1178,34 +1176,32 @@ Character.prototype.afterMiss = function (target, ability, myTeam, enemyTeam, do
     }
 };
 
-//������� ��������� ����� ��������, ���� �������� ����������� ����������
 Character.prototype.afterCast = function (castedSpell, myTeam, enemyTeam) {
-    var self=this;
-    var buffsForRemove=[];
-    var debuffsForRemove=[];
+    var self = this;
+    var buffsForRemove = [];
+    var debuffsForRemove = [];
     var currentEffect;
 
     currentEffect = self.findEffect("Powerslave");
-    if(currentEffect>-1 && castedSpell!=="Powerslave" && castedSpell!=="Lets Me Take It_Powerslave"){
+    if(currentEffect > -1 && castedSpell !== "Powerslave" && castedSpell !== "Lets Me Take It_Powerslave"){
         buffsForRemove.push(currentEffect);
     }
 
-    for(var i=0;i<buffsForRemove.length;i++){
+    for(var i = 0; i < buffsForRemove.length; i++){
         self.buffs.splice(buffsForRemove[i], 1);
     }
 
-    for(i=0;i<debuffsForRemove.length;i++){
+    for(i = 0; i < debuffsForRemove.length; i++){
         self.debuffs.splice(debuffsForRemove[i], 1);
     }
 
-    if(buffsForRemove.length>0 || debuffsForRemove.length>0){
+    if(buffsForRemove.length > 0 || debuffsForRemove.length > 0){
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
         self.calcChar();
     }
 };
 
-//������� ������� ��� ������� ���������� ���������
 Character.prototype.removeImmobilization = function (myTeam, enemyTeam) {
     var self=this;
     var debuffsForRemove=[];

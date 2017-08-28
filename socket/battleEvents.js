@@ -485,13 +485,14 @@ module.exports = function (serverIO) {
         }
 
         function castAbilitySimulation(myTeamOrig, enemyTeamOrig, activeCharId, targetCharId, preparedAbility, wallPositions){
+            console.log("ability: " + preparedAbility);            
             var myTeam = arenaService.cloneTeam(myTeamOrig);
             var enemyTeam = arenaService.cloneTeam(enemyTeamOrig);
             var activeChar = arenaService.findCharInMyTeam(activeCharId, myTeam.characters);
             var targetChar = arenaService.findCharInQueue(targetCharId, myTeam.characters, enemyTeam.characters);
             if(preparedAbility){
                 var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
-                if(ability && arenaService.checkAbilityForUse(ability, activeChar) && ability.castSimulation){
+                if(ability && arenaService.checkAbilityForUse(ability, activeChar) && ability.castSimulation){                    
                     ability.castSimulation(activeChar, targetChar, myTeam.characters, enemyTeam.characters, wallPositions);
                     arenaService.calcCharacters(myTeam.characters, enemyTeam.characters);
                 }
@@ -568,7 +569,7 @@ module.exports = function (serverIO) {
                 var allies;
                 var characters;
                 var targetChar;
-                var predictionCount = 10;
+                var predictionCount = 5;
                 if(arenaService.checkAbilityForUse(checkedAbility, activeChar) && checkedAbility.castSimulation){
                     switch(checkedAbility.targetType()){
                         case "self":
@@ -589,7 +590,7 @@ module.exports = function (serverIO) {
                            for (i = 0; i < allies.length; i++) {
                                 for (j = 0; j < myTeam.characters.length; j++) {
                                     if (myTeam.characters[j]._id == allies[i]._id) {
-                                         abilitySimulation(allies[i]);
+                                        abilitySimulation(allies[i]);
                                     }
                                 }
                            }

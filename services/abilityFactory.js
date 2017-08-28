@@ -2419,7 +2419,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 var heal = target.maxHealth * (0.1 + this.variant * 0.15) * (1 + caster.spellPower);
-                heal = arenaService.calculateExpectedHeal(heal, buffer);
+                heal = arenaService.calculateExpectedHeal(heal, caster);
                 target.takeHealSimulation(heal);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -2522,15 +2522,15 @@ var Ability = function(name){
             cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
-                this.cd=this.cooldown();
+                this.cd = this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
                 caster.soundBuffer.push(this.name);
 
-                if(target.findEffect("Locked And Loaded")!==-1) {
+                if(target.findEffect("Locked And Loaded") !== -1) {
                     caster.logBuffer.push("Debuffs can't be removed, because target is under 'Locked And Loaded' effect!");
                 }
                 else {
-                    for(var i=0;i<this.variant;i++) {
+                    for(var i = 0; i < this.variant; i++) {
                         target.removeRandomDebuff(myTeam, enemyTeam);
                     }
                 }
@@ -2722,18 +2722,18 @@ var Ability = function(name){
             cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
-                this.cd=this.cooldown();
+                this.cd = this.cooldown();
                 if(caster.checkHit()){
                     var physDamage = randomService.randomInt(caster.minDamage*(1+this.variant*0.1), caster.maxDamage*(1+this.variant*0.1));
                     var magicDamage = (150+this.variant*15)*(1+caster.spellPower);
 
                     var critical = caster.checkCrit();
                     if(critical){
-                        physDamage=caster.applyCrit(physDamage);
-                        magicDamage=caster.applyCrit(magicDamage);
+                        physDamage = caster.applyCrit(physDamage);
+                        magicDamage = caster.applyCrit(magicDamage);
                     }
-                    physDamage=target.applyResistance(physDamage, false);
-                    magicDamage=target.applyResistance(magicDamage, true);
+                    physDamage = target.applyResistance(physDamage, false);
+                    magicDamage = target.applyResistance(magicDamage, true);
 
                     caster.soundBuffer.push(this.name);
                     var totalDamage = physDamage+magicDamage;
@@ -2744,6 +2744,26 @@ var Ability = function(name){
                 }
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                var physDamage = (caster.minDamage * (1 + this.variant * 0.1) + caster.maxDamage * (1 + this.variant * 0.1)) / 2;
+                var magicDamage = (150 + this.variant * 15) * (1 + caster.spellPower);
+
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster); 
+                magicDamage = arenaService.calculateExpectedDamage(magicDamage, caster);
+
+                physDamage = target.applyResistance(physDamage, false);
+                magicDamage = target.applyResistance(magicDamage, true);                
+
+                var totalDamage = physDamage + magicDamage;
+
+                if(target.takeDamageSimulation(totalDamage, caster, true, true, myTeam, enemyTeam)){
+                    caster.takeHealSimulation(totalDamage);
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
@@ -2785,6 +2805,20 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+
+                var magicDamage = (300 + this.variant * 60) * (1 + caster.spellPower);
+                magicDamage = arenaService.calculateExpectedDamage(magicDamage, caster);
+                magicDamage = target.applyResistance(magicDamage, true);
+
+                if(target.takeDamageSimulation(magicDamage, caster, true, true, myTeam, enemyTeam)){
+                    target.addDebuffSimulation(effectFactory("Fear Of The Dark", this.variant), caster, myTeam, enemyTeam, walls);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 3},
             duration: function(){return 12-this.variant},
@@ -2815,6 +2849,13 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                target.addDebuffSimulation(effectFactory("Creeping Death", this.variant), caster, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 3},
             duration: function(){return 12-this.variant},
@@ -2843,6 +2884,13 @@ var Ability = function(name){
                 else {
                     caster.afterMiss(target.charName, {name: this.name, icon: this.icon(), role: this.role()}, myTeam, enemyTeam);
                 }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                target.addDebuffSimulation(effectFactory("Spreading The Disease", this.variant), caster, myTeam, enemyTeam, walls);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "enemy"},
@@ -2879,6 +2927,15 @@ var Ability = function(name){
 
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                for(var i = 0; i < this.variant; i++) {
+                    target.removeRandomBuff(enemyTeam, myTeam);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 3},
             duration: function(){return 0},
@@ -2910,6 +2967,13 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                target.addDebuffSimulation(effectFactory("Children Of The Damned", this.variant), caster, myTeam, enemyTeam, walls);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 3},
             duration: function(){return 12},
@@ -2929,7 +2993,7 @@ var Ability = function(name){
             cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
-                this.cd=this.cooldown();
+                this.cd = this.cooldown();
 
                 var targetIsAlly=false;
                 for(var i=0;i<myTeam.length;i++){
@@ -2952,6 +3016,24 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+
+                var targetIsAlly = false;
+                for(var i = 0; i < myTeam.length; i++){
+                    if(myTeam[i]._id == target._id) targetIsAlly = true;
+                }
+
+                if(targetIsAlly) {
+                    target.addDebuffSimulation(effectFactory("Locked And Loaded", this.variant), caster, enemyTeam, myTeam, walls);
+                }
+                else {
+                    target.addDebuffSimulation(effectFactory("Locked And Loaded", this.variant), caster, myTeam, enemyTeam, walls);
+                }
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "ally&enemy"},
             range : function(){return 3},
             duration: function(){return 4+this.variant*2},
@@ -2960,7 +3042,28 @@ var Ability = function(name){
             cooldown : function(){return 20+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
+            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { 
+                var targetIsAlly = false;
+                for(var i = 0; i < myTeam.length; i++){
+                    if(myTeam[i]._id == target._id) targetIsAlly = true;
+                }
+
+                var totalEffects = 0;
+                if(targetIsAlly){
+                    for(i = 0; i < target.buffs.length; i++){
+                        if(target.buffs[i].stacked()) totalEffects += target.buffs[i].stacks;
+                        else totalEffects++;
+                    }
+                }
+                else {
+                    for(i = 0; i < target.debuffs.length; i++){
+                        if(target.debuffs[i].stacked()) totalEffects += target.debuffs[i].stacks;
+                        else totalEffects++;
+                    }
+                }               
+
+                return totalEffects > 1; 
+            }
         };
 
         case "A Touch Of Evil": return {
@@ -2971,20 +3074,20 @@ var Ability = function(name){
             cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
-                this.cd=this.cooldown();
+                this.cd = this.cooldown();
                 if(caster.checkHit()){
-                    var totalEffects=0;
-                    for(var i=0;i<target.buffs.length;i++){
-                        if(target.buffs[i].stacked()) totalEffects+=target.buffs[i].stacks;
+                    var totalEffects = 0;
+                    for(var i = 0; i < target.buffs.length; i++){
+                        if(target.buffs[i].stacked()) totalEffects += target.buffs[i].stacks;
                         else totalEffects++;
                     }
-                    for(i=0;i<target.debuffs.length;i++){
-                        if(target.debuffs[i].stacked()) totalEffects+=target.debuffs[i].stacks;
+                    for(i = 0; i < target.debuffs.length; i++){
+                        if(target.debuffs[i].stacked()) totalEffects += target.debuffs[i].stacks;
                         else totalEffects++;
                     }
 
-                    var physDamage = randomService.randomInt(caster.minDamage*(0.1+this.variant*0.06)*totalEffects, caster.maxDamage*(0.1+this.variant*0.06)*totalEffects);
-                    var magicDamage = (40+this.variant*25)*(1+caster.spellPower)*totalEffects;
+                    var physDamage = randomService.randomInt(caster.minDamage * (0.1 + this.variant * 0.06) * totalEffects, caster.maxDamage * (0.1 + this.variant * 0.06) * totalEffects);
+                    var magicDamage = (40 + this.variant * 25) * (1 + caster.spellPower) * totalEffects;
 
                     var critical = caster.checkCrit();
                     if(critical){
@@ -3004,6 +3107,34 @@ var Ability = function(name){
                 }
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
+            castSimulation : function (caster, target, myTeam, enemyTeam, walls) {
+                caster.spendEnergy(this.energyCost(), true);
+                caster.spendMana(this.manaCost(), true);
+                this.cd = this.cooldown();
+                var totalEffects = 0;
+                for(var i = 0; i < target.buffs.length; i++){
+                    if(target.buffs[i].stacked()) totalEffects += target.buffs[i].stacks;
+                    else totalEffects++;
+                }
+                for(i = 0; i < target.debuffs.length; i++){
+                    if(target.debuffs[i].stacked()) totalEffects += target.debuffs[i].stacks;
+                    else totalEffects++;
+                }
+
+                var physDamage = (caster.minDamage * (0.1 + this.variant * 0.06) * totalEffects + caster.maxDamage * (0.1 + this.variant * 0.06) * totalEffects) / 2;
+                var magicDamage = (40 + this.variant * 25) * (1 + caster.spellPower) * totalEffects;
+
+                physDamage = arenaService.calculateExpectedDamage(physDamage, caster); 
+                magicDamage = arenaService.calculateExpectedDamage(magicDamage, caster);
+
+                physDamage = target.applyResistance(physDamage, false);
+                magicDamage = target.applyResistance(magicDamage, true);                
+
+                var totalDamage = physDamage + magicDamage;
+
+                target.takeDamageSimulation(totalDamage, caster, true, true, myTeam, enemyTeam);
+                caster.afterCast(this.name, myTeam, enemyTeam);
+            },
             targetType : function() { return "enemy"},
             range : function(){return 1},
             duration: function(){return 0},
@@ -3014,17 +3145,17 @@ var Ability = function(name){
             cd : 0,
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) {
                 if(target.magicImmune) return false;
-                var totalEffects=0;
-                for(var i=0;i<target.buffs.length;i++){
-                    if(target.buffs[i].stacked()) totalEffects+=target.buffs[i].stacks;
+                var totalEffects = 0;
+                for(var i = 0; i < target.buffs.length; i++){
+                    if(target.buffs[i].stacked()) totalEffects += target.buffs[i].stacks;
                     else totalEffects++;
                 }
-                for(i=0;i<target.debuffs.length;i++){
-                    if(target.debuffs[i].stacked()) totalEffects+=target.debuffs[i].stacks;
+                for(i = 0; i < target.debuffs.length; i++){
+                    if(target.debuffs[i].stacked()) totalEffects += target.debuffs[i].stacks;
                     else totalEffects++;
                 }
 
-                return totalEffects>=3;
+                return totalEffects >= 3;
             }
         };
 

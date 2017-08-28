@@ -54,8 +54,8 @@ module.exports = {
         score += activeChar.curHealth / activeChar.maxHealth * 110;
         score += activeChar.curMana / activeChar.maxMana * 55;
         var positionWeights = arenaService.calculatePositionWeight(activeChar.position, activeChar, myTeam.characters, enemyTeam.characters, arenaService.getOptimalRange(activeChar), wallPositions);
-        score += positionWeights[0] * 150;
-        score += positionWeights[1] * 100;
+        score += positionWeights[0] * 600;
+        score += positionWeights[1] * 400;
 
         for(var j = 0; j < activeChar.buffs.length; j++){
             if(activeChar.buffs[j].score) {
@@ -74,8 +74,8 @@ module.exports = {
         //myTeam
         for(var i = 0; i < myTeam.characters.length; i++){
             var ally = myTeam.characters[i];
-            score += ally.curHealth/ally.maxHealth * 100;
-            score += ally.curMana/ally.maxMana * 50;
+            score += ally.curHealth / ally.maxHealth * 100;
+            score += ally.curMana / ally.maxMana * 50;
             for(j = 0; j < ally.buffs.length; j++){
                 if(ally.buffs[j].score) {
                     effectScores = ally.buffs[j].score(ally, myTeam.characters, enemyTeam.characters, wallPositions);
