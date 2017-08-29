@@ -977,7 +977,7 @@ var Effect = function(name, abilityVariant) {
                 }
                 if(this.left > 1) {
                     var magicDamage = (this.variant * 100) * (1 + debuffer.spellPower);
-                    magicDamage = arenaService.calculateExpectedDamage(magicDamage, caster);
+                    magicDamage = arenaService.calculateExpectedDamage(magicDamage, debuffer);
                     magicDamage = owner.applyResistance(magicDamage, true); 
                     
                     return {

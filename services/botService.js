@@ -119,14 +119,14 @@ module.exports = {
         for(var key in effectScores){
             totalScore += effectScores[key] ? effectScores[key] : 0;
         }
-        str += "\t " + (effectScores['effectScore'] ? Math.round(effectScores['effectScore']) : 0);
-        str += "\t " + (effectScores['leftScore'] ? Math.round(effectScores['leftScore']) : 0);
-        str += "\t " + (effectScores['offensivePositionScore'] ? Math.round(effectScores['offensivePositionScore']) : 0);
-        str += "\t " + (effectScores['defensivePositionScore'] ? Math.round(effectScores['defensivePositionScore']) : 0);
-        str += "\t " + (effectScores['healthScore'] ? Math.round(effectScores['healthScore']) : 0);
-        str += "\t " + (effectScores['manaScore'] ? Math.round(effectScores['manaScore']) : 0);
-        str += "\t " + (Math.round(totalScore));
-        fs.appendFile("./effectLog.txt", str, function() {});
+        // str += "\t " + (effectScores['effectScore'] ? Math.round(effectScores['effectScore']) : 0);
+        // str += "\t " + (effectScores['leftScore'] ? Math.round(effectScores['leftScore']) : 0);
+        // str += "\t " + (effectScores['offensivePositionScore'] ? Math.round(effectScores['offensivePositionScore']) : 0);
+        // str += "\t " + (effectScores['defensivePositionScore'] ? Math.round(effectScores['defensivePositionScore']) : 0);
+        // str += "\t " + (effectScores['healthScore'] ? Math.round(effectScores['healthScore']) : 0);
+        // str += "\t " + (effectScores['manaScore'] ? Math.round(effectScores['manaScore']) : 0);
+        // str += "\t " + (Math.round(totalScore));
+        // fs.appendFile("./effectLog.txt", str, function() {});
         return totalScore;
     }    
 };

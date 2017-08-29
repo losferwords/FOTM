@@ -448,9 +448,9 @@ module.exports = function (serverIO) {
                 else if(preparedAbility){
                     var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
                     if(ability && arenaService.checkAbilityForUse(ability, activeChar)){
-                        ability.cast(activeChar, null, myTeam.characters, enemyTeam.characters, wallPositions);
-                        activeChar.createAbilitiesState();
+                        ability.castSimulation(activeChar, null, myTeam.characters, enemyTeam.characters, wallPositions);
                         activeChar.position = {x: tile.x, y: tile.y};
+                        arenaService.calcCharacters(myTeam.characters, enemyTeam.characters);
                     }
                 }
                 else if(Math.abs(activeChar.position.x-tile.x)<2 && Math.abs(activeChar.position.y-tile.y)<2){
@@ -485,7 +485,7 @@ module.exports = function (serverIO) {
         }
 
         function castAbilitySimulation(myTeamOrig, enemyTeamOrig, activeCharId, targetCharId, preparedAbility, wallPositions){
-            console.log("ability: " + preparedAbility);            
+            //console.log("ability: " + preparedAbility);            
             var myTeam = arenaService.cloneTeam(myTeamOrig);
             var enemyTeam = arenaService.cloneTeam(enemyTeamOrig);
             var activeChar = arenaService.findCharInMyTeam(activeCharId, myTeam.characters);
@@ -569,7 +569,6 @@ module.exports = function (serverIO) {
                 var allies;
                 var characters;
                 var targetChar;
-                var predictionCount = 5;
                 if(arenaService.checkAbilityForUse(checkedAbility, activeChar) && checkedAbility.castSimulation){
                     switch(checkedAbility.targetType()){
                         case "self":
@@ -659,10 +658,12 @@ module.exports = function (serverIO) {
 
             actionList.push({
                 type: "endTurn",
+                selfScore: parentAction.score,
                 score: parentAction.score > 0 ? parentAction.score : botService.situationCost(activeChar, myTeam, enemyTeam, wallPositions) 
             });
 
             async.each(actionList, function(actionInList, callback) {
+                console.log("action: \t" + actionInList.type + " \t" + (actionInList.type == "cast" ? actionInList.ability + " target: " + actionInList.target.charName : "") + "\tscore: " + actionInList.selfScore + "\ttotalScore: " + actionInList.score);
                 if(actionInList.type != "endTurn") {
                     buildActionBranch(actionInList.myTeamState, actionInList.enemyTeamState, actionInList.activeCharState._id, wallPositions, actionInList, function(actions){
                         actionInList.branch = actions;
