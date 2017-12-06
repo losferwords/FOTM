@@ -1,5 +1,7 @@
 //Сервис для работы арены
-
+var Team = require('models/team').Team;
+var Character = require('models/character').Character;
+var async = require('async');
 var map = [];
 
 module.exports = {
@@ -232,7 +234,194 @@ module.exports = {
             default: return color;
         }
     },
-    //расчёт игровой очереди
+    checkForWin: function(myTeam, enemyTeam, battleData, enemyLeave, cb){
+        var self = this;
+        var myDeaths = 0;
+        var enemyDeaths = 0;        
+        var gainedSouls = {red: 0, green:0, blue: 0};
+
+        for(var i = 0; i < myTeam.characters.length; i++){
+            if(myTeam.characters[i].isDead) {
+                myDeaths++;
+            }
+        }
+
+        for(i = 0; i < enemyTeam.characters.length; i++){
+            if(enemyTeam.characters[i].isDead || enemyLeave) {
+                enemyDeaths++;
+                //Add souls for every killed
+                switch(enemyTeam.characters[i].role){
+                    case "sentinel" : gainedSouls.red += 4; break;
+                    case "slayer" : gainedSouls.red += 4; break;
+                    case "redeemer" : gainedSouls.green += 4; break;
+                    case "ripper" : gainedSouls.green += 4; break;
+                    case "prophet" : gainedSouls.blue += 4; break;
+                    case "malefic" : gainedSouls.blue += 4; break;
+                    case "cleric" : switch(Math.floor(Math.random() * 3)) {
+                        case 0 : gainedSouls.red += 4; break;
+                        case 1 : gainedSouls.green += 4; break;
+                        case 2 : gainedSouls.blue += 4; break;
+                    }
+                        break;
+                    case "heretic" : switch(Math.floor(Math.random() * 3)) {
+                        case 0 : gainedSouls.red += 4;break;
+                        case 1 : gainedSouls.green += 4;break;
+                        case 2 : gainedSouls.blue += 4;break;
+                    }
+                        break;
+                }
+            }
+        }
+
+        if(myDeaths == 3){
+            self.makeLose(myTeam, enemyTeam, gainedSouls, battleData, cb);
+        } 
+        else if(enemyDeaths == 3){
+            self.makeWin(myTeam, enemyTeam, gainedSouls, battleData, cb);
+        }
+        //game is over after some turns
+        else if(battleData.turnsSpended >= 100){
+            if(myDeaths > enemyDeaths){
+                self.makeLose(myTeam, enemyTeam, gainedSouls, battleData, cb);
+            }
+            else if(myDeaths < enemyDeaths){
+                self.makeWin(myTeam, enemyTeam, gainedSouls, battleData, cb);
+            }
+            else {
+                self.makeDraw(myTeam, enemyTeam, gainedSouls, battleData, cb);
+            }
+        }
+        else {
+            cb(false);
+        }
+    },
+    makeWin: function(myTeam, enemyTeam, gainedSouls, battleData, cb){
+        var ratingChange = 0;
+        if(battleData.bots){
+            cb(true, 'win', 0, 0, gainedSouls);
+            return;
+        }
+
+        if(myTeam.rating > enemyTeam.rating){
+            ratingChange = myTeam.rating - enemyTeam.rating;
+            if(ratingChange > 25) ratingChange = 25;
+        }
+        else if (myTeam.rating < enemyTeam.rating){
+            ratingChange = (enemyTeam.rating - myTeam.rating) * 2;
+            if(ratingChange > 25) ratingChange = 25;
+        }
+        else {
+            ratingChange = 10;
+        }
+
+        myTeam.rating += ratingChange;
+
+        gainedSouls.red += 4;
+        gainedSouls.green += 4;
+        gainedSouls.blue += 4;
+
+        myTeam.souls.red += gainedSouls.red;
+        myTeam.souls.green += gainedSouls.green;
+        myTeam.souls.blue += gainedSouls.blue;
+
+        Team.setById(myTeam._id, {
+            rating: myTeam.rating,
+            wins: myTeam.wins + 1,
+            souls: myTeam.souls
+        }, function(err, team){
+            if (err) {
+                console.error(err);
+                return;
+            }
+            cb(true, 'win', myTeam.rating, ratingChange, gainedSouls);
+        });
+    },
+    makeLose: function(myTeam, enemyTeam, gainedSouls, battleData, cb) {
+        var ratingChange = 0;
+        if(battleData.bots){
+            cb(true, 'lose', 0, 0, gainedSouls);
+            return;
+        }
+        if(myTeam.rating > enemyTeam.rating){
+            ratingChange = (myTeam.rating - enemyTeam.rating) * 2;
+            if(ratingChange > 25) ratingChange = 25;
+        }
+        else if (myTeam.rating < enemyTeam.rating){
+            ratingChange = enemyTeam.rating - myTeam.rating;
+            if(ratingChange > 25) ratingChang = 25;
+        }
+        else {
+            ratingChange = 10;
+        }
+
+        if(myTeam.rating - ratingChange < 1000) {
+            ratingChange = myTeam.rating - 1000;
+            myTeam.rating = 1000;
+        }
+        else {
+            myTeam.rating -= ratingChange;
+        }
+
+        //Consolation prize
+        gainedSouls.red += 2;
+        gainedSouls.green += 2;
+        gainedSouls.blue += 2;
+
+        myTeam.souls.red += gainedSouls.red;
+        myTeam.souls.green += gainedSouls.green;
+        myTeam.souls.blue += gainedSouls.blue;
+
+        Team.setById(myTeam._id, {
+            rating: myTeam.rating,
+            wins: myTeam.loses + 1,
+            souls: myTeam.souls
+        }, function(err, team){
+            if (err) {
+                console.error(err);
+                return;
+            }
+            //Set lose flag for characters
+            async.each(myTeam.characters, function(char, callback) {
+                Character.setById(char._id, {lose: true}, function(err, char){
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+                    callback(null);
+                });
+            }, function(err){
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                cb(true, 'lose', myTeam.rating, ratingChange, gainedSouls);
+            });
+        });
+    },
+    makeDraw: function(myTeam, enemyTeam, gainedSouls, battleData, cb) {
+        if(battleData.bots){
+            cb(true, 'draw', 0, 0, gainedSouls);
+            return;
+        }
+        gainedSouls.red += 1;
+        gainedSouls.green += 1;
+        gainedSouls.blue += 1;
+
+        myTeam.souls.red += gainedSouls.red;
+        myTeam.souls.green += gainedSouls.green;
+        myTeam.souls.blue += gainedSouls.blue;
+
+        Team.setById(myTeam._id, {
+            souls: myTeam.souls
+        }, function(err, team){
+            if (err) {
+                console.error(err);
+                return;
+            }
+            cb(true, 'draw', myTeam.rating, 0, gainedSouls);
+        });
+    },
+    //calculation of queue
     calcQueue: function(myTeam, enemyTeam) {
         var queue = [];
 
@@ -297,7 +486,7 @@ module.exports = {
         }
         return char;
     },
-    //делает копию команды
+    //Make copy of team
     cloneTeam: function(team){
         var self = this;
         var newTeam = Object.create(Object.getPrototypeOf(team));
@@ -410,8 +599,8 @@ module.exports = {
     map1Dto2D: function(map1D) {
         return { x: map1D%10, y: (map1D/10 | 0)}
     },
-    //поиск союзников в заданном диапазоне
-    //charArray - масив союзников
+    //find allies in selected range
+    //charArray - array of characters
     findAllies: function(char, charArray, range, walls){
         var self = this;
 
@@ -432,8 +621,17 @@ module.exports = {
         }
         return result;
     },
-    //поиск противников в заданном диапазоне
-    //charArray - масив противников
+    findAlliesForAbility: function(myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, cb) {            
+        var self = this; 
+        if(preparedAbility){
+            var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
+            var result = self.findAllies(activeChar, myTeam.characters, ability.range(), wallPositions);
+            cb(result);
+            return result;
+        }
+    },
+    //find enemies in selected range
+    //charArray - array of characters
     findEnemies: function(char, charArray, range, walls){
         var self = this;
 
@@ -453,6 +651,24 @@ module.exports = {
             }
         }
         return result;
+    },
+    findEnemiesForAbility: function(myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, cb) {
+        var self = this;            
+        if(preparedAbility){
+            var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
+            var result = self.findEnemies(activeChar, enemyTeam.characters, ability.range(), wallPositions);
+            cb(result);
+            return result;
+        }
+    },
+    findCharactersForAbility: function(myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, cb) {
+        var self = this; 
+        if(preparedAbility){
+            var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
+            var result = self.findAllies(activeChar, myTeam.characters, ability.range(), wallPositions).concat(self.findEnemies(activeChar, enemyTeam.characters, ability.range(), wallPositions));
+            cb(result);
+            return result;
+        }
     },
     //Функция трассировки для нахождения препятствий между двумя точками (алгоритм Брезенхема)
     rayTrace: function(startCoordinates, endCoordinates, walls) {
@@ -577,5 +793,145 @@ module.exports = {
     },
     calculateExpectedHeal: function(heal, caster){
         return (1 - caster.critChance) * heal + caster.critChance * (1.5 + caster.critChance) * heal;
+    },
+    cleanBuffers: function(myTeam, enemyTeam){
+        for(var i = 0; i < myTeam.characters.length; i++){
+            if (myTeam.characters[i].logBuffer.length > 0) {
+                myTeam.characters[i].logBuffer = [];
+            }
+            if (myTeam.characters[i].soundBuffer.length > 0) {
+                myTeam.characters[i].soundBuffer = [];
+            }
+            if (myTeam.characters[i].battleTextBuffer.length > 0) {
+                myTeam.characters[i].battleTextBuffer = [];
+            }
+        }
+
+        for(i = 0;i < enemyTeam.characters.length; i++){
+            if (enemyTeam.characters[i].logBuffer.length > 0) {
+                enemyTeam.characters[i].logBuffer = [];
+            }
+            if (enemyTeam.characters[i].soundBuffer.length > 0) {
+                enemyTeam.characters[i].soundBuffer = [];
+            }
+            if (enemyTeam.characters[i].battleTextBuffer.length > 0) {
+                enemyTeam.characters[i].battleTextBuffer = [];
+            }
+        }
+    },
+    findMovePoints: function(myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, cb){
+        var self = this;        
+        var result = [];        
+        if(!activeChar.immobilized) {
+            var range = 0;
+            if(preparedAbility){
+                var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
+                if(ability){
+                    range = ability.range();
+                }
+            }
+            else if(activeChar.canMove()){
+                range = 1;
+            }
+
+            if(range > 0)
+            {
+                result = self.findMoves(activeChar, myTeam.characters, enemyTeam.characters, wallPositions, range);
+                cb(result);
+                return result;
+            }
+        }
+        cb(result);
+        return result;
+    },
+    moveCharTo: function(tile, myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, invisibleCb, moveCompleteCb){
+        var self = this;
+        if(!activeChar.immobilized) {
+            if(self.checkTile({x: tile.x, y: tile.y}, activeChar, myTeam.characters, enemyTeam.characters, wallPositions, false)) {
+                invisibleCb();
+            }
+            else if(preparedAbility){
+                var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
+                if(ability && self.checkAbilityForUse(ability, activeChar)){
+                    ability.cast(activeChar, null, myTeam.characters, enemyTeam.characters, wallPositions);
+                    activeChar.createAbilitiesState();
+                    activeChar.position = {x: tile.x, y: tile.y};
+                    moveCompleteCb();
+                }
+            }
+            else if(Math.abs(activeChar.position.x - tile.x) < 2 && Math.abs(activeChar.position.y - tile.y) < 2 && activeChar.canMove()){
+                activeChar.soundBuffer.push('move');
+                activeChar.position = {x: tile.x, y: tile.y};
+                activeChar.spendEnergy(activeChar.moveCost);
+                moveCompleteCb();
+            }
+        }
+        self.cleanBuffers(myTeam, enemyTeam);
+    },
+    moveCharSimulation: function(tile, myTeamOrig, enemyTeamOrig, activeCharId, preparedAbility, wallPositions){
+        var self = this;
+        var myTeam = self.cloneTeam(myTeamOrig);
+        var enemyTeam = self.cloneTeam(enemyTeamOrig);
+        var activeChar = self.findCharInMyTeam(activeCharId, myTeam.characters);
+        if(!activeChar.immobilized) {
+            if(self.checkTile({x: tile.x, y: tile.y}, activeChar, myTeam.characters, enemyTeam.characters, wallPositions, false)) {
+                //invisible char on tile
+            }
+            else if(preparedAbility){
+                var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
+                if(ability && self.checkAbilityForUse(ability, activeChar) && ability.castSimulation){ 
+                    ability.castSimulation(activeChar, null, myTeam.characters, enemyTeam.characters, wallPositions);
+                    activeChar.position = {x: tile.x, y: tile.y};
+                    self.calcCharacters(myTeam.characters, enemyTeam.characters);
+                }
+            }
+            else if(Math.abs(activeChar.position.x - tile.x) < 2 && Math.abs(activeChar.position.y - tile.y) < 2 && activeChar.canMove()){
+                activeChar.position = {x: tile.x, y: tile.y};
+                activeChar.spendEnergy(activeChar.moveCost, true);
+            }
+        }
+        self.cleanBuffers(myTeam, enemyTeam);
+        return {myTeam: myTeam, enemyTeam: enemyTeam, activeChar: activeChar};
+    },
+    castAbility: function(targetChar, myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, castCb){
+        var self = this;        
+        if(preparedAbility){
+            var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
+            if(ability && self.checkAbilityForUse(ability, activeChar)){
+                ability.cast(activeChar, targetChar, myTeam.characters, enemyTeam.characters, wallPositions);
+                activeChar.createAbilitiesState();
+                self.createEffectsStates(myTeam.characters, enemyTeam.characters);
+                self.calcCharacters(myTeam.characters, enemyTeam.characters);
+                castCb();
+            }
+        }
+        self.cleanBuffers(myTeam, enemyTeam);
+    },
+    castAbilitySimulation: function(myTeamOrig, enemyTeamOrig, activeCharId, targetCharId, preparedAbility, wallPositions){  
+        var self = this;        
+        var myTeam = self.cloneTeam(myTeamOrig);
+        var enemyTeam = self.cloneTeam(enemyTeamOrig);
+        var activeChar = self.findCharInMyTeam(activeCharId, myTeam.characters);
+        var targetChar = self.findCharInQueue(targetCharId, myTeam.characters, enemyTeam.characters);
+        if(preparedAbility){
+            var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
+            if(ability && self.checkAbilityForUse(ability, activeChar) && ability.castSimulation){                    
+                ability.castSimulation(activeChar, targetChar, myTeam.characters, enemyTeam.characters, wallPositions);
+                self.calcCharacters(myTeam.characters, enemyTeam.characters);
+            }
+        }
+        return {myTeam: myTeam, enemyTeam: enemyTeam, activeChar: activeChar};
+    },
+    turnEnded: function(myTeam, enemyTeam, activeChar, wallPositions, cb) {
+        var self = this;
+        activeChar.initiativePoints = activeChar.initiativePoints * 0.2;
+        for(var i = 0; i < myTeam.characters.length; i++){
+            myTeam.characters[i].refreshChar(myTeam.characters, enemyTeam.characters, wallPositions);
+        }
+        for(i = 0; i < enemyTeam.characters.length; i++){
+            enemyTeam.characters[i].refreshChar(enemyTeam.characters, myTeam.characters, wallPositions);
+        }
+        cb();  
+        self.cleanBuffers(myTeam, enemyTeam);        
     }
 };

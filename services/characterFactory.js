@@ -785,14 +785,7 @@ Character.prototype.addEffectFromEffects = function(name, variant) {
 };
 
 Character.prototype.canMove = function(){
-    var self = this;
-    if(self.immobilized){
-        return false;
-    }
-    else if((self.curEnergy - self.moveCost) < 0){
-        return false;
-    }
-    return true;
+    return (this.curEnergy - this.moveCost) >= 0;
 };
 
 Character.prototype.takeDamage = function(value, caster, ability, canBlock, canDodge, isCritical, myTeam, enemyTeam){

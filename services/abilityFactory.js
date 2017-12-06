@@ -1627,7 +1627,7 @@ var Ability = function(name){
             cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
-                this.cd=this.cooldown();
+                this.cd = this.cooldown();
                 caster.logBuffer.push(caster.charName+" cast '"+this.name+"'");
                 caster.soundBuffer.push(this.name);
                 caster.afterCast(this.name, myTeam, enemyTeam);
@@ -1639,11 +1639,11 @@ var Ability = function(name){
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "move"},
-            range : function(){return 1+this.variant},
+            range : function(){return 1 + this.variant},
             duration: function(){return 0},
-            energyCost : function(){return 100+this.variant*50},
-            manaCost : function(){return 200+this.variant*100},
-            cooldown : function(){return 12+this.variant},
+            energyCost : function(){return 100 + this.variant * 50},
+            manaCost : function(){return 200 + this.variant * 100},
+            cooldown : function(){return 12 + this.variant},
             needWeapon : function() {return false},
             cd : 0,
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
@@ -1827,7 +1827,7 @@ var Ability = function(name){
                 magicDamage = arenaService.calculateExpectedDamage(magicDamage, caster);
                 magicDamage = target.applyResistance(magicDamage, true);
 
-                target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam);
+                target.takeDamageSimulation(magicDamage, caster, true, true, myTeam, enemyTeam);
                 caster.afterCast(this.name, myTeam, enemyTeam);
             },
             targetType : function() { return "enemy"},

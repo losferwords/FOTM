@@ -979,7 +979,7 @@ var Effect = function(name, abilityVariant) {
                     var magicDamage = (this.variant * 100) * (1 + debuffer.spellPower);
                     magicDamage = arenaService.calculateExpectedDamage(magicDamage, debuffer);
                     magicDamage = owner.applyResistance(magicDamage, true); 
-                    
+                    var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
                     return {
                         effectScore: magicDamage / 20,
                         leftScore: this.left * 3,

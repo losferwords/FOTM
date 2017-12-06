@@ -13,7 +13,10 @@
                 "NODE_PATH": ".",
                 "NODE_ENV": "development",
                 "MONGOLAB_URI": "mongodb://losfer:glorfindel@ds059524.mongolab.com:59524/fotm"
-            } 
+            },
+            "runtimeArgs": [
+                "--max-old-space-size=4096"
+            ]
         }
     ]
 }
