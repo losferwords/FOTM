@@ -546,13 +546,13 @@ module.exports = {
             enemyTeamChars[i].createEffectsState();
         }
     },
-    //Пересчитываем персонажей
+    //Recalculate characters
     calcCharacters: function(myTeamChars, enemyTeamChars) {
         for(var i=0; i<myTeamChars.length; i++){
-            myTeamChars[i].calcChar();
+            myTeamChars[i].calcChar(true);
         }
         for(i=0; i<enemyTeamChars.length; i++){
-            enemyTeamChars[i].calcChar();
+            enemyTeamChars[i].calcChar(true);
         }
     },
     //Проверка, мой ли сейчас ход

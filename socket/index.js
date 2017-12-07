@@ -1,4 +1,3 @@
-var log = require('lib/log')(module);
 var async = require('async');
 var config = require('config');
 var cookieParser = require('cookie-parser');
@@ -78,7 +77,7 @@ module.exports = function (server) {
         //количества человек на сервере
         var serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[socket.serSt.serverRoom].sockets).length;
         io.sockets.in(socket.serSt.serverRoom).emit('join', serverOnlineUsers, socket.serSt.username);
-        log.info("User "+socket.serSt.username+" join game");
+        console.log("User "+socket.serSt.username+" join game");
 
         //Обновляем у пользователя время последнего визита
         User.setById(socket.handshake.user._id, {lastVisit: new Date()}, function(err, user) {
@@ -91,7 +90,7 @@ module.exports = function (server) {
             if(io.nsps["/"].adapter.rooms[socket.serSt.serverRoom]) { //Проверка на то, что я последний человек на сервере
                 serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[socket.serSt.serverRoom].sockets).length;
                 socket.broadcast.to(socket.serSt.serverRoom).emit('leave', serverOnlineUsers); //Покидаем сервер
-                log.info("User "+socket.serSt.username+" leave game");
+                console.log("User "+socket.serSt.username+" leave game");
                 //И выкидываем из боя оппонента, если сами вышли
                 if (socket.serSt.battleRoom) {
                     //Вылетевшей команде засчитываем поражение
@@ -148,16 +147,16 @@ module.exports = function (server) {
 //ОЧИСТКА ПОСЛЕ ВАЙПА
 //User.find({}, function(err, users){
 //    if (err) socket.emit("customError", err);
-//    log.info("Total users: "+users.length);
+//    console.log("Total users: "+users.length);
 //    users.forEach(function(user, i) {
 //        if(user.team)
 //        {
 //            user.team = undefined;
 //            user.save(function(err, user){
-//                log.info("team clean ready for "+i+": "+user.username);
+//                console.log("team clean ready for "+i+": "+user.username);
 //                if (err) socket.emit("customError", err);
 //            });
 //        }
 //    });
-//    log.info("READY");
+//    console.log("READY");
 //});

@@ -4,7 +4,7 @@ var arenaService = require('services/arenaService');
 var randomService = require('services/randomService');
 var effectFactory = require('services/effectFactory');
 
-//�������, ������� �� ���� �������� "�������" character
+//Character factory
 var Character = function(char) {
 
     for (var key in char) {
@@ -25,41 +25,40 @@ var Character = function(char) {
     this.initChar();
 };
 
-//������ ������������� ��������� � ���������� ���� ����������� �������
 Character.prototype.initChar = function(){
     var self = this;
-    self.logBuffer = []; //������ ��������� ��� ������-����
-    self.soundBuffer = []; //������ ��������� ��� ������
-    self.battleTextBuffer = []; //������ ������������ ������
-    self.buffs = []; //������ ������������� ��������
-    self.debuffs = []; //������ ������������� ��������
+    self.logBuffer = []; //buffer of messages to show on UI
+    self.soundBuffer = []; //buffer of sounds to play
+    self.battleTextBuffer = []; //buffer of messages on the map
+    self.buffs = []; //positive effects
+    self.debuffs = []; //negative effects
 
     self.resetState();
 
-    self.calcChar();
+    self.calcChar(false);
     self.curHealth=self.maxHealth;
     self.curEnergy=self.maxEnergy;
     self.curMana=self.maxMana;
     self.initiativePoints = (10+self.initiative/400)*10;
 };
 
-//���������� ��������� � ���
+//refresh character state in battle
 Character.prototype.refreshChar = function(myTeam, enemyTeam, walls){
     var self = this;
 
-    if(self.isDead) return; //���� ������, �� ��� ������ ������ �� ����
-    self.resetState(); //���������� ��������� �� ��������
-    self.applyEffects(myTeam, enemyTeam, walls); //��������� ��� �������
-    if(self.isDead) return; //���� ������ �� ���, ������ ������ �� ������
-    self.calcChar(); //������������� ��� ���������
+    if(self.isDead) return;
+    self.resetState(); //drop state to recalulate
+    self.applyEffects(myTeam, enemyTeam, walls); //apply all effects
+    if(self.isDead) return; //check again because after DOT character can die
+    self.calcChar(true); //recalculate char params
 
     self.initiativePoints += 10+self.initiative/400;
 
-    //��������������� �������
+    //restore full energy
     self.curEnergy = self.maxEnergy;
 
-    //��������������� ��������
-    var hpRegAmount = Math.floor(self.maxHealth*self.healthReg);
+    //Regenerate health
+    var hpRegAmount = Math.floor(self.maxHealth * self.healthReg);
     if(self.curHealth + hpRegAmount<self.maxHealth){
         self.curHealth += hpRegAmount;
     }
@@ -67,7 +66,7 @@ Character.prototype.refreshChar = function(myTeam, enemyTeam, walls){
         self.curHealth = self.maxHealth;
     }
 
-    //��������������� ����
+    //Regenerate mana
     var manaRegAmount = Math.floor(self.maxMana*self.manaReg);
     if(self.curMana + manaRegAmount<self.maxMana){
         self.curMana += manaRegAmount;
@@ -76,10 +75,10 @@ Character.prototype.refreshChar = function(myTeam, enemyTeam, walls){
         self.curMana = self.maxMana;
     }
 
-    //��������� �� ��� ������������
+    //Decrease CD for abilities
     for(var i=0;i<self.abilities.length;i++){
         if(self.abilities[i].cd>0){
-            //������ ��
+            //check initiative proc
             if(self.checkCooldownDrop()){
                 self.abilities[i].cd=0;
                 self.logBuffer.push(self.charName+" drop cooldown for '"+self.abilities[i].name+"'");
@@ -201,133 +200,138 @@ Character.prototype.resetState = function() {
     self.initiativeMod = 1;
 };
 
-//�������� ���� ������������� ���������
-Character.prototype.calcChar = function() {
+//Recalculate char parameters
+Character.prototype.calcChar = function(isSameEquip) {
     var self = this;
 
-    //������������ ������
-    for (var key in self.equip) {
-        if (self.equip.hasOwnProperty(key)) {
-            if(self.equip[key].name!=="Void"){
-                self.calcItem(self.equip[key]);
+    if(!isSameEquip) {
+        //Recalculate items
+        for (var key in self.equip) {
+            if (self.equip.hasOwnProperty(key)) {
+                if(self.equip[key].name !== "Void"){
+                    self.calcItem(self.equip[key]);
+                }
             }
         }
-    }
+
+        self.strFromEq = paramFromEquip('str');
+        self.attackPowerFromEq = paramFromEquip('attackPower');
+        self.maxHealthFromEq = paramFromEquip('maxHealth');
+        self.healthRegFromEq = paramFromEquip('healthReg');
+        self.physResFromEq = paramFromEquip('physRes');
+        self.blockChanceFromEq = paramFromEquip('blockChance');
+
+        self.dxtFromEq = paramFromEquip('dxt');
+        self.critChanceFromEq = paramFromEquip('critChance');
+        self.maxEnergyFromEq = paramFromEquip('maxEnergy');
+        self.hitChanceFromEq = paramFromEquip('hitChance');
+        self.dodgeChanceFromEq = paramFromEquip('dodgeChance');
+        self.luckFromEq = paramFromEquip('luck');
+
+        self.intFromEq = paramFromEquip('int');
+        self.spellPowerFromEq = paramFromEquip('spellPower');
+        self.maxManaFromEq = paramFromEquip('maxMana');
+        self.manaRegFromEq = paramFromEquip('manaReg');
+        self.magicResFromEq = paramFromEquip('magicRes');
+        self.initiativeFromEq = paramFromEquip('initiative');
+    }    
 
     self.basicHealth = 10000;
     self.basicHitChance = 0.8;
     self.basicEnergy = 1000;
     self.basicMana = 9000;
 
-    //�������� �� ������������� ������������
-    if(self.attackPowerMod<0) self.attackPowerMod = 0;
-    if(self.healthRegMod<0) self.healthRegMod = 0;
-    if(self.physResMod<0) self.physResMod = 0;
-    if(self.blockChanceMod<0) self.blockChanceMod = 0;
+    //Drop modifiers to 0 in case of negative values
+    if(self.attackPowerMod < 0) self.attackPowerMod = 0;
+    if(self.healthRegMod < 0) self.healthRegMod = 0;
+    if(self.physResMod < 0) self.physResMod = 0;
+    if(self.blockChanceMod < 0) self.blockChanceMod = 0;
 
-    if(self.critChanceMod<0) self.critChanceMod = 0;
-    if(self.hitChanceMod<0) self.hitChanceMod = 0;
-    if(self.dodgeChanceMod<0) self.dodgeChanceMod = 0;
-    if(self.luckMod<0) self.luckMod = 0;
+    if(self.critChanceMod < 0) self.critChanceMod = 0;
+    if(self.hitChanceMod < 0) self.hitChanceMod = 0;
+    if(self.dodgeChanceMod < 0) self.dodgeChanceMod = 0;
+    if(self.luckMod < 0) self.luckMod = 0;
 
-    if(self.spellPowerMod<0) self.spellPowerMod = 0;
-    if(self.manaRegMod<0) self.manaRegMod = 0;
-    if(self.magicResMod<0) self.magicResMod = 0;
-    if(self.initiativeMod<0) self.initiativeMod = 0;
+    if(self.spellPowerMod < 0) self.spellPowerMod = 0;
+    if(self.manaRegMod < 0) self.manaRegMod = 0;
+    if(self.magicResMod < 0) self.magicResMod = 0;
+    if(self.initiativeMod < 0) self.initiativeMod = 0;
 
-    //����
-    self.strFromEq = paramFromEquip('str');
-    self.str = Math.floor((self.params.strMax+self.strFromEq)*self.params.strProc);
+    //Strength
+    self.str = Math.floor((self.params.strMax + self.strFromEq) * self.params.strProc);
 
-    self.attackPowerFromStr = self.str*0.002;
-    self.attackPowerFromEq = paramFromEquip('attackPower');
-    self.attackPower = (self.attackPowerFromStr+self.attackPowerFromEq)*self.attackPowerMod;
+    self.attackPowerFromStr = self.str * 0.002;
+    self.attackPower = (self.attackPowerFromStr + self.attackPowerFromEq) * self.attackPowerMod;
 
-    self.maxHealthFromStr = self.str*30+self.basicHealth;
-    self.maxHealthFromEq = paramFromEquip('maxHealth');
-    self.maxHealth = Math.floor(self.maxHealthFromStr+self.maxHealthFromEq);
+    self.maxHealthFromStr = self.str * 30 + self.basicHealth;    
+    self.maxHealth = Math.floor(self.maxHealthFromStr + self.maxHealthFromEq);
 
-    self.healthRegFromStr = self.str*0.00012;
-    self.healthRegFromEq = paramFromEquip('healthReg');
-    self.healthReg = (self.healthRegFromStr+self.healthRegFromEq)*self.healthRegMod;
-    if(self.healthReg>0.03) self.healthReg=0.03;
+    self.healthRegFromStr = self.str * 0.00012;    
+    self.healthReg = (self.healthRegFromStr + self.healthRegFromEq) * self.healthRegMod;
+    if(self.healthReg > 0.03) self.healthReg = 0.03;
 
-    self.physResFromStr = self.str*0.0009;
-    self.physResFromEq = paramFromEquip('physRes');
-    self.physRes = (self.physResFromStr+self.physResFromEq)*self.physResMod;
-    if(self.physRes>0.6) self.physRes=0.6;
+    self.physResFromStr = self.str * 0.0009;    
+    self.physRes = (self.physResFromStr + self.physResFromEq) * self.physResMod;
+    if(self.physRes > 0.6) self.physRes = 0.6;
 
-    self.blockChanceFromStr = self.str*0.00075;
-    self.blockChanceFromEq = paramFromEquip('blockChance');
-    self.blockChance = (self.blockChanceFromStr+self.blockChanceFromEq)*self.blockChanceMod;
-    if(self.blockChance>0.5) self.blockChance=0.5;
+    self.blockChanceFromStr = self.str * 0.00075;    
+    self.blockChance = (self.blockChanceFromStr + self.blockChanceFromEq) * self.blockChanceMod;
+    if(self.blockChance > 0.5) self.blockChance = 0.5;
 
-    //��������
-    self.dxtFromEq = paramFromEquip('dxt');
-    self.dxt = Math.floor((self.params.dxtMax+self.dxtFromEq)*self.params.dxtProc);
+    //Dexterity    
+    self.dxt = Math.floor((self.params.dxtMax + self.dxtFromEq) * self.params.dxtProc);
 
-    self.critChanceFromDxt = self.dxt*0.0005;
-    self.critChanceFromEq = paramFromEquip('critChance');
-    self.critChance = (self.critChanceFromDxt+self.critChanceFromEq)*self.critChanceMod;
-    if(self.critChance>0.5) self.critChance=0.5;
+    self.critChanceFromDxt = self.dxt * 0.0005;    
+    self.critChance = (self.critChanceFromDxt + self.critChanceFromEq) * self.critChanceMod;
+    if(self.critChance > 0.5) self.critChance = 0.5;
 
-    self.maxEnergyFromDxt = self.dxt*3+self.basicEnergy;
-    self.maxEnergyFromEq = paramFromEquip('maxEnergy');
-    self.maxEnergy = Math.floor(self.maxEnergyFromDxt+self.maxEnergyFromEq);
+    self.maxEnergyFromDxt = self.dxt * 3 + self.basicEnergy;    
+    self.maxEnergy = Math.floor(self.maxEnergyFromDxt + self.maxEnergyFromEq);
 
-    self.hitChanceFromDxt = self.basicHitChance+self.dxt*0.00045;
-    self.hitChanceFromEq = paramFromEquip('hitChance');
-    self.hitChance = (self.hitChanceFromDxt+self.hitChanceFromEq)*self.hitChanceMod;
-    if(self.hitChance>1) self.hitChance=1;
+    self.hitChanceFromDxt = self.basicHitChance + self.dxt * 0.00045;    
+    self.hitChance = (self.hitChanceFromDxt + self.hitChanceFromEq) * self.hitChanceMod;
+    if(self.hitChance > 1) self.hitChance = 1;
 
-    self.dodgeChanceFromDxt = self.dxt*0.0009;
-    self.dodgeChanceFromEq = paramFromEquip('dodgeChance');
-    self.dodgeChance = (self.dodgeChanceFromDxt+self.dodgeChanceFromEq)*self.dodgeChanceMod;
-    if(self.dodgeChance>0.6) self.dodgeChance=0.6;
+    self.dodgeChanceFromDxt = self.dxt * 0.0009;
+    self.dodgeChance = (self.dodgeChanceFromDxt + self.dodgeChanceFromEq) * self.dodgeChanceMod;
+    if(self.dodgeChance > 0.6) self.dodgeChance = 0.6;
 
-    self.luckFromDxt = self.dxt*0.00075;
-    self.luckFromEq = paramFromEquip('luck');
-    self.luck = (self.luckFromDxt+self.luckFromEq)*self.luckMod;
-    if(self.luck>0.5) self.luck=0.5;
+    self.luckFromDxt = self.dxt * 0.00075;
+    self.luck = (self.luckFromDxt + self.luckFromEq) * self.luckMod;
+    if(self.luck > 0.5) self.luck = 0.5;
 
-    //���������
-    self.intFromEq = paramFromEquip('int');
-    self.int = Math.floor((self.params.intMax+self.intFromEq)*self.params.intProc);
+    //Intellect    
+    self.int = Math.floor((self.params.intMax + self.intFromEq) * self.params.intProc);
 
-    self.spellPowerFromInt = self.int*0.003;
-    self.spellPowerFromEq = paramFromEquip('spellPower');
-    self.spellPower = (self.spellPowerFromInt+self.spellPowerFromEq)*self.spellPowerMod;
+    self.spellPowerFromInt = self.int * 0.003;    
+    self.spellPower = (self.spellPowerFromInt + self.spellPowerFromEq) * self.spellPowerMod;
 
-    self.maxManaFromInt = self.int*24+self.basicMana;
-    self.maxManaFromEq = paramFromEquip('maxMana');
-    self.maxMana = Math.floor(self.maxManaFromInt+self.maxManaFromEq);
+    self.maxManaFromInt = self.int * 24 + self.basicMana;    
+    self.maxMana = Math.floor(self.maxManaFromInt + self.maxManaFromEq);
 
-    self.manaRegFromInt = self.int*0.00015;
-    self.manaRegFromEq = paramFromEquip('manaReg');
-    self.manaReg = (self.manaRegFromInt+self.manaRegFromEq)*self.manaRegMod;
-    if(self.manaReg>0.04) self.manaReg=0.04;
+    self.manaRegFromInt = self.int * 0.00015;    
+    self.manaReg = (self.manaRegFromInt + self.manaRegFromEq) * self.manaRegMod;
+    if(self.manaReg > 0.04) self.manaReg = 0.04;
 
-    self.magicResFromInt = self.int*0.0009;
-    self.magicResFromEq = paramFromEquip('magicRes');
-    self.magicRes = (self.magicResFromInt+self.magicResFromEq)*self.magicResMod;
-    if(self.magicRes>0.6) self.magicRes=0.6;
+    self.magicResFromInt = self.int * 0.0009;    
+    self.magicRes = (self.magicResFromInt + self.magicResFromEq) * self.magicResMod;
+    if(self.magicRes > 0.6) self.magicRes = 0.6;
 
-    self.initiativeFromInt = self.int;
-    self.initiativeFromEq = paramFromEquip('initiative');
-    self.initiative = Math.floor((self.initiativeFromInt+self.initiativeFromEq)*self.initiativeMod);
+    self.initiativeFromInt = self.int;    
+    self.initiative = Math.floor((self.initiativeFromInt + self.initiativeFromEq) * self.initiativeMod);
 
-    if(self.equip.offHandWeapon.name!="Void"){
-        self.minDamage=Math.floor((self.equip.mainHandWeapon.minDamage+self.equip.offHandWeapon.minDamage)*(1+self.attackPower));
-        self.maxDamage=Math.floor((self.equip.mainHandWeapon.maxDamage+self.equip.offHandWeapon.maxDamage)*(1+self.attackPower));
+    if(self.equip.offHandWeapon.name != "Void"){
+        self.minDamage = Math.floor((self.equip.mainHandWeapon.minDamage + self.equip.offHandWeapon.minDamage) * (1 + self.attackPower));
+        self.maxDamage = Math.floor((self.equip.mainHandWeapon.maxDamage + self.equip.offHandWeapon.maxDamage) * (1 + self.attackPower));
     }
     else {
-        self.minDamage=Math.floor(self.equip.mainHandWeapon.minDamage*(1+self.attackPower));
-        self.maxDamage=Math.floor(self.equip.mainHandWeapon.maxDamage*(1+self.attackPower));
+        self.minDamage = Math.floor(self.equip.mainHandWeapon.minDamage * (1 + self.attackPower));
+        self.maxDamage = Math.floor(self.equip.mainHandWeapon.maxDamage * (1 + self.attackPower));
     }
 
-    //������� ���������� ��� �������� ������ ���� ��������� � equip'�
+    //calculate params on equipment
     function paramFromEquip(key){
-        var value=0; //�������� ����� ���������
+        var value = 0;
         for (var slot in self.equip) {
             if(self.equip.hasOwnProperty(slot)){
                 if(self.equip[slot].hasOwnProperty(key)){
@@ -339,7 +343,7 @@ Character.prototype.calcChar = function() {
     }
 };
 
-//�������� ���������� �� ����� �� ������������ ������������
+//Calculate params by coordinates from params triangle
 Character.prototype.calcParamsByPoint = function(point) {
     var self = this;
 
@@ -368,12 +372,12 @@ Character.prototype.calcParamsByPoint = function(point) {
     if(intLen>=138)intLen = 140;
     if(intLen<=3) intLen = 0;
     self.params.intProc = 1-intLen/140;
-    self.calcChar();
+    self.calcChar(true);
 };
 
-//�������� ���� ������������� ������
+//Recalculate item with sockets
 Character.prototype.calcItem = function(item) {
-    if(item.name=="Void") return;
+    if(item.name == "Void") return;
 
     item.str=Math.floor(calcSockets(item.sockets, 'str'));
 
@@ -426,17 +430,16 @@ Character.prototype.calcItem = function(item) {
     if(item.hasOwnProperty('basicInitiative')) item.initiative = Math.floor(item.basicInitiative+calcSockets(item.sockets, 'initiative'));
     else item.initiative=Math.floor(calcSockets(item.sockets, 'initiative'));
 
-    //������� ������������ ��������� � �������
+    //calculate socket properties
     function calcSockets(sockets, key){
-        var value=0; //�������� ����� ���������
-        for(var i=0;i<sockets.length;i++){
-            var bonusValue=0; //�������� �������� �� ����������� �����
+        var value = 0;
+        for(var i = 0; i < sockets.length; i++){
+            var bonusValue = 0;
             if(sockets[i].gem.hasOwnProperty(key)){
-                //���� ���� ����� ������ � ������ ������
-                if(sockets[i].gem.color===sockets[i].type){
-                    bonusValue=Number(sockets[i].gem[key])*0.5;
+                if(sockets[i].gem.color === sockets[i].type){
+                    bonusValue = Number(sockets[i].gem[key]) * 0.5;
                 }
-                value += Number(sockets[i].gem[key])+bonusValue;
+                value += Number(sockets[i].gem[key]) + bonusValue;
             }
         }
         return value;
@@ -625,7 +628,7 @@ Character.prototype.removeRandomBuff = function(myTeam, enemyTeam) {
 
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        self.calcChar(true);
     }
 };
 
@@ -648,7 +651,7 @@ Character.prototype.removeRandomDebuff = function(myTeam, enemyTeam) {
 
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        self.calcChar(true);
     }
 };
 
@@ -659,7 +662,7 @@ Character.prototype.removeAllDebuffs = function(myTeam, enemyTeam) {
         self.debuffs = [];
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        self.calcChar(true);
     }
 };
 
@@ -689,7 +692,7 @@ Character.prototype.removeRandomDOT = function(myTeam, enemyTeam) {
 
             self.resetState();
             self.updateMods(myTeam, enemyTeam);
-            self.calcChar();
+            self.calcChar(true);
         }
     }
 };
@@ -732,7 +735,7 @@ Character.prototype.stealRandomBuff = function(target, myTeam, enemyTeam, walls)
 
         target.resetState();
         target.updateMods(myTeam, enemyTeam);
-        target.calcChar();
+        target.calcChar(true);
     }
     return stealedBuffName;
 };
@@ -775,7 +778,7 @@ Character.prototype.stealRandomBuffSimulation = function(target, myTeam, enemyTe
 
         target.resetState();
         target.updateMods(myTeam, enemyTeam);
-        target.calcChar();
+        target.calcChar(true);
     }
     return stealedBuffName;
 };
@@ -1099,7 +1102,7 @@ Character.prototype.afterDealingDamage = function (myTeam, enemyTeam) {
     if(buffsForRemove.length>0 || debuffsForRemove.length>0){
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        self.calcChar(true);
     }
 };
 
@@ -1130,7 +1133,7 @@ Character.prototype.afterDamageTaken = function (myTeam, enemyTeam) {
     if(buffsForRemove.length>0 || debuffsForRemove.length>0){
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        self.calcChar(true);
     }
 };
 
@@ -1165,7 +1168,7 @@ Character.prototype.afterMiss = function (target, ability, myTeam, enemyTeam, do
     if(buffsForRemove.length>0 || debuffsForRemove.length>0){
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        self.calcChar(true);
     }
 };
 
@@ -1191,7 +1194,7 @@ Character.prototype.afterCast = function (castedSpell, myTeam, enemyTeam) {
     if(buffsForRemove.length > 0 || debuffsForRemove.length > 0){
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        self.calcChar(true);
     }
 };
 
@@ -1217,7 +1220,7 @@ Character.prototype.removeImmobilization = function (myTeam, enemyTeam) {
     if(debuffsForRemove.length>0){
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        self.calcChar(true);
     }
 };
 

@@ -1,4 +1,3 @@
-var log = require('lib/log')(module);
 var async = require('async');
 var User = require('models/user').User;
 var Team = require('models/team').Team;
@@ -12,7 +11,7 @@ module.exports = function (serverIO) {
 
         socket.on('joinArenaLobby', function(){
             socket.join(socket.serSt.arenaLobby);
-            log.info("User "+socket.serSt.username+" join arena");
+            console.log("User "+socket.serSt.username+" join arena");
             io.sockets.in(socket.serSt.serverRoom).emit('someoneJoinArena');
             var queue = Object.keys(io.nsps["/"].adapter.rooms[socket.serSt.arenaLobby].sockets);
             io.sockets.in(socket.serSt.serverRoom).emit('arenaQueueChanged', queue.length);
@@ -69,7 +68,7 @@ module.exports = function (serverIO) {
 
                     battleData.queue = arenaService.calcQueue(io.sockets.connected[queue[0]].team.characters, io.sockets.connected[queue[1]].team.characters);
 
-                    log.info("User "+io.sockets.connected[queue[0]].handshake.user.username+" start battle with "+io.sockets.connected[queue[1]].handshake.user.username);
+                    console.log("User "+io.sockets.connected[queue[0]].handshake.user.username+" start battle with "+io.sockets.connected[queue[1]].handshake.user.username);
                     io.sockets.in(socket.serSt.serverRoom).emit('startBattle', battleData);
                     io.sockets.connected[queue[0]].leave(socket.serSt.arenaLobby);
                     io.sockets.connected[queue[1]].leave(socket.serSt.arenaLobby);
@@ -90,13 +89,13 @@ module.exports = function (serverIO) {
         });
 
         socket.on('leaveArenaLobby', function(){
-            log.info("User "+socket.serSt.username+" leave arena");
+            console.log("User "+socket.serSt.username+" leave arena");
             io.sockets.in(socket.serSt.serverRoom).emit('arenaQueueChanged', 0);
             socket.leave(socket.serSt.arenaLobby);
         });
 
         socket.on('sendChatMessage', function (channel, msg) {
-            log.info("User "+msg.sender+" wrote: "+msg.text);
+            console.log("User "+msg.sender+" wrote: "+msg.text);
             switch(channel) {
                 case 'common' : io.sockets.in(socket.serSt.serverRoom).emit('newMessage', msg, channel); break;
                 case 'arena' : if(socket.serSt.battleRoom) io.sockets.in(socket.serSt.battleRoom).emit('newMessage', msg, channel); break;

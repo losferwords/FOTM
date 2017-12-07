@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "node",
+            "type": "node2",
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceRoot}\\app.js",
@@ -15,7 +15,7 @@
                 "MONGOLAB_URI": "mongodb://losfer:glorfindel@ds059524.mongolab.com:59524/fotm"
             },
             "runtimeArgs": [
-                "--max-old-space-size=4096"
+                "--max-old-space-size=512"
             ]
         }
     ]

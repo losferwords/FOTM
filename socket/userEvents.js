@@ -1,4 +1,3 @@
-var log = require('lib/log')(module);
 var async = require('async');
 var User = require('models/user').User;
 var Team = require('models/team').Team;
@@ -33,7 +32,7 @@ module.exports = function (serverIO) {
                 async.each(users, function(user, callback) {
                     var currentUser = user;
                     currentUser._doc.isOnline = false;
-                    //Проверяем онлайн игрока
+                    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                     for (var socketId in io.nsps["/"].adapter.rooms[socket.serSt.serverRoom].sockets) {
                         if(io.nsps["/"].adapter.rooms[socket.serSt.serverRoom].sockets.hasOwnProperty(socketId)){
                             var socketItem = serverSockets[socketId];

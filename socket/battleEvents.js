@@ -1,4 +1,3 @@
-var log = require('lib/log')(module);
 var async = require('async');
 var User = require('models/user').User;
 var Team = require('models/team').Team;
@@ -79,7 +78,7 @@ module.exports = function (serverIO) {
 
             battleData.queue = arenaService.calcQueue(team1.characters, team2.characters);
 
-            log.info("Battle of bots begins");
+            console.log("Battle of bots begins");
             socket.emit('startBattle', battleData);
             socket.join(socket.serSt.battleRoom);
 

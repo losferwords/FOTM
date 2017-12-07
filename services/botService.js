@@ -6,6 +6,7 @@ var chance = new Chance();
 var arenaService = require('services/arenaService');
 var async = require('async');
 var fs = require('fs');
+var sizeof = require('object-sizeof');
 
 module.exports = {
     generateBotTeam: function(){
@@ -55,6 +56,7 @@ module.exports = {
                 actionList[z].branch = self.buildActionBranchSync(actionList[z].myTeamState, actionList[z].enemyTeamState, actionList[z].activeCharId, wallPositions);
                 if(actionList[z].branch && actionList[z].branch[0]) {
                     actionList[z].score = actionList[z].selfScore + actionList[z].branch[0].score;
+                    delete actionList[z].branch;
                 }
                 else {
                     actionList[z].score = actionList[z].selfScore;
@@ -81,12 +83,13 @@ module.exports = {
         var self = this;
         var actionList = self.createActionList(myTeam, enemyTeam, activeCharId, wallPositions);
 
-        async.each(actionList, function(actionInList, cb){
+        async.eachOf(actionList, function(actionInList, index, cb){
             process.nextTick(function() {
                 if(actionInList.type != "endTurn" ) {
                     actionInList.branch = self.buildActionBranchSync(actionInList.myTeamState, actionInList.enemyTeamState, actionInList.activeCharId, wallPositions);
                     if(actionInList.branch && actionInList.branch[0]) {
                         actionInList.score = actionInList.selfScore + actionInList.branch[0].score;
+                        delete actionInList.branch;
                     }
                     else {
                         actionInList.score = actionInList.selfScore;
@@ -110,8 +113,7 @@ module.exports = {
                 else if (a.score > b.score) {
                     return -1;
                 }
-            });
-    
+            });     
             cb(actionList); 
         })                            
     },    

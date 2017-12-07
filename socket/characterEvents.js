@@ -1,4 +1,3 @@
-var log = require('lib/log')(module);
 var async = require('async');
 var User = require('models/user').User;
 var Team = require('models/team').Team;
@@ -25,7 +24,7 @@ module.exports = function (serverIO) {
                             return;
                         }
                         if(char) cb();
-                        else log.error("Can't create character");
+                        else console.error("Can't create character");
                     });
                 }
                 else {
@@ -154,9 +153,9 @@ module.exports = function (serverIO) {
                         });
                     }
                     else {
-                        log.error("Can't populate null dummy character.");
-                        if(userId) { log.error("userId: "+userId)}
-                        if(team) { log.error("newChar: newChar_"+team._id)}
+                        console.error("Can't populate null dummy character.");
+                        if(userId) { console.error("userId: "+userId)}
+                        if(team) { console.error("newChar: newChar_"+team._id)}
                     }
                 });
             });
@@ -184,8 +183,8 @@ module.exports = function (serverIO) {
 
         socket.on('calcCharByParams', function(charId, point, cb){
             if(socket.team){
-                for(var i=0;i<socket.team.characters.length;i++) {
-                    if(socket.team.characters[i]._id==charId) {
+                for(var i = 0; i < socket.team.characters.length;i++) {
+                    if(socket.team.characters[i]._id == charId) {
                         socket.team.characters[i].calcParamsByPoint(point);
                         cb(socket.team.characters[i]);
                         break;

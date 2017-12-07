@@ -419,7 +419,7 @@ var Ability = function(name){
                 this.cd = this.cooldown();
 
                 if(target.findEffect("Locked And Loaded") == -1) {
-                    for(var i=0; i < 3; i++) {
+                    for(var i = 0; i < 3; i++) {
                         target.removeRandomDOT(myTeam, enemyTeam);
                     }
                 }
@@ -434,7 +434,7 @@ var Ability = function(name){
             duration: function(){return 0},
             energyCost : function(){return 100+this.variant*50},
             manaCost : function(){return 150+this.variant*100},
-            cooldown : function(){return 5+this.variant},
+            cooldown : function(){return 5 + this.variant},
             needWeapon : function() {return false},
             cd : 0,
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return !(target.findEffect("Locked And Loaded")!==-1) }

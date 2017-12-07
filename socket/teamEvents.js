@@ -1,4 +1,3 @@
-var log = require('lib/log')(module);
 var async = require('async');
 var User = require('models/user').User;
 var Team = require('models/team').Team;
@@ -301,7 +300,6 @@ module.exports = function (serverIO) {
                             socket.emit("customError", err);
                             return;
                         }
-
                         cb(newSoul, newPopTeam);
                     });
                 });
@@ -328,7 +326,7 @@ module.exports = function (serverIO) {
 
                     var foundGem = -1;
 
-                    for(var i=0;i<team.inventory.length;i++){
+                    for(var i = 0; i < team.inventory.length; i++){
                         if(team.inventory[i].id == gemId) {
                             foundGem = i;
                             break;
@@ -340,8 +338,8 @@ module.exports = function (serverIO) {
                         return;
                     }
 
-                    //Если в сокете есть камень, вернём его в инвентарь
-                    if(char.equip[slot].sockets[socketIndex].gem!=="Void") {
+                    //If socket has gem, return it to inventory
+                    if(char.equip[slot].sockets[socketIndex].gem !== "Void") {
                         team.inventory.push(char.equip[slot].sockets[socketIndex].gem);
                     }
 
@@ -366,6 +364,15 @@ module.exports = function (serverIO) {
                                     socket.emit("customError", err);
                                     return;
                                 }
+
+                                var teamForSocket = newPopTeam._doc;
+                                var charactersForSocket = [];
+                                for(var i=0;i<newPopTeam.characters.length;i++){
+                                    charactersForSocket.push(newPopTeam.characters[i]._doc);
+                                }
+                                teamForSocket.characters = charactersForSocket;
+                                socket.team = teamForSocket;
+
                                 cb(newPopTeam);
                             });
                         });
@@ -426,6 +433,14 @@ module.exports = function (serverIO) {
                                     socket.emit("customError", err);
                                     return;
                                 }
+
+                                var teamForSocket = newPopTeam._doc;
+                                var charactersForSocket = [];
+                                for(var i=0;i<newPopTeam.characters.length;i++){
+                                    charactersForSocket.push(newPopTeam.characters[i]._doc);
+                                }
+                                teamForSocket.characters = charactersForSocket;
+                                socket.team = teamForSocket;
 
                                 cb(newPopTeam);
                             });
