@@ -5,7 +5,7 @@ var randomService = require('services/randomService');
 var effectFactory = require('services/effectFactory');
 
 //Character factory
-var Character = function(char) {
+var Character = function(char, ignoreEquip) {
 
     for (var key in char) {
         if (char.hasOwnProperty(key)) {
@@ -23,6 +23,11 @@ var Character = function(char) {
     this.createEquipState();
     this.createAbilitiesState();
     this.initChar();
+
+    if(ignoreEquip){
+        delete this.state.equip;
+        delete this.equip;
+    }
 };
 
 Character.prototype.initChar = function(){
@@ -234,6 +239,15 @@ Character.prototype.calcChar = function(isSameEquip) {
         self.manaRegFromEq = paramFromEquip('manaReg');
         self.magicResFromEq = paramFromEquip('magicRes');
         self.initiativeFromEq = paramFromEquip('initiative');
+
+        if(self.equip.offHandWeapon.name != "Void"){
+            self.minDamageFromEq = self.equip.mainHandWeapon.minDamage + self.equip.offHandWeapon.minDamage;
+            self.maxDamageFromEq = self.equip.mainHandWeapon.maxDamage + self.equip.offHandWeapon.maxDamage;
+        }
+        else {
+            self.minDamageFromEq = self.equip.mainHandWeapon.minDamage;
+            self.maxDamageFromEq = self.equip.mainHandWeapon.maxDamage;
+        }
     }    
 
     self.basicHealth = 10000;
@@ -320,14 +334,8 @@ Character.prototype.calcChar = function(isSameEquip) {
     self.initiativeFromInt = self.int;    
     self.initiative = Math.floor((self.initiativeFromInt + self.initiativeFromEq) * self.initiativeMod);
 
-    if(self.equip.offHandWeapon.name != "Void"){
-        self.minDamage = Math.floor((self.equip.mainHandWeapon.minDamage + self.equip.offHandWeapon.minDamage) * (1 + self.attackPower));
-        self.maxDamage = Math.floor((self.equip.mainHandWeapon.maxDamage + self.equip.offHandWeapon.maxDamage) * (1 + self.attackPower));
-    }
-    else {
-        self.minDamage = Math.floor(self.equip.mainHandWeapon.minDamage * (1 + self.attackPower));
-        self.maxDamage = Math.floor(self.equip.mainHandWeapon.maxDamage * (1 + self.attackPower));
-    }
+    self.minDamage = Math.floor(self.minDamageFromEq * (1 + self.attackPower));
+    self.maxDamage = Math.floor(self.maxDamageFromEq * (1 + self.attackPower));
 
     //calculate params on equipment
     function paramFromEquip(key){
@@ -1317,6 +1325,6 @@ function getAbilityColor (role) {
     }
 }
 
-module.exports = function(char) {
-    return new Character(char);
+module.exports = function(char, ignoreEquip) {
+    return new Character(char, ignoreEquip);
 };

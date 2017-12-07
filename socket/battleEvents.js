@@ -23,11 +23,11 @@ module.exports = function (serverIO) {
         socket.on('startBotsBattle', function() {
             socket.serSt.battleRoom = "battle: bots";
 
-            var availablePositions = [[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]];
+            var availablePositions = [[0,1,2], [0,2,1], [1,0,2], [1,2,0], [2,0,1], [2,1,0]];
 
-            var availableWallPos=[];
-            for(var i=0;i<100;i++){
-                if(!(i<=10 || i%10===0 || i%10===9 || i>=90 || i===18 || i===81)){
+            var availableWallPos = [];
+            for(var i = 0; i < 100; i++){
+                if(!(i <= 10 || i % 10 === 0 || i % 10 === 9 || i >= 90 || i === 18 || i === 81)){
                     availableWallPos.push(i);
                 }
             }
@@ -37,7 +37,7 @@ module.exports = function (serverIO) {
                 room: socket.serSt.battleRoom,
                 groundType: Math.floor(Math.random() * 3),
                 wallPositions: randomService.shuffle(availableWallPos).slice(0, 10),
-                turnsSpended: 0 //Количество ходов, потраченное с начала боя
+                turnsSpended: 0 //Number of turns from start of battle
             };
 
             var allyPositions = availablePositions[Math.floor(Math.random() * 6)];
@@ -46,32 +46,32 @@ module.exports = function (serverIO) {
             var team1 = botService.generateBotTeam();
             var team2 = botService.generateBotTeam();
 
-            for(i=0; i<3; i++) {
+            for(i = 0; i < 3; i++) {
                 var allyPosition = arenaService.getStartPosition(allyPositions[i]);
-                team1.characters[i].position={x: allyPosition.x, y:allyPosition.y};
+                team1.characters[i].position={x: allyPosition.x, y: allyPosition.y};
                 switch (i) {
-                    case 0: team1.characters[i].battleColor="#2a9fd6"; break;
-                    case 1: team1.characters[i].battleColor="#0055AF"; break;
-                    case 2: team1.characters[i].battleColor="#9933cc"; break;
+                    case 0: team1.characters[i].battleColor = "#2a9fd6"; break;
+                    case 1: team1.characters[i].battleColor = "#0055AF"; break;
+                    case 2: team1.characters[i].battleColor = "#9933cc"; break;
                 }
             }
 
-            for(i=0; i<3; i++) {
+            for(i = 0; i < 3; i++) {
                 var startPos = arenaService.getStartPosition(enemyPositions[i]);
                 var enemyPosition = arenaService.convertEnemyPosition(startPos.x, startPos.y);
-                team2.characters[i].position={x: enemyPosition.x, y:enemyPosition.y};
+                team2.characters[i].position = {x: enemyPosition.x, y:enemyPosition.y};
                 switch (i) {
-                    case 0: team2.characters[i].battleColor="#2a9fd6"; break;
-                    case 1: team2.characters[i].battleColor="#0055AF"; break;
-                    case 2: team2.characters[i].battleColor="#9933cc"; break;
+                    case 0: team2.characters[i].battleColor = "#2a9fd6"; break;
+                    case 1: team2.characters[i].battleColor = "#0055AF"; break;
+                    case 2: team2.characters[i].battleColor = "#9933cc"; break;
                 }
             }
 
             team1.lead = true;
             team2.lead = false;
 
-            battleData['team_'+team1._id] = team1;
-            battleData['team_'+team2._id] = team2;
+            battleData['team_' + team1._id] = team1;
+            battleData['team_' + team2._id] = team2;
 
             battleData.team1Id = team1._id;
             battleData.team2Id = team2._id;
@@ -191,12 +191,13 @@ module.exports = function (serverIO) {
             setTimeout(function(){
                 var chooseActionTimeStart = new Date();
                 var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
-                var myTeam = battleData['team_'+myTeamId];
-                var enemyTeam = battleData['team_'+enemyTeamId];
+                var myTeam = battleData['team_' + myTeamId];
+                var myTeamForSimulation = botService.lightWeightTeamBeforeSimulation(arenaService.cloneTeam(myTeam));
+                var enemyTeam =  battleData['team_' + enemyTeamId];
+                var enemyTeamForSimulation = botService.lightWeightTeamBeforeSimulation(arenaService.cloneTeam(enemyTeam));
                 var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
 
-                botService.buildActionBranchAsync(myTeam, enemyTeam, activeChar._id, battleData.wallPositions, function(actions) {
-                    arenaService.cleanBuffers(myTeam, enemyTeam);
+                botService.buildActionBranchAsync(myTeamForSimulation, enemyTeamForSimulation, activeChar._id, battleData.wallPositions, function(actions) {
                     var action = actions[0];   
                     var chooseActionTimeEnd = new Date();
     

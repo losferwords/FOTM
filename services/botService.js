@@ -21,7 +21,7 @@ module.exports = {
     generateBotCharacters: function(teamId){
         var self = this;
         var chars = [];
-        for(var i=0;i<3;i++){
+        for(var i = 0; i < 3; i++){
             chars.push(self.generateBotCharacter(teamId));
         }
         return chars;
@@ -41,18 +41,17 @@ module.exports = {
         char.portrait = characterService.getRandomPortrait(char.race, char.gender);
         var abilitiesArrays = characterService.generateAbilitiesArrays(char.role, char.race);
         char.abilities = abilitiesArrays[0];
-        char.availableAbilities = abilitiesArrays[1];
         char.params = characterService.getStartParams(char.gender, char.race, char.role);
         char.equip = characterService.getEquip(char.role);
         //ToDo: create random gems here
-        return CharacterFactory(char);
+        return CharacterFactory(char, true);
     },
     buildActionBranchSync: function(myTeam, enemyTeam, activeCharId, wallPositions){
         var self = this;
         var actionList = self.createActionList(myTeam, enemyTeam, activeCharId, wallPositions);
 
         for(var z = 0; z < actionList.length; z++){
-            if(actionList[z].type != "endTurn" ) {
+            if(actionList[z].type != "endTurn") {
                 actionList[z].branch = self.buildActionBranchSync(actionList[z].myTeamState, actionList[z].enemyTeamState, actionList[z].activeCharId, wallPositions);
                 if(actionList[z].branch && actionList[z].branch[0]) {
                     actionList[z].score = actionList[z].selfScore + actionList[z].branch[0].score;
@@ -387,5 +386,49 @@ module.exports = {
             })
         }
         return branch;
+    },
+    lightWeightTeamBeforeSimulation: function(team){
+        delete team.teamName;
+        delete team.lead;
+        for(var i = 0; i < team.characters.length; i++){
+            var char = team.characters[i];
+            delete char.battleTextBuffer;
+            delete char.logBuffer;
+            delete char.soundBuffer;
+            delete char.battleColor;
+            delete char.charName;
+            delete char.gender;
+            delete char.isBot;
+            delete char.portrait;
+            delete char.race;
+            delete char.role;
+            delete char.state;
+            delete char.calcParamsByPoint;
+            delete char.calcItem;
+            delete char.getSize;
+
+            for(var j = 0; j < char.abilities.length; j++){
+                var ability = char.abilities[j];
+                delete ability.cast;
+                delete ability.icon;
+                delete ability.role;
+            }
+
+            for(j = 0; j < char.buffs.length; j++){
+                var effect = char.buffs[j];
+                delete effect.icon;
+                delete effect.role;
+                delete effect.apply;
+            }
+
+            for(j = 0; j < char.debuffs.length; j++){
+                var effect = char.debuffs[j];
+                delete effect.icon;
+                delete effect.role;
+                delete effect.apply;
+            }
+        }
+
+        return team;
     }
 };

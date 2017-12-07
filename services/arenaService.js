@@ -2,6 +2,7 @@
 var Team = require('models/team').Team;
 var Character = require('models/character').Character;
 var async = require('async');
+var sizeof = require('object-sizeof');
 var map = [];
 
 module.exports = {
@@ -495,7 +496,7 @@ module.exports = {
 
         for(var i = 0; i < team.characters.length; i++){
             var charCopy = Object.create(Object.getPrototypeOf(team.characters[i]));
-            self.clone(charCopy, team.characters[i]);
+            self.clone(charCopy, team.characters[i]);            
 
             var newAbilities = [];
             var newBuffs = [];
@@ -522,9 +523,11 @@ module.exports = {
             charCopy.abilities = newAbilities;
             charCopy.buffs = newBuffs;
             charCopy.debuffs = newDebuffs;
+            //console.log("char size: " + sizeof(charCopy));
             newCharacters.push(charCopy);
-        }
+        }        
         newTeam.characters = newCharacters;
+        //console.log("team size: " + sizeof(newTeam));
         return newTeam;
     },
     clone: function(target){
@@ -807,7 +810,7 @@ module.exports = {
             }
         }
 
-        for(i = 0;i < enemyTeam.characters.length; i++){
+        for(i = 0; i < enemyTeam.characters.length; i++){
             if (enemyTeam.characters[i].logBuffer.length > 0) {
                 enemyTeam.characters[i].logBuffer = [];
             }
@@ -890,7 +893,6 @@ module.exports = {
                 activeChar.spendEnergy(activeChar.moveCost, true);
             }
         }
-        self.cleanBuffers(myTeam, enemyTeam);
         return {myTeam: myTeam, enemyTeam: enemyTeam, activeChar: activeChar};
     },
     castAbility: function(targetChar, myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, castCb){
