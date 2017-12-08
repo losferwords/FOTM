@@ -60,7 +60,7 @@ var Ability = function(name){
                 if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
                     target.addDebuffSimulation(effectFactory("Strong Arm Of The Law", this.variant), caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 2},
@@ -113,7 +113,7 @@ var Ability = function(name){
 
                     }
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() {
                 if (this.variant === 1 || this.variant === 3 || this.variant === 5) {
@@ -170,7 +170,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd=this.cooldown();
                 target.addDebuffSimulation(effectFactory("Disarm", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 1},
@@ -227,7 +227,7 @@ var Ability = function(name){
                     arenaService.knockBack(target, caster, myTeam, enemyTeam, walls);
                     target.addDebuffSimulation(effectFactory("Walk Away", this.variant), caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 1},
@@ -260,7 +260,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 target.addBuffSimulation(effectFactory("Sanctuary", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "allyNotMe"},
             range : function(){return 3},
@@ -314,7 +314,7 @@ var Ability = function(name){
                     newEffect.bleedDamage = physDamage * this.variant * 0.1;
                     target.addDebuffSimulation(newEffect, caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 2},
@@ -369,7 +369,7 @@ var Ability = function(name){
                 if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
                     arenaService.charge(caster, target, enemyTeam, myTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -420,14 +420,14 @@ var Ability = function(name){
 
                 if(target.findEffect("Locked And Loaded") == -1) {
                     for(var i = 0; i < 3; i++) {
-                        target.removeRandomDOT(myTeam, enemyTeam);
+                        target.removeRandomDOTSimulation();
                     }
                 }
 
                 var heal = (200 + this.variant * 175) * (1 + caster.spellPower);
                 heal = arenaService.calculateExpectedHeal(heal, caster);
                 target.takeHealSimulation(heal);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "ally"},
             range : function(){return 3},
@@ -476,7 +476,7 @@ var Ability = function(name){
                 physDamage=target.applyResistance(physDamage, false);
 
                 target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 1},
@@ -527,7 +527,7 @@ var Ability = function(name){
                 if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
                     caster.addBuffSimulation(effectFactory("Reign In Blood", this.variant), caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 1},
@@ -592,7 +592,7 @@ var Ability = function(name){
                     localPhysDamage = nearbyEnemies[i].applyResistance(localPhysDamage, false);
                     nearbyEnemies[i].takeDamageSimulation(localPhysDamage, caster, true, true, myTeam, enemyTeam);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -657,7 +657,7 @@ var Ability = function(name){
                 physDamage = target.applyResistance(physDamage, false);
 
                 target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -689,7 +689,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 caster.addBuffSimulation(effectFactory("Made In Hell", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -721,7 +721,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 caster.addBuffSimulation(effectFactory("Spill The Blood", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -763,7 +763,7 @@ var Ability = function(name){
                 var heal = (500 + this.variant * 500) * (1 + caster.spellPower);
                 heal = arenaService.calculateExpectedHeal(heal, caster);
                 target.takeHealSimulation(heal);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -800,7 +800,7 @@ var Ability = function(name){
 
                 caster.takeEnergySimulation(100 + this.variant * 150);
                 caster.addBuffSimulation(effectFactory("I Dont Wanna Stop", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -861,7 +861,7 @@ var Ability = function(name){
                 var totalDamage = physDamage + magicDamage;
 
                 target.takeDamageSimulation(totalDamage, caster, true, true, myTeam, enemyTeam);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -921,7 +921,7 @@ var Ability = function(name){
                 var totalDamage = physDamage + magicDamage;
 
                 target.takeDamageSimulation(totalDamage, caster, true, true, myTeam, enemyTeam);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 4},
@@ -955,7 +955,7 @@ var Ability = function(name){
                 this.cd = this.cooldown();
 
                 target.addBuffSimulation(effectFactory("Lights In The Sky", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "ally"},
             range : function(){return 3},
@@ -1012,7 +1012,7 @@ var Ability = function(name){
                 if(target.takeDamageSimulation(magicDamage, caster, true, true, myTeam, enemyTeam)){
                     target.addDebuffSimulation(effectFactory("Thunderstruck", this.variant), caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -1044,7 +1044,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 caster.addBuffSimulation(effectFactory("You Aint No Angel", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -1078,7 +1078,7 @@ var Ability = function(name){
                 this.cd = this.cooldown();
                 caster.takeEnergySimulation(caster.maxEnergy);
                 caster.addBuffSimulation(effectFactory("State Of Grace", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -1088,7 +1088,7 @@ var Ability = function(name){
             cooldown : function(){return 24},
             needWeapon : function() {return false},
             cd : 0,
-            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return caster.curEnergy <= caster.maxEnergy }
+            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return caster.curEnergy <= caster.maxEnergy * 0.3 }
         };
 
         case "My Last Words": return {
@@ -1138,7 +1138,7 @@ var Ability = function(name){
                 var totalDamage = physDamage + magicDamage;
 
                 target.takeDamageSimulation(totalDamage, caster, true, true, myTeam, enemyTeam);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -1173,7 +1173,7 @@ var Ability = function(name){
 
                 arenaService.charge(caster, target, enemyTeam, myTeam, walls);
                 target.addBuffSimulation(effectFactory("Come Cover Me", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "allyNotMe"},
             range : function(){return 3},
@@ -1226,7 +1226,7 @@ var Ability = function(name){
                 if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
                     target.addDebuffSimulation(effectFactory("Inject The Venom", this.variant), caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 1},
@@ -1258,7 +1258,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 caster.addBuffSimulation(effectFactory("Invisible", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -1314,7 +1314,7 @@ var Ability = function(name){
                 if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
                     target.addDebuffSimulation(effectFactory("Jawbreaker", this.variant), caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 1},
@@ -1384,7 +1384,7 @@ var Ability = function(name){
                 if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
                     target.addDebuffSimulation(effectFactory("Hog Tied", this.variant), caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 2},
@@ -1417,8 +1417,8 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 caster.addBuffSimulation(effectFactory("Running Free", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.removeImmobilization(myTeam, enemyTeam);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.removeImmobilizationSimulation();
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -1450,7 +1450,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 caster.addBuffSimulation(effectFactory("Fast As The Shark", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -1507,7 +1507,7 @@ var Ability = function(name){
                 if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
                     target.addDebuffSimulation(effectFactory("Prowler", this.variant), caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 1},
@@ -1539,7 +1539,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 target.addBuffSimulation(effectFactory("Fade To Black", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "allyNotMe"},
             range : function(){return 3},
@@ -1606,7 +1606,7 @@ var Ability = function(name){
                 if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
                     caster.addBuffSimulation(effectFactory("Stargazer", this.variant), caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -1636,7 +1636,7 @@ var Ability = function(name){
                 caster.spendEnergy(this.energyCost(), true);
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "move"},
             range : function(){return 1 + this.variant},
@@ -1692,7 +1692,7 @@ var Ability = function(name){
                 for (var i = 0; i < nearbyEnemies.length; i++) {
                     nearbyEnemies[i].addDebuffSimulation(effectFactory("Never A Word", this.variant), caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -1730,7 +1730,7 @@ var Ability = function(name){
                 this.cd = this.cooldown();
 
                 target.addDebuffSimulation(effectFactory("Prophecy", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -1770,8 +1770,8 @@ var Ability = function(name){
                 this.cd = this.cooldown();
 
                 var stealedSpell = caster.stealRandomBuffSimulation(target, myTeam, enemyTeam, walls);
-                if(stealedSpell === "Powerslave") caster.afterCast(this.name + "_Powerslave", myTeam, enemyTeam);
-                else caster.afterCast(this.name, myTeam, enemyTeam);
+                if(stealedSpell === "Powerslave") caster.afterCastSimulation(this.name + "_Powerslave");
+                else caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -1828,7 +1828,7 @@ var Ability = function(name){
                 magicDamage = target.applyResistance(magicDamage, true);
 
                 target.takeDamageSimulation(magicDamage, caster, true, true, myTeam, enemyTeam);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -1867,7 +1867,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 target.addBuffSimulation(effectFactory("Infinite Dreams", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "ally"},
             range : function(){return 3},
@@ -1904,7 +1904,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 target.addDebuffSimulation(effectFactory("Caught Somewhere In Time", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -1977,7 +1977,7 @@ var Ability = function(name){
                     var totalDamage = localPhysDamage + localMagicDamage;
                     nearbyEnemies[i].takeDamageSimulation(totalDamage, caster, true, true, myTeam, enemyTeam);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -2037,7 +2037,7 @@ var Ability = function(name){
                 if(target.takeDamageSimulation(magicDamage, caster, true, true, myTeam, enemyTeam)){
                     target.addDebuffSimulation(effectFactory("Burning Ambition", this.variant), caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -2118,7 +2118,7 @@ var Ability = function(name){
                         nearbyEnemies[i].takeDamageSimulation(localMagicDamage, caster, true, true, myTeam, enemyTeam);
                     }
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -2155,7 +2155,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 target.addDebuffSimulation(effectFactory("Thank God For The Bomb", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -2187,7 +2187,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd=this.cooldown();
                 caster.addBuffSimulation(effectFactory("Powerslave", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -2219,7 +2219,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 target.addBuffSimulation(effectFactory("Cauterization", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "ally"},
             range : function(){return 3},
@@ -2251,7 +2251,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 caster.addBuffSimulation(effectFactory("Down In Flames", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -2261,7 +2261,14 @@ var Ability = function(name){
             cooldown : function(){return 0},
             needWeapon : function() {return false},
             cd : 0,
-            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
+            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { 
+                for(var i = 0; i < target.buffs.length; i++) {
+                    if(target.buffs[i].name == "Down In Flames" && target.buffs[i].stacks && target.buffs[i].stacks >= 3){
+                        return false;
+                    }
+                } 
+                return true;
+            }
         };
 
         case "Fight Fire With Fire": return {
@@ -2283,7 +2290,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 target.addBuffSimulation(effectFactory("Fight Fire With Fire", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "ally"},
             range : function(){return 3},
@@ -2350,7 +2357,7 @@ var Ability = function(name){
                 if(target.takeDamageSimulation(totalDamage, caster, true, true, myTeam, enemyTeam)){
                     caster.takeManaSimulation(totalDamage * 0.5);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 1},
@@ -2382,7 +2389,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 target.addBuffSimulation(effectFactory("Mercyful Fate", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "ally"},
             range : function(){return 3},
@@ -2421,7 +2428,7 @@ var Ability = function(name){
                 var heal = target.maxHealth * (0.1 + this.variant * 0.15) * (1 + caster.spellPower);
                 heal = arenaService.calculateExpectedHeal(heal, caster);
                 target.takeHealSimulation(heal);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "ally"},
             range : function(){return 3},
@@ -2496,7 +2503,7 @@ var Ability = function(name){
     
                     target.takeDamageSimulation(magicDamage, caster, true, true, myTeam, enemyTeam);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "ally&enemy"},
             range : function(){return 3},
@@ -2544,10 +2551,10 @@ var Ability = function(name){
 
                 if(target.findEffect("Locked And Loaded") == -1) {
                     for(var i = 0; i < this.variant; i++) {
-                        target.removeRandomDebuff(myTeam, enemyTeam);
+                        target.removeRandomDebuffSimulation();
                     }
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "ally"},
             range : function(){return 3},
@@ -2579,7 +2586,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 target.addBuffSimulation(effectFactory("Hallowed Be Thy Name", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "ally"},
             range : function(){return 3},
@@ -2657,7 +2664,7 @@ var Ability = function(name){
                     nearbyAllies[i].takeHealSimulation(heal);
                 }
 
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "self"},
             range : function(){return 0},
@@ -2696,10 +2703,10 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
 
-                target.removeAllDebuffs(myTeam, enemyTeam);
+                target.removeAllDebuffsSimulation();
 
                 target.addBuffSimulation(effectFactory("Heaven Can Wait", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "ally"},
             range : function(){return 3},
@@ -2765,7 +2772,7 @@ var Ability = function(name){
                 if(target.takeDamageSimulation(totalDamage, caster, true, true, myTeam, enemyTeam)){
                     caster.takeHealSimulation(totalDamage);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 1},
@@ -2817,7 +2824,7 @@ var Ability = function(name){
                 if(target.takeDamageSimulation(magicDamage, caster, true, true, myTeam, enemyTeam)){
                     target.addDebuffSimulation(effectFactory("Fear Of The Dark", this.variant), caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -2854,7 +2861,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 target.addDebuffSimulation(effectFactory("Creeping Death", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -2891,7 +2898,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 target.addDebuffSimulation(effectFactory("Spreading The Disease", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -2932,9 +2939,9 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 for(var i = 0; i < this.variant; i++) {
-                    target.removeRandomBuff(enemyTeam, myTeam);
+                    target.removeRandomBuffSimulation();
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -2972,7 +2979,7 @@ var Ability = function(name){
                 caster.spendMana(this.manaCost(), true);
                 this.cd = this.cooldown();
                 target.addDebuffSimulation(effectFactory("Children Of The Damned", this.variant), caster, myTeam, enemyTeam, walls);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 3},
@@ -3032,7 +3039,7 @@ var Ability = function(name){
                 else {
                     target.addDebuffSimulation(effectFactory("Locked And Loaded", this.variant), caster, myTeam, enemyTeam, walls);
                 }
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "ally&enemy"},
             range : function(){return 3},
@@ -3133,7 +3140,7 @@ var Ability = function(name){
                 var totalDamage = physDamage + magicDamage;
 
                 target.takeDamageSimulation(totalDamage, caster, true, true, myTeam, enemyTeam);
-                caster.afterCast(this.name, myTeam, enemyTeam);
+                caster.afterCastSimulation(this.name);
             },
             targetType : function() { return "enemy"},
             range : function(){return 1},
@@ -3158,7 +3165,6 @@ var Ability = function(name){
                 return totalEffects >= 3;
             }
         };
-
     }
 };
 

@@ -193,7 +193,6 @@ module.exports = {
                         for (i = 0; i < characters.length; i++) {
                             for (j = 0; j < enemyTeam.characters.length; j++) {
                                 if (enemyTeam.characters[j]._id == characters[i]._id) {
-                                    actionList.push(self.abilitySimulation(myTeam, enemyTeam, activeChar, characters[i], checkedAbility, wallPositions));
                                     abilityAction = self.abilitySimulation(myTeam, enemyTeam, activeChar, characters[i], checkedAbility, wallPositions);
                                     if(abilityAction){
                                         actionList.push(abilityAction);
@@ -405,6 +404,17 @@ module.exports = {
             delete char.state;
             delete char.calcParamsByPoint;
             delete char.calcItem;
+            delete char.updateMods;
+            delete char.removeRandomBuff;
+            delete char.removeRandomDebuff;
+            delete char.removeAllDebuffs;
+            delete char.removeRandomDOT;
+            delete char.stealRandomBuff;
+            delete char.afterDealingDamage;
+            delete char.afterDamageTaken;
+            delete char.afterMiss;
+            delete char.removeImmobilization;
+            delete char.afterCast;
             delete char.getSize;
 
             for(var j = 0; j < char.abilities.length; j++){

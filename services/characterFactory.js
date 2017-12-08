@@ -640,7 +640,26 @@ Character.prototype.removeRandomBuff = function(myTeam, enemyTeam) {
     }
 };
 
-Character.prototype.removeRandomDebuff = function(myTeam, enemyTeam) {
+Character.prototype.removeRandomBuffSimulation = function() {
+    var self = this;
+
+    if(self.buffs.length>0){
+        var removableBuffIndex = randomService.randomInt(0, self.buffs.length - 1);
+        if(self.buffs[removableBuffIndex].stacked()){
+            if(self.buffs[removableBuffIndex].stacks === 1){
+                self.buffs.splice(removableBuffIndex, 1);
+            }
+            else {
+                self.buffs[removableBuffIndex].stacks--;
+            }
+        }
+        else {
+            self.buffs.splice(removableBuffIndex, 1);
+        }
+    }
+};
+
+Character.prototype.removeRandomDebuff = function() {
     var self = this;
 
     if(self.debuffs.length > 0){
@@ -660,6 +679,25 @@ Character.prototype.removeRandomDebuff = function(myTeam, enemyTeam) {
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
         self.calcChar(true);
+    }    
+};
+
+Character.prototype.removeRandomDebuffSimulation = function() {
+    var self = this;
+
+    if(self.debuffs.length > 0){
+        var removableDebuffIndex = randomService.randomInt(0, self.debuffs.length - 1);
+        if(self.debuffs[removableDebuffIndex].stacked()){
+            if(self.debuffs[removableDebuffIndex].stacks === 1){
+                self.debuffs.splice(removableDebuffIndex, 1);
+            }
+            else {
+                self.debuffs[removableDebuffIndex].stacks--;
+            }
+        }
+        else {
+            self.debuffs.splice(removableDebuffIndex, 1);
+        }
     }
 };
 
@@ -672,6 +710,10 @@ Character.prototype.removeAllDebuffs = function(myTeam, enemyTeam) {
         self.updateMods(myTeam, enemyTeam);
         self.calcChar(true);
     }
+};
+
+Character.prototype.removeAllDebuffsSimulation = function() {
+    this.debuffs = [];
 };
 
 Character.prototype.removeRandomDOT = function(myTeam, enemyTeam) {
@@ -701,6 +743,33 @@ Character.prototype.removeRandomDOT = function(myTeam, enemyTeam) {
             self.resetState();
             self.updateMods(myTeam, enemyTeam);
             self.calcChar(true);
+        }
+    }
+};
+
+Character.prototype.removeRandomDOTSimulation = function() {
+    var self = this;
+
+    if(self.debuffs.length>0){
+        var DOTS = [];
+        for(var i = 0; i < self.debuffs.length; i++){
+            if(!self.debuffs[i].onlyStat()) DOTS.push({index: i, dot: self.debuffs[i]});
+        }
+
+        if(DOTS.length > 0){
+            var removableDOTIndex = randomService.randomInt(0, DOTS.length - 1);
+            var removableDebuffIndex = DOTS[removableDOTIndex].index;
+            if(self.debuffs[removableDebuffIndex].stacked()){
+                if(self.debuffs[removableDebuffIndex].stacks === 1){
+                    self.debuffs.splice(removableDebuffIndex, 1);
+                }
+                else {
+                    self.debuffs[removableDebuffIndex].stacks--;
+                }
+            }
+            else {
+                self.debuffs.splice(removableDebuffIndex, 1);
+            }
         }
     }
 };
@@ -783,10 +852,6 @@ Character.prototype.stealRandomBuffSimulation = function(target, myTeam, enemyTe
             }
             target.buffs.splice(removableBuffIndex, 1);
         }
-
-        target.resetState();
-        target.updateMods(myTeam, enemyTeam);
-        target.calcChar(true);
     }
     return stealedBuffName;
 };
@@ -942,8 +1007,8 @@ Character.prototype.takeDamageSimulation = function(value, caster, canBlock, can
 
     self.curHealth -= value;
 
-    caster.afterDealingDamage(enemyTeam, myTeam); //� ������� ����������� ������� ����� ��������� �����
-    self.afterDamageTaken(myTeam, enemyTeam); //� � ���� ����� ��������� �����
+    caster.afterDealingDamageSimulation();
+    self.afterDamageTakenSimulation();
 
     if(self.curHealth<=0){ //Death
         self.curHealth=0;
@@ -1114,7 +1179,30 @@ Character.prototype.afterDealingDamage = function (myTeam, enemyTeam) {
     }
 };
 
-//������� ��������� ����� ��������, ���� �������� ������� ����
+Character.prototype.afterDealingDamageSimulation = function () {
+    var self=this;
+    var buffsForRemove=[];
+    var debuffsForRemove=[];
+    var currentEffect;
+
+    currentEffect = self.findEffect("Invisible");
+    if(currentEffect >- 1){
+        buffsForRemove.push(currentEffect);
+    }
+    currentEffect = self.findEffect("Fade To Black");
+    if(currentEffect >- 1){
+        buffsForRemove.push(currentEffect);
+    }
+
+    for(var i = 0; i < buffsForRemove.length; i++){
+        self.buffs.splice(buffsForRemove[i], 1);
+    }
+
+    for(i=0; i<debuffsForRemove.length; i++){
+        self.debuffs.splice(debuffsForRemove[i], 1);
+    }
+};
+
 Character.prototype.afterDamageTaken = function (myTeam, enemyTeam) {
     var self=this;
     var buffsForRemove=[];
@@ -1142,6 +1230,30 @@ Character.prototype.afterDamageTaken = function (myTeam, enemyTeam) {
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
         self.calcChar(true);
+    }
+};
+
+Character.prototype.afterDamageTakenSimulation = function () {
+    var self = this;
+    var buffsForRemove = [];
+    var debuffsForRemove = [];
+    var currentEffect;
+
+    currentEffect = self.findEffect("Invisible");
+    if(currentEffect>-1){
+        buffsForRemove.push(currentEffect);
+    }
+    currentEffect = self.findEffect("Fade To Black");
+    if(currentEffect > -1){
+        buffsForRemove.push(currentEffect);
+    }
+
+    for(var i = 0; i < buffsForRemove.length;i++){
+        self.buffs.splice(buffsForRemove[i], 1);
+    }
+
+    for(i = 0; i < debuffsForRemove.length; i++){
+        self.debuffs.splice(debuffsForRemove[i], 1);
     }
 };
 
@@ -1180,7 +1292,7 @@ Character.prototype.afterMiss = function (target, ability, myTeam, enemyTeam, do
     }
 };
 
-Character.prototype.afterCast = function (castedSpell, myTeam, enemyTeam) {
+Character.prototype.afterCast = function (castedSpell) {
     var self = this;
     var buffsForRemove = [];
     var debuffsForRemove = [];
@@ -1199,10 +1311,30 @@ Character.prototype.afterCast = function (castedSpell, myTeam, enemyTeam) {
         self.debuffs.splice(debuffsForRemove[i], 1);
     }
 
-    if(buffsForRemove.length > 0 || debuffsForRemove.length > 0){
+    if(buffsForRemove.length>0 || debuffsForRemove.length>0){
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
         self.calcChar(true);
+    }
+};
+
+Character.prototype.afterCastSimulation = function (castedSpell) {
+    var self = this;
+    var buffsForRemove = [];
+    var debuffsForRemove = [];
+    var currentEffect;
+
+    currentEffect = self.findEffect("Powerslave");
+    if(currentEffect > -1 && castedSpell !== "Powerslave" && castedSpell !== "Lets Me Take It_Powerslave"){
+        buffsForRemove.push(currentEffect);
+    }
+
+    for(var i = 0; i < buffsForRemove.length; i++){
+        self.buffs.splice(buffsForRemove[i], 1);
+    }
+
+    for(i = 0; i < debuffsForRemove.length; i++){
+        self.debuffs.splice(debuffsForRemove[i], 1);
     }
 };
 
@@ -1229,6 +1361,26 @@ Character.prototype.removeImmobilization = function (myTeam, enemyTeam) {
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
         self.calcChar(true);
+    }
+};
+
+Character.prototype.removeImmobilizationSimulation = function () {
+    var self = this;
+    var debuffsForRemove = [];
+    var currentEffect;
+
+    currentEffect = self.findEffect("Hog Tied");
+    if(currentEffect >- 1){
+        debuffsForRemove.push(currentEffect);
+    }
+
+    currentEffect = self.findEffect("Caught Somewhere In Time");
+    if(currentEffect >- 1){
+        debuffsForRemove.push(currentEffect);
+    }
+
+    for(var i = 0; i < debuffsForRemove.length; i++){
+        self.debuffs.splice(debuffsForRemove[i], 1);
     }
 };
 
@@ -1283,8 +1435,8 @@ Character.prototype.checkLuck = function () {
 
 //������� �������� ������ ��������
 Character.prototype.checkCooldownDrop = function () {
-    var self=this;
-    return (Math.random()<=(self.initiative*0.0001));
+    var self = this;
+    return (Math.random() <= (self.initiative * 0.0001));
 };
 
 //������� �������� �������

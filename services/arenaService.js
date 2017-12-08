@@ -3,6 +3,8 @@ var Team = require('models/team').Team;
 var Character = require('models/character').Character;
 var async = require('async');
 var sizeof = require('object-sizeof');
+var deepClone = require('fast-deepclone');
+var randomService = require('services/randomService');
 var map = [];
 
 module.exports = {
@@ -479,7 +481,7 @@ module.exports = {
     //Находит персонажа в команде по ID
     findCharInMyTeam: function(id, myTeam) {
         var char;
-        for(var i=0; i<myTeam.length; i++){
+        for(var i=0; i < myTeam.length; i++){
             if(id == myTeam[i]._id){
                 char = myTeam[i];
                 break;
@@ -490,55 +492,10 @@ module.exports = {
     //Make copy of team
     cloneTeam: function(team){
         var self = this;
-        var newTeam = Object.create(Object.getPrototypeOf(team));
-        var newCharacters = [];
-        self.clone(newTeam, team);
-
-        for(var i = 0; i < team.characters.length; i++){
-            var charCopy = Object.create(Object.getPrototypeOf(team.characters[i]));
-            self.clone(charCopy, team.characters[i]);            
-
-            var newAbilities = [];
-            var newBuffs = [];
-            var newDebuffs = [];
-
-            for(var j = 0; j < charCopy.abilities.length; j++) {
-                var abilityCopy = Object.create(Object.getPrototypeOf(charCopy.abilities[j]));
-                self.clone(abilityCopy, charCopy.abilities[j]);
-                newAbilities.push(abilityCopy);
-            }
-
-            for(var j = 0; j < charCopy.buffs.length; j++) {
-                var buffCopy = Object.create(Object.getPrototypeOf(charCopy.buffs[j]));
-                self.clone(buffCopy, charCopy.buffs[j]);
-                newBuffs.push(buffCopy);
-            }
-
-            for(var j = 0; j < charCopy.debuffs.length; j++) {
-                var debuffCopy = Object.create(Object.getPrototypeOf(charCopy.debuffs[j]));
-                self.clone(debuffCopy, charCopy.debuffs[j]);
-                newDebuffs.push(debuffCopy);
-            }
-
-            charCopy.abilities = newAbilities;
-            charCopy.buffs = newBuffs;
-            charCopy.debuffs = newDebuffs;
-            //console.log("char size: " + sizeof(charCopy));
-            newCharacters.push(charCopy);
-        }        
-        newTeam.characters = newCharacters;
-        //console.log("team size: " + sizeof(newTeam));
+        //var start = process.hrtime();
+        var newTeam = deepClone(team, true);
+        //randomService.elapsedTime(start, "cloneTeam");
         return newTeam;
-    },
-    clone: function(target){
-        var sources = [].slice.call(arguments, 1);
-        sources.forEach(function (source) {
-            Object.getOwnPropertyNames(source).forEach(function(propName) {
-                Object.defineProperty(target, propName,
-                    Object.getOwnPropertyDescriptor(source, propName));
-            });
-        });
-        return target;
     },
     //Создаёт стэйты эффектов для персонажей в очереди
     createEffectsStates: function(myTeamChars, enemyTeamChars) {

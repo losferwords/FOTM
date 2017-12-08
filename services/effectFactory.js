@@ -644,7 +644,7 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "ripper"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--RunningFree)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                if(this.left == this.duration()) owner.removeImmobilization(myTeam, enemyTeam);
+                if(this.left == this.duration()) owner.removeImmobilizationSimulation();
                 owner.moveCost = 300 - this.variant * 40;
             },
             duration: function(){return 7 + this.variant},
