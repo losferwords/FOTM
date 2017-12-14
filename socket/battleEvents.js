@@ -198,10 +198,10 @@ module.exports = function (serverIO) {
                 var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
 
                 botService.buildActionBranchAsync(myTeamForSimulation, enemyTeamForSimulation, activeChar._id, battleData.wallPositions, function(actions) {
-                    var action = actions[0];   
+                    var action = actions[0];
                     var chooseActionTimeEnd = new Date();
     
-                    botService.buildDubugTree(actions);
+                    //botService.buildDubugTree(actions);
     
                     console.log("Think time: " + (chooseActionTimeEnd.getTime() - chooseActionTimeStart.getTime()) + "ms");
     

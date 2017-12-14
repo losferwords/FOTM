@@ -659,7 +659,7 @@ Character.prototype.removeRandomBuffSimulation = function() {
     }
 };
 
-Character.prototype.removeRandomDebuff = function() {
+Character.prototype.removeRandomDebuff = function(myTeam, enemyTeam) {
     var self = this;
 
     if(self.debuffs.length > 0){
@@ -1285,14 +1285,14 @@ Character.prototype.afterMiss = function (target, ability, myTeam, enemyTeam, do
         self.debuffs.splice(debuffsForRemove[i], 1);
     }
 
-    if(buffsForRemove.length>0 || debuffsForRemove.length>0){
+    if(buffsForRemove.length > 0 || debuffsForRemove.length > 0){
         self.resetState();
         self.updateMods(myTeam, enemyTeam);
         self.calcChar(true);
     }
 };
 
-Character.prototype.afterCast = function (castedSpell) {
+Character.prototype.afterCast = function (castedSpell, myTeam, enemyTeam) {
     var self = this;
     var buffsForRemove = [];
     var debuffsForRemove = [];

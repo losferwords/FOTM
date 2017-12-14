@@ -11,7 +11,11 @@ module.exports = function (server) {
     var secret = config.get('session:secret');
     var sessionKey = config.get('session:key');
 
-    var io = require('socket.io').listen(server);
+    var io = require('socket.io').listen(server,
+        {
+            pingInterval: 90000,
+            pingTimeout: 30000
+        });
 
     io.use(function (socket, next) {
         var handshakeData = socket.request;

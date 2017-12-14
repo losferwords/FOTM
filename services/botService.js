@@ -122,18 +122,40 @@ module.exports = {
         var score = 0;        
         var actionList = [];
         var movePoints = arenaService.findMovePoints(myTeam, enemyTeam, activeChar, false, wallPositions, function(){});
-        for(var i = 0; i < movePoints.length; i++){
-            var newSituationObject = arenaService.moveCharSimulation(movePoints[i], myTeam, enemyTeam, activeCharId, false, wallPositions);
+        var bestMovePoints = [];
+        //find only 3 best positions 
+        for(var i = 0; i < movePoints.length; i++){                                                      
+            var weights = arenaService.calculatePositionWeight(movePoints[i], activeChar, myTeam.characters, enemyTeam.characters, arenaService.getOptimalRange(activeChar), wallPositions);
+            bestMovePoints.push({
+                point: movePoints[i],
+                weightScore: weights[0] * 6 + weights[1] * 4
+            })
+        }
+
+        bestMovePoints.sort(function (a, b) {
+            if (a.weightScore <= b.weightScore) {
+                return 1;
+            }
+            else if (a.weightScore > b.weightScore) {
+                return -1;
+            }
+        }); 
+
+        bestMovePoints = bestMovePoints.slice(0, 3);
+
+        for(j = 0; j < bestMovePoints.length; j++){
+            var newSituationObject = arenaService.moveCharSimulation(bestMovePoints[j].point, myTeam, enemyTeam, activeCharId, false, wallPositions);
             score = self.situationCost(newSituationObject.activeChar, newSituationObject.myTeam, newSituationObject.enemyTeam, wallPositions);
             actionList.push({
                 type: "move",
-                point: movePoints[i],
+                point: bestMovePoints[j].point,
                 selfScore: score,
                 myTeamState: newSituationObject.myTeam,
                 enemyTeamState: newSituationObject.enemyTeam,
                 activeCharId: newSituationObject.activeChar._id
             });
         }
+
         for(var v = 0; v < activeChar.abilities.length; v++){
             var checkedAbility = activeChar.abilities[v];
             var enemies;
@@ -212,13 +234,34 @@ module.exports = {
                         break;
                     case "move":
                         var abilityMovePoints = arenaService.findMovePoints(myTeam, enemyTeam, activeChar, checkedAbility.name, wallPositions, function(){});
-                        for(i = 0; i < abilityMovePoints.length; i++){
-                            var castMoveSituationObject = arenaService.moveCharSimulation(abilityMovePoints[i], myTeam, enemyTeam, activeChar._id, checkedAbility.name, wallPositions);
+                        var bestPositions = [];
+                        //find only 3 best positions 
+                        for(i = 0; i < abilityMovePoints.length; i++){                                                      
+                            var weights = arenaService.calculatePositionWeight(abilityMovePoints[i], activeChar, myTeam.characters, enemyTeam.characters, arenaService.getOptimalRange(activeChar), wallPositions);
+                            bestPositions.push({
+                                point: abilityMovePoints[i],
+                                weightScore: weights[0] * 6 + weights[1] * 4
+                            })
+                        }
+
+                        bestPositions.sort(function (a, b) {
+                            if (a.weightScore <= b.weightScore) {
+                                return 1;
+                            }
+                            else if (a.weightScore > b.weightScore) {
+                                return -1;
+                            }
+                        }); 
+
+                        bestPositions = bestPositions.slice(0, 3);
+
+                        for(var j = 0; j < bestPositions.length; j++) {
+                            var castMoveSituationObject = arenaService.moveCharSimulation(bestPositions[j].point, myTeam, enemyTeam, activeChar._id, checkedAbility.name, wallPositions);
                             score = self.situationCost(castMoveSituationObject.activeChar, castMoveSituationObject.myTeam, castMoveSituationObject.enemyTeam, wallPositions);
                             actionList.push({
                                 type: "move",
                                 ability: checkedAbility.name,
-                                point: abilityMovePoints[i],
+                                point: bestPositions[j].point,
                                 selfScore: score,
                                 myTeamState: castMoveSituationObject.myTeam,
                                 enemyTeamState: castMoveSituationObject.enemyTeam,
@@ -327,14 +370,14 @@ module.exports = {
         for(var key in effectScores){
             totalScore += effectScores[key] ? effectScores[key] : 0;
         }
-        // str += "\t " + (effectScores['effectScore'] ? Math.round(effectScores['effectScore']) : 0);
-        // str += "\t " + (effectScores['leftScore'] ? Math.round(effectScores['leftScore']) : 0);
-        // str += "\t " + (effectScores['offensivePositionScore'] ? Math.round(effectScores['offensivePositionScore']) : 0);
-        // str += "\t " + (effectScores['defensivePositionScore'] ? Math.round(effectScores['defensivePositionScore']) : 0);
-        // str += "\t " + (effectScores['healthScore'] ? Math.round(effectScores['healthScore']) : 0);
-        // str += "\t " + (effectScores['manaScore'] ? Math.round(effectScores['manaScore']) : 0);
-        // str += "\t " + (Math.round(totalScore));
-        // fs.appendFile("./effectLog.txt", str, function() {});
+        str += "\t " + (effectScores['effectScore'] ? Math.round(effectScores['effectScore']) : 0);
+        str += "\t " + (effectScores['leftScore'] ? Math.round(effectScores['leftScore']) : 0);
+        str += "\t " + (effectScores['offensivePositionScore'] ? Math.round(effectScores['offensivePositionScore']) : 0);
+        str += "\t " + (effectScores['defensivePositionScore'] ? Math.round(effectScores['defensivePositionScore']) : 0);
+        str += "\t " + (effectScores['healthScore'] ? Math.round(effectScores['healthScore']) : 0);
+        str += "\t " + (effectScores['manaScore'] ? Math.round(effectScores['manaScore']) : 0);
+        str += "\t " + (Math.round(totalScore));
+        fs.appendFile("./effectLog.txt", str, function() {});
         return totalScore;
     },
     logTree: function(actionInList){
