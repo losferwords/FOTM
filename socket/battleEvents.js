@@ -197,13 +197,15 @@ module.exports = function (serverIO) {
                 var enemyTeamForSimulation = botService.lightWeightTeamBeforeSimulation(arenaService.cloneTeam(enemyTeam));
                 var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
 
-                botService.buildActionBranchAsync(myTeamForSimulation, enemyTeamForSimulation, activeChar._id, battleData.wallPositions, function(actions) {
+                botService.buildActionBranchAsync(myTeamForSimulation, enemyTeamForSimulation, activeChar._id, battleData.wallPositions, function(actions, actionsCounter) {
                     var action = actions[0];
                     var chooseActionTimeEnd = new Date();
     
                     //botService.buildDubugTree(actions);
-    
-                    console.log("Think time: " + (chooseActionTimeEnd.getTime() - chooseActionTimeStart.getTime()) + "ms");
+                    var thinkTime = chooseActionTimeEnd.getTime() - chooseActionTimeStart.getTime();
+                    //if(thinkTime > 5000){
+                        console.log("Think time: " + thinkTime + "ms, actions count: " + actionsCounter);
+                    //}
     
                     switch(action.type){
                         case "move":
@@ -232,7 +234,7 @@ module.exports = function (serverIO) {
                             break;
                     }
                 });                            
-            }, 2000);
+            }, 100);
         });
     });
 };

@@ -8,6 +8,8 @@ var async = require('async');
 var fs = require('fs');
 var sizeof = require('object-sizeof');
 
+var actionsCounter = 0;
+
 module.exports = {
     generateBotTeam: function(){
         var self = this;
@@ -80,6 +82,7 @@ module.exports = {
     }, 
     buildActionBranchAsync: function(myTeam, enemyTeam, activeCharId, wallPositions, cb){
         var self = this;
+        actionsCounter = 0;
         var actionList = self.createActionList(myTeam, enemyTeam, activeCharId, wallPositions);
 
         async.eachOf(actionList, function(actionInList, index, cb){
@@ -113,7 +116,7 @@ module.exports = {
                     return -1;
                 }
             });     
-            cb(actionList); 
+            cb(actionList, actionsCounter); 
         })                            
     },    
     createActionList: function(myTeam, enemyTeam, activeCharId, wallPositions) {
@@ -278,6 +281,8 @@ module.exports = {
             selfScore: self.situationCost(activeChar, myTeam, enemyTeam, wallPositions)
         });
 
+        actionsCounter += actionList.length;
+
         return actionList;
     },
     abilitySimulation: function(myTeam, enemyTeam, activeChar, target, checkedAbility, wallPositions){                
@@ -345,8 +350,8 @@ module.exports = {
         //enemyTeam
         for(i = 0; i < enemyTeam.characters.length; i++){
             var enemy = enemyTeam.characters[i];
-            score -= enemy.curHealth/enemy.maxHealth * 100;
-            score -= enemy.curMana/enemy.maxMana * 50;
+            score -= Math.exp(enemy.curHealth / enemy.maxHealth * 3) * 8 - 100;
+            score -= enemy.curMana / enemy.maxMana * 50;
 
             for(j = 0; j < enemy.buffs.length; j++){
                 if(enemy.buffs[j].score) {
@@ -370,14 +375,14 @@ module.exports = {
         for(var key in effectScores){
             totalScore += effectScores[key] ? effectScores[key] : 0;
         }
-        str += "\t " + (effectScores['effectScore'] ? Math.round(effectScores['effectScore']) : 0);
-        str += "\t " + (effectScores['leftScore'] ? Math.round(effectScores['leftScore']) : 0);
-        str += "\t " + (effectScores['offensivePositionScore'] ? Math.round(effectScores['offensivePositionScore']) : 0);
-        str += "\t " + (effectScores['defensivePositionScore'] ? Math.round(effectScores['defensivePositionScore']) : 0);
-        str += "\t " + (effectScores['healthScore'] ? Math.round(effectScores['healthScore']) : 0);
-        str += "\t " + (effectScores['manaScore'] ? Math.round(effectScores['manaScore']) : 0);
-        str += "\t " + (Math.round(totalScore));
-        fs.appendFile("./effectLog.txt", str, function() {});
+        // str += "\t " + (effectScores['effectScore'] ? Math.round(effectScores['effectScore']) : 0);
+        // str += "\t " + (effectScores['leftScore'] ? Math.round(effectScores['leftScore']) : 0);
+        // str += "\t " + (effectScores['offensivePositionScore'] ? Math.round(effectScores['offensivePositionScore']) : 0);
+        // str += "\t " + (effectScores['defensivePositionScore'] ? Math.round(effectScores['defensivePositionScore']) : 0);
+        // str += "\t " + (effectScores['healthScore'] ? Math.round(effectScores['healthScore']) : 0);
+        // str += "\t " + (effectScores['manaScore'] ? Math.round(effectScores['manaScore']) : 0);
+        // str += "\t " + (Math.round(totalScore));
+        // fs.appendFile("./effectLog.txt", str, function() {});
         return totalScore;
     },
     logTree: function(actionInList){

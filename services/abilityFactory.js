@@ -1222,7 +1222,9 @@ var Ability = function(name){
             cooldown : function(){return 7+this.variant},
             needWeapon : function() {return false},
             cd : 0,
-            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
+            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { 
+                return target.curHealth < target.maxHealth * 0.6;
+            }
         };
 
         //RIPPER
@@ -1658,7 +1660,7 @@ var Ability = function(name){
 
                 var totalDamage = physDamage + magicDamage;
 
-                if(target.takeDamageSimulation(physDamage, caster, true, true, myTeam, enemyTeam)){
+                if(target.takeDamageSimulation(totalDamage, caster, true, true, myTeam, enemyTeam)){
                     caster.addBuffSimulation(effectFactory("Stargazer", this.variant), caster, myTeam, enemyTeam, walls);
                 }
                 caster.afterCastSimulation(this.name);
@@ -2382,7 +2384,7 @@ var Ability = function(name){
             cd : 0,
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) {
                 var nearbyEnemies = arenaService.findEnemies(caster, enemyTeam, 3, walls);
-                return nearbyEnemies.length > 0;
+                return nearbyEnemies.length > 0 && target.curHealth < target.maxHealth * 0.8;
             }
         };
 

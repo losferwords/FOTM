@@ -593,7 +593,7 @@
 
             mainSocket.emit('checkForWin', $scope.myTeam._id, $scope.enemyTeam._id, false, function(isEnded, result, rating, ratingChange, gainedSouls){
                 if(isEnded){
-                    battleEnd(result, rating, gainedSouls)
+                    battleEnd(result, rating, ratingChange, gainedSouls)
                 }
                 else {
                     turnPrepare();

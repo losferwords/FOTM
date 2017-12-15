@@ -24,9 +24,9 @@ var Effect = function(name, abilityVariant) {
             score: function(owner, myTeam, enemyTeam, walls) {
                 var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
                 return {
-                    effectScore: owner.hitChance * (1 - this.variant * 0.07) * 50,
+                    effectScore: owner.hitChance * (1 - this.variant * 0.07) * 40,
                     leftScore: this.left * 2,
-                    offensivePositionScore: positionWeights[0] * 30
+                    offensivePositionScore: positionWeights[0] * 20
                 };
             }
         };
@@ -69,14 +69,14 @@ var Effect = function(name, abilityVariant) {
                 switch(this.variant){
                     case 1:
                     case 2:
-                        var effectScore = owner.blockChance * 250 + owner.physRes * 250 + owner.magicRes * 250;
+                        var effectScore = owner.blockChance * 300 + owner.physRes * 300 + owner.magicRes * 300;
                         break;
                     case 3:
                     case 4:
-                        effectScore = owner.blockChance * 270 + owner.physRes * 270 + owner.magicRes * 270;
+                        effectScore = owner.blockChance * 350 + owner.physRes * 350 + owner.magicRes * 350;
                         break;                    
                     case 5:
-                        effectScore = owner.blockChance * 315 + owner.physRes * 315 + owner.magicRes * 315;
+                        effectScore = owner.blockChance * 400 + owner.physRes * 400 + owner.magicRes * 400;
                         break;
                 }
 
@@ -111,8 +111,8 @@ var Effect = function(name, abilityVariant) {
             score: function(owner, myTeam, enemyTeam, walls) {
                 var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
                 return {
-                    effectScore: (owner.physRes * (1 - this.variant * 0.07) * 200 + owner.dodgeChance * (1 - this.variant * 0.07) * 200),
-                    leftScore: this.left * 4,
+                    effectScore: owner.physRes * (1 - this.variant * 0.07) * 200 + owner.dodgeChance * (1 - this.variant * 0.07) * 200,
+                    leftScore: this.left * 3,
                     offensivePositionScore: positionWeights[0] * 30
                 };
             }
@@ -514,8 +514,8 @@ var Effect = function(name, abilityVariant) {
                 heal = arenaService.calculateExpectedHeal(heal, buffer);
                 var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
                 return {
-                    effectScore: heal / 5,
-                    leftScore: this.left * 8,
+                    effectScore: heal / 6,
+                    leftScore: this.left * 6,
                     defensivePositionScore: - positionWeights[1] * 35,
                     healthScore: - owner.curHealth / owner.maxHealth * 35
                 };
@@ -560,8 +560,8 @@ var Effect = function(name, abilityVariant) {
                 magicDamage = owner.applyResistance(magicDamage, true);
                 
                 return {
-                    effectScore: magicDamage / 9,
-                    leftScore: this.left * 3
+                    effectScore: magicDamage / 8,
+                    leftScore: this.left * 2
                 };
             }
         };
@@ -635,8 +635,8 @@ var Effect = function(name, abilityVariant) {
             score: function(owner, myTeam, enemyTeam, walls) {
                 var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
                 return {                    
-                    leftScore: this.left * 4,
-                    offensivePositionScore: positionWeights[0] * 50
+                    leftScore: this.left * 3,
+                    offensivePositionScore: positionWeights[0] * 40
                 };
             }
         };
@@ -663,9 +663,9 @@ var Effect = function(name, abilityVariant) {
             score: function(owner, myTeam, enemyTeam, walls) {
                 var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
                 return {
-                    leftScore: this.left * 3,
+                    leftScore: this.left * 2,
                     offensivePositionScore: positionWeights[0] * 10,
-                    defensivePositionScore: positionWeights[1] * 30
+                    defensivePositionScore: positionWeights[1] * 20
                 };
             }
         };
@@ -690,8 +690,8 @@ var Effect = function(name, abilityVariant) {
             score: function(owner, myTeam, enemyTeam, walls) {
                 var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
                 return {
-                    effectScore: owner.luck * (1 + this.variant * 0.15) * 150 + owner.dodgeChance * (1 + this.variant * 0.2) * 125,
-                    leftScore: this.left * 3,
+                    effectScore: owner.luck * (1 + this.variant * 0.15) * 250 + owner.dodgeChance * (1 + this.variant * 0.2) * 225,
+                    leftScore: this.left * 4,
                     defensivePositionScore: - positionWeights[1] * 25,
                     healthScore: - owner.curHealth / owner.maxHealth * 25,
                 };
@@ -742,9 +742,9 @@ var Effect = function(name, abilityVariant) {
             score: function(owner, myTeam, enemyTeam, walls) {
                 var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
                 return {
-                    leftScore: this.left * 10,
-                    defensivePositionScore: - positionWeights[1] * 40,
-                    healthScore: - owner.curHealth / owner.maxHealth * 40,
+                    leftScore: this.left * 6,
+                    defensivePositionScore: - positionWeights[1] * 20,
+                    healthScore: - owner.curHealth / owner.maxHealth * 20,
                 };
             }
         };
@@ -820,8 +820,8 @@ var Effect = function(name, abilityVariant) {
             magicEffect: function() {return true},
             score: function(owner, myTeam, enemyTeam, walls) {
                 return {
-                    effectScore: owner.magicRes * (1 - this.variant * 0.1) * 320 + owner.initiative * (1 - this.variant * 0.1) * 0.75,
-                    leftScore: this.left * 5
+                    effectScore: owner.magicRes * (1 - this.variant * 0.1) * 240 + owner.initiative * (1 - this.variant * 0.1) * 0.7,
+                    leftScore: this.left * 4
 
                 };
             }
@@ -920,8 +920,8 @@ var Effect = function(name, abilityVariant) {
             score: function(owner, myTeam, enemyTeam, walls) {
                 var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
                 return {
-                    leftScore: this.left * 6,
-                    offensivePositionScore: positionWeights[0] * 50
+                    leftScore: this.left * 3,
+                    offensivePositionScore: positionWeights[0] * 30
                 };
             }
         };
@@ -1057,9 +1057,9 @@ var Effect = function(name, abilityVariant) {
             score: function(owner, myTeam, enemyTeam, walls) {
                 var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
                 return {
-                    effectScore: owner.spellPower * (1 + this.variant * 0.15) * 100,
-                    offensivePositionScore: positionWeights[0] * 50,
-                    defensivePositionScore: -positionWeights[1] * 50
+                    effectScore: owner.spellPower * (1 + this.variant * 0.15) * 150,
+                    offensivePositionScore: positionWeights[0] * 35,
+                    defensivePositionScore: -positionWeights[1] * 35
                 };
             }
         };
@@ -1109,7 +1109,7 @@ var Effect = function(name, abilityVariant) {
                     leftScore: this.left * 5,
                     defensivePositionScore: - positionWeights[1] * 25,
                     healthScore: - owner.curHealth / owner.maxHealth * 25,
-                    manaScore: owner.curMana / owner.maxMana * 50 
+                    manaScore: owner.curMana / owner.maxMana * 15 
                 };
             }
         };
@@ -1167,9 +1167,9 @@ var Effect = function(name, abilityVariant) {
             score: function(owner, myTeam, enemyTeam, walls) {
                 var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
                 return {
-                    leftScore: this.left * 8,
-                    defensivePositionScore: - positionWeights[1] * 50,
-                    healthScore: - owner.curHealth / owner.maxHealth * 50 
+                    leftScore: this.left * 10,
+                    defensivePositionScore: - positionWeights[1] * 35,
+                    healthScore: - owner.curHealth / owner.maxHealth * 35 
                 };
             }
         };
@@ -1395,8 +1395,8 @@ var Effect = function(name, abilityVariant) {
                 magicDamage = owner.applyResistance(magicDamage, true);
                 
                 return {
-                    effectScore: magicDamage / 11,
-                    leftScore: this.left * 5
+                    effectScore: magicDamage / 5,
+                    leftScore: this.left * 3
                 };
             }
         };
@@ -1500,26 +1500,26 @@ var Effect = function(name, abilityVariant) {
                 var effectScore = 0;
                 switch(this.variant){
                     case 1:
-                        effectScore = owner.attackPower * (1 - 0.25) * 120 + owner.blockChance * (1 - 0.25) * 120;
+                        effectScore = owner.attackPower * (1 - 0.25) * 100 + owner.blockChance * (1 - 0.25) * 100;
                         break;
                     case 2:
-                        effectScore = owner.critChance * (1 - 0.25) * 120 + owner.dodgeChance * (1 - 0.25) * 120;
+                        effectScore = owner.critChance * (1 - 0.25) * 100 + owner.dodgeChance * (1 - 0.25) * 100;
                         break;
                     case 3:
-                        effectScore = owner.spellPower * (1 - 0.25) * 120 + owner.hitChance * (1 - 0.25) * 30;
+                        effectScore = owner.spellPower * (1 - 0.25) * 100 + owner.hitChance * (1 - 0.25) * 25;
                         break;
                     case 4:
-                        effectScore = owner.physRes * (1 - 0.25) * 120 + owner.healthReg * (1 - 0.25) * 480;
+                        effectScore = owner.physRes * (1 - 0.25) * 100 + owner.healthReg * (1 - 0.25) * 200;
                         break;
                     case 5:
-                        effectScore = owner.magicRes * (1 - 0.25) * 120 + owner.manaReg * (1 - 0.25) * 480;
+                        effectScore = owner.magicRes * (1 - 0.25) * 100 + owner.manaReg * (1 - 0.25) * 200;
                         break;
                 }
                 var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
                 return {
                     effectScore: effectScore,
-                    leftScore: this.left * 2,
-                    offensivePositionScore: positionWeights[0] * 30
+                    leftScore: this.left,
+                    offensivePositionScore: positionWeights[0] * 25
                 };
             }
         };
