@@ -16,7 +16,7 @@ module.exports = function (serverIO) {
                 if (err) socket.emit("customError", err);
 
                 for (var i = 0; i < users.length; i++) {
-                    Team.deleteDummies(users[i]._id);
+                    Team.deleteDummies(users[i].id);
                 }
             });
         });
@@ -31,25 +31,25 @@ module.exports = function (serverIO) {
                 var serverSockets = io.of('/').in(socket.serSt.serverRoom).connected;
                 async.each(users, function(user, callback) {
                     var currentUser = user;
-                    currentUser._doc.isOnline = false;
+                    currentUser.isOnline = false;
                     //��������� ������ ������
                     for (var socketId in io.nsps["/"].adapter.rooms[socket.serSt.serverRoom].sockets) {
                         if(io.nsps["/"].adapter.rooms[socket.serSt.serverRoom].sockets.hasOwnProperty(socketId)){
                             var socketItem = serverSockets[socketId];
                             if (currentUser.id === socketItem.handshake.user.id) {
-                                currentUser._doc.isOnline=true;
+                                currentUser.isOnline=true;
                             }
                         }
                     }
                     if(user.team){
-                        Team.getByUserIdFull(user._id, function(err, fullTeam) {
+                        Team.getByUserIdFull(user.id, function(err, fullTeam) {
                             currentUser.team = fullTeam;
-                            usersList.push(currentUser._doc);
+                            usersList.push(currentUser.toObject({ virtuals: true }));
                             callback(null);
                         });
                     }
                     else {
-                        usersList.push(currentUser._doc);
+                        usersList.push(currentUser.toObject({ virtuals: true }));
                         callback(null);
                     }
                 }, function(err){
@@ -71,7 +71,7 @@ module.exports = function (serverIO) {
                             socket.emit("customError", err);
                             return;
                         }
-                        User.remove({_id: userId}, function(err) {
+                        User.remove({id: userId}, function(err) {
                             if (err) {
                                 socket.emit("customError", err);
                                 return;
@@ -81,7 +81,7 @@ module.exports = function (serverIO) {
                     });
                 }
                 else {
-                    User.remove({_id: userId}, function(err) {
+                    User.remove({id: userId}, function(err) {
                         if (err) {
                             socket.emit("customError", err);
                             return;

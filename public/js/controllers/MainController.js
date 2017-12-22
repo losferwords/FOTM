@@ -2,7 +2,7 @@
     //Главный контроллер
     module.controller("MainController", MainController);
 
-    function MainController($scope, $rootScope, $window, $location, gettextCatalog, ngAudio, soundService) {
+    function MainController($scope, $rootScope, $window, $http, $location, gettextCatalog, ngAudio, soundService) {
         gettextCatalog.setCurrentLanguage('en');
         ngAudio.performance=1000;
 
@@ -53,7 +53,7 @@
         };
 
         //Смена классов информационного div
-            $scope.changeInfoCSS = function(cssScope){
+        $scope.changeInfoCSS = function(cssScope){
             $scope.cssSuccess = false;
             $scope.cssError = false;
             $scope.cssText = false;
@@ -63,5 +63,15 @@
                 case("text") : $scope.cssText=true;break;
             }
         };
+
+        $scope.logout = function() {
+            var response = $http.post("/logout", {}, {});
+            response.success(function(data, status, headers, config) {
+                $window.location.href="/";
+            });
+            response.error(function(data, status, headers, config) {
+                $window.location.href="/";
+            });
+        }
     }
 })(angular.module("fotm"));

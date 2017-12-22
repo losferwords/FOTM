@@ -153,7 +153,7 @@
 
                 function init(obj, length, area){
                     var progression = [];
-                    for(var i=0;i<length;i++){
+                    for(var i = 0; i<length; i++){
                         progression.push(i);
                     }
                     musicIndexArrays[area] = randomService.shuffle(progression);
@@ -161,17 +161,17 @@
                 }
             },
             nextTrack: function(area) {
-                if(area=="city"){
+                if(area == "city"){
                     next.call(this, 'cityMusic', area);
                 }
-                else if(area=="battle"){
+                else if(area == "battle"){
                     next.call(this, 'battleMusic', area);
                 }
 
                 function next(obj, area){
-                    var next=musicIndexArrays[area].indexOf(musicObj[obj].index);
-                    if(next==(musicIndexArrays[area].length-1)){
-                        next=0;
+                    var next = musicIndexArrays[area].indexOf(musicObj[obj].index);
+                    if(next == (musicIndexArrays[area].length-1)){
+                        next = 0;
                     }
                     else {
                         next++;
@@ -181,10 +181,10 @@
 
             },
             playTrack: function(area, index) {
-                if(area=="city"){
+                if(area == "city"){
                     play.call(this, 'cityMusic', index);
                 }
-                else if(area=="battle"){
+                else if(area == "battle"){
                     play.call(this, 'battleMusic', index);
                 }
 

@@ -84,7 +84,7 @@
 
         $scope.deleteUser = function(user) {
             if(user){
-                mainSocket.emit("deleteUser", user._id, function() {
+                mainSocket.emit("deleteUser", user.id, function() {
                     $rootScope.showInfoMessage("Successfully deleted");
                     $scope.chosenTeam = undefined;
                     getUsers();

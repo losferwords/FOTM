@@ -1,22 +1,21 @@
 //Сервис для работы арены
-var Team = require('models/team').Team;
-var Character = require('models/character').Character;
 var async = require('async');
 var sizeof = require('object-sizeof');
 var deepClone = require('fast-deepclone');
 var randomService = require('services/randomService');
+var Team = require('models/team');
+var Character = require('models/character');
 var map = [];
 
 module.exports = {
     //поиск возможных для хода клеток
     findMoves: function(char, myTeam, enemyTeam, walls, radius){
-        var self = this;
-        var points = self.findNearestPoints(char.position, radius);
+        var points = this.findNearestPoints(char.position, radius);
 
         var availablePoints = [];
-        for(var i=0;i<points.length;i++){
-            if(!self.checkTile(points[i], char, myTeam, enemyTeam, walls, true)){
-                availablePoints[availablePoints.length]=points[i];
+        for(var i = 0; i < points.length; i++){
+            if(!this.checkTile(points[i], char, myTeam, enemyTeam, walls, true)){
+                availablePoints[availablePoints.length] = points[i];
             }
         }
         return availablePoints;
@@ -24,11 +23,11 @@ module.exports = {
     //поиск всех клеток в заданном радиусе
     findNearestPoints: function(position, rad) {
         var points = [];
-        for(var i=-rad;i<=rad;i++){
-            if(position.x+i>=0 && position.x+i<=9) {
-                for(var j=-rad;j<=rad;j++){
-                    if(position.y+j>=0 && position.y+j<=9){
-                        points[points.length] = {x: position.x+i, y: position.y+j};
+        for(var i =- rad; i <= rad; i++){
+            if(position.x + i >= 0 && position.x + i <= 9) {
+                for(var j =- rad; j <= rad; j++){
+                    if(position.y + j >= 0 && position.y + j <= 9){
+                        points[points.length] = {x: position.x + i, y: position.y + j};
                     }
                 }
             }
@@ -37,7 +36,6 @@ module.exports = {
     },
     //Проверка на наличие персонажа или препятствия на этом тайле
     checkTile: function(position, char, myTeam, enemyTeam, walls, skipInvisible){
-        var self = this;
         var queue = myTeam.concat(enemyTeam);
         for(var i=0;i<queue.length;i++){
             if(queue[i].position.x==position.x &&
@@ -60,33 +58,30 @@ module.exports = {
         }
 
         for(i=0;i<walls.length;i++){
-            var wallPos = self.map1Dto2D(walls[i]);
+            var wallPos = this.map1Dto2D(walls[i]);
             if(wallPos.x == position.x && wallPos.y == position.y) return true; //Проверяем на препятствие
         }
         return false;
     },
     //Функция перемещения вплотную к сопернику
     charge: function(target, char, myTeam, enemyTeam, walls) {
-        var self = this;
-
-        var points = self.findNearestPoints(target.position, 1);
-
+        var points = this.findNearestPoints(target.position, 1);
         var availablePoints = [];
 
         //Если уже стоим вплотную к сопернику, остаёмся на своём месте
-        var targetEnemies = self.findEnemies(target, myTeam, 1, walls);
-        for(var k=0;k<targetEnemies.length;k++){
+        var targetEnemies = this.findEnemies(target, myTeam, 1, walls);
+        for(var k = 0; k < targetEnemies.length; k++){
             if(targetEnemies[k].charName == char.charName){
                 return true;
             }
         }
 
-        for(var i=0;i<points.length;i++){
-            if(!self.checkTile(points[i], char, enemyTeam, myTeam, walls, false)){
+        for(var i = 0; i < points.length; i++){
+            if(!this.checkTile(points[i], char, enemyTeam, myTeam, walls, false)){
                 availablePoints.push(points[i]);
             }
         }
-        if(availablePoints.length===0) return false;
+        if(availablePoints.length === 0) return false;
 
         availablePoints.sort(function (a, b) {
             var aDistance = Math.sqrt(Math.pow(a.x-char.position.x,2)+Math.pow(a.y-char.position.y,2));
@@ -105,7 +100,6 @@ module.exports = {
     },
     //Функция отбрасывания соперника на клетку назад
     knockBack: function(target, char, myTeam, enemyTeam, walls) {
-        var self = this;
         var direction = {x:0,y:0};
         var direction1 = {x:0,y:0};
         var direction2 = {x:0,y:0};
@@ -196,21 +190,21 @@ module.exports = {
 
         var newPosition = {x: targetPosition.x + direction.x, y: targetPosition.y + direction.y};
 
-        if (!self.checkTile(newPosition, char, myTeam, enemyTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
+        if (!this.checkTile(newPosition, char, myTeam, enemyTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
         {
             target.position = {x: newPosition.x, y: newPosition.y};
         }
         else
         {
             newPosition = {x: targetPosition.x + direction1.x, y: targetPosition.y + direction1.y};
-            if (!self.checkTile(newPosition, char, myTeam, enemyTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
+            if (!this.checkTile(newPosition, char, myTeam, enemyTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
             {
                 target.position = {x: newPosition.x, y: newPosition.y};
             }
             else
             {
                 newPosition = {x: targetPosition.x + direction2.x, y: targetPosition.y + direction2.y};
-                if (!self.checkTile(newPosition, char, myTeam, enemyTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
+                if (!this.checkTile(newPosition, char, myTeam, enemyTeam, walls, false) && newPosition.x >= 0 && newPosition.x <= 9 && newPosition.y >= 0 && newPosition.y <= 9)
                 {
                     target.position = {x: newPosition.x, y: newPosition.y};
                 }
@@ -238,7 +232,6 @@ module.exports = {
         }
     },
     checkForWin: function(myTeam, enemyTeam, battleData, enemyLeave, cb){
-        var self = this;
         var myDeaths = 0;
         var enemyDeaths = 0;        
         var gainedSouls = {red: 0, green:0, blue: 0};
@@ -277,21 +270,41 @@ module.exports = {
         }
 
         if(myDeaths == 3){
-            self.makeLose(myTeam, enemyTeam, gainedSouls, battleData, cb);
-        } 
-        else if(enemyDeaths == 3){
-            self.makeWin(myTeam, enemyTeam, gainedSouls, battleData, cb);
-        }
-        //game is over after some turns
-        else if(battleData.turnsSpended >= 100){
-            if(myDeaths > enemyDeaths){
-                self.makeLose(myTeam, enemyTeam, gainedSouls, battleData, cb);
-            }
-            else if(myDeaths < enemyDeaths){
-                self.makeWin(myTeam, enemyTeam, gainedSouls, battleData, cb);
+            if(battleData.training) {
+                this.makeLoseTraining(myTeam, gainedSouls, cb);
             }
             else {
-                self.makeDraw(myTeam, enemyTeam, gainedSouls, battleData, cb);
+                this.makeLose(myTeam, enemyTeam, gainedSouls, battleData, cb);
+            }           
+        } 
+        else if(enemyDeaths == 3){
+            if(battleData.training) {
+                this.makeWinTraining(myTeam, gainedSouls, cb);
+            }
+            else {
+                this.makeWin(myTeam, enemyTeam, gainedSouls, battleData, cb);
+            }            
+        }
+        //game is over after some turns
+        else if(battleData.turnsSpended >= 50){
+            if(myDeaths > enemyDeaths){
+                if(battleData.training && !myTeam.isBot) {
+                    this.makeLoseTraining(myTeam, gainedSouls, cb);
+                }
+                else {
+                    this.makeLose(myTeam, enemyTeam, gainedSouls, battleData, cb);
+                }
+            }
+            else if(myDeaths < enemyDeaths){
+                if(battleData.training && !myTeam.isBot) {
+                    this.makeWinTraining(myTeam, gainedSouls, cb);
+                }
+                else {
+                    this.makeWin(myTeam, enemyTeam, gainedSouls, battleData, cb);
+                } 
+            }
+            else if(!battleData.training || (battleData.training && !myTeam.isBot)){
+                this.makeDraw(myTeam, gainedSouls, battleData, cb);
             }
         }
         else {
@@ -299,6 +312,7 @@ module.exports = {
         }
     },
     makeWin: function(myTeam, enemyTeam, gainedSouls, battleData, cb){
+        var cb = cb;
         var ratingChange = 0;
         if(battleData.bots){
             cb(true, 'win', 0, 0, gainedSouls);
@@ -327,7 +341,7 @@ module.exports = {
         myTeam.souls.green += gainedSouls.green;
         myTeam.souls.blue += gainedSouls.blue;
 
-        Team.setById(myTeam._id, {
+        Team.Team.setById(myTeam.id, {
             rating: myTeam.rating,
             wins: myTeam.wins + 1,
             souls: myTeam.souls
@@ -339,12 +353,34 @@ module.exports = {
             cb(true, 'win', myTeam.rating, ratingChange, gainedSouls);
         });
     },
+    makeWinTraining: function(myTeam, gainedSouls, cb){
+        var cb = cb;
+        gainedSouls.red += 2;
+        gainedSouls.green += 2;
+        gainedSouls.blue += 2;
+
+        myTeam.souls.red += gainedSouls.red;
+        myTeam.souls.green += gainedSouls.green;
+        myTeam.souls.blue += gainedSouls.blue;
+        
+        Team.Team.setById(myTeam.id, {
+            souls: myTeam.souls
+        }, function(err, team){
+            if (err) {
+                console.error(err);
+                return;
+            }
+            cb(true, 'win', myTeam.rating, 0, gainedSouls);
+        });
+    },
     makeLose: function(myTeam, enemyTeam, gainedSouls, battleData, cb) {
+        var cb = cb;
         var ratingChange = 0;
         if(battleData.bots){
             cb(true, 'lose', 0, 0, gainedSouls);
             return;
         }
+
         if(myTeam.rating > enemyTeam.rating){
             ratingChange = (myTeam.rating - enemyTeam.rating) * 2;
             if(ratingChange > 25) ratingChange = 25;
@@ -374,7 +410,7 @@ module.exports = {
         myTeam.souls.green += gainedSouls.green;
         myTeam.souls.blue += gainedSouls.blue;
 
-        Team.setById(myTeam._id, {
+        Team.Team.setById(myTeam.id, {
             rating: myTeam.rating,
             wins: myTeam.loses + 1,
             souls: myTeam.souls
@@ -385,7 +421,7 @@ module.exports = {
             }
             //Set lose flag for characters
             async.each(myTeam.characters, function(char, callback) {
-                Character.setById(char._id, {lose: true}, function(err, char){
+                Character.Character.setById(char.id, {lose: true}, function(err, char){
                     if (err) {
                         console.error(err);
                         return;
@@ -401,7 +437,28 @@ module.exports = {
             });
         });
     },
-    makeDraw: function(myTeam, enemyTeam, gainedSouls, battleData, cb) {
+    makeLoseTraining: function(myTeam, gainedSouls, cb){
+        var cb = cb;
+        gainedSouls.red += 1;
+        gainedSouls.green += 1;
+        gainedSouls.blue += 1;
+
+        myTeam.souls.red += gainedSouls.red;
+        myTeam.souls.green += gainedSouls.green;
+        myTeam.souls.blue += gainedSouls.blue;
+
+        Team.Team.setById(myTeam.id, {
+            souls: myTeam.souls
+        }, function(err, team){
+            if (err) {
+                console.error(err);
+                return;
+            }
+            cb(true, 'lose', myTeam.rating, 0, gainedSouls);
+        });
+    },
+    makeDraw: function(myTeam, gainedSouls, battleData, cb) {
+        var cb = cb;
         if(battleData.bots){
             cb(true, 'draw', 0, 0, gainedSouls);
             return;
@@ -414,7 +471,7 @@ module.exports = {
         myTeam.souls.green += gainedSouls.green;
         myTeam.souls.blue += gainedSouls.blue;
 
-        Team.setById(myTeam._id, {
+        Team.Team.setById(myTeam.id, {
             souls: myTeam.souls
         }, function(err, team){
             if (err) {
@@ -443,7 +500,7 @@ module.exports = {
             }
             //если инициатива одинаковая, тогда смотрим, у кого больше id
             if (a.initiativePoints == b.initiativePoints) {
-                if(a._id > b._id){
+                if(a.id > b.id){
                     return 1;
                 }
                 else {
@@ -455,7 +512,7 @@ module.exports = {
 
         var result = [];
         for(i=0; i<queue.length;i++){
-            result.push({_id: queue[i]._id, charName: queue[i].charName});
+            result.push({id: queue[i].id, charName: queue[i].charName});
         }
         return result;
     },
@@ -463,14 +520,14 @@ module.exports = {
     findCharInQueue: function(id, myTeam, enemyTeam) {
         var char;
         for(var i=0; i<myTeam.length; i++){
-            if(id == myTeam[i]._id){
+            if(id == myTeam[i].id){
                 char = myTeam[i];
                 break;
             }
         }
         if(!char) {
             for(i=0; i<enemyTeam.length; i++){
-                if(id == enemyTeam[i]._id){
+                if(id == enemyTeam[i].id){
                     char = enemyTeam[i];
                     break;
                 }
@@ -482,7 +539,7 @@ module.exports = {
     findCharInMyTeam: function(id, myTeam) {
         var char;
         for(var i=0; i < myTeam.length; i++){
-            if(id == myTeam[i]._id){
+            if(id == myTeam[i].id){
                 char = myTeam[i];
                 break;
             }
@@ -491,7 +548,6 @@ module.exports = {
     },
     //Make copy of team
     cloneTeam: function(team){
-        var self = this;
         //var start = process.hrtime();
         var newTeam = deepClone(team, true);
         //randomService.elapsedTime(start, "cloneTeam");
@@ -508,10 +564,10 @@ module.exports = {
     },
     //Recalculate characters
     calcCharacters: function(myTeamChars, enemyTeamChars) {
-        for(var i=0; i<myTeamChars.length; i++){
+        for(var i = 0; i < myTeamChars.length; i++){
             myTeamChars[i].calcChar(true);
         }
-        for(i=0; i<enemyTeamChars.length; i++){
+        for(i = 0; i < enemyTeamChars.length; i++){
             enemyTeamChars[i].calcChar(true);
         }
     },
@@ -562,10 +618,8 @@ module.exports = {
     //find allies in selected range
     //charArray - array of characters
     findAllies: function(char, charArray, range, walls){
-        var self = this;
-
         var charPos = {x: char.position.x, y: char.position.y};
-        var points = self.findNearestPoints(charPos, range);
+        var points = this.findNearestPoints(charPos, range);
 
         var result = [];
         for(var i=0;i<points.length;i++){
@@ -573,7 +627,7 @@ module.exports = {
                 if(points[i].x == charArray[j].position.x &&
                     points[i].y == charArray[j].position.y &&
                     !charArray[j].isDead &&
-                    !self.rayTrace({x: charPos.x*32+16, y: charPos.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16}, walls)
+                    !this.rayTrace({x: charPos.x * 32 + 16, y: charPos.y * 32 + 16}, {x: points[i].x * 32 + 16, y: points[i].y * 32 + 16}, walls)
                 ){
                     result.push(charArray[j]);
                 }
@@ -582,10 +636,9 @@ module.exports = {
         return result;
     },
     findAlliesForAbility: function(myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, cb) {            
-        var self = this; 
         if(preparedAbility){
-            var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
-            var result = self.findAllies(activeChar, myTeam.characters, ability.range(), wallPositions);
+            var ability = this.getAbilityForCharByName(activeChar, preparedAbility);
+            var result = this.findAllies(activeChar, myTeam.characters, ability.range(), wallPositions);
             cb(result);
             return result;
         }
@@ -593,10 +646,8 @@ module.exports = {
     //find enemies in selected range
     //charArray - array of characters
     findEnemies: function(char, charArray, range, walls){
-        var self = this;
-
         var charPos = {x: char.position.x, y: char.position.y};
-        var points = self.findNearestPoints(charPos, range);
+        var points = this.findNearestPoints(charPos, range);
 
         var result = [];
         for(var i=0;i<points.length;i++){
@@ -604,7 +655,7 @@ module.exports = {
                 if(points[i].x == charArray[j].position.x &&
                     points[i].y == charArray[j].position.y &&
                     !charArray[j].isDead &&
-                    !self.rayTrace({x: charPos.x*32+16, y: charPos.y*32+16},{x: points[i].x*32+16, y: points[i].y*32+16}, walls)
+                    !this.rayTrace({x: charPos.x * 32 + 16, y: charPos.y * 32 + 16}, {x: points[i].x * 32 + 16, y: points[i].y * 32 + 16}, walls)
                 ){
                     result.push(charArray[j]);
                 }
@@ -612,20 +663,18 @@ module.exports = {
         }
         return result;
     },
-    findEnemiesForAbility: function(myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, cb) {
-        var self = this;            
+    findEnemiesForAbility: function(myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, cb) {      
         if(preparedAbility){
-            var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
-            var result = self.findEnemies(activeChar, enemyTeam.characters, ability.range(), wallPositions);
+            var ability = this.getAbilityForCharByName(activeChar, preparedAbility);
+            var result = this.findEnemies(activeChar, enemyTeam.characters, ability.range(), wallPositions);
             cb(result);
             return result;
         }
     },
     findCharactersForAbility: function(myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, cb) {
-        var self = this; 
         if(preparedAbility){
-            var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
-            var result = self.findAllies(activeChar, myTeam.characters, ability.range(), wallPositions).concat(self.findEnemies(activeChar, enemyTeam.characters, ability.range(), wallPositions));
+            var ability = this.getAbilityForCharByName(activeChar, preparedAbility);
+            var result = this.findAllies(activeChar, myTeam.characters, ability.range(), wallPositions).concat(this.findEnemies(activeChar, enemyTeam.characters, ability.range(), wallPositions));
             cb(result);
             return result;
         }
@@ -645,7 +694,7 @@ module.exports = {
         var sy = (y1 < y2) ? 1 : -1;
         var err = dx - dy;
         // Устанавливаем начальные координаты
-        coordinatesArray.push({x:x1,y:y1});
+        coordinatesArray.push({x: x1, y: y1});
         // Основной цикл
         while (!((x1 == x2) && (y1 == y2))) {
             var e2 = err << 1;
@@ -659,25 +708,30 @@ module.exports = {
             }
             //Устанавливаем координаты
             //Список всех пикселей по пути
-            coordinatesArray.push({x:x1,y:y1});
+            coordinatesArray.push({x: x1, y: y1});
         }
 
-        for(var i=0;i<coordinatesArray.length;i++){
+        for(var i = 0; i < coordinatesArray.length; i++){
             //определяем клетку на карте, которой принадлежит эта точка
-            var x=coordinatesArray[i].x;
-            var y=coordinatesArray[i].y;
+            var x = coordinatesArray[i].x;
+            var y = coordinatesArray[i].y;
 
             //Исключаем варианты, когда точка находится ровно в уголке тайла, чтобы исключить диагонали
-            if(x%32===0 && y%32===0) continue;
+            if(x % 32 === 0 && y % 32 === 0) {
+                continue;
+            }
 
-            var tile={
-                x:Math.floor(x/32),
-                y:Math.floor(y/32)
+            var tile = {
+                x: Math.floor(x / 32),
+                y: Math.floor(y / 32)
             };
-            var mapIndex=this.map2Dto1D(tile);
 
-            for(var j=0;j<walls.length;j++) {
-                if(walls[j]==mapIndex) return true
+            var mapIndex = this.map2Dto1D(tile);
+
+            for(var j = 0; j < walls.length; j++) {
+                if(walls[j] == mapIndex) {
+                    return true;
+                }
             }
         }
         //Если стенок не встретилось
@@ -685,7 +739,7 @@ module.exports = {
     },
     //Возвращаем способность по её имени для персонажа
     getAbilityForCharByName: function(char, name) {
-        for(var i=0; i<char.abilities.length;i++){
+        for(var i = 0; i < char.abilities.length; i++){
             if(char.abilities[i].name == name) {
                 return char.abilities[i];
             }
@@ -723,29 +777,44 @@ module.exports = {
     getOptimalRange: function(activeChar){
         var rangeSum = 0;
         var rangeCount = 0;
-        for(var i=0;i<activeChar.abilities.length;i++){
-            if(activeChar.abilities[i].range() != 'self'){
-                rangeSum+=activeChar.abilities[i].range();
+        for(var i = 0; i < activeChar.abilities.length; i++){
+            if(activeChar.abilities[i].range() !== 'self'){
+                rangeSum += activeChar.abilities[i].range();
                 rangeCount++;
             }
         }
-        return rangeSum/rangeCount;
+        if(rangeSum > 0 && rangeCount > 0) {
+            return rangeSum / rangeCount;
+        } 
+        else {
+            return 0;
+        }        
     },
     calculatePositionWeight: function(position, char, myTeam, enemyTeam, optimalRange, walls){
-        var self = this;
-        var weight = [0,0];
+        var weight = [0, 0];
 
-        for(i=0;i<enemyTeam.length;i++){
-            if(enemyTeam[i].isDead) continue;
-            weight[0] += 0.3 - Math.abs(optimalRange - self.intDistanceBetweenPoints(position, enemyTeam[i].position))/30 - Number(self.rayTrace(position, myTeam[i].position, walls))*0.1;
+        for(var i = 0; i < enemyTeam.length; i++){
+            if(enemyTeam[i].isDead) {
+                continue;
+            }
+            weight[0] += 0.3 - Math.abs(optimalRange - this.intDistanceBetweenPoints(position, enemyTeam[i].position)) * 0.03 - Number(this.rayTrace({x: position.x * 32 + 16, y: position.y * 32 + 16}, {x: enemyTeam[i].position.x * 32 + 16, y: enemyTeam[i].position.y * 32 + 16}, walls)) * 0.05;
         }
-        if(weight[0] < 0) weight[0] = 0;
 
-        for(var i=0;i<myTeam.length;i++){
-            if(myTeam[i]._id == char._id || myTeam[i].isDead) continue;
-            weight[1] += 0.5 - Math.abs(optimalRange - self.intDistanceBetweenPoints(position, myTeam[i].position))/20 - Number(self.rayTrace(position, myTeam[i].position, walls))*0.1;
+        if(weight[0] < 0) {
+            weight[0] = 0;
         }
-        if(weight[1] < 0) weight[1] = 0;
+
+        for(i = 0; i < myTeam.length; i++){
+            if(myTeam[i].id == char.id || myTeam[i].isDead) {
+                continue;
+            }
+            weight[1] += 0.5 - Math.abs(optimalRange - this.intDistanceBetweenPoints(position, myTeam[i].position)) * 0.05 - Number(this.rayTrace({x: position.x * 32 + 16, y: position.y * 32 + 16}, {x: myTeam[i].position.x * 32 + 16, y: myTeam[i].position.y * 32 + 16}, walls)) * 0.125;
+        }
+
+        if(weight[1] < 0) {
+            weight[1] = 0;
+        }
+
         return weight;
     },
     calculateExpectedDamage: function(damage, caster){
@@ -780,12 +849,11 @@ module.exports = {
         }
     },
     findMovePoints: function(myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, cb){
-        var self = this;        
         var result = [];        
         if(!activeChar.immobilized) {
             var range = 0;
             if(preparedAbility){
-                var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
+                var ability = this.getAbilityForCharByName(activeChar, preparedAbility);
                 if(ability){
                     range = ability.range();
                 }
@@ -796,7 +864,7 @@ module.exports = {
 
             if(range > 0)
             {
-                result = self.findMoves(activeChar, myTeam.characters, enemyTeam.characters, wallPositions, range);
+                result = this.findMoves(activeChar, myTeam.characters, enemyTeam.characters, wallPositions, range);
                 cb(result);
                 return result;
             }
@@ -805,14 +873,13 @@ module.exports = {
         return result;
     },
     moveCharTo: function(tile, myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, invisibleCb, moveCompleteCb){
-        var self = this;
         if(!activeChar.immobilized) {
-            if(self.checkTile({x: tile.x, y: tile.y}, activeChar, myTeam.characters, enemyTeam.characters, wallPositions, false)) {
+            if(this.checkTile({x: tile.x, y: tile.y}, activeChar, myTeam.characters, enemyTeam.characters, wallPositions, false)) {
                 invisibleCb();
             }
             else if(preparedAbility){
-                var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
-                if(ability && self.checkAbilityForUse(ability, activeChar)){
+                var ability = this.getAbilityForCharByName(activeChar, preparedAbility);
+                if(ability && this.checkAbilityForUse(ability, activeChar)){
                     ability.cast(activeChar, null, myTeam.characters, enemyTeam.characters, wallPositions);
                     activeChar.createAbilitiesState();
                     activeChar.position = {x: tile.x, y: tile.y};
@@ -826,23 +893,22 @@ module.exports = {
                 moveCompleteCb();
             }
         }
-        self.cleanBuffers(myTeam, enemyTeam);
+        this.cleanBuffers(myTeam, enemyTeam);
     },
     moveCharSimulation: function(tile, myTeamOrig, enemyTeamOrig, activeCharId, preparedAbility, wallPositions){
-        var self = this;
-        var myTeam = self.cloneTeam(myTeamOrig);
-        var enemyTeam = self.cloneTeam(enemyTeamOrig);
-        var activeChar = self.findCharInMyTeam(activeCharId, myTeam.characters);
+        var myTeam = this.cloneTeam(myTeamOrig);
+        var enemyTeam = this.cloneTeam(enemyTeamOrig);
+        var activeChar = this.findCharInMyTeam(activeCharId, myTeam.characters);
         if(!activeChar.immobilized) {
-            if(self.checkTile({x: tile.x, y: tile.y}, activeChar, myTeam.characters, enemyTeam.characters, wallPositions, false)) {
+            if(this.checkTile({x: tile.x, y: tile.y}, activeChar, myTeam.characters, enemyTeam.characters, wallPositions, false)) {
                 //invisible char on tile
             }
             else if(preparedAbility){
-                var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
-                if(ability && self.checkAbilityForUse(ability, activeChar) && ability.castSimulation){ 
+                var ability = this.getAbilityForCharByName(activeChar, preparedAbility);
+                if(ability && this.checkAbilityForUse(ability, activeChar) && ability.castSimulation){ 
                     ability.castSimulation(activeChar, null, myTeam.characters, enemyTeam.characters, wallPositions);
                     activeChar.position = {x: tile.x, y: tile.y};
-                    self.calcCharacters(myTeam.characters, enemyTeam.characters);
+                    this.calcCharacters(myTeam.characters, enemyTeam.characters);
                 }
             }
             else if(Math.abs(activeChar.position.x - tile.x) < 2 && Math.abs(activeChar.position.y - tile.y) < 2 && activeChar.canMove()){
@@ -852,37 +918,34 @@ module.exports = {
         }
         return {myTeam: myTeam, enemyTeam: enemyTeam, activeChar: activeChar};
     },
-    castAbility: function(targetChar, myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, castCb){
-        var self = this;        
+    castAbility: function(targetChar, myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, castCb){ 
         if(preparedAbility){
-            var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
-            if(ability && self.checkAbilityForUse(ability, activeChar)){
+            var ability = this.getAbilityForCharByName(activeChar, preparedAbility);
+            if(ability && this.checkAbilityForUse(ability, activeChar)){
                 ability.cast(activeChar, targetChar, myTeam.characters, enemyTeam.characters, wallPositions);
                 activeChar.createAbilitiesState();
-                self.createEffectsStates(myTeam.characters, enemyTeam.characters);
-                self.calcCharacters(myTeam.characters, enemyTeam.characters);
+                this.createEffectsStates(myTeam.characters, enemyTeam.characters);
+                this.calcCharacters(myTeam.characters, enemyTeam.characters);
                 castCb();
             }
         }
-        self.cleanBuffers(myTeam, enemyTeam);
+        this.cleanBuffers(myTeam, enemyTeam);
     },
-    castAbilitySimulation: function(myTeamOrig, enemyTeamOrig, activeCharId, targetCharId, preparedAbility, wallPositions){  
-        var self = this;        
-        var myTeam = self.cloneTeam(myTeamOrig);
-        var enemyTeam = self.cloneTeam(enemyTeamOrig);
-        var activeChar = self.findCharInMyTeam(activeCharId, myTeam.characters);
-        var targetChar = self.findCharInQueue(targetCharId, myTeam.characters, enemyTeam.characters);
+    castAbilitySimulation: function(myTeamOrig, enemyTeamOrig, activeCharId, targetCharId, preparedAbility, wallPositions){       
+        var myTeam = this.cloneTeam(myTeamOrig);
+        var enemyTeam = this.cloneTeam(enemyTeamOrig);
+        var activeChar = this.findCharInMyTeam(activeCharId, myTeam.characters);
+        var targetChar = this.findCharInQueue(targetCharId, myTeam.characters, enemyTeam.characters);
         if(preparedAbility){
-            var ability = self.getAbilityForCharByName(activeChar, preparedAbility);
-            if(ability && self.checkAbilityForUse(ability, activeChar) && ability.castSimulation){                    
+            var ability = this.getAbilityForCharByName(activeChar, preparedAbility);
+            if(ability && this.checkAbilityForUse(ability, activeChar) && ability.castSimulation){                    
                 ability.castSimulation(activeChar, targetChar, myTeam.characters, enemyTeam.characters, wallPositions);
-                self.calcCharacters(myTeam.characters, enemyTeam.characters);
+                this.calcCharacters(myTeam.characters, enemyTeam.characters);
             }
         }
         return {myTeam: myTeam, enemyTeam: enemyTeam, activeChar: activeChar};
     },
     turnEnded: function(myTeam, enemyTeam, activeChar, wallPositions, cb) {
-        var self = this;
         activeChar.initiativePoints = activeChar.initiativePoints * 0.2;
         for(var i = 0; i < myTeam.characters.length; i++){
             myTeam.characters[i].refreshChar(myTeam.characters, enemyTeam.characters, wallPositions);
@@ -891,6 +954,6 @@ module.exports = {
             enemyTeam.characters[i].refreshChar(enemyTeam.characters, myTeam.characters, wallPositions);
         }
         cb();  
-        self.cleanBuffers(myTeam, enemyTeam);        
+        this.cleanBuffers(myTeam, enemyTeam);        
     }
 };

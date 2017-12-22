@@ -57,6 +57,10 @@ var schema = new Schema({
     }
 });
 
+schema.virtual('id').get(function() {
+    return this._id;
+});
+
 //GET---------------------------------------------------------------------------
 
 schema.statics.getById = function(teamId, callback) {
@@ -85,13 +89,10 @@ schema.statics.getByUserIdFull = function(userId, callback){
             if(team){
                 team.populate('characters', function(err, popTeam){ //заполняем команду персонажами
                     if (err) return callback(err);
-                    async.each(popTeam.characters, function(characterInTeam, callback) {
-                        characterInTeam._doc = CharacterFactory(characterInTeam._doc);
-                        callback(null, characterInTeam);
-                    }, function(err) {
-                        if (err) callback(err);
-                        callback(null, popTeam);
-                    });
+                    for(var i = 0; i < popTeam.characters.length; i++) {
+                        popTeam.characters[i] = CharacterFactory(popTeam.characters[i].toObject({virtuals: true}))
+                    }
+                    callback(null, popTeam);
                 });
             }
             else {
@@ -139,13 +140,10 @@ schema.statics.getByTeamIdFull = function(teamId, callback){
             else {
                 foundedTeam.populate('characters', function(err, popTeam){ //заполняем команду персонажами
                     if (err) return callback(err);
-                    async.each(popTeam.characters, function(characterInTeam, callback) {
-                        characterInTeam._doc = CharacterFactory(characterInTeam._doc);
-                        callback(null, characterInTeam);
-                    }, function(err) {
-                        if (err) callback(err);
-                        callback(null, popTeam);
-                    });
+                    for(var i = 0; i < popTeam.characters.length; i++) {
+                        popTeam.characters[i] = CharacterFactory(popTeam.characters[i].toObject({virtuals: true}))
+                    }
+                    callback(null, popTeam);
                 });
             }
         }
@@ -193,9 +191,9 @@ schema.statics.findRank = function(teamId, callback){
                     }
                     return 0;
                 });
-                for(var i=0;i<foundedTeams.length;i++){
-                    if((foundedTeams[i]._id+"")==(teamId+"")){
-                        callback(null, i+1); //возвращаем ранг команды
+                for(var i = 0; i < foundedTeams.length; i++){
+                    if((foundedTeams[i].id + "") == (teamId + "")){
+                        callback(null, i + 1); //возвращаем ранг команды
                         break;
                     }
                 }
@@ -220,7 +218,7 @@ schema.statics.getDummy = function(userId, callback){
             }
             else {
                 dummyTeam=foundedTeam;
-                Character.findOne({charName: "newChar_"+foundedTeam._id}, callback);
+                Character.findOne({charName: "newChar_"+foundedTeam.id}, callback);
             }
         },
         function (foundedChar, callback) {
@@ -229,7 +227,7 @@ schema.statics.getDummy = function(userId, callback){
             }
             else {
                 dummyChar=foundedChar;
-                dummyTeam.characters.pull(foundedChar._id);
+                dummyTeam.characters.pull(foundedChar.id);
                 dummyTeam.save(function(err){
                     if(err) return callback(err);
                     callback(null, dummyTeam);
@@ -241,7 +239,7 @@ schema.statics.getDummy = function(userId, callback){
                 callback(null, newTeam);
             }
             else {
-                Character.findByIdAndRemove(dummyChar._id, function(err, char){
+                Character.findByIdAndRemove(dummyChar.id, function(err, char){
                     if(err) return callback(err);
                     else{
                         callback(null, newTeam)
@@ -250,7 +248,7 @@ schema.statics.getDummy = function(userId, callback){
             }
         },
         function(completeTeam, callback){
-            if(completeTeam) Team.getTeamPop({_id: completeTeam._id}, callback);
+            if(completeTeam) Team.getTeamPop({_id: completeTeam.id}, callback);
             else callback(null, null);
         }
     ], callback);
@@ -278,7 +276,7 @@ schema.statics.create = function(userId, callback){
             //Добавляем созданную тиму в массив команд юзера
             dummyTeam.populate('_user', function(err, team){
                 if (err) return callback(err);
-                team._user.team=team._id;
+                team._user.team=team.id;
                 team._user.save(function(err, user){
                     if (err) callback(err);
                     callback(null, team);
@@ -291,9 +289,7 @@ schema.statics.create = function(userId, callback){
 //UPDATE---------------------------------------------------------------------
 
 schema.statics.setById = function(teamId, setter, callback) {
-    this.findByIdAndUpdate(teamId,
-        {$set: setter}, {upsert: true, new: true},
-        callback);
+    this.findByIdAndUpdate(teamId, {$set: setter}, {upsert: true, new: true}, callback);
 };
 
 //DELETE---------------------------------------------------------------------
@@ -352,7 +348,6 @@ schema.statics.deleteDummies = function(userId, callback){
             });
         },
         function (team, callback) {
-            //Сперва удалим персонажей
             team.populate('characters', function(err, popTeam){
                 if (err) return callback(err);
                 async.each(popTeam.characters, function(characterInTeam, callback) {
@@ -393,7 +388,7 @@ schema.statics.deleteDummies = function(userId, callback){
     ], callback);
 };
 
-exports.Team = mongoose.model('Team', schema);
+module.exports.Team = mongoose.model('Team', schema);
 
 function CustomError(message) {
     Error.apply(this, arguments);
@@ -406,5 +401,5 @@ util.inherits(CustomError, Error);
 
 CustomError.prototype.name = 'CustomError';
 
-exports.CustomError = CustomError;
+module.exports.CustomError = CustomError;
 

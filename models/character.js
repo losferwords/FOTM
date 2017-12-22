@@ -53,6 +53,10 @@ var schema = new Schema({
     }
 });
 
+schema.virtual('id').get(function() {
+    return this._id;
+});
+
 //GET------------------------------------------------------------------------
 
 schema.statics.getById = function(charId, callback) {
@@ -129,7 +133,7 @@ schema.statics.deleteById = function(charId, callback) {
     this.findByIdAndRemove(charId, callback);
 };
 
-exports.Character = mongoose.model('Character', schema);
+module.exports.Character = mongoose.model('Character', schema);
 
 function CustomError(message) {
     Error.apply(this, arguments);
@@ -142,7 +146,7 @@ util.inherits(CustomError, Error);
 
 CustomError.prototype.name = 'CustomError';
 
-exports.CustomError = CustomError;
+module.exports.CustomError = CustomError;
 
 //Вариант обновления всей базы
 //Character.find({}, function(err, chars){

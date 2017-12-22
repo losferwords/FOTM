@@ -6,7 +6,6 @@ var arenaService = require('services/arenaService');
 var characterService = require('services/characterService');
 var botService = require('services/botService');
 var randomService = require('services/randomService');
-var characterFactory = require('services/characterFactory');
 
 module.exports = function (serverIO) {
     var io = serverIO;
@@ -70,11 +69,11 @@ module.exports = function (serverIO) {
             team1.lead = true;
             team2.lead = false;
 
-            battleData['team_' + team1._id] = team1;
-            battleData['team_' + team2._id] = team2;
+            battleData['team_' + team1.id] = team1;
+            battleData['team_' + team2.id] = team2;
 
-            battleData.team1Id = team1._id;
-            battleData.team2Id = team2._id;
+            battleData.team1Id = team1.id;
+            battleData.team2Id = team2.id;
 
             battleData.queue = arenaService.calcQueue(team1.characters, team2.characters);
 
@@ -89,7 +88,7 @@ module.exports = function (serverIO) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
             arenaService.findMovePoints(myTeam, enemyTeam, activeChar, preparedAbility, battleData.wallPositions, cb);
         });
 
@@ -97,7 +96,7 @@ module.exports = function (serverIO) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
             arenaService.findEnemiesForAbility(myTeam, enemyTeam, activeChar, preparedAbility, battleData.wallPositions, cb);
         });
 
@@ -105,7 +104,7 @@ module.exports = function (serverIO) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
             arenaService.findAlliesForAbility(myTeam, enemyTeam, activeChar, preparedAbility, battleData.wallPositions, cb);
         });
 
@@ -113,7 +112,7 @@ module.exports = function (serverIO) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
             arenaService.findCharactersForAbility(myTeam, enemyTeam, activeChar, preparedAbility, battleData.wallPositions, cb);
         });
 
@@ -121,7 +120,7 @@ module.exports = function (serverIO) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
             arenaService.turnEnded(myTeam, enemyTeam, activeChar, battleData.wallPositions, function() {
                 battleData.turnsSpended++;
                 battleData.queue = arenaService.calcQueue(myTeam.characters, enemyTeam.characters);
@@ -147,8 +146,8 @@ module.exports = function (serverIO) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
-            arenaService.moveCharTo(tile, myTeam, enemyTeam, activeChar, preparedAbility, wallPositions, 
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
+            arenaService.moveCharTo(tile, myTeam, enemyTeam, activeChar, preparedAbility, battleData.wallPositions, 
             function(){
                 socket.emit("moveCharToResult", null, true);                
             },
@@ -162,7 +161,7 @@ module.exports = function (serverIO) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_' + myTeamId];
             var enemyTeam = battleData['team_' + enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
             var targetChar = arenaService.findCharInQueue(targetId, myTeam.characters, enemyTeam.characters);
             arenaService.castAbility(targetChar, myTeam, enemyTeam, activeChar, preparedAbility, battleData.wallPositions, function(){
                 io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
@@ -188,23 +187,31 @@ module.exports = function (serverIO) {
         });
 
         socket.on('botAction', function(myTeamId, enemyTeamId) {
-            setTimeout(function(){
-                var chooseActionTimeStart = new Date();
+            setTimeout(function(){                
                 var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
                 var myTeam = battleData['team_' + myTeamId];
                 var myTeamForSimulation = botService.lightWeightTeamBeforeSimulation(arenaService.cloneTeam(myTeam));
                 var enemyTeam =  battleData['team_' + enemyTeamId];
                 var enemyTeamForSimulation = botService.lightWeightTeamBeforeSimulation(arenaService.cloneTeam(enemyTeam));
-                var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
+                var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
 
-                botService.buildActionBranchAsync(myTeamForSimulation, enemyTeamForSimulation, activeChar._id, battleData.wallPositions, function(actions, actionsCounter) {
+                if(botService.checkForRetreat(myTeam, enemyTeam)) {
+                    for(var i = 0; i < myTeam.characters.length; i++){
+                        myTeam.characters[i].isDead = true;
+                    }
+                    io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
+                    return;
+                }
+
+                var chooseActionTimeStart = new Date();
+                botService.buildActionBranchAsync(myTeamForSimulation, enemyTeamForSimulation, activeChar.id, battleData.wallPositions, function(actions, actionsCounter) {
                     var action = actions[0];
                     var chooseActionTimeEnd = new Date();
     
                     //botService.buildDubugTree(actions);
                     var thinkTime = chooseActionTimeEnd.getTime() - chooseActionTimeStart.getTime();
-                    //if(thinkTime > 5000){
-                        console.log("Think time: " + thinkTime + "ms, actions count: " + actionsCounter);
+                    //if(thinkTime > 3000){
+                        console.log("Think time: " + thinkTime + "ms, actions count: " + actionsCounter + ", speed: " + Math.round(actionsCounter / thinkTime * 1000) + " actions per second");
                     //}
     
                     switch(action.type){
@@ -234,7 +241,7 @@ module.exports = function (serverIO) {
                             break;
                     }
                 });                            
-            }, 100);
+            }, 2000);
         });
     });
 };

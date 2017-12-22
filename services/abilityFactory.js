@@ -137,7 +137,14 @@ var Ability = function(name){
             cooldown : function(){return 12+this.variant*2},
             needWeapon : function() {return false},
             cd : 0,
-            usageLogic: function(caster, target, myTeam, enemyTeam, walls) { return true }
+            usageLogic: function(caster, target, myTeam, enemyTeam, walls) {
+                if (this.variant === 1 || this.variant === 3 || this.variant === 5) {
+                    return target.curHealth < target.maxHealth * 0.8;
+                }
+                else {
+                    return true;
+                }
+            }
         };
 
         case "Disarm": return {
@@ -1726,7 +1733,7 @@ var Ability = function(name){
 
                     var nearbyEnemies = arenaService.findEnemies(target, enemyTeam, 1, walls);
                     for (var i = 0; i < nearbyEnemies.length; i++) {
-                        if (caster.checkHit() || nearbyEnemies[i]._id == target._id) {
+                        if (caster.checkHit() || nearbyEnemies[i].id == target.id) {
                             if(nearbyEnemies[i].controlImmune) {
                                 caster.logBuffer.push(nearbyEnemies[i].charName+" has immunity to control effects!");
                             }
@@ -2149,7 +2156,7 @@ var Ability = function(name){
 
                     for (var i = 0; i < nearbyEnemies.length; i++) {
                         var localMagicDamage = magicDamage;
-                        if (nearbyEnemies[i]._id !== target._id) {
+                        if (nearbyEnemies[i].id !== target.id) {
                             if (caster.checkHit()) {
                                 critical = caster.checkCrit();
                                 if (critical) {
@@ -2186,7 +2193,7 @@ var Ability = function(name){
 
                 for (var i = 0; i < nearbyEnemies.length; i++) {
                     var localMagicDamage = magicDamage;
-                    if (nearbyEnemies[i]._id !== target._id) {                        
+                    if (nearbyEnemies[i].id !== target.id) {                        
                         localMagicDamage = nearbyEnemies[i].applyResistance(localMagicDamage, true);
                         nearbyEnemies[i].takeDamageSimulation(localMagicDamage, caster, true, true, myTeam, enemyTeam);
                     }
@@ -2549,7 +2556,7 @@ var Ability = function(name){
 
                 var targetIsAlly=false;
                 for(var i=0;i<myTeam.length;i++){
-                    if(myTeam[i]._id == target._id) targetIsAlly = true;
+                    if(myTeam[i].id == target.id) targetIsAlly = true;
                 }
                 if(targetIsAlly) {
                     var heal=(250+this.variant*250)*(1+caster.spellPower);
@@ -2585,7 +2592,7 @@ var Ability = function(name){
 
                 var targetIsAlly=false;
                 for(var i = 0; i < myTeam.length; i++){
-                    if(myTeam[i]._id == target._id) targetIsAlly = true;
+                    if(myTeam[i].id == target.id) targetIsAlly = true;
                 }
                 if(targetIsAlly) {
                     var heal = (250 + this.variant * 250) * (1 + caster.spellPower);
@@ -2612,7 +2619,7 @@ var Ability = function(name){
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) {
                 var targetIsAlly = false;
                 for(var i = 0; i < myTeam.length; i++){
-                    if(myTeam[i]._id == target._id) targetIsAlly = true;
+                    if(myTeam[i].id == target.id) targetIsAlly = true;
                 }
                 if(targetIsAlly){
                     return target.curHealth < target.maxHealth * 0.7;
@@ -3125,7 +3132,7 @@ var Ability = function(name){
 
                 var targetIsAlly=false;
                 for(var i=0;i<myTeam.length;i++){
-                    if(myTeam[i]._id == target._id) targetIsAlly=true;
+                    if(myTeam[i].id == target.id) targetIsAlly=true;
                 }
                 if(targetIsAlly) {
                     caster.logBuffer.push(caster.charName+" cast '"+this.name+"' on "+target.charName);
@@ -3151,7 +3158,7 @@ var Ability = function(name){
 
                 var targetIsAlly = false;
                 for(var i = 0; i < myTeam.length; i++){
-                    if(myTeam[i]._id == target._id) targetIsAlly = true;
+                    if(myTeam[i].id == target.id) targetIsAlly = true;
                 }
 
                 if(targetIsAlly) {
@@ -3173,7 +3180,7 @@ var Ability = function(name){
             usageLogic: function(caster, target, myTeam, enemyTeam, walls) { 
                 var targetIsAlly = false;
                 for(var i = 0; i < myTeam.length; i++){
-                    if(myTeam[i]._id == target._id) {
+                    if(myTeam[i].id == target.id) {
                         targetIsAlly = true;
                     }
                 }

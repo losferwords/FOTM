@@ -844,13 +844,14 @@ var raceAvailableAbilities = function (role, race){
 };
 
 //������� �������� �� ��������� �������� ������������ ������ 4 ���������
-var getRandomExtraAbilities = function(extraAbilitiesArray){
+var getRandomExtraAbilities = function(extraAbilitiesArray, count){
     var extraAbilitiesIndexes = [];
-    var totalArray=[];
-    for (var i = 0; i < extraAbilitiesArray.length; i++)
+    var totalArray = [];
+    for (var i = 0; i < extraAbilitiesArray.length; i++) {
         extraAbilitiesIndexes.push(i);
+    }
     var indexesArray = randomService.shuffle(extraAbilitiesIndexes);
-    for(i=0;i<4;i++){
+    for(i = 0; i < count; i++){
         totalArray.push(extraAbilitiesArray[indexesArray[i]]);
     }
     return totalArray;
@@ -953,9 +954,9 @@ module.exports = {
         return roleEquip(role);
     },
     //�����������
-    getBasicAbilities: function (role, race) {
+    getBasicAbilities: function (role, race, extraAbilitiesCount) {
         var roleAbilities = roleAvailableAbilities[role];
-        var raceAbilities = getRandomExtraAbilities(raceAvailableAbilities(role, race));
+        var raceAbilities = getRandomExtraAbilities(raceAvailableAbilities(role, race), extraAbilitiesCount);
         return roleAbilities.concat(raceAbilities);
     },
     getRoleAbilities: function (role) {
@@ -1051,15 +1052,14 @@ module.exports = {
         return portraits[randomService.randomInt(0,3)];
     },
     //������������ �������� � ��������� ������������
-    generateAbilitiesArrays: function(role, race) {
-        var self = this;
+    generateAbilitiesArrays: function(role, race, extraAbilitiesCount) {
         //�������� ������� ����� ��� ������ ����
-        var availableAbilitiesArr = self.getBasicAbilities(role, race);
-        var abilitiesArr = self.getStartAbilities(availableAbilitiesArr.slice());
+        var availableAbilitiesArr = this.getBasicAbilities(role, race, extraAbilitiesCount);
+        var abilitiesArr = this.getStartAbilities(availableAbilitiesArr.slice());
 
         var abilitiesObjectsArr = [];
-        for(var i=0;i<abilitiesArr.length;i++){
-            abilitiesObjectsArr.push({name: abilitiesArr[i], variant: randomService.randomInt(1,5)});
+        for(var i = 0; i < abilitiesArr.length; i++){
+            abilitiesObjectsArr.push({name: abilitiesArr[i], variant: randomService.randomInt(1, 5)});
         }
 
         return [abilitiesObjectsArr, availableAbilitiesArr];

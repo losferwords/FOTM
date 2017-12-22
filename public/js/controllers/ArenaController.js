@@ -4,7 +4,8 @@
     //Контроллер выбора пати
     function ArenaController($scope, $rootScope, $location, $timeout, $interval, arenaService, hotkeys, mainSocket, gettextCatalog, soundService, chatService, currentTeam, characterService) {
         $scope.botBattle = arenaService.battle.bots;
-        var currentTeamId = arenaService.battle.bots ? arenaService.battle.team1Id : currentTeam.get()._id;
+        $scope.trainingBattle = arenaService.battle.training;
+        var currentTeamId = arenaService.battle.bots ? arenaService.battle.team1Id : currentTeam.get().id;
         $scope.map = arenaService.fillMap(arenaService.battle.groundType, arenaService.battle.wallPositions, arenaService.battle["team_"+currentTeamId].lead); //Карта - двумерный массив на стороне клиента
         $scope.CombatLog = []; //Массив сообщений с информацией
         $scope.myTurn = false; //переменная, показывающая, мой ли сейчас игрок ходит
@@ -14,7 +15,7 @@
 
         //Возвращает процентные показатели ресурсов при наведении мышки
         $scope.calculateInPercent = function(cur, max) {
-          return Math.ceil(cur/max*100);
+          return Math.ceil(cur / max * 100);
         };
 
         //Функция формирует подсказку для эффекта
@@ -69,7 +70,7 @@
         //Функция возвращает значение оставшегося до конца хода времени
         $scope.getTurnTime =  function(){
             if($scope.myTurn && !$scope.botBattle){
-                if($scope.secondsForTurn<=30){
+                if($scope.secondsForTurn <= 30){
                     return $scope.secondsForTurn;
                 }
                 else {
@@ -84,56 +85,10 @@
         //Кнопка покинуть поле боя
         $scope.retreatClick =  function(){
             log($scope.myTeam.teamName+" retreats!","#ffffff", true);
-            mainSocket.emit("teamRetreat", $scope.myTeam._id);
+            mainSocket.emit("teamRetreat", $scope.myTeam.id);
         };
 
         $scope.testFunction =  function(){
-
-            var str="";
-            for(var i=0;i<$scope.myTeam.characters.length;i++){
-                str+="-----------------------------------------------------------------------";
-                str+=JSON.stringify($scope.myTeam.characters[i], function(key, value) {
-                    if (key == '_id') return undefined;
-                    if (key == '_team') return undefined;
-                    if (key == '__v') return undefined;
-                    if (key == 'portrait') return undefined;
-                    if (key == 'gender') return undefined;
-                    if (key == 'created') return undefined;
-                    if (key == 'logBuffer') return undefined;
-                    if (key == 'race') return undefined;
-                    if (key == 'role') return undefined;
-                    //if (key == 'equip') return undefined;
-                    if (key == 'abilities') return undefined;
-                    if (key == 'buffs') return undefined;
-                    if (key == 'debuffs') return undefined;
-                    if (key == 'battleColor') return undefined;
-                    if (key == '$$hashKey') return undefined;
-                    return value;
-                },4);
-            }
-            for(i=0;i<$scope.enemyTeam.characters.length;i++){
-                str+="-----------------------------------------------------------------------";
-                str+=JSON.stringify($scope.enemyTeam.characters[i], function(key, value) {
-                    if (key == '_id') return undefined;
-                    if (key == '_team') return undefined;
-                    if (key == '__v') return undefined;
-                    if (key == 'portrait') return undefined;
-                    if (key == 'gender') return undefined;
-                    if (key == 'created') return undefined;
-                    if (key == 'logBuffer') return undefined;
-                    if (key == 'race') return undefined;
-                    if (key == 'role') return undefined;
-                    //if (key == 'equip') return undefined;
-                    if (key == 'abilities') return undefined;
-                    if (key == 'buffs') return undefined;
-                    if (key == 'debuffs') return undefined;
-                    if (key == 'battleColor') return undefined;
-                    if (key == '$$hashKey') return undefined;
-                    return value;
-                },4);
-            }
-            console.log(str);
-
         };
 
         //Функция устанавливает клетку карты под курсором конечной точкой для стрелки
@@ -153,7 +108,7 @@
             }
             if(char.underAbility) {
                 $scope.charForArrow=char;
-                if(char._team==$scope.myTeam._id){
+                if(char._team==$scope.myTeam.id){
                     $scope.arrowColor = "#00b3ee";
                 }
                 else {
@@ -173,7 +128,7 @@
         $scope.moveToTile = function(tile) {
             if(tile.move){
                 //ПЕРЕВОРОТ ДЛЯ НЕ LEAD
-                mainSocket.emit("moveCharTo", $scope.myTeam.lead ? {x: tile.x, y: tile.y} : {x: tile.y, y: tile.x}, $scope.myTeam._id, $scope.enemyTeam._id, $scope.preparedAbility ? $scope.preparedAbility.name : null);
+                mainSocket.emit("moveCharTo", $scope.myTeam.lead ? {x: tile.x, y: tile.y} : {x: tile.y, y: tile.x}, $scope.myTeam.id, $scope.enemyTeam.id, $scope.preparedAbility ? $scope.preparedAbility.name : null);
             }
         };
 
@@ -199,23 +154,23 @@
                     $scope.preparedAbility = $scope.activeChar.abilities[index];
                     if ($scope.preparedAbility.targetType == "self") {
                         $scope.waitServ = true;
-                        mainSocket.emit('castAbility', $scope.activeChar._id, $scope.myTeam._id, $scope.enemyTeam._id, $scope.preparedAbility.name, function(battle) {
+                        mainSocket.emit('castAbility', $scope.activeChar.id, $scope.myTeam.id, $scope.enemyTeam.id, $scope.preparedAbility.name, function(battle) {
                             resetCharOverlays();
                             $scope.preparedAbility = undefined;
                         });
                     }
                     else if ($scope.preparedAbility.targetType == "enemy") {
                         //находим противников в зоне поражения
-                        mainSocket.emit('findEnemies', $scope.myTeam._id, $scope.enemyTeam._id, $scope.preparedAbility.name, function(enemies) {
+                        mainSocket.emit('findEnemies', $scope.myTeam.id, $scope.enemyTeam.id, $scope.preparedAbility.name, function(enemies) {
                             for (var i = 0; i < enemies.length; i++) {
                                 for (var j = 0; j < $scope.enemyTeam.characters.length; j++) {
                                     if($scope.preparedAbility.name == "My Last Words") {
-                                        if ($scope.enemyTeam.characters[j]._id == enemies[i]._id && (enemies[i].curHealth/enemies[i].maxHealth)<=0.5) {
+                                        if ($scope.enemyTeam.characters[j].id == enemies[i].id && (enemies[i].curHealth/enemies[i].maxHealth)<=0.5) {
                                             $scope.enemyTeam.characters[j].underAbility = true;
                                         }
                                     }
                                     else {
-                                        if ($scope.enemyTeam.characters[j]._id == enemies[i]._id) {
+                                        if ($scope.enemyTeam.characters[j].id == enemies[i].id) {
                                             $scope.enemyTeam.characters[j].underAbility = true;
                                         }
                                     }
@@ -225,10 +180,10 @@
                     }
                     else if ($scope.preparedAbility.targetType == "ally") {
                         //находим союзников в зоне поражения
-                        mainSocket.emit('findAllies', $scope.myTeam._id, $scope.enemyTeam._id, $scope.preparedAbility.name, function(allies) {
+                        mainSocket.emit('findAllies', $scope.myTeam.id, $scope.enemyTeam.id, $scope.preparedAbility.name, function(allies) {
                             for (var i = 0; i < allies.length; i++) {
                                 for (var j = 0; j < $scope.myTeam.characters.length; j++) {
-                                    if ($scope.myTeam.characters[j]._id == allies[i]._id) {
+                                    if ($scope.myTeam.characters[j].id == allies[i].id) {
                                         $scope.myTeam.characters[j].underAbility = true;
                                     }
                                 }
@@ -237,10 +192,10 @@
                     }
                     else if ($scope.preparedAbility.targetType == "allyNotMe") {
                         //находим союзников в зоне поражения
-                        mainSocket.emit('findAllies', $scope.myTeam._id, $scope.enemyTeam._id, $scope.preparedAbility.name, function(allies) {
+                        mainSocket.emit('findAllies', $scope.myTeam.id, $scope.enemyTeam.id, $scope.preparedAbility.name, function(allies) {
                             for (var i = 0; i < allies.length; i++) {
                                 for (var j = 0; j < $scope.myTeam.characters.length; j++) {
-                                    if ($scope.myTeam.characters[j]._id == allies[i]._id && $scope.activeChar._id != allies[i]._id) {
+                                    if ($scope.myTeam.characters[j].id == allies[i].id && $scope.activeChar.id != allies[i].id) {
                                         $scope.myTeam.characters[j].underAbility = true;
                                     }
                                 }
@@ -249,15 +204,15 @@
                     }
                     else if ($scope.preparedAbility.targetType == "ally&enemy") {
                         //находим всех в зоне поражения
-                        mainSocket.emit('findCharacters', $scope.myTeam._id, $scope.enemyTeam._id, $scope.preparedAbility.name, function(characters) {
+                        mainSocket.emit('findCharacters', $scope.myTeam.id, $scope.enemyTeam.id, $scope.preparedAbility.name, function(characters) {
                             for (var i = 0; i < characters.length; i++) {
                                 for (var j = 0; j < $scope.enemyTeam.characters.length; j++) {
-                                    if ($scope.enemyTeam.characters[j]._id == characters[i]._id) {
+                                    if ($scope.enemyTeam.characters[j].id == characters[i].id) {
                                         $scope.enemyTeam.characters[j].underAbility = true;
                                     }
                                 }
                                 for (j = 0; j < $scope.myTeam.characters.length; j++) {
-                                    if ($scope.myTeam.characters[j]._id == characters[i]._id) {
+                                    if ($scope.myTeam.characters[j].id == characters[i].id) {
                                         $scope.myTeam.characters[j].underAbility = true;
                                     }
                                 }
@@ -267,7 +222,7 @@
                     else if ($scope.preparedAbility.targetType == "move") {
                         if(!$scope.activeChar.immobilized) {
                             //Находим точки для движения
-                            mainSocket.emit('findMovePoints', $scope.myTeam._id, $scope.enemyTeam._id, $scope.preparedAbility.name, function(movePoints){
+                            mainSocket.emit('findMovePoints', $scope.myTeam.id, $scope.enemyTeam.id, $scope.preparedAbility.name, function(movePoints){
                                 for (var i = 0; i < movePoints.length; i++) {
                                     $scope.map[arenaService.map2Dto1D(movePoints[i])].move = true;
                                 }
@@ -281,7 +236,7 @@
         //Функция проверяет, можно ли использовать способность
         $scope.checkAbilityForUse = function(ability, char) {
             if ($scope.myTurn || $scope.botBattle) {
-                if(char._id == $scope.activeChar._id){ //Абилка доступна только тому, кто сейчас ходит
+                if(char.id == $scope.activeChar.id){ //Абилка доступна только тому, кто сейчас ходит
                     if(ability.name==="Void") return false;
                     if(ability.name==="Dyers Eve" && ($scope.activeChar.curHealth/$scope.activeChar.maxHealth)>0.5) return false;
                     if(ability.targetType==="move" && char.immobilized) return false;
@@ -309,7 +264,7 @@
         //Функция проверяет, какая способность в данный момент приготовлена
         $scope.checkPreparedAbility = function(ability, char){
             if($scope.preparedAbility) {
-                if(ability.name == $scope.preparedAbility.name && char._id == $scope.activeChar._id) return true;
+                if(ability.name == $scope.preparedAbility.name && char.id == $scope.activeChar.id) return true;
             }
             return false;
         };
@@ -318,7 +273,7 @@
         $scope.castAbility = function(char){
             if($scope.myTurn && $scope.preparedAbility && char.underAbility) {
                 $scope.waitServ = true;
-                mainSocket.emit('castAbility', char._id, $scope.myTeam._id, $scope.enemyTeam._id, $scope.preparedAbility.name, function(battle) {
+                mainSocket.emit('castAbility', char.id, $scope.myTeam.id, $scope.enemyTeam.id, $scope.preparedAbility.name, function(battle) {
                     resetCharOverlays();
                     $scope.preparedAbility = undefined;
                     $scope.setCharForArrow(undefined);
@@ -351,7 +306,7 @@
                 }
 
                 if($scope.myTurn || $scope.botBattle) {
-                    mainSocket.emit('findMovePoints', $scope.myTeam._id, $scope.enemyTeam._id, null, function(movePoints){
+                    mainSocket.emit('findMovePoints', $scope.myTeam.id, $scope.enemyTeam.id, null, function(movePoints){
                         for (var i = 0; i < movePoints.length; i++) {
                             $scope.map[arenaService.map2Dto1D(movePoints[i])].move = true;
                         }
@@ -478,10 +433,10 @@
         function chooseAction(){
             $scope.waitServ = true;
             if($scope.activeChar._team !== currentTeamId){
-                mainSocket.emit("botAction", $scope.enemyTeam._id, $scope.myTeam._id);
+                mainSocket.emit("botAction", $scope.enemyTeam.id, $scope.myTeam.id);
             }
             else {
-                mainSocket.emit("botAction", $scope.myTeam._id, $scope.enemyTeam._id);
+                mainSocket.emit("botAction", $scope.myTeam.id, $scope.enemyTeam.id);
             }
         }
 
@@ -500,7 +455,7 @@
 
             chatService.clearMessages('arena');
 
-            if($scope.botBattle){
+            if($scope.botBattle || $scope.trainingBattle){
                 opponentReadyForBattle();
             }
             else{
@@ -561,9 +516,11 @@
             log("Battle begins! First move for "+$scope.activeChar.charName+".", $scope.activeChar.battleColor);
             $scope.opponentWaiting = false;
             $scope.waitServ = false;
-            if($scope.botBattle) {
-                $scope.enemyTeamLoaded=true;
-                chooseAction();
+            if($scope.botBattle || $scope.trainingBattle) {
+                $scope.enemyTeamLoaded = true;
+                if($scope.activeChar.isBot){
+                    chooseAction();
+                }
             }
             else{
                 mainSocket.emit("enemyTeamLoaded", arenaService.battle.room);
@@ -575,7 +532,7 @@
             $scope.preparedAbility = undefined;
             resetCharOverlays();
             $scope.waitServ = true;
-            mainSocket.emit("turnEnded", $scope.myTeam._id, $scope.enemyTeam._id);
+            mainSocket.emit("turnEnded", $scope.myTeam.id, $scope.enemyTeam.id);
         };
 
         mainSocket.on('turnEndedResult', function(battle){
@@ -591,7 +548,7 @@
                 }
             }
 
-            mainSocket.emit('checkForWin', $scope.myTeam._id, $scope.enemyTeam._id, false, function(isEnded, result, rating, ratingChange, gainedSouls){
+            mainSocket.emit('checkForWin', $scope.myTeam.id, $scope.enemyTeam.id, false, function(isEnded, result, rating, ratingChange, gainedSouls){
                 if(isEnded){
                     battleEnd(result, rating, ratingChange, gainedSouls)
                 }
@@ -600,21 +557,22 @@
 
                     //Если персонаж в стане
                     if($scope.activeChar.stunned) {
-                        log($scope.activeChar.charName+" is stunned and skip turn", $scope.activeChar.battleColor);
-                    }
-                    if($scope.activeChar.stunned && $scope.myTurn) {
-                        $scope.endTurn();
-                        return;
-                    }
+                        log($scope.activeChar.charName + " is stunned and skip turn", $scope.activeChar.battleColor);
+                        
+                        if($scope.myTurn || $scope.activeChar.isBot) {
+                            $scope.endTurn();
+                            return;
+                        }
+                    }                    
 
                     //объявление о начале хода
                     log("Now is turn of "+$scope.activeChar.charName+".", $scope.activeChar.battleColor); //<- Цвет
                     //объявление об исходе боя в ничью
-                    if($scope.turnsSpended>=90){
-                        log("The battle ends after "+(100-$scope.turnsSpended)+" turns.");
+                    if($scope.turnsSpended>=40){
+                        log("The battle ends after "+(50-$scope.turnsSpended)+" turns.");
                     }
 
-                    if($scope.botBattle) {
+                    if($scope.trainingBattle && $scope.activeChar.isBot) {
                         chooseAction();
                     }
                 }
@@ -632,7 +590,7 @@
 
         mainSocket.on('enemyLeave', function(){
             if($scope.enemyTeamLoaded){
-                mainSocket.emit('checkForWin', $scope.myTeam._id, $scope.enemyTeam._id, true, function(isEnded, result, rating, ratingChange, gainedSouls){
+                mainSocket.emit('checkForWin', $scope.myTeam.id, $scope.enemyTeam.id, true, function(isEnded, result, rating, ratingChange, gainedSouls){
                     $interval.cancel($scope.waitOpponentTimer);
                     $rootScope.showInfoMessage(gettextCatalog.getString("Your enemy was disconnected"));
                     battleEnd(result, rating, ratingChange, gainedSouls);
@@ -681,17 +639,17 @@
             playSounds(); //Проигрываем звуки
             mapUpdate();
 
-            mainSocket.emit('checkForWin', $scope.myTeam._id, $scope.enemyTeam._id, false, function(isEnded, result, rating, ratingChange, gainedSouls){
+            mainSocket.emit('checkForWin', $scope.myTeam.id, $scope.enemyTeam.id, false, function(isEnded, result, rating, ratingChange, gainedSouls){
                 if(isEnded){
                     battleEnd(result, rating, ratingChange, gainedSouls);
                 }
                 else {
                     //Если вдруг после своего действия персонаж оказался в стане, ход сразу же завершается
-                    if($scope.activeChar.stunned && $scope.myTurn) {
+                    if($scope.activeChar.stunned && ($scope.myTurn || $scope.activeChar.isBot)) {
                         $scope.endTurn();
                         return;
                     }
-                    if($scope.botBattle) {
+                    if($scope.botBattle || ($scope.trainingBattle && $scope.activeChar.isBot)) {
                         chooseAction();
                     }
                 }

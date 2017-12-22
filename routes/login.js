@@ -29,7 +29,7 @@ exports.post = function (req, res, next) {
         }
 
 
-        req.session.user = user._id;
+        req.session.user = user.id;
         res.send({});
     });
 };

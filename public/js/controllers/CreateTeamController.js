@@ -47,7 +47,7 @@
                 else {
                     $scope.createTeamPending = true;
                     mainSocket.emit('saveNewTeam', {
-                        _id: teamObj._id,
+                        id: teamObj.id,
                         teamName: $scope.teamName.value,
                         souls: teamObj.souls
                     }, function() {
@@ -76,7 +76,7 @@
         $scope.$on('$routeChangeSuccess', function () {
             currentTeam.set(undefined);
             mainSocket.emit("getDummyTeam", function(team){
-                teamObj=team;
+                teamObj = team;
                 $scope.dummyTeamCreated = true;
                 if(team.characters[0]){
                     $scope.createdChars[0]=team.characters[0];

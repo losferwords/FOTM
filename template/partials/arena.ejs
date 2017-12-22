@@ -89,7 +89,7 @@
                         <div ng-repeat="char in myTeam.characters track by $index" class="char_tile battle-text" buffer="char.battleTextBuffer" ng-style="{'left' : char.position.x*32, 'top' : char.position.y*32, 'border-color' : char.battleColor, 'background-image' : 'url('+char.portrait+')'}" ng-if="!char.isDead" >
                             <div class="overlay" ng-class="{'myAbility': char.underAbility}" ng-mouseenter="setCharForArrow(char)" ng-mouseleave="resetArrow()" ng-click="castAbility(char)" ng-disabled="waitServ"></div>
                         </div>
-                        <div ng-repeat="char in enemyTeam.characters track by $index" class="char_tile battle-text" buffer="char.battleTextBuffer" ng-style="{'left' : char.position.x*32, 'top' : char.position.y*32, 'border-color' : char.battleColor, 'background-image' : 'url('+char.portrait+')'}" ng-if="!(char.isDead || (char.invisible && !char.isBot))" >
+                        <div ng-repeat="char in enemyTeam.characters track by $index" class="char_tile battle-text" buffer="char.battleTextBuffer" ng-style="{'left' : char.position.x*32, 'top' : char.position.y*32, 'border-color' : char.battleColor, 'background-image' : 'url('+char.portrait+')'}" ng-if="!(char.isDead || (char.invisible && !botBattle))" >
                             <div class="overlay" ng-class="{'enemyAbility': char.underAbility}" ng-mouseenter="setCharForArrow(char)" ng-mouseleave="resetArrow()" ng-click="castAbility(char)" ng-disabled="waitServ"></div>
                         </div>
                     </div>
@@ -155,7 +155,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 enemy-abilities ability-group" ng-if="$index!==2">
-                                            <div class="btn-group" ng-if="char.underProphecy || char.isBot">
+                                            <div class="btn-group" ng-if="char.underProphecy || botBattle">
                                                 <div class="ability-wrapper btn btn-default"
                                                      ng-repeat="ability in char.abilities track by $index"
                                                      uib-tooltip-html="getAbilityTooltip(ability)"
@@ -175,7 +175,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 enemy-abilities ability-group" ng-if="$index===2">
-                                            <div class="btn-group" ng-if="char.underProphecy || char.isBot">
+                                            <div class="btn-group" ng-if="char.underProphecy || botBattle">
                                                 <div class="ability-wrapper btn btn-default"
                                                      ng-repeat="ability in char.abilities track by $index"
                                                      uib-tooltip-html="getAbilityTooltip(ability)"

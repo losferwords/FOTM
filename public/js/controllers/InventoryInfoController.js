@@ -283,7 +283,7 @@
         //Присваиваем сокету камень
         $scope.setGemToSocket = function(socketIndex) {
             var slot = $scope.interestingItem.slot;
-            mainSocket.emit('setGemToSocket', currentTeam.get()._id, $scope.char._id, slot, socketIndex, $scope.dragGem.id, function(team) {
+            mainSocket.emit('setGemToSocket', currentTeam.get().id, $scope.char.id, slot, socketIndex, $scope.dragGem.id, function(team) {
                 currentTeam.set(team);
                 $scope.char = currentTeam.get().characters[currentTeam.getCurrentCharIndex()];
                 $scope.char.equip = $scope.char.state.equip;
@@ -318,7 +318,7 @@
         //Возвращаем камень из сокета в инвентарь
         $scope.setGemToInventory = function() {
             var slot = $scope.interestingItem.slot;
-            mainSocket.emit('setGemToInventory', currentTeam.get()._id, $scope.char._id, slot, $scope.dragSocketGem.id, function(team) {
+            mainSocket.emit('setGemToInventory', currentTeam.get().id, $scope.char.id, slot, $scope.dragSocketGem.id, function(team) {
                 currentTeam.set(team);
                 $scope.char = currentTeam.get().characters[currentTeam.getCurrentCharIndex()];
                 $scope.char.equip = $scope.char.state.equip;
@@ -334,7 +334,7 @@
 
         //Разрушение камня
         $scope.destroyGem = function() {
-            mainSocket.emit('destroyGem', currentTeam.get()._id, $scope.dragGem, function(newSoul, team) {
+            mainSocket.emit('destroyGem', currentTeam.get().id, $scope.dragGem, function(newSoul, team) {
                 currentTeam.set(team);
                 $scope.inventory = currentTeam.get().inventory;
                 $scope.souls = currentTeam.get().souls;
@@ -350,7 +350,7 @@
 
         //Создание камня
         $scope.craftGem = function(color) {
-            mainSocket.emit('craftGem', currentTeam.get()._id, color, function(newGem, team) {
+            mainSocket.emit('craftGem', currentTeam.get().id, color, function(newGem, team) {
                 currentTeam.set(team);
                 $scope.inventory = currentTeam.get().inventory;
                 $scope.souls = currentTeam.get().souls;

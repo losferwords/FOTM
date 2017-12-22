@@ -10,7 +10,7 @@ module.exports = function (serverIO) {
     io.on('connection', function (socket) {
 
         socket.on('createTeam', function(){
-            Team.create(socket.handshake.user._id, function(err, data){
+            Team.create(socket.handshake.user.id, function(err, data){
                 if (err) {
                     socket.emit("customError", err);
                 }
@@ -18,23 +18,23 @@ module.exports = function (serverIO) {
         });
 
         socket.on('getDummyTeam', function(cb){
-            var userId = socket.handshake.user._id;
+            var userId = socket.handshake.user.id;
             Team.getDummy(userId, function (err, team) {
                 if (err) {
                     socket.emit("customError", err);
                     return;
                 }
                 if(team){
-                    cb(team);
+                    cb(team.toObject({virtuals: true}));
                 }
                 else
                 {
-                    Team.create(socket.handshake.user._id, function(err, newTeam){
+                    Team.create(socket.handshake.user.id, function(err, newTeam){
                         if (err) {
                             socket.emit("customError", err);
                             return;
                         }
-                        cb(newTeam);
+                        cb(newTeam.toObject({virtuals: true}));
                     });
                 }
             });
@@ -52,7 +52,7 @@ module.exports = function (serverIO) {
         });
 
         socket.on('saveNewTeam', function(teamObj, cb){
-            Team.setById(teamObj._id, {
+            Team.setById(teamObj.id, {
                 teamName: teamObj.teamName,
                 rating: 1000,
                 wins: 0,
@@ -70,7 +70,7 @@ module.exports = function (serverIO) {
         });
 
         socket.on('setTeam', function(cond, cb){
-            Team.setById(cond._id, cond, function(err, team){
+            Team.setById(cond.id, cond, function(err, team){
                 if (err) {
                     socket.emit("customError", err);
                     return;
@@ -94,7 +94,7 @@ module.exports = function (serverIO) {
                         }
                     }
                 }
-                Team.setById(team._id, {
+                Team.setById(team.id, {
                     souls: {
                         red: team.souls.red+souls.red,
                         green: team.souls.green+souls.green,
@@ -110,7 +110,7 @@ module.exports = function (serverIO) {
         });
 
         socket.on('removeDummyTeam', function(){
-            Team.deleteDummies(socket.handshake.user._id, function (err, data) {
+            Team.deleteDummies(socket.handshake.user.id, function (err, data) {
                 if (err && err.status!='no team') socket.emit("customError", err);
             });
         });
@@ -141,7 +141,7 @@ module.exports = function (serverIO) {
         });
 
         socket.on('checkUserTeam', function(cb){
-            var userId = socket.handshake.user._id;
+            var userId = socket.handshake.user.id;
             Team.deleteDummies(userId, function (err, data) {
                 if (err && err.status!='no team') {
                     socket.emit("customError", err);
@@ -164,13 +164,13 @@ module.exports = function (serverIO) {
         });
 
         socket.on('getUserTeam', function(cb){
-            var userId=0;
+            var userId = 0;
 
             if(socket.serSt.battleRoom) {
                 socket.leave(socket.serSt.battleRoom);
                 socket.serSt.battleRoom=undefined;
             }
-            userId = socket.handshake.user._id;
+            userId = socket.handshake.user.id;
 
             Team.getByUserIdFull(userId, function(err, team){
                 if (err) {
@@ -187,15 +187,9 @@ module.exports = function (serverIO) {
                     });
                 }
                 else {
-                    var teamForSocket = team._doc;
-                    var charactersForSocket = [];
-                    for(var i=0;i<team.characters.length;i++){
-                        charactersForSocket.push(team.characters[i]._doc);
-                    }
-                    teamForSocket.characters = charactersForSocket;
-                    socket.team = teamForSocket;
+                    socket.team = team.toObject({virtuals: true});
 
-                    Team.findRank(team._id, function (err, rank) {
+                    Team.findRank(team.id, function (err, rank) {
                         if (err) {
                             socket.emit("customError", err);
                             return;
@@ -203,7 +197,7 @@ module.exports = function (serverIO) {
 
                         var nowTime = new Date();
 
-                        cb(team, rank, (nowTime - team.lastRoll));
+                        cb(team.toObject({virtuals: true}), rank, (nowTime - team.lastRoll));
                     });
                 }
             });
@@ -240,7 +234,7 @@ module.exports = function (serverIO) {
                             return;
                         }
 
-                        cb(newGem, newPopTeam);
+                        cb(newGem, newPopTeam.toObject({virtuals: true}));
                     });
                 });
             });
@@ -300,7 +294,7 @@ module.exports = function (serverIO) {
                             socket.emit("customError", err);
                             return;
                         }
-                        cb(newSoul, newPopTeam);
+                        cb(newSoul, newPopTeam.toObject({virtuals: true}));
                     });
                 });
             });
@@ -364,16 +358,9 @@ module.exports = function (serverIO) {
                                     socket.emit("customError", err);
                                     return;
                                 }
+                                socket.team = newPopTeam.toObject({virtuals: true});
 
-                                var teamForSocket = newPopTeam._doc;
-                                var charactersForSocket = [];
-                                for(var i=0;i<newPopTeam.characters.length;i++){
-                                    charactersForSocket.push(newPopTeam.characters[i]._doc);
-                                }
-                                teamForSocket.characters = charactersForSocket;
-                                socket.team = teamForSocket;
-
-                                cb(newPopTeam);
+                                cb(newPopTeam.toObject({virtuals: true}));
                             });
                         });
                     });
@@ -433,16 +420,9 @@ module.exports = function (serverIO) {
                                     socket.emit("customError", err);
                                     return;
                                 }
+                                socket.team = newPopTeam.toObject({virtuals: true});
 
-                                var teamForSocket = newPopTeam._doc;
-                                var charactersForSocket = [];
-                                for(var i=0;i<newPopTeam.characters.length;i++){
-                                    charactersForSocket.push(newPopTeam.characters[i]._doc);
-                                }
-                                teamForSocket.characters = charactersForSocket;
-                                socket.team = teamForSocket;
-
-                                cb(newPopTeam);
+                                cb(newPopTeam.toObject({virtuals: true}));
                             });
                         });
                     });

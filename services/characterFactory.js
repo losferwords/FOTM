@@ -3,6 +3,7 @@ var characterService = require('services/characterService');
 var arenaService = require('services/arenaService');
 var randomService = require('services/randomService');
 var effectFactory = require('services/effectFactory');
+var deepClone = require('fast-deepclone');
 
 //Character factory
 var Character = function(char, ignoreEquip) {
@@ -31,70 +32,67 @@ var Character = function(char, ignoreEquip) {
 };
 
 Character.prototype.initChar = function(){
-    var self = this;
-    self.logBuffer = []; //buffer of messages to show on UI
-    self.soundBuffer = []; //buffer of sounds to play
-    self.battleTextBuffer = []; //buffer of messages on the map
-    self.buffs = []; //positive effects
-    self.debuffs = []; //negative effects
+    this.logBuffer = []; //buffer of messages to show on UI
+    this.soundBuffer = []; //buffer of sounds to play
+    this.battleTextBuffer = []; //buffer of messages on the map
+    this.buffs = []; //positive effects
+    this.debuffs = []; //negative effects
 
-    self.resetState();
+    this.resetState();
 
-    self.calcChar(false);
-    self.curHealth=self.maxHealth;
-    self.curEnergy=self.maxEnergy;
-    self.curMana=self.maxMana;
-    self.initiativePoints = (10+self.initiative/400)*10;
+    this.calcChar(false);
+    this.curHealth = this.maxHealth;
+    this.curEnergy = this.maxEnergy;
+    this.curMana = this.maxMana;
+    this.initiativePoints = (10 + this.initiative / 400) * 10;
 };
 
 //refresh character state in battle
 Character.prototype.refreshChar = function(myTeam, enemyTeam, walls){
-    var self = this;
+    if(this.isDead) return;
+    this.resetState(); //drop state to recalulate
+    this.applyEffects(myTeam, enemyTeam, walls); //apply all effects
+    if(this.isDead) return; //check again because after DOT character can die
+    this.calcChar(true); //recalculate char params
 
-    if(self.isDead) return;
-    self.resetState(); //drop state to recalulate
-    self.applyEffects(myTeam, enemyTeam, walls); //apply all effects
-    if(self.isDead) return; //check again because after DOT character can die
-    self.calcChar(true); //recalculate char params
-
-    self.initiativePoints += 10+self.initiative/400;
+    this.initiativePoints += 10 + this.initiative / 400;
 
     //restore full energy
-    self.curEnergy = self.maxEnergy;
+    this.curEnergy = this.maxEnergy;
 
     //Regenerate health
-    var hpRegAmount = Math.floor(self.maxHealth * self.healthReg);
-    if(self.curHealth + hpRegAmount<self.maxHealth){
-        self.curHealth += hpRegAmount;
+    var hpRegAmount = Math.floor(this.maxHealth * this.healthReg);
+    if(this.curHealth + hpRegAmount < this.maxHealth){
+        this.curHealth += hpRegAmount;
     }
     else {
-        self.curHealth = self.maxHealth;
+        this.curHealth = this.maxHealth;
     }
 
     //Regenerate mana
-    var manaRegAmount = Math.floor(self.maxMana*self.manaReg);
-    if(self.curMana + manaRegAmount<self.maxMana){
-        self.curMana += manaRegAmount;
+    var manaRegAmount = Math.floor(this.maxMana * this.manaReg);
+    if(this.curMana + manaRegAmount < this.maxMana){
+        this.curMana += manaRegAmount;
     }
     else {
-        self.curMana = self.maxMana;
+        this.curMana = this.maxMana;
     }
 
     //Decrease CD for abilities
-    for(var i=0;i<self.abilities.length;i++){
-        if(self.abilities[i].cd>0){
+    for(var i = 0; i < this.abilities.length;i++){
+        if(this.abilities[i].cd>0){
             //check initiative proc
-            if(self.checkCooldownDrop()){
-                self.abilities[i].cd=0;
-                self.logBuffer.push(self.charName+" drop cooldown for '"+self.abilities[i].name+"'");
-                self.soundBuffer.push("initiative");
+            if(this.checkCooldownDrop()){
+                this.abilities[i].cd=0;
+                this.logBuffer.push(this.charName+" drop cooldown for '"+this.abilities[i].name+"'");
+                this.soundBuffer.push("initiative");
             }
-            else self.abilities[i].cd--;
+            else this.abilities[i].cd--;
         }
     }
 
-    self.createAbilitiesState();
-    self.createEffectsState();
+    this.createAbilitiesState();
+    this.createEffectsState();
 };
 
 //������� ������ ��������� ������������ ��� �������
@@ -117,29 +115,28 @@ Character.prototype.createAbilitiesState = function() {
 
 //������� ������ ��������� ��������� ��� �������
 Character.prototype.createEquipState = function() {
-    var self=this;
     //������ ����� ���������
-    if(self.equip) {
-        var equip = characterService.getEquip(self.role); //���� ����������� ��������� ��� ���� ����
+    if(this.equip) {
+        var equip = characterService.getEquip(this.role); //���� ����������� ��������� ��� ���� ����
         for (var slot in equip) {
             if (equip.hasOwnProperty(slot)) {
 
-                if(!self.equip[slot]) {
-                    self.state.equip[slot] = {};
+                if(!this.equip[slot]) {
+                    this.state.equip[slot] = {};
                     //���� ������ ���, ������ ��� �������
-                    self.state.equip[slot].name="Void";
-                    self.state.equip[slot].slot="offHandWeapon";
+                    this.state.equip[slot].name = "Void";
+                    this.state.equip[slot].slot = "offHandWeapon";
                     continue;
                 }
                 else {
-                    self.state.equip[slot]=self.equip[slot];
+                    this.state.equip[slot] = this.equip[slot];
                 }
 
                 //�������� ���������
                 for(var slotKey in equip[slot]){
                     if (equip[slot].hasOwnProperty(slotKey)) {
-                        if(slotKey!=="sockets"){
-                            self.state.equip[slot][slotKey]=equip[slot][slotKey]();
+                        if(slotKey !== "sockets"){
+                            this.state.equip[slot][slotKey] = equip[slot][slotKey]();                            
                         }
                     }
                 }
@@ -170,191 +167,185 @@ Character.prototype.createEffectsState = function() {
 
 //������� �������� ��������� ��������� � ���
 Character.prototype.resetState = function() {
-    var self = this;
+    //���������
+    this.moveCost = 300; //��������� ������� ��� ������������
 
     //���������
-    self.moveCost = 300; //��������� ������� ��� ������������
-
-    //���������
-    self.isDead = false; //����
-    self.clearCast = false; //�������� (���������� ����������)
-    self.invisible = false; //�����
-    self.silenced = false; //� ���������
-    self.disarmed = false; //��� ������
-    self.stunned = false; //�������
-    self.immobilized = false; //����������
-    self.underProphecy = false; //����� ���� ����������, ����� �� �� Prophecy
-    self.physImmune = false; //����������������� � ������ �������� ���
-    self.magicImmune = false; //����������������� � �����
-    self.controlImmune = false; //����������������� � ��������
+    this.isDead = false; //����
+    this.clearCast = false; //�������� (���������� ����������)
+    this.invisible = false; //�����
+    this.silenced = false; //� ���������
+    this.disarmed = false; //��� ������
+    this.stunned = false; //�������
+    this.immobilized = false; //����������
+    this.underProphecy = false; //����� ���� ����������, ����� �� �� Prophecy
+    this.physImmune = false; //����������������� � ������ �������� ���
+    this.magicImmune = false; //����������������� � �����
+    this.controlImmune = false; //����������������� � ��������
 
     //������������
-    self.attackPowerMod = 1;
-    self.healthRegMod = 1;
-    self.physResMod = 1;
-    self.blockChanceMod = 1;
+    this.attackPowerMod = 1;
+    this.healthRegMod = 1;
+    this.physResMod = 1;
+    this.blockChanceMod = 1;
 
-    self.critChanceMod = 1;
-    self.hitChanceMod = 1;
-    self.dodgeChanceMod = 1;
-    self.luckMod = 1;
+    this.critChanceMod = 1;
+    this.hitChanceMod = 1;
+    this.dodgeChanceMod = 1;
+    this.luckMod = 1;
 
-    self.spellPowerMod = 1;
-    self.manaRegMod = 1;
-    self.magicResMod = 1;
-    self.initiativeMod = 1;
+    this.spellPowerMod = 1;
+    this.manaRegMod = 1;
+    this.magicResMod = 1;
+    this.initiativeMod = 1;
 };
 
 //Recalculate char parameters
 Character.prototype.calcChar = function(isSameEquip) {
-    var self = this;
-
     if(!isSameEquip) {
         //Recalculate items
-        for (var key in self.equip) {
-            if (self.equip.hasOwnProperty(key)) {
-                if(self.equip[key].name !== "Void"){
-                    self.calcItem(self.equip[key]);
+        for (var key in this.equip) {
+            if (this.equip.hasOwnProperty(key)) {
+                if(this.equip[key].name !== "Void"){
+                    this.calcItem(this.equip[key]);
                 }
             }
         }
 
-        self.strFromEq = paramFromEquip('str');
-        self.attackPowerFromEq = paramFromEquip('attackPower');
-        self.maxHealthFromEq = paramFromEquip('maxHealth');
-        self.healthRegFromEq = paramFromEquip('healthReg');
-        self.physResFromEq = paramFromEquip('physRes');
-        self.blockChanceFromEq = paramFromEquip('blockChance');
+        this.strFromEq = this.paramFromEquip('str');
+        this.attackPowerFromEq = this.paramFromEquip('attackPower');
+        this.maxHealthFromEq = this.paramFromEquip('maxHealth');
+        this.healthRegFromEq = this.paramFromEquip('healthReg');
+        this.physResFromEq = this.paramFromEquip('physRes');
+        this.blockChanceFromEq = this.paramFromEquip('blockChance');
 
-        self.dxtFromEq = paramFromEquip('dxt');
-        self.critChanceFromEq = paramFromEquip('critChance');
-        self.maxEnergyFromEq = paramFromEquip('maxEnergy');
-        self.hitChanceFromEq = paramFromEquip('hitChance');
-        self.dodgeChanceFromEq = paramFromEquip('dodgeChance');
-        self.luckFromEq = paramFromEquip('luck');
+        this.dxtFromEq = this.paramFromEquip('dxt');
+        this.critChanceFromEq = this.paramFromEquip('critChance');
+        this.maxEnergyFromEq = this.paramFromEquip('maxEnergy');
+        this.hitChanceFromEq = this.paramFromEquip('hitChance');
+        this.dodgeChanceFromEq = this.paramFromEquip('dodgeChance');
+        this.luckFromEq = this.paramFromEquip('luck');
 
-        self.intFromEq = paramFromEquip('int');
-        self.spellPowerFromEq = paramFromEquip('spellPower');
-        self.maxManaFromEq = paramFromEquip('maxMana');
-        self.manaRegFromEq = paramFromEquip('manaReg');
-        self.magicResFromEq = paramFromEquip('magicRes');
-        self.initiativeFromEq = paramFromEquip('initiative');
+        this.intFromEq = this.paramFromEquip('int');
+        this.spellPowerFromEq = this.paramFromEquip('spellPower');
+        this.maxManaFromEq = this.paramFromEquip('maxMana');
+        this.manaRegFromEq = this.paramFromEquip('manaReg');
+        this.magicResFromEq = this.paramFromEquip('magicRes');
+        this.initiativeFromEq = this.paramFromEquip('initiative');
 
-        if(self.equip.offHandWeapon.name != "Void"){
-            self.minDamageFromEq = self.equip.mainHandWeapon.minDamage + self.equip.offHandWeapon.minDamage;
-            self.maxDamageFromEq = self.equip.mainHandWeapon.maxDamage + self.equip.offHandWeapon.maxDamage;
+        if(this.equip.offHandWeapon && this.equip.offHandWeapon.name !== "Void"){
+            this.minDamageFromEq = this.equip.mainHandWeapon.minDamage + this.equip.offHandWeapon.minDamage;
+            this.maxDamageFromEq = this.equip.mainHandWeapon.maxDamage + this.equip.offHandWeapon.maxDamage;
         }
         else {
-            self.minDamageFromEq = self.equip.mainHandWeapon.minDamage;
-            self.maxDamageFromEq = self.equip.mainHandWeapon.maxDamage;
+            this.minDamageFromEq = this.equip.mainHandWeapon.minDamage;
+            this.maxDamageFromEq = this.equip.mainHandWeapon.maxDamage;
         }
     }    
 
-    self.basicHealth = 10000;
-    self.basicHitChance = 0.8;
-    self.basicEnergy = 1000;
-    self.basicMana = 9000;
+    this.basicHealth = 10000;
+    this.basicHitChance = 0.8;
+    this.basicEnergy = 1000;
+    this.basicMana = 9000;
 
     //Drop modifiers to 0 in case of negative values
-    if(self.attackPowerMod < 0) self.attackPowerMod = 0;
-    if(self.healthRegMod < 0) self.healthRegMod = 0;
-    if(self.physResMod < 0) self.physResMod = 0;
-    if(self.blockChanceMod < 0) self.blockChanceMod = 0;
+    if(this.attackPowerMod < 0) this.attackPowerMod = 0;
+    if(this.healthRegMod < 0) this.healthRegMod = 0;
+    if(this.physResMod < 0) this.physResMod = 0;
+    if(this.blockChanceMod < 0) this.blockChanceMod = 0;
 
-    if(self.critChanceMod < 0) self.critChanceMod = 0;
-    if(self.hitChanceMod < 0) self.hitChanceMod = 0;
-    if(self.dodgeChanceMod < 0) self.dodgeChanceMod = 0;
-    if(self.luckMod < 0) self.luckMod = 0;
+    if(this.critChanceMod < 0) this.critChanceMod = 0;
+    if(this.hitChanceMod < 0) this.hitChanceMod = 0;
+    if(this.dodgeChanceMod < 0) this.dodgeChanceMod = 0;
+    if(this.luckMod < 0) this.luckMod = 0;
 
-    if(self.spellPowerMod < 0) self.spellPowerMod = 0;
-    if(self.manaRegMod < 0) self.manaRegMod = 0;
-    if(self.magicResMod < 0) self.magicResMod = 0;
-    if(self.initiativeMod < 0) self.initiativeMod = 0;
+    if(this.spellPowerMod < 0) this.spellPowerMod = 0;
+    if(this.manaRegMod < 0) this.manaRegMod = 0;
+    if(this.magicResMod < 0) this.magicResMod = 0;
+    if(this.initiativeMod < 0) this.initiativeMod = 0;
 
     //Strength
-    self.str = Math.floor((self.params.strMax + self.strFromEq) * self.params.strProc);
+    this.str = Math.floor((this.params.strMax + this.strFromEq) * this.params.strProc);
 
-    self.attackPowerFromStr = self.str * 0.002;
-    self.attackPower = (self.attackPowerFromStr + self.attackPowerFromEq) * self.attackPowerMod;
+    this.attackPowerFromStr = this.str * 0.002;
+    this.attackPower = (this.attackPowerFromStr + this.attackPowerFromEq) * this.attackPowerMod;
 
-    self.maxHealthFromStr = self.str * 30 + self.basicHealth;    
-    self.maxHealth = Math.floor(self.maxHealthFromStr + self.maxHealthFromEq);
+    this.maxHealthFromStr = this.str * 30 + this.basicHealth;    
+    this.maxHealth = Math.floor(this.maxHealthFromStr + this.maxHealthFromEq);
 
-    self.healthRegFromStr = self.str * 0.00012;    
-    self.healthReg = (self.healthRegFromStr + self.healthRegFromEq) * self.healthRegMod;
-    if(self.healthReg > 0.03) self.healthReg = 0.03;
+    this.healthRegFromStr = this.str * 0.00012;    
+    this.healthReg = (this.healthRegFromStr + this.healthRegFromEq) * this.healthRegMod;
+    if(this.healthReg > 0.03) this.healthReg = 0.03;
 
-    self.physResFromStr = self.str * 0.0009;    
-    self.physRes = (self.physResFromStr + self.physResFromEq) * self.physResMod;
-    if(self.physRes > 0.6) self.physRes = 0.6;
+    this.physResFromStr = this.str * 0.0009;    
+    this.physRes = (this.physResFromStr + this.physResFromEq) * this.physResMod;
+    if(this.physRes > 0.6) this.physRes = 0.6;
 
-    self.blockChanceFromStr = self.str * 0.00075;    
-    self.blockChance = (self.blockChanceFromStr + self.blockChanceFromEq) * self.blockChanceMod;
-    if(self.blockChance > 0.5) self.blockChance = 0.5;
+    this.blockChanceFromStr = this.str * 0.00075;    
+    this.blockChance = (this.blockChanceFromStr + this.blockChanceFromEq) * this.blockChanceMod;
+    if(this.blockChance > 0.5) this.blockChance = 0.5;
 
     //Dexterity    
-    self.dxt = Math.floor((self.params.dxtMax + self.dxtFromEq) * self.params.dxtProc);
+    this.dxt = Math.floor((this.params.dxtMax + this.dxtFromEq) * this.params.dxtProc);
 
-    self.critChanceFromDxt = self.dxt * 0.0005;    
-    self.critChance = (self.critChanceFromDxt + self.critChanceFromEq) * self.critChanceMod;
-    if(self.critChance > 0.5) self.critChance = 0.5;
+    this.critChanceFromDxt = this.dxt * 0.0005;    
+    this.critChance = (this.critChanceFromDxt + this.critChanceFromEq) * this.critChanceMod;
+    if(this.critChance > 0.5) this.critChance = 0.5;
 
-    self.maxEnergyFromDxt = self.dxt * 3 + self.basicEnergy;    
-    self.maxEnergy = Math.floor(self.maxEnergyFromDxt + self.maxEnergyFromEq);
+    this.maxEnergyFromDxt = this.dxt * 3 + this.basicEnergy;    
+    this.maxEnergy = Math.floor(this.maxEnergyFromDxt + this.maxEnergyFromEq);
 
-    self.hitChanceFromDxt = self.basicHitChance + self.dxt * 0.00045;    
-    self.hitChance = (self.hitChanceFromDxt + self.hitChanceFromEq) * self.hitChanceMod;
-    if(self.hitChance > 1) self.hitChance = 1;
+    this.hitChanceFromDxt = this.basicHitChance + this.dxt * 0.00045;    
+    this.hitChance = (this.hitChanceFromDxt + this.hitChanceFromEq) * this.hitChanceMod;
+    if(this.hitChance > 1) this.hitChance = 1;
 
-    self.dodgeChanceFromDxt = self.dxt * 0.0009;
-    self.dodgeChance = (self.dodgeChanceFromDxt + self.dodgeChanceFromEq) * self.dodgeChanceMod;
-    if(self.dodgeChance > 0.6) self.dodgeChance = 0.6;
+    this.dodgeChanceFromDxt = this.dxt * 0.0009;
+    this.dodgeChance = (this.dodgeChanceFromDxt + this.dodgeChanceFromEq) * this.dodgeChanceMod;
+    if(this.dodgeChance > 0.6) this.dodgeChance = 0.6;
 
-    self.luckFromDxt = self.dxt * 0.00075;
-    self.luck = (self.luckFromDxt + self.luckFromEq) * self.luckMod;
-    if(self.luck > 0.5) self.luck = 0.5;
+    this.luckFromDxt = this.dxt * 0.00075;
+    this.luck = (this.luckFromDxt + this.luckFromEq) * this.luckMod;
+    if(this.luck > 0.5) this.luck = 0.5;
 
     //Intellect    
-    self.int = Math.floor((self.params.intMax + self.intFromEq) * self.params.intProc);
+    this.int = Math.floor((this.params.intMax + this.intFromEq) * this.params.intProc);
 
-    self.spellPowerFromInt = self.int * 0.003;    
-    self.spellPower = (self.spellPowerFromInt + self.spellPowerFromEq) * self.spellPowerMod;
+    this.spellPowerFromInt = this.int * 0.003;    
+    this.spellPower = (this.spellPowerFromInt + this.spellPowerFromEq) * this.spellPowerMod;
 
-    self.maxManaFromInt = self.int * 24 + self.basicMana;    
-    self.maxMana = Math.floor(self.maxManaFromInt + self.maxManaFromEq);
+    this.maxManaFromInt = this.int * 24 + this.basicMana;    
+    this.maxMana = Math.floor(this.maxManaFromInt + this.maxManaFromEq);
 
-    self.manaRegFromInt = self.int * 0.00015;    
-    self.manaReg = (self.manaRegFromInt + self.manaRegFromEq) * self.manaRegMod;
-    if(self.manaReg > 0.04) self.manaReg = 0.04;
+    this.manaRegFromInt = this.int * 0.00015;    
+    this.manaReg = (this.manaRegFromInt + this.manaRegFromEq) * this.manaRegMod;
+    if(this.manaReg > 0.04) this.manaReg = 0.04;
 
-    self.magicResFromInt = self.int * 0.0009;    
-    self.magicRes = (self.magicResFromInt + self.magicResFromEq) * self.magicResMod;
-    if(self.magicRes > 0.6) self.magicRes = 0.6;
+    this.magicResFromInt = this.int * 0.0009;    
+    this.magicRes = (this.magicResFromInt + this.magicResFromEq) * this.magicResMod;
+    if(this.magicRes > 0.6) this.magicRes = 0.6;
 
-    self.initiativeFromInt = self.int;    
-    self.initiative = Math.floor((self.initiativeFromInt + self.initiativeFromEq) * self.initiativeMod);
+    this.initiativeFromInt = this.int;    
+    this.initiative = Math.floor((this.initiativeFromInt + this.initiativeFromEq) * this.initiativeMod);
 
-    self.minDamage = Math.floor(self.minDamageFromEq * (1 + self.attackPower));
-    self.maxDamage = Math.floor(self.maxDamageFromEq * (1 + self.attackPower));
+    this.minDamage = Math.floor(this.minDamageFromEq * (1 + this.attackPower));
+    this.maxDamage = Math.floor(this.maxDamageFromEq * (1 + this.attackPower));
+};
 
-    //calculate params on equipment
-    function paramFromEquip(key){
-        var value = 0;
-        for (var slot in self.equip) {
-            if(self.equip.hasOwnProperty(slot)){
-                if(self.equip[slot].hasOwnProperty(key)){
-                    value += Number(self.equip[slot][key]);
-                }
+//calculate params on equipment
+Character.prototype.paramFromEquip = function(key) {
+    var value = 0;
+    for (var slot in this.equip) {
+        if(this.equip.hasOwnProperty(slot)){
+            if(this.equip[slot].hasOwnProperty(key)){
+                value += Number(this.equip[slot][key]);
             }
         }
-        return value;
     }
-};
+    return value;
+}
 
 //Calculate params by coordinates from params triangle
 Character.prototype.calcParamsByPoint = function(point) {
-    var self = this;
-
     var leftY = Math.tan(2*Math.PI/3)*(point.left+5)+Math.sqrt(3)*75;
     var rightY = Math.tan(Math.PI/3)*(point.left+5)-Math.sqrt(3)*75;
     if(point.top<leftY){
@@ -364,23 +355,23 @@ Character.prototype.calcParamsByPoint = function(point) {
         point.top=rightY;
     }
 
-    self.params.paramPoint = {left: point.left, top: point.top};
+    this.params.paramPoint = {left: point.left, top: point.top};
 
     var strLen = Math.sqrt(Math.pow(point.left+5,2)+(Math.pow(point.top+5-Math.sqrt(3)*75,2)))-5;
     if(strLen>=138) strLen = 140;
     if(strLen<=3) strLen = 0;
-    self.params.strProc = 1-strLen/140;
+    this.params.strProc = 1-strLen/140;
 
     var dxtLen = Math.sqrt(Math.pow(point.left+5-75,2)+(Math.pow(point.top+5,2)))-5;
     if(dxtLen>=138) dxtLen = 140;
     if(dxtLen<=3) dxtLen = 0;
-    self.params.dxtProc = 1-dxtLen/140;
+    this.params.dxtProc = 1-dxtLen/140;
 
     var intLen = Math.sqrt(Math.pow(point.left+5-150,2)+(Math.pow(point.top+5-Math.sqrt(3)*75,2)))-5;
     if(intLen>=138)intLen = 140;
     if(intLen<=3) intLen = 0;
-    self.params.intProc = 1-intLen/140;
-    self.calcChar(true);
+    this.params.intProc = 1-intLen/140;
+    this.calcChar(true);
 };
 
 //Recalculate item with sockets
@@ -456,259 +447,238 @@ Character.prototype.calcItem = function(item) {
 };
 
 Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls){
-    var self=this;
-
-    if(self.isDead) return;
+    if(this.isDead) return;
 
     if(buff.stacked()) buff.stacks = 1;
-    buff.casterId = caster._id;
+    buff.casterId = caster.id;
     buff.casterName = caster.charName;
     buff.left = buff.duration();
 
-    for(var i = 0; i < self.buffs.length; i++){
-        if(self.buffs[i].name === buff.name && self.buffs[i].casterId === caster._id){
+    for(var i = 0; i < this.buffs.length; i++){
+        if(this.buffs[i].name === buff.name && this.buffs[i].casterId === caster.id){
             if(buff.stacked()) {
-                if(self.buffs[i].stacks < self.buffs[i].maxStacks()) self.buffs[i].stacks++;
-                self.buffs[i].apply(self, myTeam, enemyTeam, walls);
+                if(this.buffs[i].stacks < this.buffs[i].maxStacks()) this.buffs[i].stacks++;
+                this.buffs[i].apply(this, myTeam, enemyTeam, walls);
             }
-            self.buffs[i].left = buff.duration();
+            this.buffs[i].left = buff.duration();
             return;
         }
     }
-    self.buffs.push(buff);
-    buff.apply(self, myTeam, enemyTeam, walls);
+    this.buffs.push(buff);
+    buff.apply(this, myTeam, enemyTeam, walls);
 };
 
 Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, walls){
-    var self=this;
-
-    if(self.isDead) return;
-    if(self.checkImmune(debuff.magicEffect())){
-        self.logBuffer.push(self.charName + " didn't get effect '" + debuff.name + "' because immunity.");
-        self.battleTextBuffer.push({type: "other", icon: debuff.icon(), color: getAbilityColor(debuff.role()), caster: caster.charName, text: "Immune", crit: false});
-        self.soundBuffer.push("dodge");
+    if(this.isDead) return;
+    if(this.checkImmune(debuff.magicEffect())){
+        this.logBuffer.push(this.charName + " didn't get effect '" + debuff.name + "' because immunity.");
+        this.battleTextBuffer.push({type: "other", icon: debuff.icon(), color: getAbilityColor(debuff.role()), caster: caster.charName, text: "Immune", crit: false});
+        this.soundBuffer.push("dodge");
         return;
     }
 
     if(debuff.stacked()) debuff.stacks = 1;
-    debuff.casterId = caster._id;
+    debuff.casterId = caster.id;
     debuff.casterName = caster.charName;
     debuff.left = debuff.duration();
 
-    for(var i = 0; i < self.debuffs.length; i++){
-        if(self.debuffs[i].name === debuff.name && self.debuffs[i].casterId === caster._id){
+    for(var i = 0; i < this.debuffs.length; i++){
+        if(this.debuffs[i].name === debuff.name && this.debuffs[i].casterId === caster.id){
             if(debuff.stacked()) {
-                if(self.debuffs[i].stacks < self.debuffs[i].maxStacks()) self.debuffs[i].stacks++;
-                self.debuffs[i].apply(self, enemyTeam, myTeam, walls);
+                if(this.debuffs[i].stacks < this.debuffs[i].maxStacks()) this.debuffs[i].stacks++;
+                this.debuffs[i].apply(this, enemyTeam, myTeam, walls);
             }
-            if(self.isDead) return;
-            self.debuffs[i].left=debuff.duration();
+            if(this.isDead) return;
+            this.debuffs[i].left=debuff.duration();
             return;
         }
     }
-    self.debuffs.push(debuff);
-    debuff.apply(self, enemyTeam, myTeam, walls);
+    this.debuffs.push(debuff);
+    debuff.apply(this, enemyTeam, myTeam, walls);
 };
 
 Character.prototype.addBuffSimulation = function(buff, caster, myTeam, enemyTeam, walls){
-    var self=this;
-
-    if(self.isDead) return;
+    if(this.isDead) return;
 
     if(buff.stacked()) buff.stacks = 1;
-    buff.casterId = caster._id;
+    buff.casterId = caster.id;
     buff.casterName = caster.charName;
     buff.left = buff.duration();
 
-    for(var i = 0; i < self.buffs.length; i++){
-        if(self.buffs[i].name === buff.name && self.buffs[i].casterId === caster._id){
+    for(var i = 0; i < this.buffs.length; i++){
+        if(this.buffs[i].name === buff.name && this.buffs[i].casterId === caster.id){
             if(buff.stacked()) {
-                if(self.buffs[i].stacks < self.buffs[i].maxStacks()) self.buffs[i].stacks++;
+                if(this.buffs[i].stacks < this.buffs[i].maxStacks()) this.buffs[i].stacks++;
             }
-            self.buffs[i].left = buff.duration();
+            this.buffs[i].left = buff.duration();
             return;
         }
     }
-    self.buffs.push(buff);
+    this.buffs.push(buff);
 };
 
 Character.prototype.addDebuffSimulation = function(debuff, caster, myTeam, enemyTeam, walls){
-    var self = this;
-
-    if(self.isDead) return;
+    if(this.isDead) return;
 
     if(debuff.stacked()) debuff.stacks = 1;
-    debuff.casterId = caster._id;
+    debuff.casterId = caster.id;
     debuff.casterName = caster.charName;
     debuff.left = debuff.duration();
 
-    for(var i = 0; i < self.debuffs.length; i++){
-        if(self.debuffs[i].name === debuff.name && self.debuffs[i].casterId === caster._id){
+    for(var i = 0; i < this.debuffs.length; i++){
+        if(this.debuffs[i].name === debuff.name && this.debuffs[i].casterId === caster.id){
             if(debuff.stacked()) {
-                if(self.debuffs[i].stacks < self.debuffs[i].maxStacks()) self.debuffs[i].stacks++;
+                if(this.debuffs[i].stacks < this.debuffs[i].maxStacks()) this.debuffs[i].stacks++;
             }
-            if(self.isDead) return;
-            self.debuffs[i].left=debuff.duration();
+            if(this.isDead) return;
+            this.debuffs[i].left=debuff.duration();
             return;
         }
     }
-    self.debuffs.push(debuff);
+    this.debuffs.push(debuff);
 };
 
 Character.prototype.updateMods = function(myTeam, enemyTeam, walls) {
-    var self = this;
-
-    for(var i=0; i<self.buffs.length; i++){
-        if(self.buffs[i].onlyStat()) {
-            self.buffs[i].apply(self, myTeam, enemyTeam, walls);
+    for(var i=0; i<this.buffs.length; i++){
+        if(this.buffs[i].onlyStat()) {
+            this.buffs[i].apply(this, myTeam, enemyTeam, walls);
         }
     }
 
-    for(i=0; i<self.debuffs.length; i++){
-        if(self.debuffs[i].onlyStat()) {
-            self.debuffs[i].apply(self, myTeam, enemyTeam, walls);
+    for(i=0; i<this.debuffs.length; i++){
+        if(this.debuffs[i].onlyStat()) {
+            this.debuffs[i].apply(this, myTeam, enemyTeam, walls);
         }
     }
 };
 
 Character.prototype.applyEffects = function(myTeam, enemyTeam, walls) {
-    var self = this;
     var buffsForRemove = [];
     var debuffsForRemove = [];
 
-    self.battleTextBuffer = [];
+    this.battleTextBuffer = [];
 
-    for(var i=0; i<self.buffs.length; i++){
-        if(!self.buffs[i].infinite()) {
-            self.buffs[i].left--;
-            if (self.buffs[i].left < 1) {
+    for(var i=0; i<this.buffs.length; i++){
+        if(!this.buffs[i].infinite()) {
+            this.buffs[i].left--;
+            if (this.buffs[i].left < 1) {
                 buffsForRemove.push(i);
             }
             else {
-                self.buffs[i].apply(self, myTeam, enemyTeam, walls);
+                this.buffs[i].apply(this, myTeam, enemyTeam, walls);
             }
         }
         else {
-            self.buffs[i].apply(self, myTeam, enemyTeam, walls);
+            this.buffs[i].apply(this, myTeam, enemyTeam, walls);
         }
     }
 
     for(i=0;i<buffsForRemove.length;i++){
-        self.buffs.splice(buffsForRemove[i], 1);
+        this.buffs.splice(buffsForRemove[i], 1);
     }
 
-    for(i=0; i<self.debuffs.length; i++){
-        if(!self.debuffs[i].infinite()) {
-            self.debuffs[i].left--;
-            if (self.debuffs[i].left < 1) {
+    for(i=0; i<this.debuffs.length; i++){
+        if(!this.debuffs[i].infinite()) {
+            this.debuffs[i].left--;
+            if (this.debuffs[i].left < 1) {
                 debuffsForRemove.push(i);
             }
             else {
-                self.debuffs[i].apply(self, myTeam, enemyTeam, walls);
+                this.debuffs[i].apply(this, myTeam, enemyTeam, walls);
             }
         }
         else {
-            self.debuffs[i].apply(self, myTeam, enemyTeam, walls);
+            this.debuffs[i].apply(this, myTeam, enemyTeam, walls);
         }
     }
 
     for(i=0;i<debuffsForRemove.length;i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 };
 
 Character.prototype.removeRandomBuff = function(myTeam, enemyTeam) {
-    var self = this;
-
-    if(self.buffs.length>0){
-        var removableBuffIndex = randomService.randomInt(0, self.buffs.length - 1);
-        if(self.buffs[removableBuffIndex].stacked()){
-            if(self.buffs[removableBuffIndex].stacks === 1){
-                self.buffs.splice(removableBuffIndex, 1);
+    if(this.buffs.length>0){
+        var removableBuffIndex = randomService.randomInt(0, this.buffs.length - 1);
+        if(this.buffs[removableBuffIndex].stacked()){
+            if(this.buffs[removableBuffIndex].stacks === 1){
+                this.buffs.splice(removableBuffIndex, 1);
             }
             else {
-                self.buffs[removableBuffIndex].stacks--;
+                this.buffs[removableBuffIndex].stacks--;
             }
         }
         else {
-            self.buffs.splice(removableBuffIndex, 1);
+            this.buffs.splice(removableBuffIndex, 1);
         }
 
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar(true);
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
 Character.prototype.removeRandomBuffSimulation = function() {
-    var self = this;
-
-    if(self.buffs.length>0){
-        var removableBuffIndex = randomService.randomInt(0, self.buffs.length - 1);
-        if(self.buffs[removableBuffIndex].stacked()){
-            if(self.buffs[removableBuffIndex].stacks === 1){
-                self.buffs.splice(removableBuffIndex, 1);
+    if(this.buffs.length>0){
+        var removableBuffIndex = randomService.randomInt(0, this.buffs.length - 1);
+        if(this.buffs[removableBuffIndex].stacked()){
+            if(this.buffs[removableBuffIndex].stacks === 1){
+                this.buffs.splice(removableBuffIndex, 1);
             }
             else {
-                self.buffs[removableBuffIndex].stacks--;
+                this.buffs[removableBuffIndex].stacks--;
             }
         }
         else {
-            self.buffs.splice(removableBuffIndex, 1);
+            this.buffs.splice(removableBuffIndex, 1);
         }
     }
 };
 
 Character.prototype.removeRandomDebuff = function(myTeam, enemyTeam) {
-    var self = this;
-
-    if(self.debuffs.length > 0){
-        var removableDebuffIndex = randomService.randomInt(0, self.debuffs.length - 1);
-        if(self.debuffs[removableDebuffIndex].stacked()){
-            if(self.debuffs[removableDebuffIndex].stacks === 1){
-                self.debuffs.splice(removableDebuffIndex, 1);
+    if(this.debuffs.length > 0){
+        var removableDebuffIndex = randomService.randomInt(0, this.debuffs.length - 1);
+        if(this.debuffs[removableDebuffIndex].stacked()){
+            if(this.debuffs[removableDebuffIndex].stacks === 1){
+                this.debuffs.splice(removableDebuffIndex, 1);
             }
             else {
-                self.debuffs[removableDebuffIndex].stacks--;
+                this.debuffs[removableDebuffIndex].stacks--;
             }
         }
         else {
-            self.debuffs.splice(removableDebuffIndex, 1);
+            this.debuffs.splice(removableDebuffIndex, 1);
         }
 
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar(true);
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }    
 };
 
 Character.prototype.removeRandomDebuffSimulation = function() {
-    var self = this;
-
-    if(self.debuffs.length > 0){
-        var removableDebuffIndex = randomService.randomInt(0, self.debuffs.length - 1);
-        if(self.debuffs[removableDebuffIndex].stacked()){
-            if(self.debuffs[removableDebuffIndex].stacks === 1){
-                self.debuffs.splice(removableDebuffIndex, 1);
+    if(this.debuffs.length > 0){
+        var removableDebuffIndex = randomService.randomInt(0, this.debuffs.length - 1);
+        if(this.debuffs[removableDebuffIndex].stacked()){
+            if(this.debuffs[removableDebuffIndex].stacks === 1){
+                this.debuffs.splice(removableDebuffIndex, 1);
             }
             else {
-                self.debuffs[removableDebuffIndex].stacks--;
+                this.debuffs[removableDebuffIndex].stacks--;
             }
         }
         else {
-            self.debuffs.splice(removableDebuffIndex, 1);
+            this.debuffs.splice(removableDebuffIndex, 1);
         }
     }
 };
 
 Character.prototype.removeAllDebuffs = function(myTeam, enemyTeam) {
-    var self = this;
-
-    if(self.debuffs.length > 0){
-        self.debuffs = [];
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar(true);
+    if(this.debuffs.length > 0){
+        this.debuffs = [];
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
@@ -717,65 +687,60 @@ Character.prototype.removeAllDebuffsSimulation = function() {
 };
 
 Character.prototype.removeRandomDOT = function(myTeam, enemyTeam) {
-    var self = this;
-
-    if(self.debuffs.length>0){
+    if(this.debuffs.length>0){
         var DOTS = [];
-        for(var i=0; i<self.debuffs.length; i++){
-            if(!self.debuffs[i].onlyStat()) DOTS.push({index: i, dot: self.debuffs[i]});
+        for(var i=0; i<this.debuffs.length; i++){
+            if(!this.debuffs[i].onlyStat()) DOTS.push({index: i, dot: this.debuffs[i]});
         }
 
         if(DOTS.length > 0){
             var removableDOTIndex = randomService.randomInt(0, DOTS.length - 1);
             var removableDebuffIndex = DOTS[removableDOTIndex].index;
-            if(self.debuffs[removableDebuffIndex].stacked()){
-                if(self.debuffs[removableDebuffIndex].stacks === 1){
-                    self.debuffs.splice(removableDebuffIndex, 1);
+            if(this.debuffs[removableDebuffIndex].stacked()){
+                if(this.debuffs[removableDebuffIndex].stacks === 1){
+                    this.debuffs.splice(removableDebuffIndex, 1);
                 }
                 else {
-                    self.debuffs[removableDebuffIndex].stacks--;
+                    this.debuffs[removableDebuffIndex].stacks--;
                 }
             }
             else {
-                self.debuffs.splice(removableDebuffIndex, 1);
+                this.debuffs.splice(removableDebuffIndex, 1);
             }
 
-            self.resetState();
-            self.updateMods(myTeam, enemyTeam);
-            self.calcChar(true);
+            this.resetState();
+            this.updateMods(myTeam, enemyTeam);
+            this.calcChar(true);
         }
     }
 };
 
 Character.prototype.removeRandomDOTSimulation = function() {
-    var self = this;
-
-    if(self.debuffs.length>0){
+    if(this.debuffs.length>0){
         var DOTS = [];
-        for(var i = 0; i < self.debuffs.length; i++){
-            if(!self.debuffs[i].onlyStat()) DOTS.push({index: i, dot: self.debuffs[i]});
+        for(var i = 0; i < this.debuffs.length; i++){
+            if(!this.debuffs[i].onlyStat()) DOTS.push({index: i, dot: this.debuffs[i]});
         }
 
         if(DOTS.length > 0){
             var removableDOTIndex = randomService.randomInt(0, DOTS.length - 1);
             var removableDebuffIndex = DOTS[removableDOTIndex].index;
-            if(self.debuffs[removableDebuffIndex].stacked()){
-                if(self.debuffs[removableDebuffIndex].stacks === 1){
-                    self.debuffs.splice(removableDebuffIndex, 1);
+            if(this.debuffs[removableDebuffIndex].stacked()){
+                if(this.debuffs[removableDebuffIndex].stacks === 1){
+                    this.debuffs.splice(removableDebuffIndex, 1);
                 }
                 else {
-                    self.debuffs[removableDebuffIndex].stacks--;
+                    this.debuffs[removableDebuffIndex].stacks--;
                 }
             }
             else {
-                self.debuffs.splice(removableDebuffIndex, 1);
+                this.debuffs.splice(removableDebuffIndex, 1);
             }
         }
     }
 };
 
 Character.prototype.stealRandomBuff = function(target, myTeam, enemyTeam, walls) {
-    var self = this;
     var stealedBuffName = false;
 
     if(target.buffs.length > 0){
@@ -783,11 +748,11 @@ Character.prototype.stealRandomBuff = function(target, myTeam, enemyTeam, walls)
         stealedBuffName = target.buffs[removableBuffIndex].name;
         if(target.buffs[removableBuffIndex].stacked()){
             if(target.buffs[removableBuffIndex].stacks === 1){
-                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self, myTeam, enemyTeam, walls);
+                this.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), this, myTeam, enemyTeam, walls);
                 target.buffs.splice(removableBuffIndex, 1);
             }
             else {
-                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self, myTeam, enemyTeam, walls);
+                this.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), this, myTeam, enemyTeam, walls);
                 target.buffs[removableBuffIndex].stacks--;
             }
         }
@@ -795,17 +760,17 @@ Character.prototype.stealRandomBuff = function(target, myTeam, enemyTeam, walls)
             if(target.buffs[removableBuffIndex].name === "Sanctuary"){
                 var debuffer = {};
                 for(var i = 0; i < enemyTeam.length; i++){
-                    if(enemyTeam[i]._id == target.buffs[removableBuffIndex].casterId) {
+                    if(enemyTeam[i].id == target.buffs[removableBuffIndex].casterId) {
                         debuffer = enemyTeam[i];
                         break;
                     }
                 }
                 if(debuffer){
-                    self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), debuffer, myTeam, enemyTeam, walls);
+                    this.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), debuffer, myTeam, enemyTeam, walls);
                 }                
             }
             else {
-                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self, myTeam, enemyTeam, walls);
+                this.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), this, myTeam, enemyTeam, walls);
             }
             target.buffs.splice(removableBuffIndex, 1);
         }
@@ -818,7 +783,6 @@ Character.prototype.stealRandomBuff = function(target, myTeam, enemyTeam, walls)
 };
 
 Character.prototype.stealRandomBuffSimulation = function(target, myTeam, enemyTeam, walls) {
-    var self = this;
     var stealedBuffName = false;
 
     if(target.buffs.length > 0){
@@ -826,11 +790,11 @@ Character.prototype.stealRandomBuffSimulation = function(target, myTeam, enemyTe
         stealedBuffName = target.buffs[removableBuffIndex].name;
         if(target.buffs[removableBuffIndex].stacked()){
             if(target.buffs[removableBuffIndex].stacks === 1){
-                self.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self, myTeam, enemyTeam, walls);
+                this.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), this, myTeam, enemyTeam, walls);
                 target.buffs.splice(removableBuffIndex, 1);
             }
             else {
-                self.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self, myTeam, enemyTeam, walls);
+                this.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), this, myTeam, enemyTeam, walls);
                 target.buffs[removableBuffIndex].stacks--;
             }
         }
@@ -838,17 +802,17 @@ Character.prototype.stealRandomBuffSimulation = function(target, myTeam, enemyTe
             if(target.buffs[removableBuffIndex].name === "Sanctuary"){
                 var debuffer = {};
                 for(var i = 0; i < enemyTeam.length; i++){
-                    if(enemyTeam[i]._id == target.buffs[removableBuffIndex].casterId) {
+                    if(enemyTeam[i].id == target.buffs[removableBuffIndex].casterId) {
                         debuffer = enemyTeam[i];
                         break;
                     }
                 }
                 if(debuffer){
-                    self.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), debuffer, myTeam, enemyTeam, walls);
+                    this.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), debuffer, myTeam, enemyTeam, walls);
                 }                
             }
             else {
-                self.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self, myTeam, enemyTeam, walls);
+                this.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), this, myTeam, enemyTeam, walls);
             }
             target.buffs.splice(removableBuffIndex, 1);
         }
@@ -865,41 +829,40 @@ Character.prototype.canMove = function(){
 };
 
 Character.prototype.takeDamage = function(value, caster, ability, canBlock, canDodge, isCritical, myTeam, enemyTeam){
-    var self = this;
     var blockedDamage = 0;
     var str = "";
 
     if(value===0) {
-        self.logBuffer.push(self.charName + " didn't take damage from '" + ability.name + "' of " + caster.charName + ", because immunity.");
-        self.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: "Immune", crit: false});
-        self.soundBuffer.push("dodge");
+        this.logBuffer.push(this.charName + " didn't take damage from '" + ability.name + "' of " + caster.charName + ", because immunity.");
+        this.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: "Immune", crit: false});
+        this.soundBuffer.push("dodge");
         return false;
     }
 
     if(canDodge){
-        if(self.checkDodge()){
-            self.logBuffer.push(self.charName + " dodged from '"+ability.name+"' of "+caster.charName);
-            self.soundBuffer.push("dodge");
-            self.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: "Dodge", crit: false});
+        if(this.checkDodge()){
+            this.logBuffer.push(this.charName + " dodged from '"+ability.name+"' of "+caster.charName);
+            this.soundBuffer.push("dodge");
+            this.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: "Dodge", crit: false});
             return false;
         }
     }
 
     //Check for Sanctuary
-    for(var i=0;i<self.buffs.length;i++){
-        if(self.buffs[i].name==="Sanctuary") {
-            var sanctBuff=self.buffs[i];
+    for(var i=0;i<this.buffs.length;i++){
+        if(this.buffs[i].name==="Sanctuary") {
+            var sanctBuff=this.buffs[i];
             var sanctValue = value*sanctBuff.variant*0.15;
             value-=sanctValue;
             for(var j=0;j<enemyTeam.length;j++){
-                if(enemyTeam[j]._id == sanctBuff.casterId && !enemyTeam[j].isDead && enemyTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
+                if(enemyTeam[j].id == sanctBuff.casterId && !enemyTeam[j].isDead && enemyTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
                     var sanctCaster = enemyTeam[j];
                     sanctCaster.takeDamage(sanctValue, caster, {name: ability.name+" (Sanctuary)", icon: ability.icon, role: ability.role}, canBlock, canDodge, isCritical, myTeam, enemyTeam);
                 }
             }
             //�� ������ ������ ���������, ����� ��� ��� �������
             for(j=0;j<myTeam.length;j++){
-                if(myTeam[j]._id == sanctBuff.casterId && !myTeam[j].isDead && myTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
+                if(myTeam[j].id == sanctBuff.casterId && !myTeam[j].isDead && myTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
                     sanctCaster = myTeam[j];
                     sanctCaster.takeDamage(sanctValue, caster, {name: ability.name+" (Sanctuary)", icon: ability.icon, role: ability.role}, canBlock, canDodge, isCritical, enemyTeam, myTeam);
                 }
@@ -908,79 +871,77 @@ Character.prototype.takeDamage = function(value, caster, ability, canBlock, canD
     }
 
     //Check for Fight Fire With Fire
-    for(i=0;i<self.buffs.length;i++){
-        if(self.buffs[i].name==="Fight Fire With Fire") {
-            var fffBuff=self.buffs[i];
+    for(i=0;i<this.buffs.length;i++){
+        if(this.buffs[i].name==="Fight Fire With Fire") {
+            var fffBuff=this.buffs[i];
             var fffValue = value*(0.2+fffBuff.variant*0.1);
             //value-=fffValue; ����� �� �����������, � ������ ������������ ����������
-            fffValue = fffValue*(1+self.spellPower);
+            fffValue = fffValue*(1+this.spellPower);
             if(!caster.isDead && caster.findEffect("Fight Fire With Fire")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Fight Fire With Fire
-                caster.takeDamage(fffValue, self, {name: "Fight Fire With Fire", icon: "url(../images/assets/svg/view/sprites.svg#abilities--FightFireWithFire)", role: "malefic"}, true, true, isCritical, enemyTeam, myTeam);
+                caster.takeDamage(fffValue, this, {name: "Fight Fire With Fire", icon: "url(../images/assets/svg/view/sprites.svg#abilities--FightFireWithFire)", role: "malefic"}, true, true, isCritical, enemyTeam, myTeam);
             }
         }
     }
 
     if(canBlock){
-        if(self.checkBlock()){
-            blockedDamage = Math.round(value*self.blockChance*1.5);
+        if(this.checkBlock()){
+            blockedDamage = Math.round(value*this.blockChance*1.5);
             value-=blockedDamage;
-            self.soundBuffer.push("block");
+            this.soundBuffer.push("block");
         }
     }
 
     value=Math.round(value);
 
-    self.curHealth -= value;
+    this.curHealth -= value;
 
-    self.battleTextBuffer.push({type: "damage", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: value, crit: isCritical});
+    this.battleTextBuffer.push({type: "damage", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: value, crit: isCritical});
 
-    str+=self.charName + " got "+value;
+    str+=this.charName + " got "+value;
 
     if(blockedDamage>0) str+=" ("+blockedDamage+" blocked)";
     if(isCritical) str+= " CRITICAL";
     str+=" damage from '"+ability.name+"' of "+caster.charName;
-    self.logBuffer.push(str);
+    this.logBuffer.push(str);
 
     caster.afterDealingDamage(enemyTeam, myTeam); //� ������� ����������� ������� ����� ��������� �����
-    self.afterDamageTaken(myTeam, enemyTeam); //� � ���� ����� ��������� �����
+    this.afterDamageTaken(myTeam, enemyTeam); //� � ���� ����� ��������� �����
 
-    if(self.curHealth<=0){ //Death
-        self.curHealth=0;
-        self.buffs=[];
-        self.debuffs=[];
-        self.isDead=true;
-        self.portrait = "./images/assets/img/portraits/death.jpg";
-        self.logBuffer.push(self.charName + " is dead");
-        self.soundBuffer.push("death");
+    if(this.curHealth<=0){ //Death
+        this.curHealth=0;
+        this.buffs=[];
+        this.debuffs=[];
+        this.isDead=true;
+        this.portrait = "./images/assets/img/portraits/death.jpg";
+        this.logBuffer.push(this.charName + " is dead");
+        this.soundBuffer.push("death");
     }
     return true;
 };
 
 Character.prototype.takeDamageSimulation = function(value, caster, canBlock, canDodge, myTeam, enemyTeam){
-    var self = this;
-
     if(value===0) {
         return false;
     }
 
     if(canDodge){
-        value = (1 - self.dodgeChance) * value;
+        value = (1 - this.dodgeChance) * value;
     }
 
     //Check for Sanctuary
-    for(var i=0;i<self.buffs.length;i++){
-        if(self.buffs[i].name==="Sanctuary") {
-            var sanctBuff=self.buffs[i];
+    for(var i=0;i<this.buffs.length;i++){
+        if(this.buffs[i].name==="Sanctuary") {
+            var sanctBuff=this.buffs[i];
             var sanctValue = value * sanctBuff.variant * 0.15;
             value-=sanctValue;
             for(var j=0;j<enemyTeam.length;j++){
-                if(enemyTeam[j]._id === sanctBuff.casterId && !enemyTeam[j].isDead && enemyTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
+                if(enemyTeam[j].id === sanctBuff.casterId && !enemyTeam[j].isDead && enemyTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
                     var sanctCaster = enemyTeam[j];
                     sanctCaster.takeDamageSimulation(sanctValue, caster, canBlock, canDodge, myTeam, enemyTeam);
                 }
             }            
             for(j=0;j<myTeam.length;j++){
-                if(myTeam[j]._id == sanctBuff.casterId && !myTeam[j].isDead && myTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
+                if(myTeam[j].id == sanctBuff.casterId && !myTeam[j].isDead && myTeam[j].findEffect("Sanctuary")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Sanctuary
                     sanctCaster = myTeam[j];
                     sanctCaster.takeDamageSimulation(sanctValue, caster, canBlock, canDodge, enemyTeam, myTeam);
                 }
@@ -989,471 +950,440 @@ Character.prototype.takeDamageSimulation = function(value, caster, canBlock, can
     }
 
     //Check for Fight Fire With Fire
-    for(i=0;i<self.buffs.length;i++){
-        if(self.buffs[i].name==="Fight Fire With Fire") {
-            var fffBuff=self.buffs[i];
+    for(i=0;i<this.buffs.length;i++){
+        if(this.buffs[i].name==="Fight Fire With Fire") {
+            var fffBuff=this.buffs[i];
             var fffValue = value*(0.2+fffBuff.variant*0.1);
             //value-=fffValue; ����� �� �����������, � ������ ������������ ����������
-            fffValue = fffValue*(1+self.spellPower);
+            fffValue = fffValue*(1+this.spellPower);
             if(!caster.isDead && caster.findEffect("Fight Fire With Fire")===-1) { //�� ��������� ����������� �������� ������ ���������� ����� �� ����, � ���� ���� ���� Fight Fire With Fire
-                caster.takeDamageSimulation(fffValue, self, true, true, enemyTeam, myTeam);
+                caster.takeDamageSimulation(fffValue, this, true, true, enemyTeam, myTeam);
             }
         }
     }
 
     if(canBlock){
-        value -= Math.round(value * self.blockChance * 1.5) * self.blockChance;
+        value -= Math.round(value * this.blockChance * 1.5) * this.blockChance;
     }
 
-    self.curHealth -= value;
+    this.curHealth -= value;
 
     caster.afterDealingDamageSimulation();
-    self.afterDamageTakenSimulation();
+    this.afterDamageTakenSimulation();
 
-    if(self.curHealth<=0){ //Death
-        self.curHealth=0;
-        self.buffs=[];
-        self.debuffs=[];
-        self.isDead=true;
+    if(this.curHealth<=0){ //Death
+        this.curHealth=0;
+        this.buffs=[];
+        this.debuffs=[];
+        this.isDead=true;
     }
     return true;
 };
 
 //������� ��������� ���������
 Character.prototype.takeHeal = function(value, caster, ability, isCritical){
-    var self = this;
     var str = "";
 
     value=Math.round(value);
 
-    if(self.curHealth+value>=self.maxHealth) self.curHealth=self.maxHealth;
-    else self.curHealth += value;
+    if(this.curHealth+value>=this.maxHealth) this.curHealth=this.maxHealth;
+    else this.curHealth += value;
 
     //battleText
-    self.battleTextBuffer.push({type: "heal", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: value, crit: isCritical});
+    this.battleTextBuffer.push({type: "heal", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: value, crit: isCritical});
 
-    if(self._id === caster._id){
-        str+=self.charName + " healed for "+value;
+    if(this.id === caster.id){
+        str+=this.charName + " healed for "+value;
         if(isCritical) str+= " (CRITICAL)";
         str+=" with '"+ability.name+"'";
     }
     else {
-        str+=self.charName + " was healed by "+caster.charName+" for "+value;
+        str+=this.charName + " was healed by "+caster.charName+" for "+value;
         if(isCritical) str+= " (CRITICAL)";
         str+=" with '"+ability.name+"'";
     }
-    self.logBuffer.push(str);
+    this.logBuffer.push(str);
 };
 
 Character.prototype.takeHealSimulation = function(value){
-    var self = this;
-
-    if(self.curHealth+value>=self.maxHealth) self.curHealth=self.maxHealth;
-    else self.curHealth += value;    
+    if(this.curHealth+value>=this.maxHealth) this.curHealth=this.maxHealth;
+    else this.curHealth += value;    
 };
 
 //Get some energy
 Character.prototype.takeEnergy = function(value, caster, ability, isCritical){
-    var self = this;
     var str = "";
 
     value=Math.round(value);
 
-    if(self.curEnergy+value>=self.maxEnergy) self.curEnergy=self.maxEnergy;
-    else self.curEnergy += value;
+    if(this.curEnergy+value>=this.maxEnergy) this.curEnergy=this.maxEnergy;
+    else this.curEnergy += value;
 
-    if(self._id === caster._id){
-        str+=self.charName + " restore "+value;
+    if(this.id === caster.id){
+        str+=this.charName + " restore "+value;
         str+=" energy with '"+ability+"'";
     }
     else {
-        str+=self.charName + " restore "+value;
+        str+=this.charName + " restore "+value;
         str+=" energy with '"+ability+"' used by "+caster.charName;
     }
-    self.logBuffer.push(str);
+    this.logBuffer.push(str);
 };
 
 Character.prototype.takeEnergySimulation = function(value){
-    var self = this;
-
-    if(self.curEnergy + value >= self.maxEnergy) self.curEnergy = self.maxEnergy;
-    else self.curEnergy += value;
+    if(this.curEnergy + value >= this.maxEnergy) this.curEnergy = this.maxEnergy;
+    else this.curEnergy += value;
 };
 
 //Get some mana
 Character.prototype.takeMana = function(value, caster, ability, isCritical){
-    var self = this;
     var str = "";
 
     value=Math.round(value);
 
-    if(self.curMana+value>=self.maxMana) self.curMana=self.maxMana;
-    else self.curMana += value;
+    if(this.curMana+value>=this.maxMana) this.curMana=this.maxMana;
+    else this.curMana += value;
 
-    if(self._id === caster._id){
-        str+=self.charName + " restore "+value;
+    if(this.id === caster.id){
+        str+=this.charName + " restore "+value;
         str+=" mana with '"+ability+"'";
     }
     else {
-        str+=self.charName + " restore "+value;
+        str+=this.charName + " restore "+value;
         str+=" mana with '"+ability+"' used by "+caster.charName;
     }
-    self.logBuffer.push(str);
+    this.logBuffer.push(str);
 };
 
 //Get some mana (simulation)
 Character.prototype.takeManaSimulation = function(value){
-    var self = this;
-
-    if(self.curMana+value >= self.maxMana) self.curMana = self.maxMana;
-    else self.curMana += value;
+    if(this.curMana+value >= this.maxMana) this.curMana = this.maxMana;
+    else this.curMana += value;
 };
 
 //������� ����� �������
 Character.prototype.spendEnergy = function(value, simulation) {
-    var self=this;
-    if(!simulation && self.checkLuck()){
-        self.logBuffer.push(self.charName+" is very lucky and save his energy");
-        self.soundBuffer.push("luck");
+    if(!simulation && this.checkLuck()){
+        this.logBuffer.push(this.charName+" is very lucky and save his energy");
+        this.soundBuffer.push("luck");
     }
     else {
-        if(self.curEnergy-value>0) {
-            self.curEnergy-=value;
+        if(this.curEnergy-value>0) {
+            this.curEnergy-=value;
         }
         else {
-            self.curEnergy = 0;
+            this.curEnergy = 0;
         }
     }
 };
 
 //������� ����� ����
 Character.prototype.spendMana = function(value, simulation) {
-    var self=this;
-    if(self.clearCast && !simulation){
-        self.logBuffer.push(self.charName+" is in clearcasting state and save mana");
+    if(this.clearCast && !simulation){
+        this.logBuffer.push(this.charName+" is in clearcasting state and save mana");
     }
     else {
-        if(self.curMana-value>0) {
-            self.curMana-=value;
+        if(this.curMana-value>0) {
+            this.curMana-=value;
         }
         else {
-            self.curMana = 0;
+            this.curMana = 0;
         }
     }
 };
 
 //������� ������� ������������ �����
 Character.prototype.applyCrit = function (value) {
-    var self=this;
-    return Math.round(value*(1.5+self.critChance));
+    return Math.round(value*(1.5+this.critChance));
 };
 
 //������� ��������� ����� ��������, ���� �������� ���� ����
 Character.prototype.afterDealingDamage = function (myTeam, enemyTeam) {
-    var self=this;
     var buffsForRemove=[];
     var debuffsForRemove=[];
     var currentEffect;
 
-    currentEffect = self.findEffect("Invisible");
+    currentEffect = this.findEffect("Invisible");
     if(currentEffect>-1){
         buffsForRemove.push(currentEffect);
     }
-    currentEffect = self.findEffect("Fade To Black");
+    currentEffect = this.findEffect("Fade To Black");
     if(currentEffect>-1){
         buffsForRemove.push(currentEffect);
     }
 
     for(var i=0;i<buffsForRemove.length;i++){
-        self.buffs.splice(buffsForRemove[i], 1);
+        this.buffs.splice(buffsForRemove[i], 1);
     }
 
     for(i=0;i<debuffsForRemove.length;i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 
     if(buffsForRemove.length>0 || debuffsForRemove.length>0){
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar(true);
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
 Character.prototype.afterDealingDamageSimulation = function () {
-    var self=this;
     var buffsForRemove=[];
     var debuffsForRemove=[];
     var currentEffect;
 
-    currentEffect = self.findEffect("Invisible");
+    currentEffect = this.findEffect("Invisible");
     if(currentEffect >- 1){
         buffsForRemove.push(currentEffect);
     }
-    currentEffect = self.findEffect("Fade To Black");
+    currentEffect = this.findEffect("Fade To Black");
     if(currentEffect >- 1){
         buffsForRemove.push(currentEffect);
     }
 
     for(var i = 0; i < buffsForRemove.length; i++){
-        self.buffs.splice(buffsForRemove[i], 1);
+        this.buffs.splice(buffsForRemove[i], 1);
     }
 
     for(i=0; i<debuffsForRemove.length; i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 };
 
 Character.prototype.afterDamageTaken = function (myTeam, enemyTeam) {
-    var self=this;
     var buffsForRemove=[];
     var debuffsForRemove=[];
     var currentEffect;
 
-    currentEffect = self.findEffect("Invisible");
+    currentEffect = this.findEffect("Invisible");
     if(currentEffect>-1){
         buffsForRemove.push(currentEffect);
     }
-    currentEffect = self.findEffect("Fade To Black");
+    currentEffect = this.findEffect("Fade To Black");
     if(currentEffect>-1){
         buffsForRemove.push(currentEffect);
     }
 
     for(var i=0;i<buffsForRemove.length;i++){
-        self.buffs.splice(buffsForRemove[i], 1);
+        this.buffs.splice(buffsForRemove[i], 1);
     }
 
     for(i=0;i<debuffsForRemove.length;i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 
     if(buffsForRemove.length>0 || debuffsForRemove.length>0){
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar(true);
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
 Character.prototype.afterDamageTakenSimulation = function () {
-    var self = this;
     var buffsForRemove = [];
     var debuffsForRemove = [];
     var currentEffect;
 
-    currentEffect = self.findEffect("Invisible");
+    currentEffect = this.findEffect("Invisible");
     if(currentEffect>-1){
         buffsForRemove.push(currentEffect);
     }
-    currentEffect = self.findEffect("Fade To Black");
+    currentEffect = this.findEffect("Fade To Black");
     if(currentEffect > -1){
         buffsForRemove.push(currentEffect);
     }
 
     for(var i = 0; i < buffsForRemove.length;i++){
-        self.buffs.splice(buffsForRemove[i], 1);
+        this.buffs.splice(buffsForRemove[i], 1);
     }
 
     for(i = 0; i < debuffsForRemove.length; i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 };
 
 Character.prototype.afterMiss = function (target, ability, myTeam, enemyTeam, doNotLog) {
-    var self=this;
     var buffsForRemove=[];
     var debuffsForRemove=[];
     var currentEffect;
 
-    self.soundBuffer.push("miss");
-    if(!doNotLog) self.logBuffer.push(self.charName+" miss against "+target+" with '"+ability.name+"'");
-    self.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: self.charName, text: "Miss", crit: false});
+    this.soundBuffer.push("miss");
+    if(!doNotLog) this.logBuffer.push(this.charName+" miss against "+target+" with '"+ability.name+"'");
+    this.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: this.charName, text: "Miss", crit: false});
 
-    currentEffect = self.findEffect("Reign In Blood");
+    currentEffect = this.findEffect("Reign In Blood");
     if(currentEffect>-1){
         buffsForRemove.push(currentEffect);
     }
 
-    currentEffect = self.findEffect("Down In Flames");
+    currentEffect = this.findEffect("Down In Flames");
     if(currentEffect>-1){
         buffsForRemove.push(currentEffect);
     }
 
     for(var i=0;i<buffsForRemove.length;i++){
-        self.buffs.splice(buffsForRemove[i], 1);
+        this.buffs.splice(buffsForRemove[i], 1);
     }
 
     for(i=0;i<debuffsForRemove.length;i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 
     if(buffsForRemove.length > 0 || debuffsForRemove.length > 0){
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar(true);
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
 Character.prototype.afterCast = function (castedSpell, myTeam, enemyTeam) {
-    var self = this;
     var buffsForRemove = [];
     var debuffsForRemove = [];
     var currentEffect;
 
-    currentEffect = self.findEffect("Powerslave");
+    currentEffect = this.findEffect("Powerslave");
     if(currentEffect > -1 && castedSpell !== "Powerslave" && castedSpell !== "Lets Me Take It_Powerslave"){
         buffsForRemove.push(currentEffect);
     }
 
     for(var i = 0; i < buffsForRemove.length; i++){
-        self.buffs.splice(buffsForRemove[i], 1);
+        this.buffs.splice(buffsForRemove[i], 1);
     }
 
     for(i = 0; i < debuffsForRemove.length; i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 
     if(buffsForRemove.length>0 || debuffsForRemove.length>0){
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar(true);
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
 Character.prototype.afterCastSimulation = function (castedSpell) {
-    var self = this;
     var buffsForRemove = [];
     var debuffsForRemove = [];
     var currentEffect;
 
-    currentEffect = self.findEffect("Powerslave");
+    currentEffect = this.findEffect("Powerslave");
     if(currentEffect > -1 && castedSpell !== "Powerslave" && castedSpell !== "Lets Me Take It_Powerslave"){
         buffsForRemove.push(currentEffect);
     }
 
     for(var i = 0; i < buffsForRemove.length; i++){
-        self.buffs.splice(buffsForRemove[i], 1);
+        this.buffs.splice(buffsForRemove[i], 1);
     }
 
     for(i = 0; i < debuffsForRemove.length; i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 };
 
 Character.prototype.removeImmobilization = function (myTeam, enemyTeam) {
-    var self=this;
     var debuffsForRemove=[];
     var currentEffect;
 
-    currentEffect = self.findEffect("Hog Tied");
+    currentEffect = this.findEffect("Hog Tied");
     if(currentEffect>-1){
         debuffsForRemove.push(currentEffect);
     }
 
-    currentEffect = self.findEffect("Caught Somewhere In Time");
+    currentEffect = this.findEffect("Caught Somewhere In Time");
     if(currentEffect>-1){
         debuffsForRemove.push(currentEffect);
     }
 
     for(var i=0;i<debuffsForRemove.length;i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 
     if(debuffsForRemove.length>0){
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar(true);
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
 Character.prototype.removeImmobilizationSimulation = function () {
-    var self = this;
     var debuffsForRemove = [];
     var currentEffect;
 
-    currentEffect = self.findEffect("Hog Tied");
+    currentEffect = this.findEffect("Hog Tied");
     if(currentEffect >- 1){
         debuffsForRemove.push(currentEffect);
     }
 
-    currentEffect = self.findEffect("Caught Somewhere In Time");
+    currentEffect = this.findEffect("Caught Somewhere In Time");
     if(currentEffect >- 1){
         debuffsForRemove.push(currentEffect);
     }
 
     for(var i = 0; i < debuffsForRemove.length; i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 };
 
 //������� �������� �����
 Character.prototype.applyResistance = function (value, magic) {
-    var self=this;
     if(magic) {
-        if(self.magicImmune) return 0;
-        return Math.round(value-value*self.magicRes);
+        if(this.magicImmune) return 0;
+        return Math.round(value-value*this.magicRes);
     }
     else {
-        if(self.physImmune) return 0;
-        return Math.round(value-value*self.physRes);
+        if(this.physImmune) return 0;
+        return Math.round(value-value*this.physRes);
     }
 };
 
 //������� �������� �����
 Character.prototype.checkBlock = function () {
-    var self=this;
-    return (Math.random()<=self.blockChance);
+    return (Math.random()<=this.blockChance);
 };
 
 //������� �������� �� ���������
 Character.prototype.checkImmune = function (magicEffect) {
-    var self=this;
-    return (!magicEffect && self.physImmune) || (magicEffect && self.magicImmune);
+    return (!magicEffect && this.physImmune) || (magicEffect && this.magicImmune);
 };
 
 //������� �������� ����
 Character.prototype.checkHit = function () {
-    var self=this;
-    return (Math.random()<=self.hitChance);
+    return (Math.random()<=this.hitChance);
 };
 
 //������� �������� �����
 Character.prototype.checkCrit = function () {
-    var self=this;
-    return (Math.random()<=self.critChance);
+    return (Math.random()<=this.critChance);
 };
 
 //������� �������� ���������
 Character.prototype.checkDodge = function () {
-    var self=this;
-    return (Math.random()<=self.dodgeChance);
+    return (Math.random()<=this.dodgeChance);
 };
 
 //������� �������� �����
 Character.prototype.checkLuck = function () {
-    var self=this;
-    return (Math.random()<=self.luck);
+    return (Math.random()<=this.luck);
 };
 
 //������� �������� ������ ��������
 Character.prototype.checkCooldownDrop = function () {
-    var self = this;
-    return (Math.random() <= (self.initiative * 0.0001));
+    return (Math.random() <= (this.initiative * 0.0001));
 };
 
 //������� �������� �������
 Character.prototype.findEffect = function (effect) {
-    var self=this;
-    for(var i=0;i<self.buffs.length;i++){
-        if(self.buffs[i].name===effect) return i;
+    for(var i=0;i<this.buffs.length;i++){
+        if(this.buffs[i].name===effect) return i;
     }
-    for(i=0;i<self.debuffs.length;i++){
-        if(self.debuffs[i].name===effect) return i;
+    for(i=0;i<this.debuffs.length;i++){
+        if(this.debuffs[i].name===effect) return i;
     }
     return -1;
 };
 
 Character.prototype.getSize = function() {
-    var self = this;
-    console.log("Character "+self.charName+" length: "+byteLength(JSON.stringify(self))+" bytes");
+    console.log("Character "+this.charName+" length: "+byteLength(JSON.stringify(this))+" bytes");
 };
 
 function getAbilityColor (role) {

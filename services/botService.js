@@ -4,34 +4,34 @@ var randomService = require('services/randomService');
 var Chance = require('chance');
 var chance = new Chance();
 var arenaService = require('services/arenaService');
+var gemService = require('services/gemService');
 var async = require('async');
 var fs = require('fs');
 var sizeof = require('object-sizeof');
 
 var actionsCounter = 0;
+var actionsCounterLimit = 20000;
 
 module.exports = {
     generateBotTeam: function(){
-        var self = this;
         var newTeam = {
-            _id: chance.integer({min: 1000000, max: 9999999}),
-            teamName: chance.last()
+            id: chance.integer({min: 1000000, max: 9999999}),
+            teamName: chance.last(),
+            isBot: true
         };
-        newTeam.characters = self.generateBotCharacters(newTeam._id);
+        newTeam.characters = this.generateBotCharacters(newTeam.id);
         return newTeam;
     },
     generateBotCharacters: function(teamId){
-        var self = this;
         var chars = [];
         for(var i = 0; i < 3; i++){
-            chars.push(self.generateBotCharacter(teamId));
+            chars.push(this.generateBotCharacter(teamId));
         }
         return chars;
     },
     generateBotCharacter: function(teamId){
-        var self = this;
         var char = {
-            _id: chance.integer({min: 1000000, max: 9999999}),
+            id: chance.integer({min: 1000000, max: 9999999}),
             gender: characterService.generateRandomGender(),
             race: characterService.generateRandomRace(),
             isBot: true,
@@ -41,20 +41,28 @@ module.exports = {
         char.charName = chance.first({ gender: char.gender.toLowerCase() });
         char.role = characterService.generateRandomRole(char.race);
         char.portrait = characterService.getRandomPortrait(char.race, char.gender);
-        var abilitiesArrays = characterService.generateAbilitiesArrays(char.role, char.race);
+        var abilitiesArrays = characterService.generateAbilitiesArrays(char.role, char.race, 2);
         char.abilities = abilitiesArrays[0];
         char.params = characterService.getStartParams(char.gender, char.race, char.role);
         char.equip = characterService.getEquip(char.role);
-        //ToDo: create random gems here
+        this.generateGemsForEquip(char);
         return CharacterFactory(char, true);
     },
+    generateGemsForEquip: function(char){
+        for (var slot in char.equip) {
+            if (char.equip.hasOwnProperty(slot) && char.equip[slot] && char.equip[slot].name() !== 'Void') {
+                for(var i = 0; i < char.equip[slot].sockets.length; i++){
+                    char.equip[slot].sockets[i].gem = gemService.randomizeGem(char.equip[slot].sockets[i].type);
+                }             
+            }
+        }
+    },
     buildActionBranchSync: function(myTeam, enemyTeam, activeCharId, wallPositions){
-        var self = this;
-        var actionList = self.createActionList(myTeam, enemyTeam, activeCharId, wallPositions);
+        var actionList = this.createActionList(myTeam, enemyTeam, activeCharId, wallPositions);
 
         for(var z = 0; z < actionList.length; z++){
             if(actionList[z].type != "endTurn") {
-                actionList[z].branch = self.buildActionBranchSync(actionList[z].myTeamState, actionList[z].enemyTeamState, actionList[z].activeCharId, wallPositions);
+                actionList[z].branch = this.buildActionBranchSync(actionList[z].myTeamState, actionList[z].enemyTeamState, actionList[z].activeCharId, wallPositions);
                 if(actionList[z].branch && actionList[z].branch[0]) {
                     actionList[z].score = actionList[z].selfScore + actionList[z].branch[0].score;
                     delete actionList[z].branch;
@@ -66,7 +74,7 @@ module.exports = {
             else {
                 actionList[z].score = actionList[z].selfScore;
             }
-            //self.logTree(actionList[z]);
+            //this.logTree(actionList[z]);
         }
 
         actionList.sort(function (a, b) {
@@ -83,7 +91,7 @@ module.exports = {
     buildActionBranchAsync: function(myTeam, enemyTeam, activeCharId, wallPositions, cb){
         var self = this;
         actionsCounter = 0;
-        var actionList = self.createActionList(myTeam, enemyTeam, activeCharId, wallPositions);
+        var actionList = this.createActionList(myTeam, enemyTeam, activeCharId, wallPositions);
 
         async.eachOf(actionList, function(actionInList, index, cb){
             process.nextTick(function() {
@@ -100,7 +108,7 @@ module.exports = {
                 else {
                     actionInList.score = actionInList.selfScore;
                 }
-                //self.logTree(actionInList);
+                //this.logTree(actionInList);
                 cb(null, null);
             });      
         }, function(err, actions){
@@ -117,46 +125,21 @@ module.exports = {
                 }
             });     
             cb(actionList, actionsCounter); 
+            actionsCounter = 0;
         })                            
     },    
-    createActionList: function(myTeam, enemyTeam, activeCharId, wallPositions) {
-        var self = this;
-        var activeChar = arenaService.findCharInMyTeam(activeCharId, myTeam.characters);
+    createActionList: function(myTeam, enemyTeam, activeCharId, wallPositions) {    
+        var activeChar = arenaService.findCharInMyTeam(activeCharId, myTeam.characters);  
         var score = 0;        
         var actionList = [];
-        var movePoints = arenaService.findMovePoints(myTeam, enemyTeam, activeChar, false, wallPositions, function(){});
         var bestMovePoints = [];
-        //find only 3 best positions 
-        for(var i = 0; i < movePoints.length; i++){                                                      
-            var weights = arenaService.calculatePositionWeight(movePoints[i], activeChar, myTeam.characters, enemyTeam.characters, arenaService.getOptimalRange(activeChar), wallPositions);
-            bestMovePoints.push({
-                point: movePoints[i],
-                weightScore: weights[0] * 6 + weights[1] * 4
-            })
-        }
 
-        bestMovePoints.sort(function (a, b) {
-            if (a.weightScore <= b.weightScore) {
-                return 1;
-            }
-            else if (a.weightScore > b.weightScore) {
-                return -1;
-            }
-        }); 
-
-        bestMovePoints = bestMovePoints.slice(0, 3);
-
-        for(j = 0; j < bestMovePoints.length; j++){
-            var newSituationObject = arenaService.moveCharSimulation(bestMovePoints[j].point, myTeam, enemyTeam, activeCharId, false, wallPositions);
-            score = self.situationCost(newSituationObject.activeChar, newSituationObject.myTeam, newSituationObject.enemyTeam, wallPositions);
-            actionList.push({
-                type: "move",
-                point: bestMovePoints[j].point,
-                selfScore: score,
-                myTeamState: newSituationObject.myTeam,
-                enemyTeamState: newSituationObject.enemyTeam,
-                activeCharId: newSituationObject.activeChar._id
-            });
+        if(actionsCounter > actionsCounterLimit) {
+            actionsCounter += 1; 
+            return [{
+                type: "endTurn",
+                selfScore: this.situationCost(activeChar, myTeam, enemyTeam, wallPositions)
+            }];
         }
 
         for(var v = 0; v < activeChar.abilities.length; v++){
@@ -169,7 +152,7 @@ module.exports = {
             if(arenaService.checkAbilityForUse(checkedAbility, activeChar) && checkedAbility.castSimulation){
                 switch(checkedAbility.targetType()){
                     case "self":
-                        var abilityAction = self.abilitySimulation(myTeam, enemyTeam, activeChar, activeChar, checkedAbility, wallPositions);
+                        var abilityAction = this.abilitySimulation(myTeam, enemyTeam, activeChar, activeChar, checkedAbility, wallPositions);
                         if(abilityAction){
                             actionList.push(abilityAction);
                         }
@@ -178,8 +161,8 @@ module.exports = {
                         enemies = arenaService.findEnemiesForAbility(myTeam, enemyTeam, activeChar, checkedAbility.name, wallPositions, function(){});
                         for (i = 0; i < enemies.length; i++) {
                             for (var j = 0; j < enemyTeam.characters.length; j++) {
-                                if(enemyTeam.characters[j]._id == enemies[i]._id) {
-                                    abilityAction = self.abilitySimulation(myTeam, enemyTeam, activeChar, enemies[i], checkedAbility, wallPositions);
+                                if(enemyTeam.characters[j].id == enemies[i].id) {
+                                    abilityAction = this.abilitySimulation(myTeam, enemyTeam, activeChar, enemies[i], checkedAbility, wallPositions);
                                     if(abilityAction){
                                         actionList.push(abilityAction);
                                     }
@@ -191,8 +174,8 @@ module.exports = {
                         allies = arenaService.findAlliesForAbility(myTeam, enemyTeam, activeChar, checkedAbility.name, wallPositions, function(){});
                         for (i = 0; i < allies.length; i++) {
                             for (j = 0; j < myTeam.characters.length; j++) {
-                                if (myTeam.characters[j]._id == allies[i]._id) {
-                                    abilityAction = self.abilitySimulation(myTeam, enemyTeam, activeChar, allies[i], checkedAbility, wallPositions);
+                                if (myTeam.characters[j].id == allies[i].id) {
+                                    abilityAction = this.abilitySimulation(myTeam, enemyTeam, activeChar, allies[i], checkedAbility, wallPositions);
                                     if(abilityAction){
                                         actionList.push(abilityAction);
                                     }
@@ -204,8 +187,8 @@ module.exports = {
                         allies = arenaService.findAlliesForAbility(myTeam, enemyTeam, activeChar, checkedAbility.name, wallPositions, function(){});
                         for (i = 0; i < allies.length; i++) {
                             for (j = 0; j < myTeam.characters.length; j++) {
-                                if (myTeam.characters[j]._id == allies[i]._id && activeChar._id != allies[i]._id) {
-                                    abilityAction = self.abilitySimulation(myTeam, enemyTeam, activeChar, allies[i], checkedAbility, wallPositions);
+                                if (myTeam.characters[j].id == allies[i].id && activeChar.id != allies[i].id) {
+                                    abilityAction = this.abilitySimulation(myTeam, enemyTeam, activeChar, allies[i], checkedAbility, wallPositions);
                                     if(abilityAction){
                                         actionList.push(abilityAction);
                                     }
@@ -217,8 +200,8 @@ module.exports = {
                         characters = arenaService.findCharactersForAbility(myTeam, enemyTeam, activeChar, checkedAbility.name, wallPositions, function(){});
                         for (i = 0; i < characters.length; i++) {
                             for (j = 0; j < enemyTeam.characters.length; j++) {
-                                if (enemyTeam.characters[j]._id == characters[i]._id) {
-                                    abilityAction = self.abilitySimulation(myTeam, enemyTeam, activeChar, characters[i], checkedAbility, wallPositions);
+                                if (enemyTeam.characters[j].id == characters[i].id) {
+                                    abilityAction = this.abilitySimulation(myTeam, enemyTeam, activeChar, characters[i], checkedAbility, wallPositions);
                                     if(abilityAction){
                                         actionList.push(abilityAction);
                                     }
@@ -226,8 +209,8 @@ module.exports = {
                             }
                             for (j = 0; j < myTeam.characters.length; j++) {
                                 if(!checkedAbility.usageLogic(activeChar, myTeam.characters[j], myTeam.characters, enemyTeam.characters, wallPositions)) continue;
-                                if (myTeam.characters[j]._id == characters[i]._id) {
-                                    abilityAction = self.abilitySimulation(myTeam, enemyTeam, activeChar, characters[i], checkedAbility, wallPositions);
+                                if (myTeam.characters[j].id == characters[i].id) {
+                                    abilityAction = this.abilitySimulation(myTeam, enemyTeam, activeChar, characters[i], checkedAbility, wallPositions);
                                     if(abilityAction){
                                         actionList.push(abilityAction);
                                     }
@@ -259,8 +242,8 @@ module.exports = {
                         bestPositions = bestPositions.slice(0, 3);
 
                         for(var j = 0; j < bestPositions.length; j++) {
-                            var castMoveSituationObject = arenaService.moveCharSimulation(bestPositions[j].point, myTeam, enemyTeam, activeChar._id, checkedAbility.name, wallPositions);
-                            score = self.situationCost(castMoveSituationObject.activeChar, castMoveSituationObject.myTeam, castMoveSituationObject.enemyTeam, wallPositions);
+                            var castMoveSituationObject = arenaService.moveCharSimulation(bestPositions[j].point, myTeam, enemyTeam, activeChar.id, checkedAbility.name, wallPositions);
+                            score = this.situationCost(castMoveSituationObject.activeChar, castMoveSituationObject.myTeam, castMoveSituationObject.enemyTeam, wallPositions);
                             actionList.push({
                                 type: "move",
                                 ability: checkedAbility.name,
@@ -268,41 +251,78 @@ module.exports = {
                                 selfScore: score,
                                 myTeamState: castMoveSituationObject.myTeam,
                                 enemyTeamState: castMoveSituationObject.enemyTeam,
-                                activeCharId: castMoveSituationObject.activeChar._id
+                                activeCharId: castMoveSituationObject.activeChar.id
                             });
                         }
                         break;
                 }
             }
+        }     
+
+        var movePoints = arenaService.findMovePoints(myTeam, enemyTeam, activeChar, false, wallPositions, function(){});
+        
+        //find only 3 best positions 
+        for(var i = 0; i < movePoints.length; i++){                                                      
+            var weights = arenaService.calculatePositionWeight(movePoints[i], activeChar, myTeam.characters, enemyTeam.characters, arenaService.getOptimalRange(activeChar), wallPositions);
+            bestMovePoints.push({
+                point: movePoints[i],
+                weightScore: weights[0] * 6 + weights[1] * 4
+            })
+        }
+
+        bestMovePoints.sort(function (a, b) {
+            if (a.weightScore <= b.weightScore) {
+                return 1;
+            }
+            else if (a.weightScore > b.weightScore) {
+                return -1;
+            }
+        }); 
+
+        bestMovePoints = bestMovePoints.slice(0, 3);
+
+        for(j = 0; j < bestMovePoints.length; j++){
+            var newSituationObject = arenaService.moveCharSimulation(bestMovePoints[j].point, myTeam, enemyTeam, activeCharId, false, wallPositions);
+            score = this.situationCost(newSituationObject.activeChar, newSituationObject.myTeam, newSituationObject.enemyTeam, wallPositions);
+            actionList.push({
+                type: "move",
+                point: bestMovePoints[j].point,
+                selfScore: score,
+                myTeamState: newSituationObject.myTeam,
+                enemyTeamState: newSituationObject.enemyTeam,
+                activeCharId: newSituationObject.activeChar.id
+            });
+        }
+
+        if(actionsCounter > actionsCounterLimit) {
+            actionList = [];
         }
 
         actionList.push({
             type: "endTurn",
-            selfScore: self.situationCost(activeChar, myTeam, enemyTeam, wallPositions)
+            selfScore: actionList.length == 0 ? this.situationCost(activeChar, myTeam, enemyTeam, wallPositions) : 0
         });
 
-        actionsCounter += actionList.length;
+        actionsCounter += actionList.length; 
 
         return actionList;
     },
     abilitySimulation: function(myTeam, enemyTeam, activeChar, target, checkedAbility, wallPositions){                
-        var self = this;
         if(checkedAbility.usageLogic(activeChar, target, myTeam.characters, enemyTeam.characters, wallPositions)) {
-            var situationObject = arenaService.castAbilitySimulation(myTeam, enemyTeam, activeChar._id, target._id, checkedAbility.name, wallPositions);
-            var score = self.situationCost(situationObject.activeChar, situationObject.myTeam, situationObject.enemyTeam, wallPositions);
+            var situationObject = arenaService.castAbilitySimulation(myTeam, enemyTeam, activeChar.id, target.id, checkedAbility.name, wallPositions);
+            var score = this.situationCost(situationObject.activeChar, situationObject.myTeam, situationObject.enemyTeam, wallPositions);
             return {
                 type: "cast",
                 ability: checkedAbility.name,
                 selfScore: score,
-                targetId: target._id,
+                targetId: target.id,
                 myTeamState: situationObject.myTeam,
                 enemyTeamState: situationObject.enemyTeam,
-                activeCharId: situationObject.activeChar._id
+                activeCharId: situationObject.activeChar.id
             } 
         }
     },
     situationCost: function(activeChar, myTeam, enemyTeam, wallPositions){
-        var self = this;
         var score = 0;
         var effectScore = 0;
 
@@ -310,8 +330,8 @@ module.exports = {
         score += activeChar.curHealth / activeChar.maxHealth * 110;
         score += activeChar.curMana / activeChar.maxMana * 55;
         var positionWeights = arenaService.calculatePositionWeight(activeChar.position, activeChar, myTeam.characters, enemyTeam.characters, arenaService.getOptimalRange(activeChar), wallPositions);
-        score += positionWeights[0] * 600;
-        score += positionWeights[1] * 400;
+        score += positionWeights[0] * 250 + Math.random();
+        score += positionWeights[1] * 125 + Math.random();
 
         for(var j = 0; j < activeChar.buffs.length; j++){
             if(activeChar.buffs[j].score) {
@@ -348,10 +368,10 @@ module.exports = {
         }
 
         //enemyTeam
-        for(i = 0; i < enemyTeam.characters.length; i++){
+        for(i = 0; i < enemyTeam.characters.length; i++){            
             var enemy = enemyTeam.characters[i];
-            score -= Math.exp(enemy.curHealth / enemy.maxHealth * 3) * 8 - 100;
-            score -= enemy.curMana / enemy.maxMana * 50;
+            score -= Math.exp(enemy.curHealth / enemy.maxHealth * 3) * 15 - 200;
+            score -= enemy.curMana / enemy.maxMana * 50;            
 
             for(j = 0; j < enemy.buffs.length; j++){
                 if(enemy.buffs[j].score) {
@@ -371,7 +391,7 @@ module.exports = {
     },
     calculateEffectScore: function(effectScores, name){
         var totalScore = 0;
-        var str = "\n" + name;
+        //var str = "\n" + name;
         for(var key in effectScores){
             totalScore += effectScores[key] ? effectScores[key] : 0;
         }
@@ -411,17 +431,15 @@ module.exports = {
         console.log(str);
     },
     buildDubugTree: function(actions) {
-        var self = this;
         var path = "./decisionTreeBuilder/trees/treeLog_";
         var fileIndex = 0;
         while (fs.existsSync(path + fileIndex + ".json")) {
             fileIndex++;
         }  
-        var tree = self.buildDebugTreeBranch(actions);
+        var tree = this.buildDebugTreeBranch(actions);
         fs.appendFile(path + fileIndex + ".json", JSON.stringify({"type" : "root", "children" : tree}), function() {}); 
     },
     buildDebugTreeBranch: function(parent){
-        var self = this;
         var branch = []
         for(var i = 0; i < parent.length; i++) {
             branch.push({
@@ -429,7 +447,7 @@ module.exports = {
                 ability: parent[i].ability,
                 score: parent[i].score,
                 selfScore: parent[i].selfScore,
-                children: parent[i].branch ? self.buildDebugTreeBranch(parent[i].branch) : undefined
+                children: parent[i].branch ? this.buildDebugTreeBranch(parent[i].branch) : undefined
             })
         }
         return branch;
@@ -488,5 +506,18 @@ module.exports = {
         }
 
         return team;
+    },
+    checkForRetreat: function(myTeam, enemyTeam) {
+        var myTeamTotalHealth = 0;
+        var enemyTeamTotalHealth = 0;
+        for(var i = 0; i < myTeam.characters.length; i++) {
+            myTeamTotalHealth += myTeam.characters[i].curHealth / myTeam.characters[i].maxHealth;
+        }
+
+        for(i = 0; i < enemyTeam.characters.length; i++) {
+            enemyTeamTotalHealth += enemyTeam.characters[i].curHealth / enemyTeam.characters[i].maxHealth;
+        }
+
+        return enemyTeamTotalHealth - myTeamTotalHealth > 1.5;
     }
 };
