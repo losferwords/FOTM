@@ -135,6 +135,13 @@ module.exports = function (serverIO) {
             var enemyTeam = battleData['team_'+enemyTeamId];
 
             arenaService.checkForWin(myTeam, enemyTeam, battleData, enemyLeave, function(isEnded, result, rating, ratingChange, gainedSouls){
+                if(isEnded){
+                    switch(result){
+                        case 'win' : console.log("User " + socket.serSt.username + " has won the battle"); break;
+                        case 'lose' : console.log("User " + socket.serSt.username + " has lost  the battle"); break;
+                        case 'draw' : console.log("User " + socket.serSt.username + " has ended the battle with draw"); break;
+                    }                    
+                }
                 cb(isEnded, result, rating, ratingChange, gainedSouls);
                 if(enemyLeave) {
                     socket.leave(socket.serSt.battleRoom);
@@ -210,9 +217,9 @@ module.exports = function (serverIO) {
     
                     //botService.buildDubugTree(actions);
                     var thinkTime = chooseActionTimeEnd.getTime() - chooseActionTimeStart.getTime();
-                    //if(thinkTime > 3000){
+                    if(thinkTime > 3000){
                         console.log("Think time: " + thinkTime + "ms, actions count: " + actionsCounter + ", speed: " + Math.round(actionsCounter / thinkTime * 1000) + " actions per second");
-                    //}
+                    }
     
                     switch(action.type){
                         case "move":
