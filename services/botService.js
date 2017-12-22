@@ -10,7 +10,7 @@ var fs = require('fs');
 var sizeof = require('object-sizeof');
 
 var actionsCounter = 0;
-var actionsCounterLimit = 20000;
+var actionsCounterLimit = 15000;
 
 module.exports = {
     generateBotTeam: function(){
