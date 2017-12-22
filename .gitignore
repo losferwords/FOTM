@@ -9,6 +9,7 @@ $ cat .gitignore
 /public/css/all.css
 /public/images/assets
 run_mongo_server.bat
+package-lock.json
 /bin
 /obj
 /.vs
