@@ -75,6 +75,6 @@
   },
   "homepage": "https://github.com/losferwords/FOTM#readme",
   "engines": {
-    "node": ">0.12.7"
+    "node": "7.10.1"
   }
 }
