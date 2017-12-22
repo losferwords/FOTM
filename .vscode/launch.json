@@ -1,0 +1,22 @@
+{
+    // Use IntelliSense to learn about possible Node.js debug attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node2",
+            "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceRoot}\\app.js",
+            "env": {
+                "NODE_PATH": ".",
+                "NODE_ENV": "development",
+                "MONGOLAB_URI": "mongodb://losfer:glorfindel@ds059524.mongolab.com:59524/fotm"
+            },
+            "runtimeArgs": [
+                "--max-old-space-size=512"
+            ]
+        }
+    ]
+}

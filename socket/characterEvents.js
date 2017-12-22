@@ -1,4 +1,3 @@
-var log = require('lib/log')(module);
 var async = require('async');
 var User = require('models/user').User;
 var Team = require('models/team').Team;
@@ -12,20 +11,20 @@ module.exports = function (serverIO) {
     io.on('connection', function (socket) {
 
         socket.on('createChar', function(cb){
-            var userId = socket.handshake.user._id;
+            var userId = socket.handshake.user.id;
             Team.getByAny({teamName: "newTeam_"+userId}, function(err, team){
                 if (err) {
                     socket.emit("customError", err);
                     return;
                 }
                 if(team!=null){
-                    Character.create(team._id, function(err, char){
+                    Character.create(team.id, function(err, char){
                         if (err) {
                             socket.emit("customError", err);
                             return;
                         }
                         if(char) cb();
-                        else log.error("Can't create character");
+                        else console.error("Can't create character");
                     });
                 }
                 else {
@@ -57,7 +56,7 @@ module.exports = function (serverIO) {
                     socket.emit("customError", err);
                     return;
                 }
-                if(char) cb(char);
+                if(char) cb(char.toObject({virtuals: true}));
                 else cb(null);
             });
         });
@@ -78,9 +77,9 @@ module.exports = function (serverIO) {
                         (team.souls.blue - characterService.getRoleCost(charObj.role).blue >= 0))
                     {
                         if(charObj.role=='random') charObj.role = characterService.generateRandomRole(charObj.race);
-                        var abilitiesArrays = characterService.generateAbilitiesArrays(charObj.role, charObj.race);
+                        var abilitiesArrays = characterService.generateAbilitiesArrays(charObj.role, charObj.race, 4);
 
-                        Character.setById(charObj._id, {
+                        Character.setById(charObj.id, {
                             charName: charObj.charName,
                             gender: charObj.gender,
                             race: charObj.race,
@@ -96,14 +95,14 @@ module.exports = function (serverIO) {
                                 socket.emit("customError", err);
                                 return;
                             }
-                            var roleCost = characterService.getRoleCost(char._doc.role);
-                            Team.getById(char._doc._team, function(err, team){
+                            var roleCost = characterService.getRoleCost(char.role);
+                            Team.getById(char._team, function(err, team){
                                 if (err) {
                                     socket.emit("customError", err);
                                     return;
                                 }
 
-                                Team.setById(team._id, {
+                                Team.setById(team.id, {
                                     souls: {
                                         red: team.souls.red-roleCost.red,
                                         green: team.souls.green-roleCost.green,
@@ -115,7 +114,7 @@ module.exports = function (serverIO) {
                                         return;
                                     }
 
-                                    cb(team._doc);
+                                    cb(team.toObject({ virtuals: true }));
                                 });
                             });
 
@@ -133,13 +132,13 @@ module.exports = function (serverIO) {
         });
 
         socket.on('getDummyChar', function(cb){
-            var userId = socket.handshake.user._id;
+            var userId = socket.handshake.user.id;
             Team.findOne({teamName: "newTeam_"+userId}, function(err, team){
                 if (err) {
                     socket.emit("customError", err);
                     return;
                 }
-                Character.getByAny({charName: "newChar_"+team._id}, function(err, char){
+                Character.getByAny({charName: "newChar_"+team.id}, function(err, char){
                     if (err) {
                         socket.emit("customError", err);
                         return;
@@ -150,25 +149,25 @@ module.exports = function (serverIO) {
                                 socket.emit("customError", err);
                                 return;
                             }
-                            cb(popChar);
+                            cb(popChar.toObject({ virtuals: true }));
                         });
                     }
                     else {
-                        log.error("Can't populate null dummy character.");
-                        if(userId) { log.error("userId: "+userId)}
-                        if(team) { log.error("newChar: newChar_"+team._id)}
+                        console.error("Can't populate null dummy character.");
+                        if(userId) { console.error("userId: "+userId)}
+                        if(team) { console.error("newChar: newChar_"+team.id)}
                     }
                 });
             });
         });
 
         socket.on('setChar', function(cond, cb){
-            Character.setById(cond._id, cond, function(err, char){
+            Character.setById(cond.id, cond, function(err, char){
                 if (err) {
                     socket.emit("customError", err);
                     return;
                 }
-                cb(CharacterFactory(char._doc));
+                cb(CharacterFactory(char.toObject({ virtuals: true })));
             });
         });
 
@@ -178,14 +177,14 @@ module.exports = function (serverIO) {
                     socket.emit("customError", err);
                     return;
                 }
-                cb(CharacterFactory(char._doc));
+                cb(CharacterFactory(char.toObject({ virtuals: true })));
             });
         });
 
         socket.on('calcCharByParams', function(charId, point, cb){
             if(socket.team){
-                for(var i=0;i<socket.team.characters.length;i++) {
-                    if(socket.team.characters[i]._id==charId) {
+                for(var i = 0; i < socket.team.characters.length;i++) {
+                    if(socket.team.characters[i].id == charId) {
                         socket.team.characters[i].calcParamsByPoint(point);
                         cb(socket.team.characters[i]);
                         break;
@@ -205,7 +204,7 @@ module.exports = function (serverIO) {
                     socket.emit("customError", err);
                     return;
                 }
-                cb(CharacterFactory(char._doc));
+                cb(CharacterFactory(char.toObject({ virtuals: true })));
             });
         });
 
@@ -215,8 +214,8 @@ module.exports = function (serverIO) {
                     socket.emit("customError", err);
                     return;
                 }
-                var resurectedChar = CharacterFactory(char._doc);
-                Team.getById(char._doc._team, function(err, team){
+                var resurectedChar = CharacterFactory(char.toObject({ virtuals: true }));
+                Team.getById(char._team, function(err, team){
                     if (err) {
                         socket.emit("customError", err);
                         return;
@@ -226,7 +225,7 @@ module.exports = function (serverIO) {
                             (team.souls.green-characterService.getRoleCost(resurectedChar.role).green>=0) &&
                             (team.souls.blue-characterService.getRoleCost(resurectedChar.role).blue>=0))
                         {
-                            Team.setById(team._id, {
+                            Team.setById(team.id, {
                                 souls: {
                                     red: team.souls.red-characterService.getRoleCost(resurectedChar.role).red,
                                     green: team.souls.green-characterService.getRoleCost(resurectedChar.role).green,
@@ -238,13 +237,13 @@ module.exports = function (serverIO) {
                                     return;
                                 }
                                 if(newTeam) {
-                                    Team.getByTeamIdFull(newTeam._id, function(err, popTeam) {
+                                    Team.getByTeamIdFull(newTeam.id, function(err, popTeam) {
                                         if (err) {
                                             socket.emit("customError", err);
                                             return;
                                         }
                                         if(popTeam){
-                                            cb(popTeam._doc);
+                                            cb(popTeam.toObject({ virtuals: true }));
                                         }
                                     });
                                 }

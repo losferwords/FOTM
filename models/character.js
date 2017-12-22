@@ -53,6 +53,10 @@ var schema = new Schema({
     }
 });
 
+schema.virtual('id').get(function() {
+    return this._id;
+});
+
 //GET------------------------------------------------------------------------
 
 schema.statics.getById = function(charId, callback) {
@@ -129,7 +133,7 @@ schema.statics.deleteById = function(charId, callback) {
     this.findByIdAndRemove(charId, callback);
 };
 
-exports.Character = mongoose.model('Character', schema);
+module.exports.Character = mongoose.model('Character', schema);
 
 function CustomError(message) {
     Error.apply(this, arguments);
@@ -142,23 +146,23 @@ util.inherits(CustomError, Error);
 
 CustomError.prototype.name = 'CustomError';
 
-exports.CustomError = CustomError;
+module.exports.CustomError = CustomError;
 
 //Вариант обновления всей базы
 //Character.find({}, function(err, chars){
 //    if (err) socket.emit("customError", err);
-//    log.info("Total chars: "+chars.length);
+//    console.log("Total chars: "+chars.length);
 //    chars.forEach(function(char, i) {
 //        if(char.portrait)
 //        {
 //            if(char.portrait.length>0){
 //                char.portrait = char.portrait.replace("images/portraits/", "images/assets/img/portraits/");
 //                char.save(function(err, char){
-//                    log.info("RENAME ready for "+i+": "+char.charName);
+//                    console.log("RENAME ready for "+i+": "+char.charName);
 //                    if (err) socket.emit("customError", err);
 //                });
 //            }
 //        }
 //    });
-//    log.info("READY");
+//    console.log("READY");
 //});

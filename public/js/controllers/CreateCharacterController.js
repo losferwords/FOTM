@@ -20,7 +20,7 @@
 
         $scope.characterObj = {
             _team: "",
-            _id: "",
+            id: "",
             charName: "",
             gender: defaultGender,
             race: defaultRace,
@@ -44,7 +44,7 @@
                 }
                 else {
                     mainSocket.emit('saveNewChar', {
-                        _id: $scope.characterObj._id,
+                        id: $scope.characterObj.id,
                         charName: $scope.characterObj.charName,
                         gender: $scope.characterObj.gender,
                         race: $scope.characterObj.race,
@@ -73,7 +73,7 @@
             }
             else {
                 $scope.createCharPending = true;
-                mainSocket.emit("removeChar", teamId, $scope.characterObj._id, function() {
+                mainSocket.emit("removeChar", teamId, $scope.characterObj.id, function() {
                     $location.path('/createTeam');
                 });
             }
@@ -83,17 +83,17 @@
             //Только у созданной тимы есть рейтинг
             if(currentTeam.get().rating){
                 //попали сюда из City
-                $scope.characterObj._id=currentTeam.get().characters[currentTeam.getCurrentCharIndex()]._id;
+                $scope.characterObj.id=currentTeam.get().characters[currentTeam.getCurrentCharIndex()].id;
                 $scope.teamSouls=currentTeam.get().souls;
-                teamId = currentTeam.get()._id;
+                teamId = currentTeam.get().id;
             }
             else {
                 //Если не нашли, значит это создание команды
                 //Получаем dummy персонажа
                 mainSocket.emit("getDummyChar", function(dummyChar) {
-                    $scope.characterObj._id=dummyChar._id;
+                    $scope.characterObj.id=dummyChar.id;
                     $scope.teamSouls=dummyChar._team.souls;
-                    teamId = dummyChar._team._id;
+                    teamId = dummyChar._team.id;
                 });
             }
         });

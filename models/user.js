@@ -56,7 +56,7 @@ schema.statics.authorize = function (username, password, callback) {
      *      Да - сверить пароль вызовом user.checkPassword
      *      Нет - ошибка, пользователь не найден
      * 3. Авторизация успешна?
-     *      Да - сохранить _id посетителя в сессию session.user = user._id и ответить 200
+     *      Да - сохранить id посетителя в сессию session.user = user.id и ответить 200
      *      Нет - вывести ошибку (403 или другую)
      */
 
@@ -93,6 +93,10 @@ schema.virtual('password')
         return this._plainPassword;
     });
 
+schema.virtual('id').get(function() {
+    return this._id;
+});
+
 schema.methods.checkPassword = function (password) {
     return this.encryptPassword(password) === this.hashedPassword;
 };
@@ -106,7 +110,7 @@ schema.statics.register = function (username, password, email, callback) {
      *      Да - ошибка регистрации
      *      Нет - регистрируем нового User
      * 3. Авторизация успешна?
-     *      Да - сохранить _id посетителя в сессию session.user = user._id и ответить 200
+     *      Да - сохранить id посетителя в сессию session.user = user.id и ответить 200
      *      Нет - вывести ошибку (403 или другую)
      */
     var User = this;
@@ -157,7 +161,7 @@ schema.statics.setById = function(userId, setter, callback) {
 
 //DELETE---------------------------------------------------------------------
 
-exports.User = mongoose.model('User', schema);
+module.exports.User = mongoose.model('User', schema);
 
 
 
@@ -172,5 +176,5 @@ util.inherits(CustomError, Error);
 
 CustomError.prototype.name = 'CustomError';
 
-exports.CustomError = CustomError;
+module.exports.CustomError = CustomError;
 

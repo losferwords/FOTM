@@ -20,7 +20,7 @@
             for(var i=0;i<$scope.char.abilities.length;i++){
                 rawAbilities.push({name: $scope.char.abilities[i].name, variant: $scope.char.abilities[i].variant})
             }
-            mainSocket.emit('setCharAbilities', $scope.char._id, rawAbilities, function(char) {
+            mainSocket.emit('setCharAbilities', $scope.char.id, rawAbilities, function(char) {
                 $scope.char = char;
                 $scope.char.getParamTooltip = characterService.getParamTooltip;
                 $scope.char.abilities = abilityService.translateAbilities($scope.char.state.abilities);

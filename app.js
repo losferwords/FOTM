@@ -1,5 +1,4 @@
 var express = require('express');
-var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
@@ -7,7 +6,6 @@ var session = require('express-session');
 var http = require('http');
 var path = require('path');
 var config = require('config');
-var log = require('lib/log')(module);
 
 var mongoose = require('lib/mongoose');
 var HttpError = require('error').HttpError;
@@ -42,8 +40,6 @@ require('routes')(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(morgan("dev"));
-
 app.use(function(req, res) {
     res.redirect('/');
 });
@@ -61,7 +57,7 @@ app.use(function (err, req, res, next) {
         if (app.get('env') == 'development') {
             errorHandler()(err, req, res, next);
         } else {
-            log.error(err);
+            console.error(err);
             err = new HttpError(500);
             res.sendHttpError(err);
         }
@@ -73,14 +69,14 @@ app.use(function (err, req, res, next) {
 if(process.env.NODE_ENV==="production"){
     var server = http.createServer(app);
     server.listen(process.env.PORT, process.env.IP || '0.0.0.0', function () {
-        log.info('Express server listening on port ' + process.env.PORT);
+        console.log('Express server listening on port ' + process.env.PORT);
     });
 }
 //local
 else {
     var server = http.createServer(app);
     server.listen(3000, 'localhost', function () {
-        log.info('Express server listening on port ' + 3000);
+        console.log('Express server listening on port ' + 3000);
     });
 }
 

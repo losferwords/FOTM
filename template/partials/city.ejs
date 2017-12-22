@@ -27,21 +27,21 @@
                     <div class="row text-center">
                         <div class="panel panel-primary" ng-style="{'border-color' : char.battleColor }" ng-repeat="char in team.characters">
                             <div class="panel-heading" ng-style="{'background-color' : char.battleColor, 'border-color' : char.battleColor}">
-                                <h2 class="panel-title" ng-if="char.charName!==char._id">{{char.charName}}</h2>
+                                <h2 class="panel-title" ng-if="char.charName!==char.id">{{char.charName}}</h2>
                             </div>
                             <div class="panel-body text-center">
-                                <button class="btn btn-primary btn-create" ng-click="createCharClick($index)" ng-disabled="pending" ng-if="char.charName===char._id" translate>Create</button>
-                                <div class="portrait" ng-style="{'background-image': getCharPortrait(char)}" ng-if="char.charName!==char._id">
+                                <button class="btn btn-primary btn-create" ng-click="createCharClick($index)" ng-disabled="pending" ng-if="char.charName===char.id" translate>Create</button>
+                                <div class="portrait" ng-style="{'background-image': getCharPortrait(char)}" ng-if="char.charName!==char.id">
                                     <div class="role-in-portrait icon" ng-class="[char.role+'-icon']"></div>
                                 </div>
-                                <div class="btn-group-vertical btn-group-char-options" ng-if="!(char.lose || char.charName===char._id)">
+                                <div class="btn-group-vertical btn-group-char-options" ng-if="!(char.lose || char.charName===char.id)">
                                     <button class="btn btn-default btn-sm" ng-click="characterClick($index)" ng-disabled="searchBattle || pending" translate>Character</button>
                                     <button class="btn btn-info btn-sm" ng-click="abilitiesClick($index)" ng-disabled="searchBattle || pending" translate>Abilities</button>
                                     <button class="btn btn-success btn-sm" ng-click="inventoryClick($index)" ng-disabled="searchBattle || pending" translate>Inventory</button>
                                     <button class="btn btn-danger btn-sm" ng-click="burnClick(char)" ng-disabled="searchBattle || pending" translate>Burn</button>
                                 </div>
 
-                                <div class="resurrect-shards" ng-if="(char.lose && char.charName!==char._id)">
+                                <div class="resurrect-shards" ng-if="(char.lose && char.charName!==char.id)">
                                     <p translate>Resurrection cost:</p>
                                     <div class="shards-container">
                                         <div class="shard red-shard">
@@ -59,7 +59,7 @@
                                     </div>
                                 </div>
 
-                                <div class="btn-group-vertical" ng-if="(char.lose && char.charName!==char._id)">
+                                <div class="btn-group-vertical" ng-if="(char.lose && char.charName!==char.id)">
                                     <button class="btn btn-success btn-sm"
                                             ng-click="resurrectClick(char)"
                                             ng-disabled="checkResurectCost($index) || pending"
@@ -74,8 +74,25 @@
                 </div>
                 <div class="clearfix"></div>
                 <div class="btn-group">
-                    <button class="btn btn-success btn-sm" ng-click="joinArenaClick()" ng-disabled="searchBattle || checkForLose() || pending">{{joinBattleBtnHtml()}}</button>
+                    <button 
+                        class="btn btn-success btn-sm" 
+                        ng-click="joinArenaClick()" 
+                        ng-disabled="searchBattle || checkForLose() || pending" 
+                        uib-tooltip="{{'Start battle with real opponent, your characters will die if you lose, but reward for victory is more' |translate}}"
+                        tooltip-placement="bottom"
+                        tooltip-append-to-body="true">{{joinBattleBtnHtml()}}</button>
                     <button class="btn btn-warning btn-sm" ng-click="leaveArenaClick()" ng-disabled="!searchBattle || checkForLose() || pending" translate>Leave Queue</button>
+                </div>
+                <div class="btn-group">
+                    <button 
+                        class="btn btn-info btn-sm" 
+                        ng-click="startTrainingClick()" 
+                        ng-disabled="searchBattle || checkForLose() || pending" 
+                        translate 
+                        uib-tooltip="{{'Start battle with computer opponent, your characters will not die if you lose, but reward for victory is less' |translate}}"
+                        tooltip-placement="bottom"
+                        tooltip-append-to-body="true"
+                        tooltip-animation="false">Training</button>
                 </div>
                 <div class="btn-group">
                     <button class="btn btn-primary btn-sm roll-btn" ng-click="rollDicesClick()" ng-disabled="searchBattle || nextRollLeft!==0 || pending">{{rollDicesBtnText()}}</button>

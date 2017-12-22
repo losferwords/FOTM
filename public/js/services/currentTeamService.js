@@ -1,4 +1,4 @@
-//Сервис для хранения текущего состояния команды при настройках
+//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 (function (module) {
     module.service('currentTeam', function() {
         var _team = {};
@@ -8,12 +8,12 @@
             set: function(newTeam) { _team = newTeam },
             getChar: function(id) {
                 for(var i=0; i<_team.characters.length;i++){
-                    if(_team.characters[i]._id == id) return _team.characters[i];
+                    if(_team.characters[i].id == id) return _team.characters[i];
                 }
             },
             setChar: function(char) {
                 for(var i=0; i<_team.characters.length;i++){
-                    if(_team.characters[i]._id == char._id) {
+                    if(_team.characters[i].id == char.id) {
                         _team.characters[i]=char;
                     }
                 }

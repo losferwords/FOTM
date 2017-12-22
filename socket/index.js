@@ -1,4 +1,3 @@
-var log = require('lib/log')(module);
 var async = require('async');
 var config = require('config');
 var cookieParser = require('cookie-parser');
@@ -12,7 +11,11 @@ module.exports = function (server) {
     var secret = config.get('session:secret');
     var sessionKey = config.get('session:key');
 
-    var io = require('socket.io').listen(server);
+    var io = require('socket.io').listen(server,
+        {
+            pingInterval: 90000,
+            pingTimeout: 30000
+        });
 
     io.use(function (socket, next) {
         var handshakeData = socket.request;
@@ -78,10 +81,10 @@ module.exports = function (server) {
         //количества человек на сервере
         var serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[socket.serSt.serverRoom].sockets).length;
         io.sockets.in(socket.serSt.serverRoom).emit('join', serverOnlineUsers, socket.serSt.username);
-        log.info("User "+socket.serSt.username+" join game");
+        console.log("User "+socket.serSt.username+" join game");
 
         //Обновляем у пользователя время последнего визита
-        User.setById(socket.handshake.user._id, {lastVisit: new Date()}, function(err, user) {
+        User.setById(socket.handshake.user.id, {lastVisit: new Date()}, function(err, user) {
             if (err) {
                 socket.emit("customError", err);
             }
@@ -91,11 +94,11 @@ module.exports = function (server) {
             if(io.nsps["/"].adapter.rooms[socket.serSt.serverRoom]) { //Проверка на то, что я последний человек на сервере
                 serverOnlineUsers = Object.keys(io.nsps["/"].adapter.rooms[socket.serSt.serverRoom].sockets).length;
                 socket.broadcast.to(socket.serSt.serverRoom).emit('leave', serverOnlineUsers); //Покидаем сервер
-                log.info("User "+socket.serSt.username+" leave game");
+                console.log("User "+socket.serSt.username+" leave game");
                 //И выкидываем из боя оппонента, если сами вышли
                 if (socket.serSt.battleRoom) {
                     //Вылетевшей команде засчитываем поражение
-                    var userId = socket.handshake.user._id;
+                    var userId = socket.handshake.user.id;
                     Team.getByUserIdFull(userId, function(err, team){
                         if (err) {
                             socket.emit("customError", err);
@@ -103,7 +106,7 @@ module.exports = function (server) {
                         }
                         var rateChange = 0;
                         if(team.rating-25>=1000) rateChange=25;
-                        Team.setById(team._id, {
+                        Team.setById(team.id, {
                             rating: team.rating-rateChange,
                             souls: {red: team.souls.red+2, green: team.souls.green+2, blue: team.souls.blue+2},
                             loses: team.loses+1
@@ -112,13 +115,13 @@ module.exports = function (server) {
                                 socket.emit("customError", err);
                                 return;
                             }
-                            Character.getAllByAny({_team: team._id}, function(err, chars){
+                            Character.getAllByAny({_team: team.id}, function(err, chars){
                                 if (err) {
                                     socket.emit("customError", err);
                                     return;
                                 }
                                 for(var i=0;i<chars.length;i++){
-                                    Character.setById(chars[i]._id, {lose: true}, function(err){
+                                    Character.setById(chars[i].id, {lose: true}, function(err){
                                         if (err) {
                                             socket.emit("customError", err);
                                         }
@@ -137,7 +140,7 @@ module.exports = function (server) {
                     }
                 }
             }
-            Team.deleteDummies(socket.handshake.user._id);
+            Team.deleteDummies(socket.handshake.user.id);
         });
 
     });
@@ -148,16 +151,16 @@ module.exports = function (server) {
 //ОЧИСТКА ПОСЛЕ ВАЙПА
 //User.find({}, function(err, users){
 //    if (err) socket.emit("customError", err);
-//    log.info("Total users: "+users.length);
+//    console.log("Total users: "+users.length);
 //    users.forEach(function(user, i) {
 //        if(user.team)
 //        {
 //            user.team = undefined;
 //            user.save(function(err, user){
-//                log.info("team clean ready for "+i+": "+user.username);
+//                console.log("team clean ready for "+i+": "+user.username);
 //                if (err) socket.emit("customError", err);
 //            });
 //        }
 //    });
-//    log.info("READY");
+//    console.log("READY");
 //});

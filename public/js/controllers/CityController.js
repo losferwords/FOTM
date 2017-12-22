@@ -26,6 +26,10 @@
             mainSocket.emit("joinArenaLobby");
         };
 
+        $scope.startTrainingClick = function() {
+            mainSocket.emit("startTraining");
+        }
+
         $scope.joinBattleBtnHtml = function() {
             if(!searchTimer || !$scope.searchBattle){
                 return gettextCatalog.getString("Join Battle");
@@ -86,7 +90,7 @@
 
         $scope.resurrectClick = function(char){
             $scope.pending = true;
-            mainSocket.emit('resurectChar', char._id, function(team) {
+            mainSocket.emit('resurectChar', char.id, function(team) {
                 $scope.pending = false;
                 $scope.team = team;
                 currentTeam.set(team);
@@ -100,7 +104,7 @@
 
         $scope.burnClick = function(char){
             $scope.pending=true;
-            mainSocket.emit('burnChar', char._id, function(burnedChar) {
+            mainSocket.emit('burnChar', char.id, function(burnedChar) {
                 currentTeam.setChar(burnedChar);
                 $scope.pending=false;
             });
@@ -120,7 +124,7 @@
                 size: 'sm',
                 resolve: {
                     teamId: function () {
-                        return $scope.team._id;
+                        return $scope.team.id;
                     }
                 }
             });
@@ -192,7 +196,7 @@
                     $scope.team.characters[2].battleColor="#9933cc";
                     $scope.rank = rank;
                     currentTeam.set(team);
-                    mainSocket.emit('getTeamRoleCost', team._id, function(costArray){
+                    mainSocket.emit('getTeamRoleCost', team.id, function(costArray){
                         $scope.resurectCostArray = costArray;
                     });
 
@@ -282,7 +286,7 @@
                 $interval.cancel(rollingTimer);
                 rollingTimer=undefined;
                 $scope.rollComplete=true;
-                mainSocket.emit('addSoulsAfterRoll', team._id, {
+                mainSocket.emit('addSoulsAfterRoll', team.id, {
                         red: $scope.dices.red,
                         green: $scope.dices.green,
                         blue: $scope.dices.blue

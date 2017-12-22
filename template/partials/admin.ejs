@@ -35,14 +35,14 @@
                         <div class="row text-center" ng-if="chosenTeam">
                             <div class="panel online panel-primary" ng-style="{'border-color' : char.battleColor }" ng-repeat="char in chosenTeam.characters">
                                 <div class="panel-heading" ng-style="{'background-color' : char.battleColor, 'border-color' : char.battleColor}">
-                                    <h2 class="panel-title" ng-if="char.charName!==char._id">{{char.charName}}</h2>
+                                    <h2 class="panel-title" ng-if="char.charName!==char.id">{{char.charName}}</h2>
                                 </div>
                                 <div class="panel-body text-center">
-                                    <h3 ng-if="char.charName===char._id">Burned</h3>
-                                    <div class="portrait" ng-style="{'background-image': getCharPortrait(char)}" ng-if="char.charName!==char._id">
+                                    <h3 ng-if="char.charName===char.id">Burned</h3>
+                                    <div class="portrait" ng-style="{'background-image': getCharPortrait(char)}" ng-if="char.charName!==char.id">
                                         <div class="role-in-portrait icon" ng-class="[char.role+'-icon']"></div>
                                     </div>
-                                    <div class="ability-slot-container btn-group" ng-if="char.charName!==char._id">
+                                    <div class="ability-slot-container btn-group" ng-if="char.charName!==char.id">
                                         <div class="ability-slot btn icon"
                                              ng-repeat="ability in char.abilities track by $index"
                                              ng-style="{'background-image': ability.icon, 'background-color' : getAbilityColor(ability)}"
@@ -155,6 +155,7 @@
             <div class="btn-group clearfix">
                 <button class="btn btn-warning btn-sm clearfix" ng-click="exitClick()">City</button>
                 <button class="btn btn-primary btn-sm clearfix" ng-click="clearDummies()">Clear Dummies</button>
+                <button class="btn btn-primary btn-sm clearfix" ng-click="startBotsBattle()">Start Bots Battle</button>
                 <button class="btn btn-success btn-sm clearfix" ng-click="refresh()">Refresh</button>
             </div>
         </div>

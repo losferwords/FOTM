@@ -1,6 +1,6 @@
 var arenaService = require('services/arenaService');
 
-//Фабрика создания эффектов по имени
+//Factory for ability effects
 var Effect = function(name, abilityVariant) {
     switch (name) {
 
@@ -11,17 +11,25 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "sentinel"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--StrongArmOfTheLaw)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.hitChanceMod-=this.variant*0.07;
+                owner.hitChanceMod -= this.variant * 0.07;
             },
-            duration: function(){return 18-this.variant*2},
+            duration: function(){ return 18 - this.variant * 2 },
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: owner.hitChance * (1 - this.variant * 0.07) * 40,
+                    leftScore: this.left * 2,
+                    offensivePositionScore: positionWeights[0] * 20
+                };
+            }
+        };
 
         case "Defender Of The Faith": return {
             name : "Defender Of The Faith",
@@ -31,42 +39,56 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 switch(this.variant){
                     case 1:
-                        owner.blockChanceMod+=0.1;
-                        owner.physResMod+=0.1;
-                        owner.magicResMod+=0.1;
-                        break;
                     case 2:
-                        owner.blockChanceMod+=0.1;
-                        owner.physResMod+=0.1;
-                        owner.magicResMod+=0.1;
+                        owner.blockChanceMod += 0.1;
+                        owner.physResMod += 0.1;
+                        owner.magicResMod += 0.1;
                         break;
                     case 3:
-                        owner.blockChanceMod+=0.2;
-                        owner.physResMod+=0.2;
-                        owner.magicResMod+=0.2;
-                        break;
                     case 4:
-                        owner.blockChanceMod+=0.2;
-                        owner.physResMod+=0.2;
-                        owner.magicResMod+=0.2;
-                        break;
+                        owner.blockChanceMod += 0.2;
+                        owner.physResMod += 0.2;
+                        owner.magicResMod += 0.2;
+                        break;                    
                     case 5:
-                        owner.blockChanceMod+=0.4;
-                        owner.physResMod+=0.4;
-                        owner.magicResMod+=0.4;
+                        owner.blockChanceMod += 0.4;
+                        owner.physResMod += 0.4;
+                        owner.magicResMod += 0.4;
                         break;
                 }
-
             },
-            duration: function(){return 22-this.variant*2},
+            duration: function(){return 22 - this.variant * 2},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                switch(this.variant){
+                    case 1:
+                    case 2:
+                        var effectScore = owner.blockChance * 200 + owner.physRes * 200 + owner.magicRes * 200;
+                        break;
+                    case 3:
+                    case 4:
+                        effectScore = owner.blockChance * 250 + owner.physRes * 250 + owner.magicRes * 250;
+                        break;                    
+                    case 5:
+                        effectScore = owner.blockChance * 300 + owner.physRes * 300 + owner.magicRes * 300;
+                        break;
+                }
+
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: effectScore,
+                    leftScore: this.left * 1.5,
+                    defensivePositionScore: - positionWeights[1] * 35,
+                    healthScore: - owner.curHealth / owner.maxHealth * 35
+                };
+            }
+        };
 
         case "Disarm": return {
             name : "Disarm",
@@ -74,19 +96,27 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "sentinel"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--Disarm)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.disarmed=true;
-                owner.physResMod-=this.variant*0.07;
-                owner.dodgeChanceMod-=this.variant*0.07;
+                owner.disarmed = true;
+                owner.physResMod -= this.variant * 0.07;
+                owner.dodgeChanceMod -= this.variant * 0.07;
             },
-            duration: function(){return 5+this.variant},
+            duration: function(){return 5 + this.variant},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: owner.physRes * (1 - this.variant * 0.07) * 200 + owner.dodgeChance * (1 - this.variant * 0.07) * 200,
+                    leftScore: this.left * 3,
+                    offensivePositionScore: positionWeights[0] * 30
+                };
+            }
+        };
 
         case "Walk Away": return {
             name : "Walk Away",
@@ -94,7 +124,7 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "sentinel"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--WalkAway)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.stunned=true;
+                owner.stunned = true;
             },
             duration: function(){return 3+this.variant},
             left : 0,
@@ -103,8 +133,16 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {                    
+                    leftScore: this.left * 10,
+                    offensivePositionScore: positionWeights[0] * 75,
+                    defensivePositionScore: -positionWeights[1] * 50
+                };
+            }
+        };
 
         case "Sanctuary": return {
             name : "Sanctuary",
@@ -121,8 +159,16 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    leftScore: this.left * 10,
+                    defensivePositionScore: - positionWeights[1] * 30,
+                    healthScore: - owner.curHealth / owner.maxHealth * 30 
+                };
+            }
+        };
 
         case "The Punishment Due": return {
             name : "The Punishment Due",
@@ -132,7 +178,7 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var debuffer = {};
                 for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i].charName===this.caster) debuffer=enemyTeam[i];
+                    if(enemyTeam[i].id===this.casterId) debuffer=enemyTeam[i];
                 }
                 var physicalDamage = this.bleedDamage*(1+debuffer.attackPower);
                 var critical = debuffer.checkCrit();
@@ -149,8 +195,22 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var debuffer = {};
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i].id == this.casterId) debuffer = enemyTeam[i];
+                }
+                var physicalDamage = this.bleedDamage * (1 + debuffer.attackPower);
+                physicalDamage = arenaService.calculateExpectedDamage(physicalDamage, debuffer);
+                physicalDamage = owner.applyResistance(physicalDamage, false);
+                
+                return {
+                    effectScore: physicalDamage / 18,
+                    leftScore: this.left * 8
+                };
+            }
+        };
 
         //SLAYER
 
@@ -160,7 +220,7 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "slayer"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--ReignInBlood)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.attackPowerMod+=0.02*this.variant*this.stacks;
+                owner.attackPowerMod += 0.02 * this.variant * this.stacks;
             },
             duration: function(){return 0},
             left : 0,
@@ -169,8 +229,15 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return true},
             maxStacks: function() {return 5},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: owner.attackPower * (1 + 0.02 * this.variant * this.stacks) *150,
+                    offensivePositionScore: positionWeights[0] * 50
+                };
+            }
+        };
 
         case "Made In Hell": return {
             name : "Made In Hell",
@@ -178,37 +245,55 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "slayer"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--MadeInHell)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.magicImmune=true;
-                owner.manaRegMod+=this.variant*0.6;
+                owner.magicImmune = true;
+                owner.manaRegMod += this.variant * 0.6;
             },
-            duration: function(){return 4+this.variant*2},
+            duration: function(){return 4 + this.variant * 2},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: owner.manaReg * (1 + this.variant * 0.6) * 100,
+                    leftScore: this.left * 2,
+                    defensivePositionScore: - positionWeights[1] * 25,
+                    healthScore: - owner.curHealth / owner.maxHealth * 25 
+                };
+            }
+        };
 
         case "Spill The Blood": return {
-            name : "Spill The Blood",
+            name: "Spill The Blood",
             variant: abilityVariant,
-            role : function(){ return "slayer"},
-            icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--SpillTheBlood)"},
-            apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.attackPowerMod+=this.variant*0.1;
-                owner.healthRegMod+=this.variant*0.15;
+            role: function() { return "slayer"},
+            icon: function() { return "url(../images/assets/svg/view/sprites.svg#abilities--SpillTheBlood)"},
+            apply: function (owner, myTeam, enemyTeam, walls) {
+                owner.attackPowerMod += this.variant * 0.1;
+                owner.healthRegMod += this.variant * 0.15;
             },
-            duration: function(){return 12+this.variant},
-            left : 0,
+            duration: function() { return 12 + this.variant },
+            left: 0,
             stacks: 0,
-            stacked: function() {return false},
-            infinite: function() {return false},
-            maxStacks: function() {return 0},
-            onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            stacked: function() { return false },
+            infinite: function() { return false },
+            maxStacks: function() { return 0 },
+            onlyStat: function() { return true },
+            magicEffect: function() { return false },
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: owner.attackPower * (1 + this.variant * 0.1) * 40 + owner.healthReg * (1 + this.variant * 0.15) * 20,
+                    leftScore: this.left * 2,
+                    offensivePositionScore: positionWeights[0] * 30,
+                    defensivePositionScore: -positionWeights[1] * 30
+                };
+            }
+        };
 
         case "Dyers Eve": return {
             name : "Dyers Eve",
@@ -216,7 +301,7 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "slayer"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--DyersEve)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.criticalChanceMod+=this.variant*0.2;
+                owner.criticalChanceMod += this.variant * 0.2;
             },
             duration: function(){return this.variant},
             left : 0,
@@ -225,8 +310,17 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: owner.criticalChance * (1 + this.variant * 0.2) * 60,
+                    leftScore: this.left * 6,
+                    offensivePositionScore: positionWeights[0] * 30,
+                    defensivePositionScore: -positionWeights[1] * 50
+                };
+            }
+        };
 
         case "I Dont Wanna Stop": return {
             name : "I Dont Wanna Stop",
@@ -236,15 +330,23 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 owner.controlImmune=true;
             },
-            duration: function(){return 6+this.variant},
+            duration: function(){return 6 + this.variant},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    leftScore: this.left * 4,
+                    offensivePositionScore: positionWeights[0] * 50,
+                    defensivePositionScore: - positionWeights[1] * 50
+                };
+            }
+        };
 
         //REDEEMER
 
@@ -254,8 +356,8 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "redeemer"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--LightsInTheSky)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.hitChanceMod+=0.15+this.variant*0.02;
-                owner.hitChanceMod+=0.25-this.variant*0.02;
+                owner.hitChanceMod += 0.15 + this.variant * 0.02;
+                owner.critChanceMod += 0.25 - this.variant * 0.02;
             },
             duration: function(){return 12},
             left : 0,
@@ -264,8 +366,17 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: owner.hitChance * (1 + 0.15 + this.variant * 0.02) * 15 + owner.critChance * (1 + 0.25 - this.variant * 0.02) * 300,
+                    leftScore: this.left * 2,
+                    offensivePositionScore: positionWeights[0] * 30,
+                    defensivePositionScore: -positionWeights[1] * 30
+                };
+            }
+        };
 
         case "Thunderstruck": return {
             name : "Thunderstruck",
@@ -282,8 +393,16 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {                    
+                    leftScore: this.left * 7,
+                    offensivePositionScore: positionWeights[0] * 50,
+                    defensivePositionScore: -positionWeights[1] * 50
+                };
+            }
+        };
 
         case "You Aint No Angel": return {
             name : "You Aint No Angel",
@@ -291,8 +410,8 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "redeemer"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--YouAintNoAngel)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.physImmune=true;
-                owner.healthRegMod+=this.variant*0.6;
+                owner.physImmune = true;
+                owner.healthRegMod += this.variant * 0.6;
             },
             duration: function(){return 4+this.variant*2},
             left : 0,
@@ -301,8 +420,17 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: owner.healthReg * (1 +this.variant * 0.6) * 100,
+                    leftScore: this.left * 2,
+                    defensivePositionScore: - positionWeights[1] * 25,
+                    healthScore: - owner.curHealth / owner.maxHealth * 25 
+                };
+            }
+        };
 
         case "State Of Grace": return {
             name : "State Of Grace",
@@ -311,11 +439,11 @@ var Effect = function(name, abilityVariant) {
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--StateOfGrace)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var buffer = {};
-                for(var i=0;i<myTeam.length;i++){
-                    if(myTeam[i].charName===this.caster) buffer=myTeam[i];
+                for(var i = 0; i < myTeam.length; i++){
+                    if(myTeam[i].id == this.casterId) buffer = myTeam[i];
                 }
-                var heal = (100+this.variant*60)*(1+buffer.spellPower);
-                var mana = (460-this.variant*60);
+                var heal = (100 + this.variant * 60) * (1 + buffer.spellPower);
+                var mana = (460 - this.variant * 60);
                 var critical = buffer.checkCrit();
                 if(critical){
                     heal=buffer.applyCrit(heal);
@@ -330,8 +458,27 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var buffer = {};
+                for(var i = 0; i < myTeam.length; i++){
+                    if(myTeam[i].id == this.casterId) buffer = myTeam[i];
+                }
+                var heal = (100 + this.variant * 60) * (1 + buffer.spellPower);
+                var mana = (460 - this.variant * 60);
+                heal = arenaService.calculateExpectedHeal(heal, buffer);
+
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: (heal + mana) / 25,
+                    leftScore: this.left * 4,
+                    offensivePositionScore: positionWeights[0] * 30,
+                    defensivePositionScore: - positionWeights[1] * 30,
+                    healthScore: - owner.curHealth / owner.maxHealth * 30,
+                    manaScore: - owner.curMana / owner.maxMana * 30 
+                };
+            }
+        };
 
         case "Come Cover Me": return {
             name : "Come Cover Me",
@@ -341,24 +488,39 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var buffer = {};
                 for(var i=0;i<myTeam.length;i++){
-                    if(myTeam[i].charName===this.caster) buffer=myTeam[i];
+                    if(myTeam[i].id===this.casterId) buffer=myTeam[i];
                 }
-                var heal = (100+this.variant*50)*(1+buffer.spellPower);
+                var heal = (100 + this.variant * 50) * (1 + buffer.spellPower);
                 var critical = buffer.checkCrit();
                 if(critical){
                     heal=buffer.applyCrit(heal);
                 }
                 owner.takeHeal(heal, buffer, {name: this.name, icon: this.icon(), role: this.role()}, critical);
             },
-            duration: function(){return 10-this.variant},
+            duration: function(){return 10 - this.variant},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var buffer = {};
+                for(var i = 0; i < myTeam.length; i++){
+                    if(myTeam[i].id == this.casterId) buffer = myTeam[i];
+                }
+                var heal = (100 + this.variant * 50) * (1 + buffer.spellPower);
+                heal = arenaService.calculateExpectedHeal(heal, buffer);
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: heal / 6,
+                    leftScore: this.left * 6,
+                    defensivePositionScore: - positionWeights[1] * 35,
+                    healthScore: - owner.curHealth / owner.maxHealth * 35
+                };
+            }
+        };
 
         //RIPPER
 
@@ -370,7 +532,7 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var debuffer = {};
                 for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i].charName===this.caster) debuffer=enemyTeam[i];
+                    if(enemyTeam[i].id===this.casterId) debuffer=enemyTeam[i];
                 }
                 var magicDamage = 75*this.variant*(1+debuffer.spellPower);
                 var critical = debuffer.checkCrit();
@@ -387,8 +549,22 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var debuffer = {};
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i].id == this.casterId) debuffer = enemyTeam[i];
+                }
+                var magicDamage = 75 * this.variant * (1 + debuffer.spellPower);
+                magicDamage = arenaService.calculateExpectedDamage(magicDamage, debuffer);
+                magicDamage = owner.applyResistance(magicDamage, true);
+                
+                return {
+                    effectScore: magicDamage / 8,
+                    leftScore: this.left * 2
+                };
+            }
+        };
 
         case "Invisible": return {
             name : "Invisible",
@@ -397,17 +573,23 @@ var Effect = function(name, abilityVariant) {
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--Invisible)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
                 owner.invisible=true;
-                owner.attackPowerMod+=this.variant*0.2;
+                owner.attackPowerMod+=this.variant * 0.2;
             },
-            duration: function(){return 3+this.variant*3},
+            duration: function(){return 3 + this.variant * 3},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                return {
+                    effectScore: owner.attackPower * (1 + this.variant * 0.2) * 100,
+                    leftScore: this.left * 3
+                };
+            }
+        };
 
         case "Jawbreaker": return {
             name : "Jawbreaker",
@@ -417,15 +599,22 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 owner.silenced=true;
             },
-            duration: function(){return 5+this.variant},
+            duration: function(){ return 5 + this.variant },
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    leftScore: this.left * 5,
+                    offensivePositionScore: positionWeights[0] * 50
+                };
+            }
+        };
 
         case "Hog Tied": return {
             name : "Hog Tied",
@@ -433,7 +622,7 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "ripper"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--HogTied)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.immobilized=true;
+                owner.immobilized = true;
             },
             duration: function(){return 7+this.variant},
             left : 0,
@@ -442,8 +631,15 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {                    
+                    leftScore: this.left * 3,
+                    offensivePositionScore: positionWeights[0] * 40
+                };
+            }
+        };
 
         case "Running Free": return {
             name : "Running Free",
@@ -451,19 +647,28 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "ripper"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--RunningFree)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                //На первом тике удалим все обездвиживающие эффекты (это нужно, если бафф украли)
-                if(this.left===this.duration()) owner.removeImmobilization(myTeam, enemyTeam);
-                owner.moveCost = 300-this.variant*40;
+                if(this.left == this.duration()) {
+                    owner.removeImmobilization(myTeam, enemyTeam);
+                }
+                owner.moveCost = 300 - this.variant * 40;
             },
-            duration: function(){return 7+this.variant},
+            duration: function(){return 7 + this.variant},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    leftScore: this.left * 2,
+                    offensivePositionScore: positionWeights[0] * 10,
+                    defensivePositionScore: positionWeights[1] * 20
+                };
+            }
+        };
 
         case "Fast As The Shark": return {
             name : "Fast As The Shark",
@@ -471,18 +676,27 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "ripper"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--FastAsTheShark)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.luckMod+=this.variant*0.15;
-                owner.dodgeChanceMod+=this.variant*0.2;
+                owner.luckMod += this.variant * 0.15;
+                owner.dodgeChanceMod += this.variant * 0.2;
             },
-            duration: function(){return 5+this.variant*2},
+            duration: function(){return 5 + this.variant * 2},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: owner.luck * (1 + this.variant * 0.15) * 250 + owner.dodgeChance * (1 + this.variant * 0.2) * 225,
+                    leftScore: this.left * 4,
+                    defensivePositionScore: - positionWeights[1] * 25,
+                    healthScore: - owner.curHealth / owner.maxHealth * 25,
+                };
+            }
+        };
 
         case "Prowler": return {
             name : "Prowler",
@@ -490,17 +704,24 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "ripper"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--Prowler)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.stunned=true;
+                owner.stunned = true;
             },
-            duration: function(){return 4+this.variant},
+            duration: function(){return 4 + this.variant},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {                    
+                    leftScore: this.left * 5,
+                    offensivePositionScore: positionWeights[0] * 50
+                };
+            }
+        };
 
         case "Fade To Black": return {
             name : "Fade To Black",
@@ -508,17 +729,25 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "ripper"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--FadeToBlack)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.invisible=true;
+                owner.invisible = true;
             },
-            duration: function(){return 3+this.variant*2},
+            duration: function(){return 3 + this.variant * 2},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return false}
-        };break;
+            magicEffect: function() {return false},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    leftScore: this.left * 6,
+                    defensivePositionScore: - positionWeights[1] * 20,
+                    healthScore: - owner.curHealth / owner.maxHealth * 20,
+                };
+            }
+        };
 
         //PROPHET
 
@@ -537,8 +766,14 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 5},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                return {
+                    effectScore: owner.spellPower * (1 + this.variant * 0.01 * this.stacks) * 150,
+                    leftScore: this.left * 5
+                };
+            }
+        };
 
         case "Never A Word": return {
             name : "Never A Word",
@@ -546,17 +781,24 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "prophet"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--NeverAWord)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.silenced=true;
+                owner.silenced = true;
             },
-            duration: function(){return 5+this.variant},
+            duration: function(){return 5 + this.variant},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {                    
+                    leftScore: this.left * 4,
+                    offensivePositionScore: positionWeights[0] * 40
+                };
+            }
+        };
 
         case "Prophecy": return {
             name : "Prophecy",
@@ -564,19 +806,26 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "prophet"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--Prophecy)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.underProphecy=true;
-                owner.magicResMod-=this.variant*0.1;
-                owner.initiativeMod-=this.variant*0.1;
+                owner.underProphecy = true;
+                owner.magicResMod -= this.variant * 0.1;
+                owner.initiativeMod -= this.variant * 0.1;
             },
-            duration: function(){return 11+this.variant},
+            duration: function(){return 11 + this.variant},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                return {
+                    effectScore: owner.magicRes * (1 - this.variant * 0.1) * 240 + owner.initiative * (1 - this.variant * 0.1) * 0.7,
+                    leftScore: this.left * 4
+
+                };
+            }
+        };
 
         case "Infinite Dreams": return {
             name : "Infinite Dreams",
@@ -584,8 +833,8 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "prophet"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--InfiniteDreams)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.takeMana(owner.maxMana*(this.variant)*0.01, owner, this.name, false);
-                owner.initiativeMod+=this.variant*0.15;
+                owner.takeMana(owner.maxMana * (this.variant) * 0.01, owner, this.name, false);
+                owner.initiativeMod += this.variant * 0.15;
             },
             duration: function(){return 5+this.variant},
             left : 0,
@@ -594,8 +843,16 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var mana = owner.maxMana * (this.variant) * 0.01;                
+                return {
+                    effectScore: mana / 12.5 + owner.initiative * (1 + this.variant * 0.15) * 0.75,
+                    leftScore: this.left * 8,
+                    manaScore: - owner.curMana / owner.maxMana * 50
+                };
+            }
+        };
 
         case "Caught Somewhere In Time": return {
             name : "Caught Somewhere In Time",
@@ -606,7 +863,7 @@ var Effect = function(name, abilityVariant) {
                 owner.immobilized=true;
                 var debuffer = {};
                 for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i].charName===this.caster) debuffer=enemyTeam[i];
+                    if(enemyTeam[i].id===this.casterId) debuffer = enemyTeam[i];
                 }
                 var magicDamage = (75*this.variant+(75*this.variant)*((35-this.variant*5)*0.01)*(this.duration()-this.left))*(1+debuffer.spellPower);
                 var critical = debuffer.checkCrit();
@@ -623,8 +880,24 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var debuffer = {};
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i].id == this.casterId) debuffer = enemyTeam[i];
+                }
+                var magicDamage = (75 * this.variant + (75 * this.variant) * ((35 - this.variant * 5) * 0.01) * (this.duration() - this.left)) * (1 + debuffer.spellPower);
+                magicDamage = arenaService.calculateExpectedDamage(magicDamage, debuffer);
+                magicDamage = owner.applyResistance(magicDamage, true);
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+
+                return {
+                    effectScore: magicDamage / 15,
+                    leftScore: this.left * 3,
+                    offensivePositionScore: positionWeights[0] * 30
+                };
+            }
+        };
 
         //MALEFIC
 
@@ -634,17 +907,24 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "malefic"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--BurningAmbition)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.disarmed=true;
+                owner.disarmed = true;
             },
-            duration: function(){return 4+this.variant},
+            duration: function(){return 4 + this.variant},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    leftScore: this.left * 3,
+                    offensivePositionScore: positionWeights[0] * 30
+                };
+            }
+        };
 
         case "Thank God For The Bomb": return {
             name : "Thank God For The Bomb",
@@ -654,7 +934,7 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var debuffer = {};
                 for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i].charName===this.caster) debuffer=enemyTeam[i];
+                    if(enemyTeam[i].id===this.casterId) debuffer=enemyTeam[i];
                 }
                 if(this.left>1) {
                     var magicDamage = (this.variant * 100) * (1 + debuffer.spellPower);
@@ -671,17 +951,18 @@ var Effect = function(name, abilityVariant) {
                     var nearbyAllies = arenaService.findAllies(owner, myTeam, 1, walls);
                     owner.soundBuffer.push("Thank God For The Bomb (explode)");
                     for (i = 0; i < nearbyAllies.length; i++) {
+                        var localMagicDamage = magicDamage;
                         critical = debuffer.checkCrit();
                         if (critical) {
-                            magicDamage = debuffer.applyCrit(magicDamage);
+                            localMagicDamage = debuffer.applyCrit(localMagicDamage);
                         }
-                        magicDamage = nearbyAllies[i].applyResistance(magicDamage, true);
-                        if(nearbyAllies[i].takeDamage(magicDamage, debuffer, {name: this.name +" (explosion)", icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
+                        localMagicDamage = nearbyAllies[i].applyResistance(localMagicDamage, true);
+                        if(nearbyAllies[i].takeDamage(localMagicDamage, debuffer, {name: this.name +" (explosion)", icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
                             if(nearbyAllies[i].controlImmune) {
                                 owner.logBuffer.push(nearbyAllies[i].charName+" has immunity to control effects!");
                             }
                             else {
-                                nearbyAllies[i].addDebuff(nearbyAllies[i].addEffectFromEffects("Thank God For The Bomb (Stun)", this.variant), debuffer.charName, enemyTeam, myTeam, walls);
+                                nearbyAllies[i].addDebuff(nearbyAllies[i].addEffectFromEffects("Thank God For The Bomb (Stun)", this.variant), debuffer, enemyTeam, myTeam, walls);
                             }
                         }
                     }
@@ -694,8 +975,42 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var debuffer = {};
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i].id == this.casterId) debuffer = enemyTeam[i];
+                }
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                if(this.left > 1) {
+                    var magicDamage = (this.variant * 100) * (1 + debuffer.spellPower);
+                    magicDamage = arenaService.calculateExpectedDamage(magicDamage, debuffer);
+                    magicDamage = owner.applyResistance(magicDamage, true);                    
+                    return {
+                        effectScore: magicDamage / 20,
+                        leftScore: this.left * 3,
+                        offensivePositionScore: positionWeights[0] * 30
+                    };
+                }
+                else {
+                    magicDamage = (this.variant * 300) * (1 + debuffer.spellPower);
+                    var nearbyAllies = arenaService.findAllies(owner, myTeam, 1, walls);
+                    var totalMagicDamage = 0;
+
+                    for (i = 0; i < nearbyAllies.length; i++) {
+                        var localMagicDamage = magicDamage;
+                        localMagicDamage = nearbyAllies[i].applyResistance(localMagicDamage, true);
+                        totalMagicDamage += localMagicDamage;
+                    }
+
+                    return {
+                        effectScore: totalMagicDamage / 180,
+                        leftScore: this.left * 3,
+                        offensivePositionScore: positionWeights[0] * 30
+                    };
+                }
+            }
+        };
 
         case "Thank God For The Bomb (Stun)": return {
             name : "Thank God For The Bomb (Stun)",
@@ -703,7 +1018,7 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "malefic"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--ThankGodForTheBomb)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.stunned=true;
+                owner.stunned = true;
             },
             duration: function(){return 3},
             left : 0,
@@ -712,8 +1027,15 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {                    
+                    leftScore: this.left * 16,
+                    offensivePositionScore: positionWeights[0] * 50
+                };
+            }
+        };
 
         case "Powerslave": return {
             name : "Powerslave",
@@ -721,8 +1043,8 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "malefic"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--Powerslave)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.clearCast=true;
-                owner.spellPowerMod+=this.variant*0.15;
+                owner.clearCast = true;
+                owner.spellPowerMod += this.variant * 0.15;
             },
             duration: function(){return 0},
             left : 0,
@@ -731,8 +1053,16 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return true},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: owner.spellPower * (1 + this.variant * 0.15) * 150,
+                    offensivePositionScore: positionWeights[0] * 35,
+                    defensivePositionScore: -positionWeights[1] * 35
+                };
+            }
+        };
 
         case "Cauterization": return {
             name : "Cauterization",
@@ -742,11 +1072,11 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var buffer = {};
                 for (var i = 0; i < myTeam.length; i++) {
-                    if (myTeam[i].charName === this.caster) buffer = myTeam[i];
+                    if (myTeam[i].id === this.casterId) buffer = myTeam[i];
                 }
 
                 var heal = (this.variant*80)*(1+buffer.spellPower);
-                var manaSpend = (this.variant*60).toFixed(0);
+                var manaSpend = +((this.variant*60).toFixed(0));
 
                 var critical = buffer.checkCrit();
                 if (critical) {
@@ -762,8 +1092,27 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var buffer = {};
+                for (var i = 0; i < myTeam.length; i++) {
+                    if (myTeam[i].id === this.casterId) buffer = myTeam[i];
+                }
+
+                var heal = (this.variant * 80) * (1 + buffer.spellPower);
+
+                heal = arenaService.calculateExpectedHeal(heal, buffer);
+
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: heal / 10,
+                    leftScore: this.left * 5,
+                    defensivePositionScore: - positionWeights[1] * 25,
+                    healthScore: - owner.curHealth / owner.maxHealth * 25,
+                    manaScore: owner.curMana / owner.maxMana * 15 
+                };
+            }
+        };
 
         case "Down In Flames": return {
             name: "Down In Flames",
@@ -774,8 +1123,7 @@ var Effect = function(name, abilityVariant) {
             icon: function () {
                 return "url(../images/assets/svg/view/sprites.svg#abilities--DownInFlames)"
             },
-            apply: function (owner, myTeam, enemyTeam, walls) {
-                //т.к. кд=0, сначала убавим значение у персонажа, а потом прибавим снова
+            apply: function (owner, myTeam, enemyTeam, walls) {                
                 if (this.stacks > 1) {
                     owner.spellPowerMod -= 0.03 * this.variant * (this.stacks - 1);
                     owner.critChanceMod -= 0.03 * this.variant * (this.stacks - 1);
@@ -783,18 +1131,23 @@ var Effect = function(name, abilityVariant) {
                 owner.spellPowerMod += 0.03 * this.variant * this.stacks;
                 owner.critChanceMod += 0.03 * this.variant * this.stacks;
             },
-            duration: function () {
-                return 0
-            },
+            duration: function () { return 0 },
             left: 0,
             stacks: 0,
             stacked: function () {return true},
             infinite: function () {return true},
             maxStacks: function () {return 10},
             onlyStat: function () {return true},
-            magicEffect: function () {return true}
+            magicEffect: function () {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: owner.spellPower * (1 + 0.03 * this.variant * this.stacks) * 60 + owner.critChance * (1 + 0.03 * this.variant * this.stacks) * 60,
+                    offensivePositionScore: positionWeights[0] * 50,
+                    defensivePositionScore: -positionWeights[1] * 25
+                };
+            }
         };
-        break;
 
         case "Fight Fire With Fire": return {
             name : "Fight Fire With Fire",
@@ -803,15 +1156,23 @@ var Effect = function(name, abilityVariant) {
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--FightFireWithFire)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
             },
-            duration: function(){return 10+this.variant},
+            duration: function(){return 10 + this.variant},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    leftScore: this.left * 10,
+                    defensivePositionScore: - positionWeights[1] * 35,
+                    healthScore: - owner.curHealth / owner.maxHealth * 35 
+                };
+            }
+        };
 
         //CLERIC
 
@@ -822,10 +1183,10 @@ var Effect = function(name, abilityVariant) {
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--MercyfulFate)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var buffer = {};
-                for(var i=0;i<myTeam.length;i++){
-                    if(myTeam[i].charName===this.caster) buffer=myTeam[i];
+                for(var i = 0; i < myTeam.length; i++){
+                    if(myTeam[i].id === this.casterId) buffer = myTeam[i];
                 }
-                var heal = (75+this.variant*15)*(1+buffer.spellPower)*this.stacks;
+                var heal = (75 + this.variant * 15) * (1 + buffer.spellPower) * this.stacks;
                 var critical = buffer.checkCrit();
                 if(critical){
                     heal=buffer.applyCrit(heal);
@@ -839,8 +1200,26 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 3},
             onlyStat: function() {return false},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var buffer = {};
+                for (var i = 0; i < myTeam.length; i++) {
+                    if (myTeam[i].id === this.casterId) buffer = myTeam[i];
+                }
+
+                var heal = (75 + this.variant * 15) * (1 + buffer.spellPower) * this.stacks;
+
+                heal = arenaService.calculateExpectedHeal(heal, buffer);
+
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: heal / 5,
+                    leftScore: this.left * 7,
+                    defensivePositionScore: - positionWeights[1] * 25,
+                    healthScore: - owner.curHealth / owner.maxHealth * 25
+                };
+            }
+        };
 
         case "Hallowed Be Thy Name": return {
             name : "Hallowed Be Thy Name",
@@ -850,27 +1229,26 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 switch(this.variant){
                     case 1:
-                        owner.attackPowerMod+=0.25;
-                        owner.blockChanceMod+=0.25;
+                        owner.attackPowerMod += 0.25;
+                        owner.blockChanceMod += 0.25;
                         break;
                     case 2:
-                        owner.critChanceMod+=0.25;
-                        owner.dodgeChanceMod+=0.25;
+                        owner.critChanceMod += 0.25;
+                        owner.dodgeChanceMod += 0.25;
                         break;
                     case 3:
-                        owner.spellPowerMod+=0.25;
-                        owner.hitChanceMod+=0.25;
+                        owner.spellPowerMod += 0.25;
+                        owner.hitChanceMod += 0.25;
                         break;
                     case 4:
-                        owner.physResMod+=0.25;
-                        owner.healthRegMod+=0.25;
+                        owner.physResMod += 0.25;
+                        owner.healthRegMod += 0.25;
                         break;
                     case 5:
-                        owner.magicResMod+=0.25;
-                        owner.manaRegMod+=0.25;
+                        owner.magicResMod += 0.25;
+                        owner.manaRegMod += 0.25;
                         break;
                 }
-
             },
             duration: function(){return 12},
             left : 0,
@@ -879,8 +1257,35 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var effectScore = 0;
+                switch(this.variant){
+                    case 1:
+                        effectScore = owner.attackPower * (1 + 0.25) * 60 + owner.blockChance * (1 + 0.25) * 60;
+                        break;
+                    case 2:
+                        effectScore = owner.critChance * (1 + 0.25) * 60 + owner.dodgeChance * (1 + 0.25) * 60;
+                        break;
+                    case 3:
+                        effectScore = owner.spellPower * (1 + 0.25) * 60 + owner.hitChance * (1 + 0.25) * 15;
+                        break;
+                    case 4:
+                        effectScore = owner.physRes * (1 + 0.25) * 60 + owner.healthReg * (1 + 0.25) * 240;
+                        break;
+                    case 5:
+                        effectScore = owner.magicRes * (1 + 0.25) * 60 + owner.manaReg * (1 + 0.25) * 240;
+                        break;
+                }
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: effectScore,
+                    leftScore: this.left * 3,
+                    offensivePositionScore: positionWeights[0] * 35,
+                    defensivePositionScore: -positionWeights[1] * 35
+                };
+            }
+        };
 
         case "Heaven Can Wait": return {
             name : "Heaven Can Wait",
@@ -888,19 +1293,27 @@ var Effect = function(name, abilityVariant) {
             role : function(){ return "cleric"},
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--HeavenCanWait)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
-                owner.physImmune=true;
-                owner.magicImmune=true;
-                owner.controlImmune=true;
+                owner.physImmune = true;
+                owner.magicImmune = true;
+                owner.controlImmune = true;
             },
-            duration: function(){return 4+this.variant},
+            duration: function(){return 4 + this.variant},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    leftScore: this.left * 13,
+                    defensivePositionScore: - positionWeights[1] * 25,
+                    healthScore: - owner.curHealth / owner.maxHealth * 25 
+                };
+            }
+        };
 
         //HERETIC
 
@@ -911,26 +1324,40 @@ var Effect = function(name, abilityVariant) {
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--FearOfTheDark)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var debuffer = {};
-                for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i].charName===this.caster) debuffer=enemyTeam[i];
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i].id == this.casterId) debuffer = enemyTeam[i];
                 }
-                var magicDamage = (40+this.variant*60)*(1+debuffer.spellPower);
+                var magicDamage = (40 + this.variant * 60) * (1 + debuffer.spellPower);
                 var critical = debuffer.checkCrit();
                 if(critical){
                     magicDamage=debuffer.applyCrit(magicDamage);
                 }
-                magicDamage=owner.applyResistance(magicDamage, true);
+                magicDamage = owner.applyResistance(magicDamage, true);
                 owner.takeDamage(magicDamage, debuffer, {name: this.name +" (DOT effect)", icon: this.icon(), role: this.role()}, false, false, critical, myTeam, enemyTeam);
             },
-            duration: function(){return 12-this.variant},
+            duration: function(){return 12 - this.variant},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return false},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var debuffer = {};
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i].id == this.casterId) debuffer = enemyTeam[i];
+                }
+                var magicDamage = (40 + this.variant * 60) * (1 + debuffer.spellPower);
+                magicDamage = arenaService.calculateExpectedDamage(magicDamage, debuffer);
+                magicDamage = owner.applyResistance(magicDamage, true);
+                
+                return {
+                    effectScore: magicDamage / 7,
+                    leftScore: this.left * 4
+                };
+            }
+        };
 
         case "Creeping Death": return {
             name : "Creeping Death",
@@ -939,15 +1366,15 @@ var Effect = function(name, abilityVariant) {
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--CreepingDeath)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var debuffer = {};
-                for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i].charName===this.caster) debuffer=enemyTeam[i];
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i].id == this.casterId) debuffer = enemyTeam[i];
                 }
-                var magicDamage = 30*this.variant*(1+debuffer.spellPower)*this.stacks;
+                var magicDamage = 30 * this.variant * (1 + debuffer.spellPower) * this.stacks;
                 var critical = debuffer.checkCrit();
                 if(critical){
-                    magicDamage=debuffer.applyCrit(magicDamage);
+                    magicDamage = debuffer.applyCrit(magicDamage);
                 }
-                magicDamage=owner.applyResistance(magicDamage, true);
+                magicDamage = owner.applyResistance(magicDamage, true);
                 owner.takeDamage(magicDamage, debuffer, {name: this.name, icon: this.icon(), role: this.role()}, false, false, critical, myTeam, enemyTeam);
             },
             duration: function(){return 12-this.variant},
@@ -957,8 +1384,22 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 5},
             onlyStat: function() {return false},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var debuffer = {};
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i].id == this.casterId) debuffer = enemyTeam[i];
+                }
+                var magicDamage = 30 * this.variant * (1 + debuffer.spellPower) * this.stacks;
+                magicDamage = arenaService.calculateExpectedDamage(magicDamage, debuffer);
+                magicDamage = owner.applyResistance(magicDamage, true);
+                
+                return {
+                    effectScore: magicDamage / 5,
+                    leftScore: this.left * 3
+                };
+            }
+        };
 
         case "Spreading The Disease": return {
             name : "Spreading The Disease",
@@ -967,39 +1408,55 @@ var Effect = function(name, abilityVariant) {
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--SpreadingTheDisease)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
                 var debuffer = {};
-                for(var i=0;i<enemyTeam.length;i++){
-                    if(enemyTeam[i].charName===this.caster) debuffer=enemyTeam[i];
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i].id == this.casterId) debuffer = enemyTeam[i];
                 }
-                var magicDamage = 20*this.variant*(1+debuffer.spellPower)*this.stacks;
+                var magicDamage = 20 * this.variant * (1 + debuffer.spellPower) * this.stacks;
                 var critical = debuffer.checkCrit();
                 if(critical){
                     magicDamage=debuffer.applyCrit(magicDamage);
                 }
-                magicDamage=owner.applyResistance(magicDamage, true);
+                magicDamage = owner.applyResistance(magicDamage, true);
                 owner.takeDamage(magicDamage, debuffer, {name: this.name, icon: this.icon(), role: this.role()}, false, false, critical, myTeam, enemyTeam);
 
-                owner.attackPowerMod-=this.variant*0.01*this.stacks;
-                owner.spellPowerMod-=this.variant*0.01*this.stacks;
-                owner.critChanceMod-=this.variant*0.01*this.stacks;
+                owner.attackPowerMod -= this.variant * 0.01 * this.stacks;
+                owner.spellPowerMod -= this.variant * 0.01 * this.stacks;
+                owner.critChanceMod -= this.variant * 0.01 * this.stacks;
 
                 var nearbyAllies = arenaService.findAllies(owner, myTeam, 1, walls);
                 for (i = 0; i < nearbyAllies.length; i++) {
-                    if(nearbyAllies[i].charName!==owner.charName) {
+                    if(nearbyAllies[i].id !== owner.id) {
                         if(nearbyAllies[i].findEffect("Spreading The Disease")===-1){
-                            nearbyAllies[i].addDebuff(nearbyAllies[i].addEffectFromEffects("Spreading The Disease", this.variant), debuffer.charName, enemyTeam, myTeam, walls);
+                            nearbyAllies[i].addDebuff(nearbyAllies[i].addEffectFromEffects("Spreading The Disease", this.variant), debuffer, enemyTeam, myTeam, walls);
                         }
                     }
                 }
             },
-            duration: function(){return 6+this.variant},
+            duration: function(){return 6 + this.variant},
             left : 0,
             stacks: 0,
             stacked: function() {return true},
             infinite: function() {return false},
             maxStacks: function() {return 5},
             onlyStat: function() {return false},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var debuffer = {};
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i].id == this.casterId) debuffer = enemyTeam[i];
+                }
+                var magicDamage = 20 * this.variant * (1 + debuffer.spellPower) * this.stacks;
+                magicDamage = arenaService.calculateExpectedDamage(magicDamage, debuffer);
+                magicDamage = owner.applyResistance(magicDamage, true);
+
+                var nearbyAllies = arenaService.findAllies(owner, myTeam, 1, walls);            
+                
+                return {
+                    effectScore: (magicDamage - (owner.attackPower * (1 - this.variant * 0.01 * this.stacks) * 12 + owner.spellPower * (1 - this.variant * 0.01 * this.stacks) * 12 + owner.critChance * (1 - this.variant * 0.01 * this.stacks) * 12)) * (nearbyAllies.length + 1),
+                    leftScore: this.left * 4
+                };
+            }
+        };
 
         case "Children Of The Damned": return {
             name : "Children Of The Damned",
@@ -1009,24 +1466,24 @@ var Effect = function(name, abilityVariant) {
             apply : function (owner, myTeam, enemyTeam, walls) {
                 switch(this.variant){
                     case 1:
-                        owner.attackPowerMod-=0.25;
-                        owner.blockChanceMod-=0.25;
+                        owner.attackPowerMod -= 0.25;
+                        owner.blockChanceMod -= 0.25;
                         break;
                     case 2:
-                        owner.critChanceMod-=0.25;
-                        owner.dodgeChanceMod-=0.25;
+                        owner.critChanceMod -= 0.25;
+                        owner.dodgeChanceMod -= 0.25;
                         break;
                     case 3:
-                        owner.spellPowerMod-=0.25;
-                        owner.hitChanceMod-=0.25;
+                        owner.spellPowerMod -= 0.25;
+                        owner.hitChanceMod -= 0.25;
                         break;
                     case 4:
-                        owner.physResMod-=0.25;
-                        owner.healthRegMod-=0.25;
+                        owner.physResMod -= 0.25;
+                        owner.healthRegMod -= 0.25;
                         break;
                     case 5:
-                        owner.magicResMod-=0.25;
-                        owner.manaRegMod-=0.25;
+                        owner.magicResMod -= 0.25;
+                        owner.manaRegMod -= 0.25;
                         break;
                 }
 
@@ -1038,8 +1495,34 @@ var Effect = function(name, abilityVariant) {
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var effectScore = 0;
+                switch(this.variant){
+                    case 1:
+                        effectScore = owner.attackPower * (1 - 0.25) * 100 + owner.blockChance * (1 - 0.25) * 100;
+                        break;
+                    case 2:
+                        effectScore = owner.critChance * (1 - 0.25) * 100 + owner.dodgeChance * (1 - 0.25) * 100;
+                        break;
+                    case 3:
+                        effectScore = owner.spellPower * (1 - 0.25) * 100 + owner.hitChance * (1 - 0.25) * 25;
+                        break;
+                    case 4:
+                        effectScore = owner.physRes * (1 - 0.25) * 100 + owner.healthReg * (1 - 0.25) * 200;
+                        break;
+                    case 5:
+                        effectScore = owner.magicRes * (1 - 0.25) * 100 + owner.manaReg * (1 - 0.25) * 200;
+                        break;
+                }
+                var positionWeights = arenaService.calculatePositionWeight(owner.position, owner, myTeam, enemyTeam, arenaService.getOptimalRange(owner), walls);
+                return {
+                    effectScore: effectScore,
+                    leftScore: this.left,
+                    offensivePositionScore: positionWeights[0] * 25
+                };
+            }
+        };
 
         case "Locked And Loaded": return {
             name : "Locked And Loaded",
@@ -1048,15 +1531,41 @@ var Effect = function(name, abilityVariant) {
             icon : function(){ return "url(../images/assets/svg/view/sprites.svg#abilities--LockedAndLoaded)"},
             apply : function (owner, myTeam, enemyTeam, walls) {
             },
-            duration: function(){return 4+this.variant*2},
+            duration: function(){return 4 + this.variant * 2},
             left : 0,
             stacks: 0,
             stacked: function() {return false},
             infinite: function() {return false},
             maxStacks: function() {return 0},
             onlyStat: function() {return true},
-            magicEffect: function() {return true}
-        };break;
+            magicEffect: function() {return true},
+            score: function(owner, myTeam, enemyTeam, walls) {
+                var targetIsAlly = false;
+
+                for(var i = 0; i < myTeam.length; i++){
+                    if(myTeam[i].id == this.casterId) targetIsAlly = true;
+                }   
+
+                var totalEffects = 0;
+                if(targetIsAlly){
+                    for(i = 0; i < owner.buffs.length; i++){
+                        if(owner.buffs[i].stacked()) totalEffects += owner.buffs[i].stacks;
+                        else totalEffects++;
+                    }
+                }
+                else {
+                    for(i = 0; i < owner.debuffs.length; i++){
+                        if(owner.debuffs[i].stacked()) totalEffects += owner.debuffs[i].stacks;
+                        else totalEffects++;
+                    }
+                } 
+                
+                return {
+                    effectScore: totalEffects * 8,
+                    leftScore: this.left * 2
+                };
+            }
+        };
 
     }
 };

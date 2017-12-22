@@ -81,7 +81,7 @@
             //Проверка, мой ли сейчас ход
             checkTurn: function(myTeam, queue) {
                 for (var i = 0; i < myTeam.length; i++) {
-                    if (myTeam[i]._id == queue._id) return true;
+                    if (myTeam[i].id == queue.id) return true;
                 }
                 return false;
             },
@@ -139,7 +139,7 @@
                 for(var i=0;i<this.battle.queue.length;i++){
                     var found = false;
                     for(var j=0;j<myTeamChars.length;j++){
-                        if(this.battle.queue[i]._id == myTeamChars[j]._id) {
+                        if(this.battle.queue[i].id == myTeamChars[j].id) {
                             result.push(myTeamChars[j]);
                             found = true;
                             break;
@@ -147,7 +147,7 @@
                     }
                     if(!found){
                         for(j=0;j<enemyTeamChars.length;j++){
-                            if(this.battle.queue[i]._id == enemyTeamChars[j]._id) {
+                            if(this.battle.queue[i].id == enemyTeamChars[j].id) {
                                 result.push(enemyTeamChars[j]);
                                 break;
                             }

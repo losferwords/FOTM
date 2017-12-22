@@ -16,8 +16,8 @@
                                 <div class="panel panel-default char-panel" ng-style="::{'border-color' : char.battleColor }">
                                     <div class="panel-body">
                                         <div class="portrait btn"
-                                                ng-style="{'background-image': getCharPortrait(char)}"
-                                                uib-popover-template="'effectsPopover.html'">
+                                             ng-style="{'background-image': getCharPortrait(char)}"
+                                             uib-popover-template="'effectsPopover.html'">
                                             <div class="role-in-portrait ally icon" ng-class="::[char.role+'-icon']"></div>
                                         </div>
                                         <div class="char-info">
@@ -42,9 +42,9 @@
                                                          ng-disabled="!checkAbilityForUse(ability, char) || waitServ || !enemyTeamLoaded"
                                                          ng-class="{'prepared': checkPreparedAbility(ability, char)}"
                                                          ng-click="prepareAbility($index)"
-                                                         >
-                                                            <span ng-if="ability.cd>0">{{ability.cd}}</span>
-                                                            <div class="ability-fade"></div>
+                                                            >
+                                                        <span ng-if="ability.cd>0">{{ability.cd}}</span>
+                                                        <div class="ability-fade"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -83,11 +83,13 @@
                 <div class="center-info" ng-if="!battleEnd.ended">
                     <div class="map">
                         <canvas width="320" height="320" arrows start="activeChar.position" end-tile="tileForArrow" end-char="charForArrow.position" arrow-color="arrowColor"></canvas>
-                        <div ng-repeat="tile in map track by $index" class="map_tile" ng-style="::{'left' : tile.x*32, 'top' : tile.y*32, 'background-image': tile.image}"><div class="overlay" ng-class="{'move': tile.move}" ng-mouseenter="setTileForArrow(tile)" ng-mouseleave="resetArrow()" ng-click="moveToTile(tile)" ng-hide="waitServ || !enemyTeamLoaded"></div></div>
+                        <div ng-repeat="tile in map track by $index" class="map_tile" ng-style="::{'left' : tile.x*32, 'top' : tile.y*32, 'background-image': tile.image}">
+                            <div class="overlay" ng-class="{'move': tile.move}" ng-mouseenter="setTileForArrow(tile)" ng-mouseleave="resetArrow()" ng-click="moveToTile(tile)" ng-hide="waitServ || !enemyTeamLoaded"></div>
+                        </div>
                         <div ng-repeat="char in myTeam.characters track by $index" class="char_tile battle-text" buffer="char.battleTextBuffer" ng-style="{'left' : char.position.x*32, 'top' : char.position.y*32, 'border-color' : char.battleColor, 'background-image' : 'url('+char.portrait+')'}" ng-if="!char.isDead" >
                             <div class="overlay" ng-class="{'myAbility': char.underAbility}" ng-mouseenter="setCharForArrow(char)" ng-mouseleave="resetArrow()" ng-click="castAbility(char)" ng-disabled="waitServ"></div>
                         </div>
-                        <div ng-repeat="char in enemyTeam.characters track by $index" class="char_tile battle-text" buffer="char.battleTextBuffer" ng-style="{'left' : char.position.x*32, 'top' : char.position.y*32, 'border-color' : char.battleColor, 'background-image' : 'url('+char.portrait+')'}" ng-if="!(char.isDead || char.invisible)" >
+                        <div ng-repeat="char in enemyTeam.characters track by $index" class="char_tile battle-text" buffer="char.battleTextBuffer" ng-style="{'left' : char.position.x*32, 'top' : char.position.y*32, 'border-color' : char.battleColor, 'background-image' : 'url('+char.portrait+')'}" ng-if="!(char.isDead || (char.invisible && !botBattle))" >
                             <div class="overlay" ng-class="{'enemyAbility': char.underAbility}" ng-mouseenter="setCharForArrow(char)" ng-mouseleave="resetArrow()" ng-click="castAbility(char)" ng-disabled="waitServ"></div>
                         </div>
                     </div>
@@ -101,7 +103,7 @@
                                  tooltip-append-to-body="true"
                                  tooltip-animation="false"></div>
                         </div>
-                        <button class="btn btn-default btn-end-turn icon" ng-class="{'waiting' : waitServ}" ng-style="{'background-color': queue[0].battleColor}" ng-disabled="!myTurn || $scope.activeChar.turnEnded || !enemyTeamLoaded" ng-click="endTurn()">{{getTurnTime()}}</button>
+                        <button class="btn btn-default btn-end-turn icon" ng-if="!botBattle" ng-class="{'waiting' : waitServ}" ng-style="{'background-color': queue[0].battleColor}" ng-disabled="!myTurn || !enemyTeamLoaded" ng-click="endTurn()">{{getTurnTime()}}</button>
                         <div class="loader" ng-if="waitServ || !enemyTeamLoaded"></div>
                     </div>
                     <div class="combatLog well customScrollBar" autoscroll>
@@ -153,7 +155,7 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 enemy-abilities ability-group" ng-if="$index!==2">
-                                            <div class="btn-group" ng-if="char.underProphecy">
+                                            <div class="btn-group" ng-if="char.underProphecy || botBattle">
                                                 <div class="ability-wrapper btn btn-default"
                                                      ng-repeat="ability in char.abilities track by $index"
                                                      uib-tooltip-html="getAbilityTooltip(ability)"
@@ -163,7 +165,8 @@
                                                      tooltip-class="ability-tooltip">
                                                     <div class="ability-icon icon"
                                                          ng-style="::{'background-image': ability.icon, 'background-color': getAbilityColor(ability)}"
-                                                         ng-disabled="true"
+                                                         ng-disabled="!(botBattle && checkAbilityForUse(ability, char))"
+                                                         ng-class="{'prepared': checkPreparedAbility(ability, char)}"
                                                             >
                                                         <span ng-if="ability.cd>0">{{ability.cd}}</span>
                                                         <div class="ability-fade"></div>
@@ -172,17 +175,18 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 enemy-abilities ability-group" ng-if="$index===2">
-                                            <div class="btn-group" ng-if="char.underProphecy">
+                                            <div class="btn-group" ng-if="char.underProphecy || botBattle">
                                                 <div class="ability-wrapper btn btn-default"
                                                      ng-repeat="ability in char.abilities track by $index"
                                                      uib-tooltip-html="getAbilityTooltip(ability)"
-                                                     tooltip-placement="bottom"
+                                                     tooltip-placement="top"
                                                      tooltip-append-to-body="true"
                                                      tooltip-animation="false"
                                                      tooltip-class="ability-tooltip">
                                                     <div class="ability-icon icon"
                                                          ng-style="::{'background-image': ability.icon, 'background-color': getAbilityColor(ability)}"
-                                                         ng-disabled="true"
+                                                         ng-disabled="!(botBattle && checkAbilityForUse(ability, char))"
+                                                         ng-class="{'prepared': checkPreparedAbility(ability, char)}"
                                                             >
                                                         <span ng-if="ability.cd>0">{{ability.cd}}</span>
                                                         <div class="ability-fade"></div>

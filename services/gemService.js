@@ -3,14 +3,14 @@ var FlakeId = require('flake-idgen');
 var intformat = require('biguint-format');
 var flakeIdGen = new FlakeId();
 
-//Сервис для создания камней
+//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 module.exports = {
-    //Функция создаёт случайный камень
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     randomizeGem: function (color) {
         var newGem = {};
         newGem.id = intformat(flakeIdGen.next(), 'dec');
         if(color){
-            newGem.color=color;
+            newGem.color = color;
         }
         else {
             switch(Math.floor(Math.random() * 3)){
@@ -133,7 +133,7 @@ module.exports = {
 
         return newGem;
     },
-    //Функция создаёт случайный топовый камень
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     randomizeTopGem: function(color){
         var newGem = {};
         if(color){

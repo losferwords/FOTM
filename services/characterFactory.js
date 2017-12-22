@@ -3,9 +3,10 @@ var characterService = require('services/characterService');
 var arenaService = require('services/arenaService');
 var randomService = require('services/randomService');
 var effectFactory = require('services/effectFactory');
+var deepClone = require('fast-deepclone');
 
-//Фабрика, которая по сути является "классом" character
-var Character = function(char) {
+//Character factory
+var Character = function(char, ignoreEquip) {
 
     for (var key in char) {
         if (char.hasOwnProperty(key)) {
@@ -23,83 +24,84 @@ var Character = function(char) {
     this.createEquipState();
     this.createAbilitiesState();
     this.initChar();
+
+    if(ignoreEquip){
+        delete this.state.equip;
+        delete this.equip;
+    }
 };
 
-//Расчёт характеристик персонажа и присвоение всех необходимых свойств
 Character.prototype.initChar = function(){
-    var self = this;
-    self.logBuffer = []; //Массив сообщений для комбат-лога
-    self.soundBuffer = []; //Массив сообщений для звуков
-    self.battleTextBuffer = []; //Массив всплывающего текста
-    self.buffs = []; //Массив положительных эффектов
-    self.debuffs = []; //Массив отрицательных эффектов
+    this.logBuffer = []; //buffer of messages to show on UI
+    this.soundBuffer = []; //buffer of sounds to play
+    this.battleTextBuffer = []; //buffer of messages on the map
+    this.buffs = []; //positive effects
+    this.debuffs = []; //negative effects
 
-    self.resetState();
+    this.resetState();
 
-    self.calcChar();
-    self.curHealth=self.maxHealth;
-    self.curEnergy=self.maxEnergy;
-    self.curMana=self.maxMana;
-    self.initiativePoints = (10+self.initiative/400)*10;
+    this.calcChar(false);
+    this.curHealth = this.maxHealth;
+    this.curEnergy = this.maxEnergy;
+    this.curMana = this.maxMana;
+    this.initiativePoints = (10 + this.initiative / 400) * 10;
 };
 
-//Обновление персонажа в бою
+//refresh character state in battle
 Character.prototype.refreshChar = function(myTeam, enemyTeam, walls){
-    var self = this;
+    if(this.isDead) return;
+    this.resetState(); //drop state to recalulate
+    this.applyEffects(myTeam, enemyTeam, walls); //apply all effects
+    if(this.isDead) return; //check again because after DOT character can die
+    this.calcChar(true); //recalculate char params
 
-    if(self.isDead) return; //Если дохлый, то уже ничего делать не надо
-    self.resetState(); //Сбрасываем состояние на начально
-    self.applyEffects(myTeam, enemyTeam, walls); //Применяем все эффекты
-    if(self.isDead) return; //Если сдохли от дот, больше ничего не делаем
-    self.calcChar(); //Пересчитываем все параметры
+    this.initiativePoints += 10 + this.initiative / 400;
 
-    self.initiativePoints += 10+self.initiative/400;
+    //restore full energy
+    this.curEnergy = this.maxEnergy;
 
-    //Восстанавливаем энергию
-    self.curEnergy = self.maxEnergy;
-
-    //Восстанавливаем здоровье
-    var hpRegAmount = Math.floor(self.maxHealth*self.healthReg);
-    if(self.curHealth + hpRegAmount<self.maxHealth){
-        self.curHealth += hpRegAmount;
+    //Regenerate health
+    var hpRegAmount = Math.floor(this.maxHealth * this.healthReg);
+    if(this.curHealth + hpRegAmount < this.maxHealth){
+        this.curHealth += hpRegAmount;
     }
     else {
-        self.curHealth = self.maxHealth;
+        this.curHealth = this.maxHealth;
     }
 
-    //Восстанавливаем ману
-    var manaRegAmount = Math.floor(self.maxMana*self.manaReg);
-    if(self.curMana + manaRegAmount<self.maxMana){
-        self.curMana += manaRegAmount;
+    //Regenerate mana
+    var manaRegAmount = Math.floor(this.maxMana * this.manaReg);
+    if(this.curMana + manaRegAmount < this.maxMana){
+        this.curMana += manaRegAmount;
     }
     else {
-        self.curMana = self.maxMana;
+        this.curMana = this.maxMana;
     }
 
-    //обновляем КД для способностей
-    for(var i=0;i<self.abilities.length;i++){
-        if(self.abilities[i].cd>0){
-            //Сбросы кд
-            if(self.checkCooldownDrop()){
-                self.abilities[i].cd=0;
-                self.logBuffer.push(self.charName+" drop cooldown for '"+self.abilities[i].name+"'");
-                self.soundBuffer.push("initiative");
+    //Decrease CD for abilities
+    for(var i = 0; i < this.abilities.length;i++){
+        if(this.abilities[i].cd>0){
+            //check initiative proc
+            if(this.checkCooldownDrop()){
+                this.abilities[i].cd=0;
+                this.logBuffer.push(this.charName+" drop cooldown for '"+this.abilities[i].name+"'");
+                this.soundBuffer.push("initiative");
             }
-            else self.abilities[i].cd--;
+            else this.abilities[i].cd--;
         }
     }
 
-    self.createAbilitiesState();
-    self.createEffectsState();
+    this.createAbilitiesState();
+    this.createEffectsState();
 };
 
-//Функция создаёт состояние способностей для сервера
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 Character.prototype.createAbilitiesState = function() {
-    //создаём стэйт способностей
+    //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     if(this.abilities) {
         var abilitiesForClient = [];
         for (var i = 0; i < this.abilities.length; i++) {
-            //Если способности только что пришли из БД, заполним их методами
+            //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             if(!this.abilities[i].cast){
                 var variant = this.abilities[i].variant;
                 this.abilities[i] = AbilityFactory(this.abilities[i].name);
@@ -111,30 +113,30 @@ Character.prototype.createAbilitiesState = function() {
     }
 };
 
-//Функция создаёт состояние инвентаря для сервера
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 Character.prototype.createEquipState = function() {
-    //Создаём стэйт инвентаря
+    //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     if(this.equip) {
-        var equip = characterService.getEquip(this.role); //Берём стандартный инвентарь для этой роли
+        var equip = characterService.getEquip(this.role); //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         for (var slot in equip) {
             if (equip.hasOwnProperty(slot)) {
 
                 if(!this.equip[slot]) {
                     this.state.equip[slot] = {};
-                    //Если такого нет, значит это оффхэнд
-                    this.state.equip[slot].name="Void";
-                    this.state.equip[slot].slot="offHandWeapon";
+                    //пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+                    this.state.equip[slot].name = "Void";
+                    this.state.equip[slot].slot = "offHandWeapon";
                     continue;
                 }
                 else {
-                    this.state.equip[slot]=this.equip[slot];
+                    this.state.equip[slot] = this.equip[slot];
                 }
 
-                //наделяем функциями
+                //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                 for(var slotKey in equip[slot]){
                     if (equip[slot].hasOwnProperty(slotKey)) {
-                        if(slotKey!=="sockets"){
-                            this.state.equip[slot][slotKey]=equip[slot][slotKey]();
+                        if(slotKey !== "sockets"){
+                            this.state.equip[slot][slotKey] = equip[slot][slotKey]();                            
                         }
                     }
                 }
@@ -143,7 +145,7 @@ Character.prototype.createEquipState = function() {
     }
 };
 
-//Функция создаёт состояние эффектов для сервера
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 Character.prototype.createEffectsState = function() {
     var buffsForClient = [];
     var debuffsForClient = [];
@@ -163,186 +165,187 @@ Character.prototype.createEffectsState = function() {
     this.state.debuffs = debuffsForClient;
 };
 
-//Функция обнуляет состояние персонажа в бою
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ
 Character.prototype.resetState = function() {
-    var self = this;
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    this.moveCost = 300; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-    //Константы
-    self.moveCost = 300; //стоимость энергии для передвижения
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    this.isDead = false; //пїЅпїЅпїЅпїЅ
+    this.clearCast = false; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
+    this.invisible = false; //пїЅпїЅпїЅпїЅпїЅ
+    this.silenced = false; //пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    this.disarmed = false; //пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    this.stunned = false; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    this.immobilized = false; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    this.underProphecy = false; //пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ Prophecy
+    this.physImmune = false; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
+    this.magicImmune = false; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ
+    this.controlImmune = false; //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-    //Состояния
-    self.immobilize = false; //обездвижен
-    self.isDead = false; //мёртв
-    self.clearCast = false; //Клиркаст (бесплатные заклинания)
-    self.invisible = false; //Инвиз
-    self.silenced = false; //С молчанкой
-    self.disarmed = false; //Без оружия
-    self.stunned = false; //Оглушён
-    self.immobilized = false; //Обездвижен
-    self.underProphecy = false; //Палит свои заклинания, когда на нём Prophecy
-    self.physImmune = false; //Невосприимчивость к атакам ближнего боя
-    self.magicImmune = false; //Невосприимчивость к магии
-    self.controlImmune = false; //Невосприимчивость к контролю
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    this.attackPowerMod = 1;
+    this.healthRegMod = 1;
+    this.physResMod = 1;
+    this.blockChanceMod = 1;
 
-    //Модификаторы
-    self.attackPowerMod = 1;
-    self.healthRegMod = 1;
-    self.physResMod = 1;
-    self.blockChanceMod = 1;
+    this.critChanceMod = 1;
+    this.hitChanceMod = 1;
+    this.dodgeChanceMod = 1;
+    this.luckMod = 1;
 
-    self.critChanceMod = 1;
-    self.hitChanceMod = 1;
-    self.dodgeChanceMod = 1;
-    self.luckMod = 1;
-
-    self.spellPowerMod = 1;
-    self.manaRegMod = 1;
-    self.magicResMod = 1;
-    self.initiativeMod = 1;
+    this.spellPowerMod = 1;
+    this.manaRegMod = 1;
+    this.magicResMod = 1;
+    this.initiativeMod = 1;
 };
 
-//Пересчёт всех характерситик персонажа
-Character.prototype.calcChar = function() {
-    var self = this;
-
-    //Просчитываем оружие
-    for (var key in self.equip) {
-        if (self.equip.hasOwnProperty(key)) {
-            if(self.equip[key].name!=="Void"){
-                self.calcItem(self.equip[key]);
-            }
-        }
-    }
-
-    self.basicHealth = 10000;
-    self.basicHitChance = 0.8;
-    self.basicEnergy = 1000;
-    self.basicMana = 9000;
-
-    //Проверки на отрицательные модификаторы
-    if(self.attackPowerMod<0) self.attackPowerMod = 0;
-    if(self.healthRegMod<0) self.healthRegMod = 0;
-    if(self.physResMod<0) self.physResMod = 0;
-    if(self.blockChanceMod<0) self.blockChanceMod = 0;
-
-    if(self.critChanceMod<0) self.critChanceMod = 0;
-    if(self.hitChanceMod<0) self.hitChanceMod = 0;
-    if(self.dodgeChanceMod<0) self.dodgeChanceMod = 0;
-    if(self.luckMod<0) self.luckMod = 0;
-
-    if(self.spellPowerMod<0) self.spellPowerMod = 0;
-    if(self.manaRegMod<0) self.manaRegMod = 0;
-    if(self.magicResMod<0) self.magicResMod = 0;
-    if(self.initiativeMod<0) self.initiativeMod = 0;
-
-    //СИЛА
-    self.strFromEq = paramFromEquip('str');
-    self.str = Math.floor((self.params.strMax+self.strFromEq)*self.params.strProc);
-
-    self.attackPowerFromStr = self.str*0.002;
-    self.attackPowerFromEq = paramFromEquip('attackPower');
-    self.attackPower = (self.attackPowerFromStr+self.attackPowerFromEq)*self.attackPowerMod;
-
-    self.maxHealthFromStr = self.str*30+self.basicHealth;
-    self.maxHealthFromEq = paramFromEquip('maxHealth');
-    self.maxHealth = Math.floor(self.maxHealthFromStr+self.maxHealthFromEq);
-
-    self.healthRegFromStr = self.str*0.00012;
-    self.healthRegFromEq = paramFromEquip('healthReg');
-    self.healthReg = (self.healthRegFromStr+self.healthRegFromEq)*self.healthRegMod;
-    if(self.healthReg>0.03) self.healthReg=0.03;
-
-    self.physResFromStr = self.str*0.0009;
-    self.physResFromEq = paramFromEquip('physRes');
-    self.physRes = (self.physResFromStr+self.physResFromEq)*self.physResMod;
-    if(self.physRes>0.6) self.physRes=0.6;
-
-    self.blockChanceFromStr = self.str*0.00075;
-    self.blockChanceFromEq = paramFromEquip('blockChance');
-    self.blockChance = (self.blockChanceFromStr+self.blockChanceFromEq)*self.blockChanceMod;
-    if(self.blockChance>0.5) self.blockChance=0.5;
-
-    //ЛОВКОСТЬ
-    self.dxtFromEq = paramFromEquip('dxt');
-    self.dxt = Math.floor((self.params.dxtMax+self.dxtFromEq)*self.params.dxtProc);
-
-    self.critChanceFromDxt = self.dxt*0.0005;
-    self.critChanceFromEq = paramFromEquip('critChance');
-    self.critChance = (self.critChanceFromDxt+self.critChanceFromEq)*self.critChanceMod;
-    if(self.critChance>0.5) self.critChance=0.5;
-
-    self.maxEnergyFromDxt = self.dxt*3+self.basicEnergy;
-    self.maxEnergyFromEq = paramFromEquip('maxEnergy');
-    self.maxEnergy = Math.floor(self.maxEnergyFromDxt+self.maxEnergyFromEq);
-
-    self.hitChanceFromDxt = self.basicHitChance+self.dxt*0.00045;
-    self.hitChanceFromEq = paramFromEquip('hitChance');
-    self.hitChance = (self.hitChanceFromDxt+self.hitChanceFromEq)*self.hitChanceMod;
-    if(self.hitChance>1) self.hitChance=1;
-
-    self.dodgeChanceFromDxt = self.dxt*0.0009;
-    self.dodgeChanceFromEq = paramFromEquip('dodgeChance');
-    self.dodgeChance = (self.dodgeChanceFromDxt+self.dodgeChanceFromEq)*self.dodgeChanceMod;
-    if(self.dodgeChance>0.6) self.dodgeChance=0.6;
-
-    self.luckFromDxt = self.dxt*0.00075;
-    self.luckFromEq = paramFromEquip('luck');
-    self.luck = (self.luckFromDxt+self.luckFromEq)*self.luckMod;
-    if(self.luck>0.5) self.luck=0.5;
-
-    //ИНТЕЛЛЕКТ
-    self.intFromEq = paramFromEquip('int');
-    self.int = Math.floor((self.params.intMax+self.intFromEq)*self.params.intProc);
-
-    self.spellPowerFromInt = self.int*0.003;
-    self.spellPowerFromEq = paramFromEquip('spellPower');
-    self.spellPower = (self.spellPowerFromInt+self.spellPowerFromEq)*self.spellPowerMod;
-
-    self.maxManaFromInt = self.int*24+self.basicMana;
-    self.maxManaFromEq = paramFromEquip('maxMana');
-    self.maxMana = Math.floor(self.maxManaFromInt+self.maxManaFromEq);
-
-    self.manaRegFromInt = self.int*0.00015;
-    self.manaRegFromEq = paramFromEquip('manaReg');
-    self.manaReg = (self.manaRegFromInt+self.manaRegFromEq)*self.manaRegMod;
-    if(self.manaReg>0.04) self.manaReg=0.04;
-
-    self.magicResFromInt = self.int*0.0009;
-    self.magicResFromEq = paramFromEquip('magicRes');
-    self.magicRes = (self.magicResFromInt+self.magicResFromEq)*self.magicResMod;
-    if(self.magicRes>0.6) self.magicRes=0.6;
-
-    self.initiativeFromInt = self.int;
-    self.initiativeFromEq = paramFromEquip('initiative');
-    self.initiative = Math.floor((self.initiativeFromInt+self.initiativeFromEq)*self.initiativeMod);
-
-    if(self.equip.offHandWeapon.name!="Void"){
-        self.minDamage=Math.floor((self.equip.mainHandWeapon.minDamage+self.equip.offHandWeapon.minDamage)*(1+self.attackPower));
-        self.maxDamage=Math.floor((self.equip.mainHandWeapon.maxDamage+self.equip.offHandWeapon.maxDamage)*(1+self.attackPower));
-    }
-    else {
-        self.minDamage=Math.floor(self.equip.mainHandWeapon.minDamage*(1+self.attackPower));
-        self.maxDamage=Math.floor(self.equip.mainHandWeapon.maxDamage*(1+self.attackPower));
-    }
-
-    //Функция складывает все значения какого либо параметра с equip'а
-    function paramFromEquip(key){
-        var value=0; //итоговая сумма параметра
-        for (var slot in self.equip) {
-            if(self.equip.hasOwnProperty(slot)){
-                if(self.equip[slot].hasOwnProperty(key)){
-                    value += Number(self.equip[slot][key]);
+//Recalculate char parameters
+Character.prototype.calcChar = function(isSameEquip) {
+    if(!isSameEquip) {
+        //Recalculate items
+        for (var key in this.equip) {
+            if (this.equip.hasOwnProperty(key)) {
+                if(this.equip[key].name !== "Void"){
+                    this.calcItem(this.equip[key]);
                 }
             }
         }
-        return value;
-    }
+
+        this.strFromEq = this.paramFromEquip('str');
+        this.attackPowerFromEq = this.paramFromEquip('attackPower');
+        this.maxHealthFromEq = this.paramFromEquip('maxHealth');
+        this.healthRegFromEq = this.paramFromEquip('healthReg');
+        this.physResFromEq = this.paramFromEquip('physRes');
+        this.blockChanceFromEq = this.paramFromEquip('blockChance');
+
+        this.dxtFromEq = this.paramFromEquip('dxt');
+        this.critChanceFromEq = this.paramFromEquip('critChance');
+        this.maxEnergyFromEq = this.paramFromEquip('maxEnergy');
+        this.hitChanceFromEq = this.paramFromEquip('hitChance');
+        this.dodgeChanceFromEq = this.paramFromEquip('dodgeChance');
+        this.luckFromEq = this.paramFromEquip('luck');
+
+        this.intFromEq = this.paramFromEquip('int');
+        this.spellPowerFromEq = this.paramFromEquip('spellPower');
+        this.maxManaFromEq = this.paramFromEquip('maxMana');
+        this.manaRegFromEq = this.paramFromEquip('manaReg');
+        this.magicResFromEq = this.paramFromEquip('magicRes');
+        this.initiativeFromEq = this.paramFromEquip('initiative');
+
+        if(this.equip.offHandWeapon && this.equip.offHandWeapon.name !== "Void"){
+            this.minDamageFromEq = this.equip.mainHandWeapon.minDamage + this.equip.offHandWeapon.minDamage;
+            this.maxDamageFromEq = this.equip.mainHandWeapon.maxDamage + this.equip.offHandWeapon.maxDamage;
+        }
+        else {
+            this.minDamageFromEq = this.equip.mainHandWeapon.minDamage;
+            this.maxDamageFromEq = this.equip.mainHandWeapon.maxDamage;
+        }
+    }    
+
+    this.basicHealth = 10000;
+    this.basicHitChance = 0.8;
+    this.basicEnergy = 1000;
+    this.basicMana = 9000;
+
+    //Drop modifiers to 0 in case of negative values
+    if(this.attackPowerMod < 0) this.attackPowerMod = 0;
+    if(this.healthRegMod < 0) this.healthRegMod = 0;
+    if(this.physResMod < 0) this.physResMod = 0;
+    if(this.blockChanceMod < 0) this.blockChanceMod = 0;
+
+    if(this.critChanceMod < 0) this.critChanceMod = 0;
+    if(this.hitChanceMod < 0) this.hitChanceMod = 0;
+    if(this.dodgeChanceMod < 0) this.dodgeChanceMod = 0;
+    if(this.luckMod < 0) this.luckMod = 0;
+
+    if(this.spellPowerMod < 0) this.spellPowerMod = 0;
+    if(this.manaRegMod < 0) this.manaRegMod = 0;
+    if(this.magicResMod < 0) this.magicResMod = 0;
+    if(this.initiativeMod < 0) this.initiativeMod = 0;
+
+    //Strength
+    this.str = Math.floor((this.params.strMax + this.strFromEq) * this.params.strProc);
+
+    this.attackPowerFromStr = this.str * 0.002;
+    this.attackPower = (this.attackPowerFromStr + this.attackPowerFromEq) * this.attackPowerMod;
+
+    this.maxHealthFromStr = this.str * 30 + this.basicHealth;    
+    this.maxHealth = Math.floor(this.maxHealthFromStr + this.maxHealthFromEq);
+
+    this.healthRegFromStr = this.str * 0.00012;    
+    this.healthReg = (this.healthRegFromStr + this.healthRegFromEq) * this.healthRegMod;
+    if(this.healthReg > 0.03) this.healthReg = 0.03;
+
+    this.physResFromStr = this.str * 0.0009;    
+    this.physRes = (this.physResFromStr + this.physResFromEq) * this.physResMod;
+    if(this.physRes > 0.6) this.physRes = 0.6;
+
+    this.blockChanceFromStr = this.str * 0.00075;    
+    this.blockChance = (this.blockChanceFromStr + this.blockChanceFromEq) * this.blockChanceMod;
+    if(this.blockChance > 0.5) this.blockChance = 0.5;
+
+    //Dexterity    
+    this.dxt = Math.floor((this.params.dxtMax + this.dxtFromEq) * this.params.dxtProc);
+
+    this.critChanceFromDxt = this.dxt * 0.0005;    
+    this.critChance = (this.critChanceFromDxt + this.critChanceFromEq) * this.critChanceMod;
+    if(this.critChance > 0.5) this.critChance = 0.5;
+
+    this.maxEnergyFromDxt = this.dxt * 3 + this.basicEnergy;    
+    this.maxEnergy = Math.floor(this.maxEnergyFromDxt + this.maxEnergyFromEq);
+
+    this.hitChanceFromDxt = this.basicHitChance + this.dxt * 0.00045;    
+    this.hitChance = (this.hitChanceFromDxt + this.hitChanceFromEq) * this.hitChanceMod;
+    if(this.hitChance > 1) this.hitChance = 1;
+
+    this.dodgeChanceFromDxt = this.dxt * 0.0009;
+    this.dodgeChance = (this.dodgeChanceFromDxt + this.dodgeChanceFromEq) * this.dodgeChanceMod;
+    if(this.dodgeChance > 0.6) this.dodgeChance = 0.6;
+
+    this.luckFromDxt = this.dxt * 0.00075;
+    this.luck = (this.luckFromDxt + this.luckFromEq) * this.luckMod;
+    if(this.luck > 0.5) this.luck = 0.5;
+
+    //Intellect    
+    this.int = Math.floor((this.params.intMax + this.intFromEq) * this.params.intProc);
+
+    this.spellPowerFromInt = this.int * 0.003;    
+    this.spellPower = (this.spellPowerFromInt + this.spellPowerFromEq) * this.spellPowerMod;
+
+    this.maxManaFromInt = this.int * 24 + this.basicMana;    
+    this.maxMana = Math.floor(this.maxManaFromInt + this.maxManaFromEq);
+
+    this.manaRegFromInt = this.int * 0.00015;    
+    this.manaReg = (this.manaRegFromInt + this.manaRegFromEq) * this.manaRegMod;
+    if(this.manaReg > 0.04) this.manaReg = 0.04;
+
+    this.magicResFromInt = this.int * 0.0009;    
+    this.magicRes = (this.magicResFromInt + this.magicResFromEq) * this.magicResMod;
+    if(this.magicRes > 0.6) this.magicRes = 0.6;
+
+    this.initiativeFromInt = this.int;    
+    this.initiative = Math.floor((this.initiativeFromInt + this.initiativeFromEq) * this.initiativeMod);
+
+    this.minDamage = Math.floor(this.minDamageFromEq * (1 + this.attackPower));
+    this.maxDamage = Math.floor(this.maxDamageFromEq * (1 + this.attackPower));
 };
 
-//Пересчёт параметров по точке на треугольнике способностей
-Character.prototype.calcParamsByPoint = function(point) {
-    var self = this;
+//calculate params on equipment
+Character.prototype.paramFromEquip = function(key) {
+    var value = 0;
+    for (var slot in this.equip) {
+        if(this.equip.hasOwnProperty(slot)){
+            if(this.equip[slot].hasOwnProperty(key)){
+                value += Number(this.equip[slot][key]);
+            }
+        }
+    }
+    return value;
+}
 
+//Calculate params by coordinates from params triangle
+Character.prototype.calcParamsByPoint = function(point) {
     var leftY = Math.tan(2*Math.PI/3)*(point.left+5)+Math.sqrt(3)*75;
     var rightY = Math.tan(Math.PI/3)*(point.left+5)-Math.sqrt(3)*75;
     if(point.top<leftY){
@@ -352,28 +355,28 @@ Character.prototype.calcParamsByPoint = function(point) {
         point.top=rightY;
     }
 
-    self.params.paramPoint = {left: point.left, top: point.top};
+    this.params.paramPoint = {left: point.left, top: point.top};
 
     var strLen = Math.sqrt(Math.pow(point.left+5,2)+(Math.pow(point.top+5-Math.sqrt(3)*75,2)))-5;
     if(strLen>=138) strLen = 140;
     if(strLen<=3) strLen = 0;
-    self.params.strProc = 1-strLen/140;
+    this.params.strProc = 1-strLen/140;
 
     var dxtLen = Math.sqrt(Math.pow(point.left+5-75,2)+(Math.pow(point.top+5,2)))-5;
     if(dxtLen>=138) dxtLen = 140;
     if(dxtLen<=3) dxtLen = 0;
-    self.params.dxtProc = 1-dxtLen/140;
+    this.params.dxtProc = 1-dxtLen/140;
 
     var intLen = Math.sqrt(Math.pow(point.left+5-150,2)+(Math.pow(point.top+5-Math.sqrt(3)*75,2)))-5;
     if(intLen>=138)intLen = 140;
     if(intLen<=3) intLen = 0;
-    self.params.intProc = 1-intLen/140;
-    self.calcChar();
+    this.params.intProc = 1-intLen/140;
+    this.calcChar(true);
 };
 
-//Пересчёт всех характерситик оружия
+//Recalculate item with sockets
 Character.prototype.calcItem = function(item) {
-    if(item.name=="Void") return;
+    if(item.name == "Void") return;
 
     item.str=Math.floor(calcSockets(item.sockets, 'str'));
 
@@ -426,17 +429,16 @@ Character.prototype.calcItem = function(item) {
     if(item.hasOwnProperty('basicInitiative')) item.initiative = Math.floor(item.basicInitiative+calcSockets(item.sockets, 'initiative'));
     else item.initiative=Math.floor(calcSockets(item.sockets, 'initiative'));
 
-    //Функция подсчитывает параметры в сокетах
+    //calculate socket properties
     function calcSockets(sockets, key){
-        var value=0; //итоговая сумма параметра
-        for(var i=0;i<sockets.length;i++){
-            var bonusValue=0; //бонусная прибавка от соотвествия цвета
+        var value = 0;
+        for(var i = 0; i < sockets.length; i++){
+            var bonusValue = 0;
             if(sockets[i].gem.hasOwnProperty(key)){
-                //Если цвет камня совпал с цветом сокета
-                if(sockets[i].gem.color===sockets[i].type){
-                    bonusValue=Number(sockets[i].gem[key])*0.5;
+                if(sockets[i].gem.color === sockets[i].type){
+                    bonusValue = Number(sockets[i].gem[key]) * 0.5;
                 }
-                value += Number(sockets[i].gem[key])+bonusValue;
+                value += Number(sockets[i].gem[key]) + bonusValue;
             }
         }
         return value;
@@ -444,312 +446,423 @@ Character.prototype.calcItem = function(item) {
     return item;
 };
 
-//Добавление баффа
 Character.prototype.addBuff = function(buff, caster, myTeam, enemyTeam, walls){
-    var self=this;
+    if(this.isDead) return;
 
-    if(self.isDead) return;
+    if(buff.stacked()) buff.stacks = 1;
+    buff.casterId = caster.id;
+    buff.casterName = caster.charName;
+    buff.left = buff.duration();
 
-    if(buff.stacked()) buff.stacks=1;
-    buff.caster=caster;
-    buff.left=buff.duration();
-
-    for(var i=0;i<self.buffs.length;i++){
-        if(self.buffs[i].name===buff.name && self.buffs[i].caster===caster){
+    for(var i = 0; i < this.buffs.length; i++){
+        if(this.buffs[i].name === buff.name && this.buffs[i].casterId === caster.id){
             if(buff.stacked()) {
-                if(self.buffs[i].stacks<self.buffs[i].maxStacks()) self.buffs[i].stacks++;
-                self.buffs[i].apply(self, myTeam, enemyTeam, walls);
+                if(this.buffs[i].stacks < this.buffs[i].maxStacks()) this.buffs[i].stacks++;
+                this.buffs[i].apply(this, myTeam, enemyTeam, walls);
             }
-            self.buffs[i].left=buff.duration();
+            this.buffs[i].left = buff.duration();
             return;
         }
     }
-    self.buffs.push(buff);
-    buff.apply(self, myTeam, enemyTeam, walls);
+    this.buffs.push(buff);
+    buff.apply(this, myTeam, enemyTeam, walls);
 };
 
-//Добавление дебаффа
 Character.prototype.addDebuff = function(debuff, caster, myTeam, enemyTeam, walls){
-    var self=this;
-
-    if(self.isDead) return;
-    if(self.checkImmune(debuff.magicEffect())){
-        self.logBuffer.push(self.charName + " didn't get effect '" + debuff.name + "' because immunity.");
-        self.battleTextBuffer.push({type: "other", icon: debuff.icon(), color: getAbilityColor(debuff.role()), caster: caster, text: "Immune", crit: false});
-        self.soundBuffer.push("dodge");
+    if(this.isDead) return;
+    if(this.checkImmune(debuff.magicEffect())){
+        this.logBuffer.push(this.charName + " didn't get effect '" + debuff.name + "' because immunity.");
+        this.battleTextBuffer.push({type: "other", icon: debuff.icon(), color: getAbilityColor(debuff.role()), caster: caster.charName, text: "Immune", crit: false});
+        this.soundBuffer.push("dodge");
         return;
     }
 
-    if(debuff.stacked()) debuff.stacks=1;
-    debuff.caster=caster;
-    debuff.left=debuff.duration();
+    if(debuff.stacked()) debuff.stacks = 1;
+    debuff.casterId = caster.id;
+    debuff.casterName = caster.charName;
+    debuff.left = debuff.duration();
 
-    for(var i=0;i<self.debuffs.length;i++){
-        if(self.debuffs[i].name===debuff.name && self.debuffs[i].caster===caster){
+    for(var i = 0; i < this.debuffs.length; i++){
+        if(this.debuffs[i].name === debuff.name && this.debuffs[i].casterId === caster.id){
             if(debuff.stacked()) {
-                if(self.debuffs[i].stacks<self.debuffs[i].maxStacks()) self.debuffs[i].stacks++;
-                self.debuffs[i].apply(self, enemyTeam, myTeam, walls); //При дебаффе меняются местами
+                if(this.debuffs[i].stacks < this.debuffs[i].maxStacks()) this.debuffs[i].stacks++;
+                this.debuffs[i].apply(this, enemyTeam, myTeam, walls);
             }
-            self.debuffs[i].left=debuff.duration();
+            if(this.isDead) return;
+            this.debuffs[i].left=debuff.duration();
             return;
         }
     }
-    self.debuffs.push(debuff);
-    debuff.apply(self, enemyTeam, myTeam, walls); //При дебаффе меняются местами
+    this.debuffs.push(debuff);
+    debuff.apply(this, enemyTeam, myTeam, walls);
 };
 
-//Применение эффектов за исключением дот и хот и без снятия left
+Character.prototype.addBuffSimulation = function(buff, caster, myTeam, enemyTeam, walls){
+    if(this.isDead) return;
+
+    if(buff.stacked()) buff.stacks = 1;
+    buff.casterId = caster.id;
+    buff.casterName = caster.charName;
+    buff.left = buff.duration();
+
+    for(var i = 0; i < this.buffs.length; i++){
+        if(this.buffs[i].name === buff.name && this.buffs[i].casterId === caster.id){
+            if(buff.stacked()) {
+                if(this.buffs[i].stacks < this.buffs[i].maxStacks()) this.buffs[i].stacks++;
+            }
+            this.buffs[i].left = buff.duration();
+            return;
+        }
+    }
+    this.buffs.push(buff);
+};
+
+Character.prototype.addDebuffSimulation = function(debuff, caster, myTeam, enemyTeam, walls){
+    if(this.isDead) return;
+
+    if(debuff.stacked()) debuff.stacks = 1;
+    debuff.casterId = caster.id;
+    debuff.casterName = caster.charName;
+    debuff.left = debuff.duration();
+
+    for(var i = 0; i < this.debuffs.length; i++){
+        if(this.debuffs[i].name === debuff.name && this.debuffs[i].casterId === caster.id){
+            if(debuff.stacked()) {
+                if(this.debuffs[i].stacks < this.debuffs[i].maxStacks()) this.debuffs[i].stacks++;
+            }
+            if(this.isDead) return;
+            this.debuffs[i].left=debuff.duration();
+            return;
+        }
+    }
+    this.debuffs.push(debuff);
+};
+
 Character.prototype.updateMods = function(myTeam, enemyTeam, walls) {
-    var self = this;
-
-    for(var i=0; i<self.buffs.length; i++){
-        if(self.buffs[i].onlyStat()) {
-            self.buffs[i].apply(self, myTeam, enemyTeam, walls);
+    for(var i=0; i<this.buffs.length; i++){
+        if(this.buffs[i].onlyStat()) {
+            this.buffs[i].apply(this, myTeam, enemyTeam, walls);
         }
     }
 
-    for(i=0; i<self.debuffs.length; i++){
-        if(self.debuffs[i].onlyStat()) {
-            self.debuffs[i].apply(self, myTeam, enemyTeam, walls);
+    for(i=0; i<this.debuffs.length; i++){
+        if(this.debuffs[i].onlyStat()) {
+            this.debuffs[i].apply(this, myTeam, enemyTeam, walls);
         }
     }
 };
 
-//Применение эффектов
 Character.prototype.applyEffects = function(myTeam, enemyTeam, walls) {
-    var self = this;
     var buffsForRemove = [];
     var debuffsForRemove = [];
 
-    self.battleTextBuffer = []; //Очистим буфер, т.к. в нём должно быть пусто перед применением бафов
+    this.battleTextBuffer = [];
 
-    for(var i=0; i<self.buffs.length; i++){
-        if(!self.buffs[i].infinite()) {
-            self.buffs[i].left--;
-            if (self.buffs[i].left < 1) {
+    for(var i=0; i<this.buffs.length; i++){
+        if(!this.buffs[i].infinite()) {
+            this.buffs[i].left--;
+            if (this.buffs[i].left < 1) {
                 buffsForRemove.push(i);
             }
             else {
-                self.buffs[i].apply(self, myTeam, enemyTeam, walls);
+                this.buffs[i].apply(this, myTeam, enemyTeam, walls);
             }
         }
         else {
-            self.buffs[i].apply(self, myTeam, enemyTeam, walls);
+            this.buffs[i].apply(this, myTeam, enemyTeam, walls);
         }
     }
 
     for(i=0;i<buffsForRemove.length;i++){
-        self.buffs.splice(buffsForRemove[i], 1);
+        this.buffs.splice(buffsForRemove[i], 1);
     }
 
-    for(i=0; i<self.debuffs.length; i++){
-        if(!self.debuffs[i].infinite()) {
-            self.debuffs[i].left--;
-            if (self.debuffs[i].left < 1) {
+    for(i=0; i<this.debuffs.length; i++){
+        if(!this.debuffs[i].infinite()) {
+            this.debuffs[i].left--;
+            if (this.debuffs[i].left < 1) {
                 debuffsForRemove.push(i);
             }
             else {
-                self.debuffs[i].apply(self, myTeam, enemyTeam, walls);
+                this.debuffs[i].apply(this, myTeam, enemyTeam, walls);
             }
         }
         else {
-            self.debuffs[i].apply(self, myTeam, enemyTeam, walls);
+            this.debuffs[i].apply(this, myTeam, enemyTeam, walls);
         }
     }
 
     for(i=0;i<debuffsForRemove.length;i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 };
 
-//Функция снимает с игрока случайные эффекты
 Character.prototype.removeRandomBuff = function(myTeam, enemyTeam) {
-    var self = this;
-
-    if(self.buffs.length>0){
-        var removableBuffIndex = randomService.randomInt(0, self.buffs.length-1);
-        if(self.buffs[removableBuffIndex].stacked()){
-            if(self.buffs[removableBuffIndex].stacks===1){
-                self.buffs.splice(removableBuffIndex,1);
+    if(this.buffs.length>0){
+        var removableBuffIndex = randomService.randomInt(0, this.buffs.length - 1);
+        if(this.buffs[removableBuffIndex].stacked()){
+            if(this.buffs[removableBuffIndex].stacks === 1){
+                this.buffs.splice(removableBuffIndex, 1);
             }
             else {
-                self.buffs[removableBuffIndex].stacks--;
+                this.buffs[removableBuffIndex].stacks--;
             }
         }
         else {
-            self.buffs.splice(removableBuffIndex,1);
+            this.buffs.splice(removableBuffIndex, 1);
         }
 
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
-//Функция снимает с игрока случайные эффекты
+Character.prototype.removeRandomBuffSimulation = function() {
+    if(this.buffs.length>0){
+        var removableBuffIndex = randomService.randomInt(0, this.buffs.length - 1);
+        if(this.buffs[removableBuffIndex].stacked()){
+            if(this.buffs[removableBuffIndex].stacks === 1){
+                this.buffs.splice(removableBuffIndex, 1);
+            }
+            else {
+                this.buffs[removableBuffIndex].stacks--;
+            }
+        }
+        else {
+            this.buffs.splice(removableBuffIndex, 1);
+        }
+    }
+};
+
 Character.prototype.removeRandomDebuff = function(myTeam, enemyTeam) {
-    var self = this;
-
-    if(self.debuffs.length>0){
-        var removableDebuffIndex = randomService.randomInt(0, self.debuffs.length-1);
-        if(self.debuffs[removableDebuffIndex].stacked()){
-            if(self.debuffs[removableDebuffIndex].stacks===1){
-                self.debuffs.splice(removableDebuffIndex,1);
+    if(this.debuffs.length > 0){
+        var removableDebuffIndex = randomService.randomInt(0, this.debuffs.length - 1);
+        if(this.debuffs[removableDebuffIndex].stacked()){
+            if(this.debuffs[removableDebuffIndex].stacks === 1){
+                this.debuffs.splice(removableDebuffIndex, 1);
             }
             else {
-                self.debuffs[removableDebuffIndex].stacks--;
+                this.debuffs[removableDebuffIndex].stacks--;
             }
         }
         else {
-            self.debuffs.splice(removableDebuffIndex,1);
+            this.debuffs.splice(removableDebuffIndex, 1);
         }
 
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
+    }    
+};
+
+Character.prototype.removeRandomDebuffSimulation = function() {
+    if(this.debuffs.length > 0){
+        var removableDebuffIndex = randomService.randomInt(0, this.debuffs.length - 1);
+        if(this.debuffs[removableDebuffIndex].stacked()){
+            if(this.debuffs[removableDebuffIndex].stacks === 1){
+                this.debuffs.splice(removableDebuffIndex, 1);
+            }
+            else {
+                this.debuffs[removableDebuffIndex].stacks--;
+            }
+        }
+        else {
+            this.debuffs.splice(removableDebuffIndex, 1);
+        }
     }
 };
 
-//Функция снимает с игрока все дебаффы
 Character.prototype.removeAllDebuffs = function(myTeam, enemyTeam) {
-    var self = this;
-
-    if(self.debuffs.length>0){
-        self.debuffs=[];
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+    if(this.debuffs.length > 0){
+        this.debuffs = [];
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
-//Функция снимает с игрока случайные доты
-Character.prototype.removeRandomDOT = function(myTeam, enemyTeam) {
-    var self = this;
+Character.prototype.removeAllDebuffsSimulation = function() {
+    this.debuffs = [];
+};
 
-    if(self.debuffs.length>0){
+Character.prototype.removeRandomDOT = function(myTeam, enemyTeam) {
+    if(this.debuffs.length>0){
         var DOTS = [];
-        for(var i=0;i<self.debuffs.length;i++){
-            if(!self.debuffs[i].onlyStat()) DOTS.push({index: i, dot: self.debuffs[i]});
+        for(var i=0; i<this.debuffs.length; i++){
+            if(!this.debuffs[i].onlyStat()) DOTS.push({index: i, dot: this.debuffs[i]});
         }
 
-        if(DOTS.length>0){
-            var removableDOTIndex = randomService.randomInt(0, DOTS.length-1);
+        if(DOTS.length > 0){
+            var removableDOTIndex = randomService.randomInt(0, DOTS.length - 1);
             var removableDebuffIndex = DOTS[removableDOTIndex].index;
-            if(self.debuffs[removableDebuffIndex].stacked()){
-                if(self.debuffs[removableDebuffIndex].stacks===1){
-                    self.debuffs.splice(removableDebuffIndex,1);
+            if(this.debuffs[removableDebuffIndex].stacked()){
+                if(this.debuffs[removableDebuffIndex].stacks === 1){
+                    this.debuffs.splice(removableDebuffIndex, 1);
                 }
                 else {
-                    self.debuffs[removableDebuffIndex].stacks--;
+                    this.debuffs[removableDebuffIndex].stacks--;
                 }
             }
             else {
-                self.debuffs.splice(removableDebuffIndex,1);
+                this.debuffs.splice(removableDebuffIndex, 1);
             }
 
-            self.resetState();
-            self.updateMods(myTeam, enemyTeam);
-            self.calcChar();
+            this.resetState();
+            this.updateMods(myTeam, enemyTeam);
+            this.calcChar(true);
         }
     }
 };
 
-//Функция крадёт у цели случайные баффы
-Character.prototype.stealRandomBuff = function(target, myTeam, enemyTeam, walls) {
-    var self = this;
-    var stealedBuffName=false;
+Character.prototype.removeRandomDOTSimulation = function() {
+    if(this.debuffs.length>0){
+        var DOTS = [];
+        for(var i = 0; i < this.debuffs.length; i++){
+            if(!this.debuffs[i].onlyStat()) DOTS.push({index: i, dot: this.debuffs[i]});
+        }
 
-    if(target.buffs.length>0){
-        var removableBuffIndex = randomService.randomInt(0, target.buffs.length-1);
-        stealedBuffName = target.buffs[removableBuffIndex].name;
-        if(target.buffs[removableBuffIndex].stacked()){
-            if(target.buffs[removableBuffIndex].stacks===1){
-                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self.charName, myTeam, enemyTeam, walls);
-                target.buffs.splice(removableBuffIndex,1);
+        if(DOTS.length > 0){
+            var removableDOTIndex = randomService.randomInt(0, DOTS.length - 1);
+            var removableDebuffIndex = DOTS[removableDOTIndex].index;
+            if(this.debuffs[removableDebuffIndex].stacked()){
+                if(this.debuffs[removableDebuffIndex].stacks === 1){
+                    this.debuffs.splice(removableDebuffIndex, 1);
+                }
+                else {
+                    this.debuffs[removableDebuffIndex].stacks--;
+                }
             }
             else {
-                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self.charName, myTeam, enemyTeam, walls);
+                this.debuffs.splice(removableDebuffIndex, 1);
+            }
+        }
+    }
+};
+
+Character.prototype.stealRandomBuff = function(target, myTeam, enemyTeam, walls) {
+    var stealedBuffName = false;
+
+    if(target.buffs.length > 0){
+        var removableBuffIndex = randomService.randomInt(0, target.buffs.length - 1);
+        stealedBuffName = target.buffs[removableBuffIndex].name;
+        if(target.buffs[removableBuffIndex].stacked()){
+            if(target.buffs[removableBuffIndex].stacks === 1){
+                this.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), this, myTeam, enemyTeam, walls);
+                target.buffs.splice(removableBuffIndex, 1);
+            }
+            else {
+                this.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), this, myTeam, enemyTeam, walls);
                 target.buffs[removableBuffIndex].stacks--;
             }
         }
         else {
-            //Для некоторых спелов кастером нужно оставить иммено хозяина украденного эффекта
-            if(target.buffs[removableBuffIndex].name==="Sanctuary"){
-                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), target.buffs[removableBuffIndex].caster, myTeam, enemyTeam, walls);
+            if(target.buffs[removableBuffIndex].name === "Sanctuary"){
+                var debuffer = {};
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i].id == target.buffs[removableBuffIndex].casterId) {
+                        debuffer = enemyTeam[i];
+                        break;
+                    }
+                }
+                if(debuffer){
+                    this.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), debuffer, myTeam, enemyTeam, walls);
+                }                
             }
             else {
-                self.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), self.charName, myTeam, enemyTeam, walls);
+                this.addBuff(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), this, myTeam, enemyTeam, walls);
             }
-            target.buffs.splice(removableBuffIndex,1);
+            target.buffs.splice(removableBuffIndex, 1);
         }
 
-        //Обновляем эффекты на цели
         target.resetState();
         target.updateMods(myTeam, enemyTeam);
-        target.calcChar();
-
-        //Обновляем эффекты на себе
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        target.calcChar(true);
     }
     return stealedBuffName;
 };
 
-//Функция используется тогда, когда один из эффектов добавляет другие эффекты
+Character.prototype.stealRandomBuffSimulation = function(target, myTeam, enemyTeam, walls) {
+    var stealedBuffName = false;
+
+    if(target.buffs.length > 0){
+        var removableBuffIndex = randomService.randomInt(0, target.buffs.length - 1);
+        stealedBuffName = target.buffs[removableBuffIndex].name;
+        if(target.buffs[removableBuffIndex].stacked()){
+            if(target.buffs[removableBuffIndex].stacks === 1){
+                this.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), this, myTeam, enemyTeam, walls);
+                target.buffs.splice(removableBuffIndex, 1);
+            }
+            else {
+                this.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), this, myTeam, enemyTeam, walls);
+                target.buffs[removableBuffIndex].stacks--;
+            }
+        }
+        else {
+            if(target.buffs[removableBuffIndex].name === "Sanctuary"){
+                var debuffer = {};
+                for(var i = 0; i < enemyTeam.length; i++){
+                    if(enemyTeam[i].id == target.buffs[removableBuffIndex].casterId) {
+                        debuffer = enemyTeam[i];
+                        break;
+                    }
+                }
+                if(debuffer){
+                    this.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), debuffer, myTeam, enemyTeam, walls);
+                }                
+            }
+            else {
+                this.addBuffSimulation(effectFactory(target.buffs[removableBuffIndex].name, target.buffs[removableBuffIndex].variant), this, myTeam, enemyTeam, walls);
+            }
+            target.buffs.splice(removableBuffIndex, 1);
+        }
+    }
+    return stealedBuffName;
+};
+
 Character.prototype.addEffectFromEffects = function(name, variant) {
     return effectFactory(name, variant);
 };
 
-//может ли перснонаж двигаться
 Character.prototype.canMove = function(){
-    var self = this;
-    if(self.immobilized){ //если обездвижен
-        return false;
-    }
-    else if((self.curEnergy-self.moveCost)<0){ //если не хватит энергии
-        return false;
-    }
-    return true;
+    return (this.curEnergy - this.moveCost) >= 0;
 };
 
-//Функция получения урона
 Character.prototype.takeDamage = function(value, caster, ability, canBlock, canDodge, isCritical, myTeam, enemyTeam){
-    var self = this;
     var blockedDamage = 0;
     var str = "";
 
     if(value===0) {
-        self.logBuffer.push(self.charName + " didn't take damage from '" + ability.name + "' of " + caster.charName + ", because immunity.");
-        self.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: "Immune", crit: false});
-        self.soundBuffer.push("dodge");
+        this.logBuffer.push(this.charName + " didn't take damage from '" + ability.name + "' of " + caster.charName + ", because immunity.");
+        this.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: "Immune", crit: false});
+        this.soundBuffer.push("dodge");
         return false;
     }
 
     if(canDodge){
-        if(self.checkDodge()){
-            self.logBuffer.push(self.charName + " dodged from '"+ability.name+"' of "+caster.charName);
-            self.soundBuffer.push("dodge");
-            self.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: "Dodge", crit: false});
+        if(this.checkDodge()){
+            this.logBuffer.push(this.charName + " dodged from '"+ability.name+"' of "+caster.charName);
+            this.soundBuffer.push("dodge");
+            this.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: "Dodge", crit: false});
             return false;
         }
     }
 
-    //Проверка на Sanctuary
-    for(var i=0;i<self.buffs.length;i++){
-        if(self.buffs[i].name==="Sanctuary") {
-            var sanctBuff=self.buffs[i];
+    //Check for Sanctuary
+    for(var i=0;i<this.buffs.length;i++){
+        if(this.buffs[i].name==="Sanctuary") {
+            var sanctBuff=this.buffs[i];
             var sanctValue = value*sanctBuff.variant*0.15;
             value-=sanctValue;
             for(var j=0;j<enemyTeam.length;j++){
-                if(enemyTeam[j].charName===sanctBuff.caster && !enemyTeam[j].isDead && enemyTeam[j].findEffect("Sanctuary")===-1) { //Во избежание бесконечной рекурсии нельзя переводить дамаг на того, у кого тоже есть Sanctuary
+                if(enemyTeam[j].id == sanctBuff.casterId && !enemyTeam[j].isDead && enemyTeam[j].findEffect("Sanctuary")===-1) { //пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ Sanctuary
                     var sanctCaster = enemyTeam[j];
                     sanctCaster.takeDamage(sanctValue, caster, {name: ability.name+" (Sanctuary)", icon: ability.icon, role: ability.role}, canBlock, canDodge, isCritical, myTeam, enemyTeam);
                 }
             }
-            //На всякий случай проверяем, вдруг баф был украден
+            //пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             for(j=0;j<myTeam.length;j++){
-                if(myTeam[j].charName===sanctBuff.caster && !myTeam[j].isDead && myTeam[j].findEffect("Sanctuary")===-1) { //Во избежание бесконечной рекурсии нельзя переводить дамаг на того, у кого тоже есть Sanctuary
+                if(myTeam[j].id == sanctBuff.casterId && !myTeam[j].isDead && myTeam[j].findEffect("Sanctuary")===-1) { //пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ Sanctuary
                     sanctCaster = myTeam[j];
                     sanctCaster.takeDamage(sanctValue, caster, {name: ability.name+" (Sanctuary)", icon: ability.icon, role: ability.role}, canBlock, canDodge, isCritical, enemyTeam, myTeam);
                 }
@@ -757,416 +870,543 @@ Character.prototype.takeDamage = function(value, caster, ability, canBlock, canD
         }
     }
 
-    //Проверка на Fight Fire With Fire
-    for(i=0;i<self.buffs.length;i++){
-        if(self.buffs[i].name==="Fight Fire With Fire") {
-            var fffBuff=self.buffs[i];
+    //Check for Fight Fire With Fire
+    for(i=0;i<this.buffs.length;i++){
+        if(this.buffs[i].name==="Fight Fire With Fire") {
+            var fffBuff=this.buffs[i];
             var fffValue = value*(0.2+fffBuff.variant*0.1);
-            //value-=fffValue; дамаг не уменьшается, а только возвращается атакующему
-            fffValue = fffValue*(1+self.spellPower);
-            if(!caster.isDead && caster.findEffect("Fight Fire With Fire")===-1) { //Во избежание бесконечной рекурсии нельзя переводить дамаг на того, у кого тоже есть Fight Fire With Fire
-                caster.takeDamage(fffValue, self, {name: "Fight Fire With Fire", icon: "url(../images/assets/svg/view/sprites.svg#abilities--FightFireWithFire)", role: "malefic"}, true, true, isCritical, enemyTeam, myTeam);
+            //value-=fffValue; пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            fffValue = fffValue*(1+this.spellPower);
+            if(!caster.isDead && caster.findEffect("Fight Fire With Fire")===-1) { //пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ Fight Fire With Fire
+                caster.takeDamage(fffValue, this, {name: "Fight Fire With Fire", icon: "url(../images/assets/svg/view/sprites.svg#abilities--FightFireWithFire)", role: "malefic"}, true, true, isCritical, enemyTeam, myTeam);
             }
         }
     }
 
     if(canBlock){
-        if(self.checkBlock()){
-            blockedDamage = Math.round(value*self.blockChance*1.5);
+        if(this.checkBlock()){
+            blockedDamage = Math.round(value*this.blockChance*1.5);
             value-=blockedDamage;
-            self.soundBuffer.push("block");
+            this.soundBuffer.push("block");
         }
     }
 
     value=Math.round(value);
 
-    self.curHealth -= value;
+    this.curHealth -= value;
 
-    self.battleTextBuffer.push({type: "damage", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: value, crit: isCritical});
+    this.battleTextBuffer.push({type: "damage", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: value, crit: isCritical});
 
-    str+=self.charName + " got "+value;
+    str+=this.charName + " got "+value;
 
     if(blockedDamage>0) str+=" ("+blockedDamage+" blocked)";
     if(isCritical) str+= " CRITICAL";
     str+=" damage from '"+ability.name+"' of "+caster.charName;
-    self.logBuffer.push(str);
+    this.logBuffer.push(str);
 
-    caster.afterDealingDamage(enemyTeam, myTeam); //У кастера срабатывает событие после нанесения урона
-    self.afterDamageTaken(myTeam, enemyTeam); //А у цели после получения урона
+    caster.afterDealingDamage(enemyTeam, myTeam); //пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+    this.afterDamageTaken(myTeam, enemyTeam); //пїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
-    if(self.curHealth<=0){ //Смерть
-        self.curHealth=0;
-        self.buffs=[];
-        self.debuffs=[];
-        self.isDead=true;
-        self.portrait = "./images/assets/img/portraits/death.jpg";
-        self.logBuffer.push(self.charName + " is dead");
-        self.soundBuffer.push("death");
+    if(this.curHealth<=0){ //Death
+        this.curHealth=0;
+        this.buffs=[];
+        this.debuffs=[];
+        this.isDead=true;
+        this.portrait = "./images/assets/img/portraits/death.jpg";
+        this.logBuffer.push(this.charName + " is dead");
+        this.soundBuffer.push("death");
     }
     return true;
 };
 
-//Функция получения исцеления
+Character.prototype.takeDamageSimulation = function(value, caster, canBlock, canDodge, myTeam, enemyTeam){
+    if(value===0) {
+        return false;
+    }
+
+    if(canDodge){
+        value = (1 - this.dodgeChance) * value;
+    }
+
+    //Check for Sanctuary
+    for(var i=0;i<this.buffs.length;i++){
+        if(this.buffs[i].name==="Sanctuary") {
+            var sanctBuff=this.buffs[i];
+            var sanctValue = value * sanctBuff.variant * 0.15;
+            value-=sanctValue;
+            for(var j=0;j<enemyTeam.length;j++){
+                if(enemyTeam[j].id === sanctBuff.casterId && !enemyTeam[j].isDead && enemyTeam[j].findEffect("Sanctuary")===-1) { //пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ Sanctuary
+                    var sanctCaster = enemyTeam[j];
+                    sanctCaster.takeDamageSimulation(sanctValue, caster, canBlock, canDodge, myTeam, enemyTeam);
+                }
+            }            
+            for(j=0;j<myTeam.length;j++){
+                if(myTeam[j].id == sanctBuff.casterId && !myTeam[j].isDead && myTeam[j].findEffect("Sanctuary")===-1) { //пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ Sanctuary
+                    sanctCaster = myTeam[j];
+                    sanctCaster.takeDamageSimulation(sanctValue, caster, canBlock, canDodge, enemyTeam, myTeam);
+                }
+            }
+        }
+    }
+
+    //Check for Fight Fire With Fire
+    for(i=0;i<this.buffs.length;i++){
+        if(this.buffs[i].name==="Fight Fire With Fire") {
+            var fffBuff=this.buffs[i];
+            var fffValue = value*(0.2+fffBuff.variant*0.1);
+            //value-=fffValue; пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+            fffValue = fffValue*(1+this.spellPower);
+            if(!caster.isDead && caster.findEffect("Fight Fire With Fire")===-1) { //пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ Fight Fire With Fire
+                caster.takeDamageSimulation(fffValue, this, true, true, enemyTeam, myTeam);
+            }
+        }
+    }
+
+    if(canBlock){
+        value -= Math.round(value * this.blockChance * 1.5) * this.blockChance;
+    }
+
+    this.curHealth -= value;
+
+    caster.afterDealingDamageSimulation();
+    this.afterDamageTakenSimulation();
+
+    if(this.curHealth<=0){ //Death
+        this.curHealth=0;
+        this.buffs=[];
+        this.debuffs=[];
+        this.isDead=true;
+    }
+    return true;
+};
+
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 Character.prototype.takeHeal = function(value, caster, ability, isCritical){
-    var self = this;
     var str = "";
 
     value=Math.round(value);
 
-    if(self.curHealth+value>=self.maxHealth) self.curHealth=self.maxHealth;
-    else self.curHealth += value;
+    if(this.curHealth+value>=this.maxHealth) this.curHealth=this.maxHealth;
+    else this.curHealth += value;
 
     //battleText
-    self.battleTextBuffer.push({type: "heal", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: value, crit: isCritical});
+    this.battleTextBuffer.push({type: "heal", icon: ability.icon, color: getAbilityColor(ability.role), caster: caster.charName, text: value, crit: isCritical});
 
-    if(self.charName===caster.charName){
-        str+=self.charName + " healed for "+value;
+    if(this.id === caster.id){
+        str+=this.charName + " healed for "+value;
         if(isCritical) str+= " (CRITICAL)";
         str+=" with '"+ability.name+"'";
     }
     else {
-        str+=self.charName + " was healed by "+caster.charName+" for "+value;
+        str+=this.charName + " was healed by "+caster.charName+" for "+value;
         if(isCritical) str+= " (CRITICAL)";
         str+=" with '"+ability.name+"'";
     }
-    self.logBuffer.push(str);
+    this.logBuffer.push(str);
 };
 
-//Функция получения энергии
+Character.prototype.takeHealSimulation = function(value){
+    if(this.curHealth+value>=this.maxHealth) this.curHealth=this.maxHealth;
+    else this.curHealth += value;    
+};
+
+//Get some energy
 Character.prototype.takeEnergy = function(value, caster, ability, isCritical){
-    var self = this;
     var str = "";
 
     value=Math.round(value);
 
-    if(self.curEnergy+value>=self.maxEnergy) self.curEnergy=self.maxEnergy;
-    else self.curEnergy += value;
+    if(this.curEnergy+value>=this.maxEnergy) this.curEnergy=this.maxEnergy;
+    else this.curEnergy += value;
 
-    if(self.charName===caster.charName){
-        str+=self.charName + " restore "+value;
+    if(this.id === caster.id){
+        str+=this.charName + " restore "+value;
         str+=" energy with '"+ability+"'";
     }
     else {
-        str+=self.charName + " restore "+value;
+        str+=this.charName + " restore "+value;
         str+=" energy with '"+ability+"' used by "+caster.charName;
     }
-    self.logBuffer.push(str);
+    this.logBuffer.push(str);
 };
 
-//Функция получения маны
+Character.prototype.takeEnergySimulation = function(value){
+    if(this.curEnergy + value >= this.maxEnergy) this.curEnergy = this.maxEnergy;
+    else this.curEnergy += value;
+};
+
+//Get some mana
 Character.prototype.takeMana = function(value, caster, ability, isCritical){
-    var self = this;
     var str = "";
 
     value=Math.round(value);
 
-    if(self.curMana+value>=self.maxMana) self.curMana=self.maxMana;
-    else self.curMana += value;
+    if(this.curMana+value>=this.maxMana) this.curMana=this.maxMana;
+    else this.curMana += value;
 
-    if(self.charName===caster.charName){
-        str+=self.charName + " restore "+value;
+    if(this.id === caster.id){
+        str+=this.charName + " restore "+value;
         str+=" mana with '"+ability+"'";
     }
     else {
-        str+=self.charName + " restore "+value;
+        str+=this.charName + " restore "+value;
         str+=" mana with '"+ability+"' used by "+caster.charName;
     }
-    self.logBuffer.push(str);
+    this.logBuffer.push(str);
 };
 
-//Функция траты энергии
-Character.prototype.spendEnergy = function(value) {
-    var self=this;
-    if(self.checkLuck()){
-        self.logBuffer.push(self.charName+" is very lucky and save his energy");
-        self.soundBuffer.push("luck");
+//Get some mana (simulation)
+Character.prototype.takeManaSimulation = function(value){
+    if(this.curMana+value >= this.maxMana) this.curMana = this.maxMana;
+    else this.curMana += value;
+};
+
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+Character.prototype.spendEnergy = function(value, simulation) {
+    if(!simulation && this.checkLuck()){
+        this.logBuffer.push(this.charName+" is very lucky and save his energy");
+        this.soundBuffer.push("luck");
     }
     else {
-        if(self.curEnergy-value>0) {
-            self.curEnergy-=value;
+        if(this.curEnergy-value>0) {
+            this.curEnergy-=value;
         }
         else {
-            self.curEnergy = 0;
+            this.curEnergy = 0;
         }
     }
 };
 
-//Функция траты маны
-Character.prototype.spendMana = function(value) {
-    var self=this;
-    if(self.clearCast){
-        self.logBuffer.push(self.charName+" is in clearcasting state and save mana");
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+Character.prototype.spendMana = function(value, simulation) {
+    if(this.clearCast && !simulation){
+        this.logBuffer.push(this.charName+" is in clearcasting state and save mana");
     }
     else {
-        if(self.curMana-value>0) {
-            self.curMana-=value;
+        if(this.curMana-value>0) {
+            this.curMana-=value;
         }
         else {
-            self.curMana = 0;
+            this.curMana = 0;
         }
     }
 };
 
-//Функция расчёта критического урона
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 Character.prototype.applyCrit = function (value) {
-    var self=this;
-    return Math.round(value*(1.5+self.critChance));
+    return Math.round(value*(1.5+this.critChance));
 };
 
-//Функция выполняет некие действия, если персонаж нанёс урон
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 Character.prototype.afterDealingDamage = function (myTeam, enemyTeam) {
-    var self=this;
     var buffsForRemove=[];
     var debuffsForRemove=[];
     var currentEffect;
 
-    currentEffect = self.findEffect("Invisible");
+    currentEffect = this.findEffect("Invisible");
     if(currentEffect>-1){
         buffsForRemove.push(currentEffect);
     }
-    currentEffect = self.findEffect("Fade To Black");
+    currentEffect = this.findEffect("Fade To Black");
     if(currentEffect>-1){
         buffsForRemove.push(currentEffect);
     }
 
     for(var i=0;i<buffsForRemove.length;i++){
-        self.buffs.splice(buffsForRemove[i], 1);
+        this.buffs.splice(buffsForRemove[i], 1);
     }
 
     for(i=0;i<debuffsForRemove.length;i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 
     if(buffsForRemove.length>0 || debuffsForRemove.length>0){
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
-//Функция выполняет некие действия, если персонаж получил урон
+Character.prototype.afterDealingDamageSimulation = function () {
+    var buffsForRemove=[];
+    var debuffsForRemove=[];
+    var currentEffect;
+
+    currentEffect = this.findEffect("Invisible");
+    if(currentEffect >- 1){
+        buffsForRemove.push(currentEffect);
+    }
+    currentEffect = this.findEffect("Fade To Black");
+    if(currentEffect >- 1){
+        buffsForRemove.push(currentEffect);
+    }
+
+    for(var i = 0; i < buffsForRemove.length; i++){
+        this.buffs.splice(buffsForRemove[i], 1);
+    }
+
+    for(i=0; i<debuffsForRemove.length; i++){
+        this.debuffs.splice(debuffsForRemove[i], 1);
+    }
+};
+
 Character.prototype.afterDamageTaken = function (myTeam, enemyTeam) {
-    var self=this;
     var buffsForRemove=[];
     var debuffsForRemove=[];
     var currentEffect;
 
-    currentEffect = self.findEffect("Invisible");
+    currentEffect = this.findEffect("Invisible");
     if(currentEffect>-1){
         buffsForRemove.push(currentEffect);
     }
-    currentEffect = self.findEffect("Fade To Black");
+    currentEffect = this.findEffect("Fade To Black");
     if(currentEffect>-1){
         buffsForRemove.push(currentEffect);
     }
 
     for(var i=0;i<buffsForRemove.length;i++){
-        self.buffs.splice(buffsForRemove[i], 1);
+        this.buffs.splice(buffsForRemove[i], 1);
     }
 
     for(i=0;i<debuffsForRemove.length;i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 
     if(buffsForRemove.length>0 || debuffsForRemove.length>0){
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
-//Функция выполняет некие действия, если персонаж промазал
+Character.prototype.afterDamageTakenSimulation = function () {
+    var buffsForRemove = [];
+    var debuffsForRemove = [];
+    var currentEffect;
+
+    currentEffect = this.findEffect("Invisible");
+    if(currentEffect>-1){
+        buffsForRemove.push(currentEffect);
+    }
+    currentEffect = this.findEffect("Fade To Black");
+    if(currentEffect > -1){
+        buffsForRemove.push(currentEffect);
+    }
+
+    for(var i = 0; i < buffsForRemove.length;i++){
+        this.buffs.splice(buffsForRemove[i], 1);
+    }
+
+    for(i = 0; i < debuffsForRemove.length; i++){
+        this.debuffs.splice(debuffsForRemove[i], 1);
+    }
+};
+
 Character.prototype.afterMiss = function (target, ability, myTeam, enemyTeam, doNotLog) {
-    var self=this;
     var buffsForRemove=[];
     var debuffsForRemove=[];
     var currentEffect;
 
-    self.soundBuffer.push("miss");
-    if(!doNotLog) self.logBuffer.push(self.charName+" miss against "+target+" with '"+ability.name+"'");
-    self.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: self.charName, text: "Miss", crit: false});
+    this.soundBuffer.push("miss");
+    if(!doNotLog) this.logBuffer.push(this.charName+" miss against "+target+" with '"+ability.name+"'");
+    this.battleTextBuffer.push({type: "other", icon: ability.icon, color: getAbilityColor(ability.role), caster: this.charName, text: "Miss", crit: false});
 
-    currentEffect = self.findEffect("Reign In Blood");
+    currentEffect = this.findEffect("Reign In Blood");
     if(currentEffect>-1){
         buffsForRemove.push(currentEffect);
     }
 
-    currentEffect = self.findEffect("Down In Flames");
+    currentEffect = this.findEffect("Down In Flames");
     if(currentEffect>-1){
         buffsForRemove.push(currentEffect);
     }
 
     for(var i=0;i<buffsForRemove.length;i++){
-        self.buffs.splice(buffsForRemove[i], 1);
+        this.buffs.splice(buffsForRemove[i], 1);
     }
 
     for(i=0;i<debuffsForRemove.length;i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 
-    if(buffsForRemove.length>0 || debuffsForRemove.length>0){
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+    if(buffsForRemove.length > 0 || debuffsForRemove.length > 0){
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
-//Функция выполняет некие действия, если персонаж использовал заклинание
 Character.prototype.afterCast = function (castedSpell, myTeam, enemyTeam) {
-    var self=this;
-    var buffsForRemove=[];
-    var debuffsForRemove=[];
+    var buffsForRemove = [];
+    var debuffsForRemove = [];
     var currentEffect;
 
-    currentEffect = self.findEffect("Powerslave");
-    if(currentEffect>-1 && castedSpell!=="Powerslave" && castedSpell!=="Lets Me Take It_Powerslave"){
+    currentEffect = this.findEffect("Powerslave");
+    if(currentEffect > -1 && castedSpell !== "Powerslave" && castedSpell !== "Lets Me Take It_Powerslave"){
         buffsForRemove.push(currentEffect);
     }
 
-    for(var i=0;i<buffsForRemove.length;i++){
-        self.buffs.splice(buffsForRemove[i], 1);
+    for(var i = 0; i < buffsForRemove.length; i++){
+        this.buffs.splice(buffsForRemove[i], 1);
     }
 
-    for(i=0;i<debuffsForRemove.length;i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+    for(i = 0; i < debuffsForRemove.length; i++){
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 
     if(buffsForRemove.length>0 || debuffsForRemove.length>0){
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
-//Функция убирает все эффекты замедления персонажа
+Character.prototype.afterCastSimulation = function (castedSpell) {
+    var buffsForRemove = [];
+    var debuffsForRemove = [];
+    var currentEffect;
+
+    currentEffect = this.findEffect("Powerslave");
+    if(currentEffect > -1 && castedSpell !== "Powerslave" && castedSpell !== "Lets Me Take It_Powerslave"){
+        buffsForRemove.push(currentEffect);
+    }
+
+    for(var i = 0; i < buffsForRemove.length; i++){
+        this.buffs.splice(buffsForRemove[i], 1);
+    }
+
+    for(i = 0; i < debuffsForRemove.length; i++){
+        this.debuffs.splice(debuffsForRemove[i], 1);
+    }
+};
+
 Character.prototype.removeImmobilization = function (myTeam, enemyTeam) {
-    var self=this;
     var debuffsForRemove=[];
     var currentEffect;
 
-    currentEffect = self.findEffect("Hog Tied");
+    currentEffect = this.findEffect("Hog Tied");
     if(currentEffect>-1){
         debuffsForRemove.push(currentEffect);
     }
 
-    currentEffect = self.findEffect("Caught Somewhere In Time");
+    currentEffect = this.findEffect("Caught Somewhere In Time");
     if(currentEffect>-1){
         debuffsForRemove.push(currentEffect);
     }
 
     for(var i=0;i<debuffsForRemove.length;i++){
-        self.debuffs.splice(debuffsForRemove[i], 1);
+        this.debuffs.splice(debuffsForRemove[i], 1);
     }
 
     if(debuffsForRemove.length>0){
-        self.resetState();
-        self.updateMods(myTeam, enemyTeam);
-        self.calcChar();
+        this.resetState();
+        this.updateMods(myTeam, enemyTeam);
+        this.calcChar(true);
     }
 };
 
-//Функция снижения урона
+Character.prototype.removeImmobilizationSimulation = function () {
+    var debuffsForRemove = [];
+    var currentEffect;
+
+    currentEffect = this.findEffect("Hog Tied");
+    if(currentEffect >- 1){
+        debuffsForRemove.push(currentEffect);
+    }
+
+    currentEffect = this.findEffect("Caught Somewhere In Time");
+    if(currentEffect >- 1){
+        debuffsForRemove.push(currentEffect);
+    }
+
+    for(var i = 0; i < debuffsForRemove.length; i++){
+        this.debuffs.splice(debuffsForRemove[i], 1);
+    }
+};
+
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 Character.prototype.applyResistance = function (value, magic) {
-    var self=this;
     if(magic) {
-        if(self.magicImmune) return 0;
-        return Math.round(value-value*self.magicRes);
+        if(this.magicImmune) return 0;
+        return Math.round(value-value*this.magicRes);
     }
     else {
-        if(self.physImmune) return 0;
-        return Math.round(value-value*self.physRes);
+        if(this.physImmune) return 0;
+        return Math.round(value-value*this.physRes);
     }
 };
 
-//Функция проверки блока
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 Character.prototype.checkBlock = function () {
-    var self=this;
-    return (Math.random()<=self.blockChance);
+    return (Math.random()<=this.blockChance);
 };
 
-//Функция проверки на иммунитет
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 Character.prototype.checkImmune = function (magicEffect) {
-    var self=this;
-    return (!magicEffect && self.physImmune) || (magicEffect && self.magicImmune);
+    return (!magicEffect && this.physImmune) || (magicEffect && this.magicImmune);
 };
 
-//Функция проверки хита
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 Character.prototype.checkHit = function () {
-    var self=this;
-    return (Math.random()<=self.hitChance);
+    return (Math.random()<=this.hitChance);
 };
 
-//Функция проверки крита
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 Character.prototype.checkCrit = function () {
-    var self=this;
-    return (Math.random()<=self.critChance);
+    return (Math.random()<=this.critChance);
 };
 
-//Функция проверки уклонения
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 Character.prototype.checkDodge = function () {
-    var self=this;
-    return (Math.random()<=self.dodgeChance);
+    return (Math.random()<=this.dodgeChance);
 };
 
-//Функция проверки удачи
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 Character.prototype.checkLuck = function () {
-    var self=this;
-    return (Math.random()<=self.luck);
+    return (Math.random()<=this.luck);
 };
 
-//Функция проверки сброса кулдауна
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 Character.prototype.checkCooldownDrop = function () {
-    var self=this;
-    return (Math.random()<=(self.initiative*0.0001));
+    return (Math.random() <= (this.initiative * 0.0001));
 };
 
-//Функция проверки эффекта
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 Character.prototype.findEffect = function (effect) {
-    var self=this;
-    for(var i=0;i<self.buffs.length;i++){
-        if(self.buffs[i].name===effect) return i;
+    for(var i=0;i<this.buffs.length;i++){
+        if(this.buffs[i].name===effect) return i;
     }
-    for(i=0;i<self.debuffs.length;i++){
-        if(self.debuffs[i].name===effect) return i;
+    for(i=0;i<this.debuffs.length;i++){
+        if(this.debuffs[i].name===effect) return i;
     }
     return -1;
 };
 
 Character.prototype.getSize = function() {
-    var self = this;
-    console.log("Character "+self.charName+" length: "+byteLength(JSON.stringify(self))+" bytes");
+    console.log("Character "+this.charName+" length: "+byteLength(JSON.stringify(this))+" bytes");
 };
 
-//Функция выбирает цвет для способности по её роли
 function getAbilityColor (role) {
     switch (role) {
         case "sentinel":
             return "#f7f7f7";
-            break;
         case "slayer":
             return "#ff0906";
-            break;
         case "redeemer":
             return "#0055AF";
-            break;
         case "ripper":
             return "#61dd45";
-            break;
         case "prophet":
             return "#00b3ee";
-            break;
         case "malefic":
             return "#f05800";
-            break;
         case "cleric":
             return "#ffc520";
-            break;
         case "heretic":
             return "#862197";
-            break;
     }
 }
 
-module.exports = function(char) {
-    return new Character(char);
+module.exports = function(char, ignoreEquip) {
+    return new Character(char, ignoreEquip);
 };

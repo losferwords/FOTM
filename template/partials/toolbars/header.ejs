@@ -14,7 +14,7 @@
             <ul class="nav col-xs-4 col-sm-3 col-lg-2">
                 <li class="col-xs-6"><p class="navbar-text"><span class="text-info text-right">{{::userName}}</span></p></li>
                 <li class="col-xs-6">
-                    <button class="btn btn-warning btn-sm navbar-btn" href="" onclick="$('<form method=POST action=/logout></form>').submit(); return false" translate>Exit</button>
+                    <button class="btn btn-warning btn-sm navbar-btn" ng-click="logout()" translate>Exit</button>
                 </li>
             </ul>
         </div>

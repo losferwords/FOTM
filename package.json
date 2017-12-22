@@ -1,15 +1,17 @@
 {
   "name": "fotm",
-  "version": "0.6.6",
+  "version": "0.7.0",
   "private": true,
   "scripts": {
-    "postinstall": "bower install && gulp default --env production"
+    "postinstall": "bower install && gulp default --env production",
+    "profiller": "SET NODE_PATH=.&&SET NODE_ENV=development&&node --inspect=33786 app.js"
   },
   "dependencies": {
     "async": "1.5.2",
     "biguint-format": "1.0.0",
     "body-parser": "1.15.2",
     "bower": "1.7.9",
+    "chance": "1.0.6",
     "connect": "3.5.0",
     "connect-mongo": "0.8.2",
     "cookie": "0.2.4",
@@ -21,6 +23,7 @@
     "express": "4.14.0",
     "express-error-handler": "1.1.0",
     "express-session": "1.14.2",
+    "fast-deepclone": "1.0.0",
     "flake-idgen": "1.1.0",
     "gulp": "3.9.1",
     "gulp-clean-css": "2.0.13",
@@ -36,13 +39,12 @@
     "gulp-uglify": "1.5.4",
     "mongodb": "2.2.11",
     "mongoose": "4.6.6",
-    "morgan": "1.7.0",
     "nconf": "0.8.4",
+    "object-sizeof": "1.2.0",
     "serve-favicon": "2.3.0",
     "socket.io": "1.5.1",
     "socket.io-emitter": "0.2.0",
-    "socket.io-handshake": "0.0.10",
-    "winston": "2.3.0"
+    "socket.io-handshake": "0.0.10"
   },
   "devDependencies": {
     "grunt": "0.4.5",

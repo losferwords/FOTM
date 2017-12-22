@@ -1,7 +1,9 @@
 var AbilityFactory = require('services/abilityFactory');
 var randomService = require('services/randomService');
+var Chance = require('chance');
+var chance = new Chance();
 
-//Сервис для создания персонажа
+//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 var genderParams = {
     male: {str:5, dxt:0, int:5},
     female: {str:0, dxt:5, int:5}
@@ -32,655 +34,649 @@ var roleCosts = {
     heretic:        {red: 1, green: 2, blue: 3},
     random:         {red: 1, green: 1, blue: 1}
 };
-var roleEquip = {
-    sentinel:
-    {
-        head: {
-            name: function(){return "Plate Helmet"},
-            slot: function(){return "head"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--black-knight-helm)"},
-            basicPhysRes: function(){return 0.0075},
-            basicMagicRes: function(){return 0.001875},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
-        },
-        chest: {
-            name: function(){return "Breastplate"},
-            slot: function(){return "chest"},
-            image: function(){return"url(../images/assets/svg/view/sprites.svg#inventory--breastplate)"},
-            basicPhysRes: function(){return 0.015},
-            basicMagicRes: function(){return 0.00375},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
-        },
-        hands: {
-            name: function(){return "Plate gloves"},
-            slot: function(){return "hands"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
-            basicPhysRes: function(){return 0.0075},
-            basicMagicRes: function(){return 0.001875},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
-        },
-        legs: {
-            name: function(){return "Plate greaves"},
-            slot: function(){return "legs"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
-            basicPhysRes: function(){return 0.0075},
-            basicMagicRes: function(){return 0.001875},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
-        },
-        boots: {
-            name: function(){return "Plate sabatons"},
-            slot: function(){return "boots"},
-            image: function(){return"url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
-            basicPhysRes: function(){return 0.0075},
-            basicMagicRes: function(){return 0.001875},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
-        },
-        mainHandWeapon: {
-            name: function(){return "Seraph Spear"},
-            slot: function(){return "mainHandWeapon"},
-            image: function(){return"url(../images/assets/svg/view/sprites.svg#inventory--spear-feather)"},
-            minDamage: function(){return 440},
-            maxDamage: function(){return 600},
-            basicMagicRes: function(){return 0.015},
-            basicMaxHealth: function(){return 500},
-            range: function(){return 2},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
-        },
-        offHandWeapon: {
-            name: function(){return "Sentinel Shield"},
-            slot: function(){return "offHandWeapon"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--templar-shield)"},
-            basicPhysRes: function(){return 0.015},
-            basicBlockChance: function(){return 0.025},
-            minDamage: function(){return 0},
-            maxDamage: function(){return 0},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
-        },
-        leftRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "leftRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        rightRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "rightRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        amulet: {
-            name: function(){return "Amulet"},
-            slot: function(){return "amulet"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        }
-    },
-    slayer:
-    {
-        head: {
-            name: function(){return "Plate Helmet"},
-            slot: function(){return "head"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--brutal-helm)"},
-            basicPhysRes: function(){return 0.0075},
-            basicMagicRes: function(){return 0.001875},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
-        },
-        chest: {
-            name: function(){return "Breastplate"},
-            slot: function(){return "chest"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--lamellar)"},
-            basicPhysRes: function(){return 0.015},
-            basicMagicRes: function(){return 0.00375},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
-        },
-        hands: {
-            name: function(){return "Plate gloves"},
-            slot: function(){return "hands"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
-            basicPhysRes: function(){return 0.0075},
-            basicMagicRes: function(){return 0.001875},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        legs: {
-            name: function(){return "Plate greaves"},
-            slot: function(){return "legs"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
-            basicPhysRes: function(){return 0.0075},
-            basicMagicRes: function(){return 0.001875},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
-        },
-        boots: {
-            name: function(){return "Plate sabatons"},
-            slot: function(){return "boots"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
-            basicPhysRes: function(){return 0.0075},
-            basicMagicRes: function(){return 0.001875},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
-        },
-        mainHandWeapon: {
-            name: function(){return "Abaddon Blade"},
-            slot: function(){return "mainHandWeapon"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--relic-blade)"},
-            minDamage: function(){return 666},
-            maxDamage: function(){return 900},
-            basicAttackPower: function(){return 0.1},
-            basicCritChance: function(){return 0.0125},
-            basicPhysRes: function(){return 0.015},
-            basicHealthReg: function(){return 0.002},
-            range: function(){return 1},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        offHandWeapon: {
-            name: function(){return "Void"},
-            slot: function(){return "offHandWeapon"}
-        },
-        leftRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "leftRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        rightRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "rightRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        amulet: {
-            name: function(){return "Amulet"},
-            slot: function(){return "amulet"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
-        }
-    },
-    redeemer:
-    {
-        head: {
-            name: function(){return "Leather hood"},
-            slot: function(){return "head"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--hood)"},
-            basicPhysRes: function(){return 0.00375},
-            basicMagicRes: function(){return 0.005625},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        chest: {
-            name: function(){return "Leather vest"},
-            slot: function(){return "chest"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--leather-vest)"},
-            basicPhysRes: function(){return 0.0075},
-            basicMagicRes: function(){return 0.01125},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        hands: {
-            name: function(){return "Leather gloves"},
-            slot: function(){return "hands"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
-            basicPhysRes: function(){return 0.00375},
-            basicMagicRes: function(){return 0.005625},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        legs: {
-            name: function(){return "Leather pants"},
-            slot: function(){return "legs"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
-            basicPhysRes: function(){return 0.00375},
-            basicMagicRes: function(){return 0.005625},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        boots: {
-            name: function(){return "Leather boots"},
-            slot: function(){return "boots"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
-            basicPhysRes: function(){return 0.00375},
-            basicMagicRes: function(){return 0.005625},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
-        },
-        mainHandWeapon: {
-            name: function(){return "Best Faith Gun"},
-            slot: function(){return "mainHandWeapon"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--laser-blast)"},
-            minDamage: function(){return 450},
-            maxDamage: function(){return 700},
-            basicHitChance: function(){return 0.05},
-            basicMaxEnergy: function(){return 50},
-            basicDodgeChance: function(){return 0.045},
-            basicSpellPower: function(){return 0.05},
-            range: function(){return 3},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        offHandWeapon: {
-            name: function(){return "Void"},
-            slot: function(){return "offHandWeapon"}
-        },
-        leftRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "leftRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        rightRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "rightRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        amulet: {
-            name: function(){return "Amulet"},
-            slot: function(){return "amulet"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
-        }
-    },
-    ripper:
-    {
-        head: {
-            name: function(){return "Leather hood"},
-            slot: function(){return "head"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--hood)"},
-            basicPhysRes: function(){return 0.00375},
-            basicMagicRes: function(){return 0.005625},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        chest: {
-            name: function(){return "Leather cloak"},
-            slot: function(){return "chest"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--cloak-dagger)"},
-            basicPhysRes: function(){return 0.0075},
-            basicMagicRes: function(){return 0.01125},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
-        },
-        hands: {
-            name: function(){return "Leather gloves"},
-            slot: function(){return "hands"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
-            basicPhysRes: function(){return 0.00375},
-            basicMagicRes: function(){return 0.005625},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        legs: {
-            name: function(){return "Leather pants"},
-            slot: function(){return "legs"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
-            basicPhysRes: function(){return 0.00375},
-            basicMagicRes: function(){return 0.005625},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
-        },
-        boots: {
-            name: function(){return "Leather boots"},
-            slot: function(){return "boots"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
-            basicPhysRes: function(){return 0.00375},
-            basicMagicRes: function(){return 0.005625},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
-        },
-        mainHandWeapon: {
-            name: function(){return "Tormentor Dagger"},
-            slot: function(){return "mainHandWeapon"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--curvy-knife)"},
-            minDamage: function(){return 210},
-            maxDamage: function(){return 350},
-            basicHitChance: function(){return 0.025},
-            basicCritChance: function(){return 0.025},
-            range: function(){return 1},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "red"}]
-        },
-        offHandWeapon: {
-            name: function(){return "Slaughter Dagger"},
-            slot: function(){return "offHandWeapon"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--sacrificial-dagger)"},
-            minDamage: function(){return 210},
-            maxDamage: function(){return 350},
-            basicAttackPower: function(){return 0.05},
-            basicLuck: function(){return 0.0125},
-            range: function(){return 1},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
-        },
-        leftRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "leftRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
-        },
-        rightRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "rightRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        amulet: {
-            name: function(){return "Amulet"},
-            slot: function(){return "amulet"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        }
-    },
-    prophet:
-    {
-        head: {
-            name: function(){return "Cloth Hat"},
-            slot: function(){return "head"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--pointy-hat)"},
-            basicPhysRes: function(){return 0.001875},
-            basicMagicRes: function(){return 0.0075},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        chest: {
-            name: function(){return "Cloth robe"},
-            slot: function(){return "chest"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--robe)"},
-            basicPhysRes: function(){return 0.00375},
-            basicMagicRes: function(){return 0.015},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        hands: {
-            name: function(){return "Cloth gloves"},
-            slot: function(){return "hands"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
-            basicPhysRes: function(){return 0.001875},
-            basicMagicRes: function(){return 0.0075},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        legs: {
-            name: function(){return "Cloth pants"},
-            slot: function(){return "legs"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
-            basicPhysRes: function(){return 0.001875},
-            basicMagicRes: function(){return 0.0075},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        boots: {
-            name: function(){return "Cloth boots"},
-            slot: function(){return "boots"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
-            basicPhysRes: function(){return 0.001875},
-            basicMagicRes: function(){return 0.0075},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        mainHandWeapon: {
-            name: function(){return "Clairvoyant Wand"},
-            slot: function(){return "mainHandWeapon"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--lunar-wand)"},
-            minDamage: function(){return 360},
-            maxDamage: function(){return 600},
-            basicSpellPower: function(){return 0.05},
-            basicHitChance: function(){return 0.025},
-            range: function(){return 3},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        offHandWeapon: {
-            name: function(){return "Book Of Souls"},
-            slot: function(){return "offHandWeapon"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--bookmarklet)"},
-            minDamage: function(){return 0},
-            maxDamage: function(){return 0},
-            basicMagicRes: function(){return 0.015},
-            basicManaReg: function(){return 0.005},
-            sockets: [{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        leftRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "leftRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        rightRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "rightRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
-        },
-        amulet: {
-            name: function(){return "Amulet"},
-            slot: function(){return "amulet"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        }
-    },
-    malefic:
-    {
-        head: {
-            name: function(){return "Cloth mask"},
-            slot: function(){return "head"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--imp-laugh)"},
-            basicPhysRes: function(){return 0.001875},
-            basicMagicRes: function(){return 0.0075},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
-        },
-        chest: {
-            name: function(){return "Cloth robe"},
-            slot: function(){return "chest"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--robe)"},
-            basicPhysRes: function(){return 0.00375},
-            basicMagicRes: function(){return 0.015},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        hands: {
-            name: function(){return "Cloth gloves"},
-            slot: function(){return "hands"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
-            basicPhysRes: function(){return 0.001875},
-            basicMagicRes: function(){return 0.0075},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
-        },
-        legs: {
-            name: function(){return "Cloth pants"},
-            slot: function(){return "legs"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
-            basicPhysRes: function(){return 0.001875},
-            basicMagicRes: function(){return 0.0075},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        boots: {
-            name: function(){return "Cloth boots"},
-            slot: function(){return "boots"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
-            basicPhysRes: function(){return 0.001875},
-            basicMagicRes: function(){return 0.0075},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        mainHandWeapon: {
-            name: function(){return "Zaqqum Branch"},
-            slot: function(){return "mainHandWeapon"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--wizard-staff)"},
-            minDamage: function(){return 510},
-            maxDamage: function(){return 850},
-            basicSpellPower: function(){return 0.1},
-            basicCritChance: function(){return 0.0125},
-            basicMaxMana: function(){return 400},
-            basicInitiative: function(){return 17},
-            range: function(){return 1},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        offHandWeapon: {
-            name: function(){return "Void"},
-            slot: function(){return "offHandWeapon"}
-        },
-        leftRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "leftRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        rightRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "rightRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
-        },
-        amulet: {
-            name: function(){return "Amulet"},
-            slot: function(){return "amulet"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        }
-    },
-    cleric:
-    {
-        head: {
-            name: function(){return "Cleric crown"},
-            slot: function(){return "head"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--pope-crown)"},
-            basicPhysRes: function(){return 0.005625},
-            basicMagicRes: function(){return 0.00375},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        chest: {
-            name: function(){return "Mail plastron"},
-            slot: function(){return "chest"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--plastron)"},
-            basicPhysRes: function(){return 0.01125},
-            basicMagicRes: function(){return 0.0075},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
-        },
-        hands: {
-            name: function(){return "Mail gloves"},
-            slot: function(){return "hands"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
-            basicPhysRes: function(){return 0.005625},
-            basicMagicRes: function(){return 0.00375},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        legs: {
-            name: function(){return "Mail pants"},
-            slot: function(){return "legs"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
-            basicPhysRes: function(){return 0.005625},
-            basicMagicRes: function(){return 0.00375},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        boots: {
-            name: function(){return "Mail boots"},
-            slot: function(){return "boots"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
-            basicPhysRes: function(){return 0.005625},
-            basicMagicRes: function(){return 0.00375},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        mainHandWeapon: {
-            name: function(){return "Malleus Maleficarum"},
-            slot: function(){return "mainHandWeapon"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--claw-hammer)"},
-            minDamage: function(){return 300},
-            maxDamage: function(){return 500},
-            basicAttackPower: function(){return 0.075},
-            basicLuck: function(){return 0.0125},
-            range: function(){return 1},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
-        },
-        offHandWeapon: {
-            name: function(){return "Salvation Crucifix"},
-            slot: function(){return "offHandWeapon"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--crucifix)"},
-            minDamage: function(){return 0},
-            maxDamage: function(){return 0},
-            basicSpellPower: function(){return 0.075},
-            basicManaReg: function(){return 0.0025},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        leftRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "leftRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
-        },
-        rightRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "rightRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        amulet: {
-            name: function(){return "Amulet"},
-            slot: function(){return "amulet"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        }
-    },
-    heretic:
-    {
-        head: {
-            name: function(){return "Heretic crown"},
-            slot: function(){return "head"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--crowned-skull)"},
-            basicPhysRes: function(){return 0.005625},
-            basicMagicRes: function(){return 0.00375},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        chest: {
-            name: function(){return "Rib armor"},
-            slot: function(){return "chest"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ribcage)"},
-            basicPhysRes: function(){return 0.01125},
-            basicMagicRes: function(){return 0.0075},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        hands: {
-            name: function(){return "Mail gloves"},
-            slot: function(){return "hands"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
-            basicPhysRes: function(){return 0.005625},
-            basicMagicRes: function(){return 0.00375},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
-        },
-        legs: {
-            name: function(){return "Mail pants"},
-            slot: function(){return "legs"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
-            basicPhysRes: function(){return 0.005625},
-            basicMagicRes: function(){return 0.00375},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
-        },
-        boots: {
-            name: function(){return "Mail boots"},
-            slot: function(){return "boots"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
-            basicPhysRes: function(){return 0.005625},
-            basicMagicRes: function(){return 0.00375},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
-        },
-        mainHandWeapon: {
-            name: function(){return "Incubus Dagger"},
-            slot: function(){return "mainHandWeapon"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--bone-knife)"},
-            minDamage: function(){return 240},
-            maxDamage: function(){return 400},
-            basicSpellPower: function(){return 0.075},
-            basicMaxMana: function(){return 400},
-            range: function(){return 1},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
-        },
-        offHandWeapon: {
-            name: function(){return "Succubus Shield"},
-            slot: function(){return "offHandWeapon"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--magic-shield)"},
-            basicMaxEnergy: function(){return 50},
-            basicBlockChance: function(){return 0.01875},
-            minDamage: function(){return 0},
-            maxDamage: function(){return 0},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
-        },
-        leftRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "leftRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
-        },
-        rightRing: {
-            name: function(){return "Ring"},
-            slot: function(){return "rightRing"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
-            sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
-        },
-        amulet: {
-            name: function(){return "Amulet"},
-            slot: function(){return "amulet"},
-            image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
-            sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+var roleEquip = function(role){
+    switch(role){
+        case "sentinel": return {
+            head: {
+                name: function(){return "Plate Helmet"},
+                slot: function(){return "head"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--black-knight-helm)"},
+                basicPhysRes: function(){return 0.0075},
+                basicMagicRes: function(){return 0.001875},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
+            },
+            chest: {
+                name: function(){return "Breastplate"},
+                slot: function(){return "chest"},
+                image: function(){return"url(../images/assets/svg/view/sprites.svg#inventory--breastplate)"},
+                basicPhysRes: function(){return 0.015},
+                basicMagicRes: function(){return 0.00375},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
+            },
+            hands: {
+                name: function(){return "Plate gloves"},
+                slot: function(){return "hands"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
+                basicPhysRes: function(){return 0.0075},
+                basicMagicRes: function(){return 0.001875},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
+            },
+            legs: {
+                name: function(){return "Plate greaves"},
+                slot: function(){return "legs"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
+                basicPhysRes: function(){return 0.0075},
+                basicMagicRes: function(){return 0.001875},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
+            },
+            boots: {
+                name: function(){return "Plate sabatons"},
+                slot: function(){return "boots"},
+                image: function(){return"url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
+                basicPhysRes: function(){return 0.0075},
+                basicMagicRes: function(){return 0.001875},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
+            },
+            mainHandWeapon: {
+                name: function(){return "Seraph Spear"},
+                slot: function(){return "mainHandWeapon"},
+                image: function(){return"url(../images/assets/svg/view/sprites.svg#inventory--spear-feather)"},
+                minDamage: function(){return 440},
+                maxDamage: function(){return 600},
+                basicMagicRes: function(){return 0.015},
+                basicMaxHealth: function(){return 500},
+                range: function(){return 2},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
+            },
+            offHandWeapon: {
+                name: function(){return "Sentinel Shield"},
+                slot: function(){return "offHandWeapon"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--templar-shield)"},
+                basicPhysRes: function(){return 0.015},
+                basicBlockChance: function(){return 0.025},
+                minDamage: function(){return 0},
+                maxDamage: function(){return 0},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
+            },
+            leftRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "leftRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            rightRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "rightRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            amulet: {
+                name: function(){return "Amulet"},
+                slot: function(){return "amulet"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            }
+        };
+        case "slayer": return {
+            head: {
+                name: function(){return "Plate Helmet"},
+                slot: function(){return "head"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--brutal-helm)"},
+                basicPhysRes: function(){return 0.0075},
+                basicMagicRes: function(){return 0.001875},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
+            },
+            chest: {
+                name: function(){return "Breastplate"},
+                slot: function(){return "chest"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--lamellar)"},
+                basicPhysRes: function(){return 0.015},
+                basicMagicRes: function(){return 0.00375},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
+            },
+            hands: {
+                name: function(){return "Plate gloves"},
+                slot: function(){return "hands"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
+                basicPhysRes: function(){return 0.0075},
+                basicMagicRes: function(){return 0.001875},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            legs: {
+                name: function(){return "Plate greaves"},
+                slot: function(){return "legs"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
+                basicPhysRes: function(){return 0.0075},
+                basicMagicRes: function(){return 0.001875},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
+            },
+            boots: {
+                name: function(){return "Plate sabatons"},
+                slot: function(){return "boots"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
+                basicPhysRes: function(){return 0.0075},
+                basicMagicRes: function(){return 0.001875},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
+            },
+            mainHandWeapon: {
+                name: function(){return "Abaddon Blade"},
+                slot: function(){return "mainHandWeapon"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--relic-blade)"},
+                minDamage: function(){return 666},
+                maxDamage: function(){return 900},
+                basicAttackPower: function(){return 0.1},
+                basicCritChance: function(){return 0.0125},
+                basicPhysRes: function(){return 0.015},
+                basicHealthReg: function(){return 0.002},
+                range: function(){return 1},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            offHandWeapon: {
+                name: function(){return "Void"},
+                slot: function(){return "offHandWeapon"}
+            },
+            leftRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "leftRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            rightRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "rightRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            amulet: {
+                name: function(){return "Amulet"},
+                slot: function(){return "amulet"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
+            }
+        };
+        case "redeemer": return {
+            head: {
+                name: function(){return "Leather hood"},
+                slot: function(){return "head"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--hood)"},
+                basicPhysRes: function(){return 0.00375},
+                basicMagicRes: function(){return 0.005625},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            chest: {
+                name: function(){return "Leather vest"},
+                slot: function(){return "chest"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--leather-vest)"},
+                basicPhysRes: function(){return 0.0075},
+                basicMagicRes: function(){return 0.01125},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            hands: {
+                name: function(){return "Leather gloves"},
+                slot: function(){return "hands"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
+                basicPhysRes: function(){return 0.00375},
+                basicMagicRes: function(){return 0.005625},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            legs: {
+                name: function(){return "Leather pants"},
+                slot: function(){return "legs"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
+                basicPhysRes: function(){return 0.00375},
+                basicMagicRes: function(){return 0.005625},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            boots: {
+                name: function(){return "Leather boots"},
+                slot: function(){return "boots"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
+                basicPhysRes: function(){return 0.00375},
+                basicMagicRes: function(){return 0.005625},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
+            },
+            mainHandWeapon: {
+                name: function(){return "Best Faith Gun"},
+                slot: function(){return "mainHandWeapon"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--laser-blast)"},
+                minDamage: function(){return 450},
+                maxDamage: function(){return 700},
+                basicHitChance: function(){return 0.05},
+                basicMaxEnergy: function(){return 50},
+                basicDodgeChance: function(){return 0.045},
+                basicSpellPower: function(){return 0.05},
+                range: function(){return 3},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            offHandWeapon: {
+                name: function(){return "Void"},
+                slot: function(){return "offHandWeapon"}
+            },
+            leftRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "leftRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            rightRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "rightRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            amulet: {
+                name: function(){return "Amulet"},
+                slot: function(){return "amulet"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
+            }
+        };
+        case "ripper": return {
+            head: {
+                name: function(){return "Leather hood"},
+                slot: function(){return "head"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--hood)"},
+                basicPhysRes: function(){return 0.00375},
+                basicMagicRes: function(){return 0.005625},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            chest: {
+                name: function(){return "Leather cloak"},
+                slot: function(){return "chest"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--cloak-dagger)"},
+                basicPhysRes: function(){return 0.0075},
+                basicMagicRes: function(){return 0.01125},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
+            },
+            hands: {
+                name: function(){return "Leather gloves"},
+                slot: function(){return "hands"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
+                basicPhysRes: function(){return 0.00375},
+                basicMagicRes: function(){return 0.005625},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            legs: {
+                name: function(){return "Leather pants"},
+                slot: function(){return "legs"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
+                basicPhysRes: function(){return 0.00375},
+                basicMagicRes: function(){return 0.005625},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
+            },
+            boots: {
+                name: function(){return "Leather boots"},
+                slot: function(){return "boots"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
+                basicPhysRes: function(){return 0.00375},
+                basicMagicRes: function(){return 0.005625},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
+            },
+            mainHandWeapon: {
+                name: function(){return "Tormentor Dagger"},
+                slot: function(){return "mainHandWeapon"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--curvy-knife)"},
+                minDamage: function(){return 210},
+                maxDamage: function(){return 350},
+                basicHitChance: function(){return 0.025},
+                basicCritChance: function(){return 0.025},
+                range: function(){return 1},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "red"}]
+            },
+            offHandWeapon: {
+                name: function(){return "Slaughter Dagger"},
+                slot: function(){return "offHandWeapon"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--sacrificial-dagger)"},
+                minDamage: function(){return 210},
+                maxDamage: function(){return 350},
+                basicAttackPower: function(){return 0.05},
+                basicLuck: function(){return 0.0125},
+                range: function(){return 1},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
+            },
+            leftRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "leftRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
+            },
+            rightRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "rightRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            amulet: {
+                name: function(){return "Amulet"},
+                slot: function(){return "amulet"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            }
+        };
+        case "prophet": return {
+            head: {
+                name: function(){return "Cloth Hat"},
+                slot: function(){return "head"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--pointy-hat)"},
+                basicPhysRes: function(){return 0.001875},
+                basicMagicRes: function(){return 0.0075},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            chest: {
+                name: function(){return "Cloth robe"},
+                slot: function(){return "chest"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--robe)"},
+                basicPhysRes: function(){return 0.00375},
+                basicMagicRes: function(){return 0.015},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            hands: {
+                name: function(){return "Cloth gloves"},
+                slot: function(){return "hands"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
+                basicPhysRes: function(){return 0.001875},
+                basicMagicRes: function(){return 0.0075},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            legs: {
+                name: function(){return "Cloth pants"},
+                slot: function(){return "legs"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
+                basicPhysRes: function(){return 0.001875},
+                basicMagicRes: function(){return 0.0075},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            boots: {
+                name: function(){return "Cloth boots"},
+                slot: function(){return "boots"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
+                basicPhysRes: function(){return 0.001875},
+                basicMagicRes: function(){return 0.0075},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            mainHandWeapon: {
+                name: function(){return "Clairvoyant Wand"},
+                slot: function(){return "mainHandWeapon"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--lunar-wand)"},
+                minDamage: function(){return 360},
+                maxDamage: function(){return 600},
+                basicSpellPower: function(){return 0.05},
+                basicHitChance: function(){return 0.025},
+                range: function(){return 3},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            offHandWeapon: {
+                name: function(){return "Book Of Souls"},
+                slot: function(){return "offHandWeapon"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--bookmarklet)"},
+                minDamage: function(){return 0},
+                maxDamage: function(){return 0},
+                basicMagicRes: function(){return 0.015},
+                basicManaReg: function(){return 0.005},
+                sockets: [{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            leftRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "leftRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            rightRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "rightRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
+            },
+            amulet: {
+                name: function(){return "Amulet"},
+                slot: function(){return "amulet"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            }
+        };
+        case "malefic": return {
+            head: {
+                name: function(){return "Cloth mask"},
+                slot: function(){return "head"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--imp-laugh)"},
+                basicPhysRes: function(){return 0.001875},
+                basicMagicRes: function(){return 0.0075},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
+            },
+            chest: {
+                name: function(){return "Cloth robe"},
+                slot: function(){return "chest"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--robe)"},
+                basicPhysRes: function(){return 0.00375},
+                basicMagicRes: function(){return 0.015},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            hands: {
+                name: function(){return "Cloth gloves"},
+                slot: function(){return "hands"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
+                basicPhysRes: function(){return 0.001875},
+                basicMagicRes: function(){return 0.0075},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
+            },
+            legs: {
+                name: function(){return "Cloth pants"},
+                slot: function(){return "legs"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
+                basicPhysRes: function(){return 0.001875},
+                basicMagicRes: function(){return 0.0075},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            boots: {
+                name: function(){return "Cloth boots"},
+                slot: function(){return "boots"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
+                basicPhysRes: function(){return 0.001875},
+                basicMagicRes: function(){return 0.0075},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            mainHandWeapon: {
+                name: function(){return "Zaqqum Branch"},
+                slot: function(){return "mainHandWeapon"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--wizard-staff)"},
+                minDamage: function(){return 510},
+                maxDamage: function(){return 850},
+                basicSpellPower: function(){return 0.1},
+                basicCritChance: function(){return 0.0125},
+                basicMaxMana: function(){return 400},
+                basicInitiative: function(){return 17},
+                range: function(){return 1},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            offHandWeapon: {
+                name: function(){return "Void"},
+                slot: function(){return "offHandWeapon"}
+            },
+            leftRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "leftRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            rightRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "rightRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
+            },
+            amulet: {
+                name: function(){return "Amulet"},
+                slot: function(){return "amulet"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            }
+        };
+        case "cleric": return {
+            head: {
+                name: function(){return "Cleric crown"},
+                slot: function(){return "head"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--pope-crown)"},
+                basicPhysRes: function(){return 0.005625},
+                basicMagicRes: function(){return 0.00375},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            chest: {
+                name: function(){return "Mail plastron"},
+                slot: function(){return "chest"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--plastron)"},
+                basicPhysRes: function(){return 0.01125},
+                basicMagicRes: function(){return 0.0075},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
+            },
+            hands: {
+                name: function(){return "Mail gloves"},
+                slot: function(){return "hands"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
+                basicPhysRes: function(){return 0.005625},
+                basicMagicRes: function(){return 0.00375},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            legs: {
+                name: function(){return "Mail pants"},
+                slot: function(){return "legs"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
+                basicPhysRes: function(){return 0.005625},
+                basicMagicRes: function(){return 0.00375},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            boots: {
+                name: function(){return "Mail boots"},
+                slot: function(){return "boots"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
+                basicPhysRes: function(){return 0.005625},
+                basicMagicRes: function(){return 0.00375},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            mainHandWeapon: {
+                name: function(){return "Malleus Maleficarum"},
+                slot: function(){return "mainHandWeapon"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--claw-hammer)"},
+                minDamage: function(){return 300},
+                maxDamage: function(){return 500},
+                basicAttackPower: function(){return 0.075},
+                basicLuck: function(){return 0.0125},
+                range: function(){return 1},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "green"}]
+            },
+            offHandWeapon: {
+                name: function(){return "Salvation Crucifix"},
+                slot: function(){return "offHandWeapon"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--crucifix)"},
+                minDamage: function(){return 0},
+                maxDamage: function(){return 0},
+                basicSpellPower: function(){return 0.075},
+                basicManaReg: function(){return 0.0025},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            leftRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "leftRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
+            },
+            rightRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "rightRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            amulet: {
+                name: function(){return "Amulet"},
+                slot: function(){return "amulet"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            }
+        };
+        case "heretic": return {
+            head: {
+                name: function(){return "Heretic crown"},
+                slot: function(){return "head"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--crowned-skull)"},
+                basicPhysRes: function(){return 0.005625},
+                basicMagicRes: function(){return 0.00375},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            chest: {
+                name: function(){return "Rib armor"},
+                slot: function(){return "chest"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ribcage)"},
+                basicPhysRes: function(){return 0.01125},
+                basicMagicRes: function(){return 0.0075},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            hands: {
+                name: function(){return "Mail gloves"},
+                slot: function(){return "hands"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--forearm)"},
+                basicPhysRes: function(){return 0.005625},
+                basicMagicRes: function(){return 0.00375},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            },
+            legs: {
+                name: function(){return "Mail pants"},
+                slot: function(){return "legs"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--trousers)"},
+                basicPhysRes: function(){return 0.005625},
+                basicMagicRes: function(){return 0.00375},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
+            },
+            boots: {
+                name: function(){return "Mail boots"},
+                slot: function(){return "boots"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--boots)"},
+                basicPhysRes: function(){return 0.005625},
+                basicMagicRes: function(){return 0.00375},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
+            },
+            mainHandWeapon: {
+                name: function(){return "Incubus Dagger"},
+                slot: function(){return "mainHandWeapon"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--bone-knife)"},
+                minDamage: function(){return 240},
+                maxDamage: function(){return 400},
+                basicSpellPower: function(){return 0.075},
+                basicMaxMana: function(){return 400},
+                range: function(){return 1},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
+            },
+            offHandWeapon: {
+                name: function(){return "Succubus Shield"},
+                slot: function(){return "offHandWeapon"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--magic-shield)"},
+                basicMaxEnergy: function(){return 50},
+                basicBlockChance: function(){return 0.01875},
+                minDamage: function(){return 0},
+                maxDamage: function(){return 0},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "red"},{gem: "Void", type: "blue"}]
+            },
+            leftRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "leftRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "green"}]
+            },
+            rightRing: {
+                name: function(){return "Ring"},
+                slot: function(){return "rightRing"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--ring)"},
+                sockets: [{gem: "Void", type: "red"},{gem: "Void", type: "green"},{gem: "Void", type: "blue"}]
+            },
+            amulet: {
+                name: function(){return "Amulet"},
+                slot: function(){return "amulet"},
+                image: function(){return "url(../images/assets/svg/view/sprites.svg#inventory--gem-pendant)"},
+                sockets: [{gem: "Void", type: "green"},{gem: "Void", type: "blue"},{gem: "Void", type: "blue"}]
+            }
         }
     }
 };
 
-//Доступные способности для каждой роли
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 var roleAvailableAbilities = {
     sentinel:   [
         'Strong Arm Of The Law',
@@ -764,7 +760,7 @@ var roleAvailableAbilities = {
     ]
 };
 
-//Функция набирает из имеющихся способностей дополнительные, которые доступны расе
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 var raceAvailableAbilities = function (role, race){
     var totalAbilities = [];
     var abilities = {
@@ -847,14 +843,15 @@ var raceAvailableAbilities = function (role, race){
     return totalAbilities;
 };
 
-//Функция выбирает из имеющихся рассовых способностей только 4 случайных
-var getRandomExtraAbilities = function(extraAbilitiesArray){
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 4 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+var getRandomExtraAbilities = function(extraAbilitiesArray, count){
     var extraAbilitiesIndexes = [];
-    var totalArray=[];
-    for (var i = 0; i < extraAbilitiesArray.length; i++)
+    var totalArray = [];
+    for (var i = 0; i < extraAbilitiesArray.length; i++) {
         extraAbilitiesIndexes.push(i);
+    }
     var indexesArray = randomService.shuffle(extraAbilitiesIndexes);
-    for(i=0;i<4;i++){
+    for(i = 0; i < count; i++){
         totalArray.push(extraAbilitiesArray[indexesArray[i]]);
     }
     return totalArray;
@@ -936,7 +933,7 @@ var startAbilities = {
 };
 
 module.exports = {
-    //Получение параметров персонажа при создании
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     getStartParams: function (gender,race,role) {
         return {
             strMax: genderParams[gender].str+raceParams[race].str+roleParams[role].str,
@@ -948,59 +945,52 @@ module.exports = {
             paramPoint: {left: 70, top: 81}
         };
     },
-    //Стоимости ролей персонажа
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     getRoleCost: function (role) {
         return roleCosts[role];
     },
-    //обмундирование
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     getEquip: function (role) {
-        return roleEquip[role];
+        return roleEquip(role);
     },
-    //способности
-    getBasicAbilities: function (role, race) {
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    getBasicAbilities: function (role, race, extraAbilitiesCount) {
         var roleAbilities = roleAvailableAbilities[role];
-        var raceAbilities = getRandomExtraAbilities(raceAvailableAbilities(role, race));
+        var raceAbilities = getRandomExtraAbilities(raceAvailableAbilities(role, race), extraAbilitiesCount);
         return roleAbilities.concat(raceAbilities);
     },
     getRoleAbilities: function (role) {
         return roleAvailableAbilities[role];
     },
-    //стартовые способности
+    //randomize positions of basic abilities
     getStartAbilities: function (basicAbilities) {
         return randomService.shuffle(basicAbilities).splice(0,7);
     },
+    //get ability state for client
     abilityForClient: function (ability) {
-        return {
-            name: ability.name,
-            role : ability.role(),
-            icon : ability.icon(),
-            variant: ability.variant,
-            targetType : ability.targetType(),
-            range : ability.range(),
-            duration: ability.duration(),
-            energyCost : ability.energyCost(),
-            manaCost : ability.manaCost(),
-            cooldown : ability.cooldown(),
-            needWeapon : ability.needWeapon(),
-            cd : ability.cd
+        var clientAbility = {};
+        for(var key in ability){
+            if(typeof ability[key] == 'function' && key !== 'cast' && key !== 'castSimulation' && key !== 'usageLogic'){
+                clientAbility[key] = ability[key]();
+            }
+            if(typeof ability[key] != 'function') {
+                clientAbility[key] = ability[key];
+            }
         }
+        return clientAbility;
     },
+    //get effect state for client
     effectForClient: function (effect) {
-        return {
-            name: effect.name,
-            role : effect.role(),
-            icon : effect.icon(),
-            variant: effect.variant,
-            duration: effect.duration(),
-            left : effect.left,
-            stacks: effect.stacks,
-            stacked: effect.stacked(),
-            infinite: effect.infinite(),
-            maxStacks: effect.maxStacks(),
-            onlyStat: effect.onlyStat(),
-            magicEffect: effect.magicEffect(),
-            caster: effect.caster
+        var clientEffect = {};
+        for(var key in effect){
+            if(typeof effect[key] == 'function' && key !== 'apply' && key !== 'score'){
+                clientEffect[key] = effect[key]();
+            }
+            if(typeof effect[key] != 'function') {
+                clientEffect[key] = effect[key];
+            }
         }
+        return clientEffect;
     },
     generateRandomRole: function(race) {
         var role;
@@ -1034,15 +1024,42 @@ module.exports = {
         }
         return role;
     },
-    generateAbilitiesArrays: function(role, race) {
-        var self = this;
-        //Набираем базовые скилы для данной роли
-        var availableAbilitiesArr = self.getBasicAbilities(role, race);
-        var abilitiesArr = self.getStartAbilities(availableAbilitiesArr.slice());
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    generateRandomGender: function() {
+        var gender;
+        switch (randomService.randomInt(0,1)) {
+            case 0: gender="male"; break;
+            case 1: gender="female"; break;
+        }
+        return gender;
+    },
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+    generateRandomRace: function() {
+        var race;
+        switch (randomService.randomInt(0,2)) {
+            case 0: race="nephilim"; break;
+            case 1: race="human"; break;
+            case 2: race="cambion"; break;
+        }
+        return race;
+    },
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    getRandomPortrait: function(race, gender) {
+        var portraits=[];
+        for(var i=1;i<=4;i++){
+            portraits.push("./images/assets/img/portraits/"+race+"/"+gender+"/"+race+"_"+gender+"_"+i+".jpg");
+        }
+        return portraits[randomService.randomInt(0,3)];
+    },
+    //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    generateAbilitiesArrays: function(role, race, extraAbilitiesCount) {
+        //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+        var availableAbilitiesArr = this.getBasicAbilities(role, race, extraAbilitiesCount);
+        var abilitiesArr = this.getStartAbilities(availableAbilitiesArr.slice());
 
         var abilitiesObjectsArr = [];
-        for(var i=0;i<abilitiesArr.length;i++){
-            abilitiesObjectsArr.push({name: abilitiesArr[i], variant: 3});
+        for(var i = 0; i < abilitiesArr.length; i++){
+            abilitiesObjectsArr.push({name: abilitiesArr[i], variant: randomService.randomInt(1, 5)});
         }
 
         return [abilitiesObjectsArr, availableAbilitiesArr];

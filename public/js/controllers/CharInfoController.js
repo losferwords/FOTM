@@ -24,7 +24,7 @@
         $scope.changeParams = function() {
             $scope.charChanged=true;
 
-            mainSocket.emit('calcCharByParams', $scope.char._id, $scope.paramPoint, function (char) {
+            mainSocket.emit('calcCharByParams', $scope.char.id, $scope.paramPoint, function (char) {
                 $scope.char = char;
                 $scope.char.getParamTooltip = characterService.getParamTooltip;
             });
@@ -54,7 +54,7 @@
         //Функция принимает изменения персонажа
         $scope.acceptChangesClick = function(){
             mainSocket.emit('setChar', {
-                _id: $scope.char._id,
+                id: $scope.char.id,
                 params: $scope.char.params
             },
             function(char){
@@ -72,7 +72,7 @@
 
         //Функция отменяет изменения персонажа
         $scope.declineChangesClick = function(){
-            mainSocket.emit('calcCharByParams', $scope.char._id, tempParamPoint, function (char) {
+            mainSocket.emit('calcCharByParams', $scope.char.id, tempParamPoint, function (char) {
                 $scope.char = char;
                 $scope.char.getParamTooltip = characterService.getParamTooltip;
                 $scope.charChanged=false;

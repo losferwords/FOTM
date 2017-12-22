@@ -69,7 +69,7 @@
                             return gettextCatalog.getString("Sanctuary")
                         };
                         effects[i].desc = function() {
-                            var str = this.caster;
+                            var str = this.casterName;
                             str+=" ";
                             str+=gettextCatalog.getString(
                                 "takes {{one}}% of damage from this character.",{
@@ -394,7 +394,7 @@
                         effects[i].desc = function() {
                             var str = gettextCatalog.getString(
                                 "Every turn deals {{one}} magical damage.",{
-                                    one: (75*this.variant+(75*this.variant)*((35-this.variant*5)*0.01)*(this.duration()-this.left)).toFixed(0)
+                                    one: (75*this.variant+(75*this.variant)*((35-this.variant*5)*0.01)*(this.duration - this.left)).toFixed(0)
                                 });
                             str+="<br>";
                             str+=gettextCatalog.getString("Immobilized. Can't move.");

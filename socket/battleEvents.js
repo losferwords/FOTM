@@ -1,11 +1,11 @@
-var log = require('lib/log')(module);
 var async = require('async');
 var User = require('models/user').User;
 var Team = require('models/team').Team;
 var Character = require('models/character').Character;
-var socketUtils = require('socket/socketUtils');
 var arenaService = require('services/arenaService');
 var characterService = require('services/characterService');
+var botService = require('services/botService');
+var randomService = require('services/randomService');
 
 module.exports = function (serverIO) {
     var io = serverIO;
@@ -19,318 +19,154 @@ module.exports = function (serverIO) {
             socket.broadcast.to(room).emit('opponentReady');
         });
 
+        socket.on('startBotsBattle', function() {
+            socket.serSt.battleRoom = "battle: bots";
+
+            var availablePositions = [[0,1,2], [0,2,1], [1,0,2], [1,2,0], [2,0,1], [2,1,0]];
+
+            var availableWallPos = [];
+            for(var i = 0; i < 100; i++){
+                if(!(i <= 10 || i % 10 === 0 || i % 10 === 9 || i >= 90 || i === 18 || i === 81)){
+                    availableWallPos.push(i);
+                }
+            }
+
+            var battleData = {
+                bots: true,
+                room: socket.serSt.battleRoom,
+                groundType: Math.floor(Math.random() * 3),
+                wallPositions: randomService.shuffle(availableWallPos).slice(0, 10),
+                turnsSpended: 0 //Number of turns from start of battle
+            };
+
+            var allyPositions = availablePositions[Math.floor(Math.random() * 6)];
+            var enemyPositions = availablePositions[Math.floor(Math.random() * 6)];
+
+            var team1 = botService.generateBotTeam();
+            var team2 = botService.generateBotTeam();
+
+            for(i = 0; i < 3; i++) {
+                var allyPosition = arenaService.getStartPosition(allyPositions[i]);
+                team1.characters[i].position={x: allyPosition.x, y: allyPosition.y};
+                switch (i) {
+                    case 0: team1.characters[i].battleColor = "#2a9fd6"; break;
+                    case 1: team1.characters[i].battleColor = "#0055AF"; break;
+                    case 2: team1.characters[i].battleColor = "#9933cc"; break;
+                }
+            }
+
+            for(i = 0; i < 3; i++) {
+                var startPos = arenaService.getStartPosition(enemyPositions[i]);
+                var enemyPosition = arenaService.convertEnemyPosition(startPos.x, startPos.y);
+                team2.characters[i].position = {x: enemyPosition.x, y:enemyPosition.y};
+                switch (i) {
+                    case 0: team2.characters[i].battleColor = "#2a9fd6"; break;
+                    case 1: team2.characters[i].battleColor = "#0055AF"; break;
+                    case 2: team2.characters[i].battleColor = "#9933cc"; break;
+                }
+            }
+
+            team1.lead = true;
+            team2.lead = false;
+
+            battleData['team_' + team1.id] = team1;
+            battleData['team_' + team2.id] = team2;
+
+            battleData.team1Id = team1.id;
+            battleData.team2Id = team2.id;
+
+            battleData.queue = arenaService.calcQueue(team1.characters, team2.characters);
+
+            console.log("Battle of bots begins");
+            socket.emit('startBattle', battleData);
+            socket.join(socket.serSt.battleRoom);
+
+            io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData = battleData;
+        });
+
         socket.on('findMovePoints', function(myTeamId, enemyTeamId, preparedAbility, cb) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
-            if(!activeChar.immobilized) {
-                var range = 0;
-                if(preparedAbility){
-                    var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
-                    if(ability){
-                        range = ability.range();
-                    }
-                }
-                else if(activeChar.canMove()){
-                    range = 1;
-                }
-
-                if(range>0)
-                {
-                    cb(arenaService.findMoves(activeChar, myTeam.characters, enemyTeam.characters, battleData.wallPositions, range));
-                    return;
-                }
-            }
-            cb([]);
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
+            arenaService.findMovePoints(myTeam, enemyTeam, activeChar, preparedAbility, battleData.wallPositions, cb);
         });
 
         socket.on('findEnemies', function(myTeamId, enemyTeamId, preparedAbility, cb) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
-            if(preparedAbility){
-                var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
-                cb(arenaService.findEnemies(activeChar, enemyTeam.characters, ability.range(), battleData.wallPositions));
-            }
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
+            arenaService.findEnemiesForAbility(myTeam, enemyTeam, activeChar, preparedAbility, battleData.wallPositions, cb);
         });
 
         socket.on('findAllies', function(myTeamId, enemyTeamId, preparedAbility, cb) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
-            if(preparedAbility){
-                var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
-                cb(arenaService.findAllies(activeChar, myTeam.characters, ability.range(), battleData.wallPositions));
-            }
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
+            arenaService.findAlliesForAbility(myTeam, enemyTeam, activeChar, preparedAbility, battleData.wallPositions, cb);
         });
 
         socket.on('findCharacters', function(myTeamId, enemyTeamId, preparedAbility, cb) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
-            if(preparedAbility){
-                var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
-                cb(arenaService.findAllies(activeChar, myTeam.characters, ability.range(), battleData.wallPositions).concat(arenaService.findEnemies(activeChar, enemyTeam.characters, ability.range(), battleData.wallPositions)));
-            }
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
+            arenaService.findCharactersForAbility(myTeam, enemyTeam, activeChar, preparedAbility, battleData.wallPositions, cb);
         });
 
         socket.on('turnEnded', function(myTeamId, enemyTeamId) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
-            battleData.turnsSpended++;
-            activeChar.initiativePoints = activeChar.initiativePoints*0.2;
-            for(var i=0;i<myTeam.characters.length;i++){
-                myTeam.characters[i].refreshChar(myTeam.characters, enemyTeam.characters, battleData.wallPositions);
-            }//Обновляем своих персонажей
-            for(i=0;i<enemyTeam.characters.length;i++){
-                enemyTeam.characters[i].refreshChar(enemyTeam.characters, myTeam.characters, battleData.wallPositions);
-            }//Обновляем персонажей противника
-
-            battleData.queue = arenaService.calcQueue(myTeam.characters, enemyTeam.characters);
-            io.sockets.in(socket.serSt.battleRoom).emit('turnEndedResult', battleData);
-            cleanBuffers(myTeam, enemyTeam);
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
+            arenaService.turnEnded(myTeam, enemyTeam, activeChar, battleData.wallPositions, function() {
+                battleData.turnsSpended++;
+                battleData.queue = arenaService.calcQueue(myTeam.characters, enemyTeam.characters);
+                io.sockets.in(socket.serSt.battleRoom).emit('turnEndedResult', battleData);
+            });
         });
 
-        //Функция проверяет, закончен ли бой
+        //Is battle over?
         socket.on('checkForWin', function(myTeamId, enemyTeamId, enemyLeave, cb) {
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
 
-            var myDeaths=0;
-            var enemyDeaths=0;
-            var ratingChange=0;
-            var gainedSouls ={red: 0, green:0, blue: 0};
-
-            for(var i=0;i<myTeam.characters.length;i++){
-                if(myTeam.characters[i].isDead) {
-                    myDeaths++;
+            arenaService.checkForWin(myTeam, enemyTeam, battleData, enemyLeave, function(isEnded, result, rating, ratingChange, gainedSouls){
+                cb(isEnded, result, rating, ratingChange, gainedSouls);
+                if(enemyLeave) {
+                    socket.leave(socket.serSt.battleRoom);
                 }
-            }
-
-            for(i=0;i<enemyTeam.characters.length;i++){
-                if(enemyTeam.characters[i].isDead || enemyLeave) {
-                    enemyDeaths++;
-                    //Добавляем душ за каждого убитого
-                    switch(enemyTeam.characters[i].role){
-                        case "sentinel" : gainedSouls.red+=4;break;
-                        case "slayer" : gainedSouls.red+=4;break;
-                        case "redeemer" : gainedSouls.green+=4;break;
-                        case "ripper" : gainedSouls.green+=4;break;
-                        case "prophet" : gainedSouls.blue+=4;break;
-                        case "malefic" : gainedSouls.blue+=4;break;
-                        case "cleric" : switch(Math.floor(Math.random() * 3)) {
-                            case 0 : gainedSouls.red+=4;break;
-                            case 1 : gainedSouls.green+=4;break;
-                            case 2 : gainedSouls.blue+=4;break;
-                        }
-                            break;
-                        case "heretic" : switch(Math.floor(Math.random() * 3)) {
-                            case 0 : gainedSouls.red+=4;break;
-                            case 1 : gainedSouls.green+=4;break;
-                            case 2 : gainedSouls.blue+=4;break;
-                        }
-                            break;
-                    }
-                }
-            }
-
-            if(myDeaths==3){
-                makeLose();
-            }
-            else if(enemyDeaths==3){
-                makeWin();
-            }
-            //Вышло время
-            else if(battleData.turnsSpended>=100){
-                if(myDeaths>enemyDeaths){
-                    makeLose();
-                }
-                else if(myDeaths<enemyDeaths){
-                    makeWin();
-                }
-                else {
-                    makeDraw();
-                }
-            }
-            else {
-                cb(false);
-            }
-
-            function makeWin(){
-                if(myTeam.rating>enemyTeam.rating){
-                    ratingChange = myTeam.rating-enemyTeam.rating;
-                    if(ratingChange>25) ratingChange=25;
-                }
-                else if (myTeam.rating<enemyTeam.rating){
-                    ratingChange = (enemyTeam.rating-myTeam.rating)*2;
-                    if(ratingChange>25) ratingChange=25;
-                }
-                else {
-                    ratingChange = 10;
-                }
-
-                myTeam.rating+=ratingChange;
-
-                gainedSouls.red+=4;
-                gainedSouls.green+=4;
-                gainedSouls.blue+=4;
-
-                myTeam.souls.red+=gainedSouls.red;
-                myTeam.souls.green+=gainedSouls.green;
-                myTeam.souls.blue+=gainedSouls.blue;
-
-                Team.setById(myTeam._id, {
-                    rating: myTeam.rating,
-                    wins: myTeam.wins+1,
-                    souls: myTeam.souls
-                }, function(err, team){
-                    if (err) {
-                        socket.emit("customError", err);
-                        return;
-                    }
-                    cb(true, 'win', myTeam.rating, ratingChange, gainedSouls);
-                });
-            }
-
-            function makeLose() {
-                if(myTeam.rating>enemyTeam.rating){
-                    ratingChange = (myTeam.rating-enemyTeam.rating)*2;
-                    if(ratingChange>25) ratingChange=25;
-                }
-                else if (myTeam.rating<enemyTeam.rating){
-                    ratingChange = enemyTeam.rating-myTeam.rating;
-                    if(ratingChange>25) ratingChange=25;
-                }
-                else {
-                    ratingChange = 10;
-                }
-
-                if(myTeam.rating-ratingChange<1000) {
-                    ratingChange=myTeam.rating-1000;
-                    myTeam.rating=1000;
-                }
-                else {
-                    myTeam.rating-=ratingChange;
-                }
-
-                //Утешительный приз
-                gainedSouls.red+=2;
-                gainedSouls.green+=2;
-                gainedSouls.blue+=2;
-
-                myTeam.souls.red+=gainedSouls.red;
-                myTeam.souls.green+=gainedSouls.green;
-                myTeam.souls.blue+=gainedSouls.blue;
-
-                Team.setById(myTeam._id, {
-                    rating: myTeam.rating,
-                    wins: myTeam.loses+1,
-                    souls: myTeam.souls
-                }, function(err, team){
-                    if (err) {
-                        socket.emit("customError", err);
-                        return;
-                    }
-                    //Устанавливаем флаг проигрыша для персонажей
-                    async.each(myTeam.characters, function(char, callback) {
-                        Character.setById(char._id, {lose: true}, function(err, char){
-                            if (err) {
-                                socket.emit("customError", err);
-                                return;
-                            }
-                            callback(null);
-                        });
-                    }, function(err){
-                        if (err) {
-                            socket.emit("customError", err);
-                            return;
-                        }
-                        cb(true, 'lose', myTeam.rating, ratingChange, gainedSouls);
-                    });
-                });
-            }
-
-            function makeDraw() {
-                gainedSouls.red+=1;
-                gainedSouls.green+=1;
-                gainedSouls.blue+=1;
-
-                myTeam.souls.red+=gainedSouls.red;
-                myTeam.souls.green+=gainedSouls.green;
-                myTeam.souls.blue+=gainedSouls.blue;
-
-                Team.setById(myTeam._id, {
-                    souls: myTeam.souls
-                }, function(err, team){
-                    if (err) {
-                        socket.emit("customError", err);
-                        return;
-                    }
-                    cb(true, 'draw', myTeam.rating, 0, gainedSouls);
-                });
-            }
-
-            if(enemyLeave) {
-                socket.leave(socket.serSt.battleRoom);
-            }
+            });           
         });
 
-        socket.on('moveCharTo', function(tile, myTeamId, enemyTeamId, preparedAbility, cb){
+        socket.on('moveCharTo', function(tile, myTeamId, enemyTeamId, preparedAbility){
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
             var myTeam = battleData['team_'+myTeamId];
             var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
-            if(activeChar.canMove()) {
-                if(arenaService.checkTile({x: tile.x, y: tile.y}, activeChar, myTeam.characters, enemyTeam.characters, battleData.wallPositions, false)) {
-                    cb(null, true);
-                }
-                else if(preparedAbility){
-                    var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
-                    if(ability && checkAbilityForUse(ability, activeChar)){
-                        ability.cast(activeChar, null, myTeam.characters, enemyTeam.characters, battleData.wallPositions);
-                        activeChar.createAbilitiesState();
-                        activeChar.position = {x: tile.x, y: tile.y};
-                        io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
-                        cb();
-
-                    }
-                }
-                else if(Math.abs(activeChar.position.x-tile.x)<2 && Math.abs(activeChar.position.y-tile.y)<2){
-                    activeChar.soundBuffer.push('move');
-                    activeChar.position = {x: tile.x, y: tile.y};
-                    activeChar.spendEnergy(activeChar.moveCost);
-                    io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
-                    cb();
-                }
-            }
-            cleanBuffers(myTeam, enemyTeam);
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
+            arenaService.moveCharTo(tile, myTeam, enemyTeam, activeChar, preparedAbility, battleData.wallPositions, 
+            function(){
+                socket.emit("moveCharToResult", null, true);                
+            },
+            function() {
+                io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
+                socket.emit("moveCharToResult");
+            })
         });
 
         socket.on('castAbility', function(targetId, myTeamId, enemyTeamId, preparedAbility, cb){
             var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
-            var myTeam = battleData['team_'+myTeamId];
-            var enemyTeam = battleData['team_'+enemyTeamId];
-            var activeChar = arenaService.findCharInQueue(battleData.queue[0]._id, myTeam.characters, enemyTeam.characters);
+            var myTeam = battleData['team_' + myTeamId];
+            var enemyTeam = battleData['team_' + enemyTeamId];
+            var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
             var targetChar = arenaService.findCharInQueue(targetId, myTeam.characters, enemyTeam.characters);
-            if(preparedAbility){
-                var ability = arenaService.getAbilityForCharByName(activeChar, preparedAbility);
-                if(ability && checkAbilityForUse(ability, activeChar)){
-                    ability.cast(activeChar, targetChar, myTeam.characters, enemyTeam.characters, battleData.wallPositions);
-                    activeChar.createAbilitiesState();
-                    arenaService.createEffectsStates(myTeam.characters, enemyTeam.characters);
-                    arenaService.calcCharacters(myTeam.characters, enemyTeam.characters);
-                    io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
-                    cb();
-                }
-            }
-            cleanBuffers(myTeam, enemyTeam);
+            arenaService.castAbility(targetChar, myTeam, enemyTeam, activeChar, preparedAbility, battleData.wallPositions, function(){
+                io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
+                cb();
+            })
         });
 
         socket.on('teamRetreat', function(myTeamId){
@@ -342,62 +178,70 @@ module.exports = function (serverIO) {
             io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
         });
 
-        function cleanBuffers(myTeam, enemyTeam){
-            for(var i=0;i<myTeam.characters.length;i++){
-                if (myTeam.characters[i].logBuffer.length>0) {
-                    myTeam.characters[i].logBuffer = [];
-                }
-                if (myTeam.characters[i].soundBuffer.length>0) {
-                    myTeam.characters[i].soundBuffer = [];
-                }
-                if (myTeam.characters[i].battleTextBuffer.length>0) {
-                    myTeam.characters[i].battleTextBuffer = [];
-                }
-            }
-
-            for(i=0;i<enemyTeam.characters.length;i++){
-                if (enemyTeam.characters[i].logBuffer.length>0) {
-                    enemyTeam.characters[i].logBuffer = [];
-                }
-                if (enemyTeam.characters[i].soundBuffer.length>0) {
-                    enemyTeam.characters[i].soundBuffer = [];
-                }
-                if (enemyTeam.characters[i].battleTextBuffer.length>0) {
-                    enemyTeam.characters[i].battleTextBuffer = [];
-                }
-            }
-        }
-
-        //Функция проверяет, можно ли использовать способность
-        function checkAbilityForUse(ability, char) {
-            if(ability.name == "Void") return false;
-            if(ability.name == "Dyers Eve" && (char.curHealth/char.maxHealth)>0.5) return false;
-            if(ability.targetType() == "move" && char.immobilized) return false;
-            if(ability.cd == 0){ //если она не на кулдауне
-                if(char.curEnergy - ability.energyCost()>0){ //на неё есть энергия
-                    if(char.curMana - ability.manaCost()>0){ //и мана
-                        if(ability.needWeapon()){ //Если для абилки нужно оружие
-                            if(!char.disarmed){ //и персонаж не в дизарме
-                                return true;
-                            }
-                        }
-                        else { //Если это магия
-                            if(!char.silenced){ //и персонаж не в молчанке
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-
         socket.on('enemyTeamLoaded', function(room) {
             socket.broadcast.to(room).emit('enemyTeamLoadedResult');
         });
 
         socket.on('combatLogUpdate', function(room, message) {
             socket.broadcast.to(room).emit('combatLogUpdateSend', message);
+        });
+
+        socket.on('botAction', function(myTeamId, enemyTeamId) {
+            setTimeout(function(){                
+                var battleData = io.nsps["/"].adapter.rooms[socket.serSt.battleRoom].battleData;
+                var myTeam = battleData['team_' + myTeamId];
+                var myTeamForSimulation = botService.lightWeightTeamBeforeSimulation(arenaService.cloneTeam(myTeam));
+                var enemyTeam =  battleData['team_' + enemyTeamId];
+                var enemyTeamForSimulation = botService.lightWeightTeamBeforeSimulation(arenaService.cloneTeam(enemyTeam));
+                var activeChar = arenaService.findCharInQueue(battleData.queue[0].id, myTeam.characters, enemyTeam.characters);
+
+                if(botService.checkForRetreat(myTeam, enemyTeam)) {
+                    for(var i = 0; i < myTeam.characters.length; i++){
+                        myTeam.characters[i].isDead = true;
+                    }
+                    io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
+                    return;
+                }
+
+                var chooseActionTimeStart = new Date();
+                botService.buildActionBranchAsync(myTeamForSimulation, enemyTeamForSimulation, activeChar.id, battleData.wallPositions, function(actions, actionsCounter) {
+                    var action = actions[0];
+                    var chooseActionTimeEnd = new Date();
+    
+                    //botService.buildDubugTree(actions);
+                    var thinkTime = chooseActionTimeEnd.getTime() - chooseActionTimeStart.getTime();
+                    //if(thinkTime > 3000){
+                        console.log("Think time: " + thinkTime + "ms, actions count: " + actionsCounter + ", speed: " + Math.round(actionsCounter / thinkTime * 1000) + " actions per second");
+                    //}
+    
+                    switch(action.type){
+                        case "move":
+                            arenaService.moveCharTo(action.point, myTeam, enemyTeam, activeChar, action.ability ? action.ability : false, battleData.wallPositions, 
+                            function(){
+                                socket.emit("moveCharToResult", null, true);
+                            },
+                            function() {
+                                io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
+                                socket.emit("moveCharToResult");
+                            });
+                            break;
+                        case "cast":
+                            var targetChar = arenaService.findCharInQueue(action.targetId, myTeam.characters, enemyTeam.characters);
+                            arenaService.castAbility(targetChar, myTeam, enemyTeam, activeChar, action.ability, battleData.wallPositions, 
+                            function(){
+                                io.sockets.in(socket.serSt.battleRoom).emit('updateTeams', battleData);
+                            });
+                            break;
+                        case "endTurn":
+                            arenaService.turnEnded(myTeam, enemyTeam, activeChar, battleData.wallPositions, function() {
+                                battleData.turnsSpended++;
+                                battleData.queue = arenaService.calcQueue(myTeam.characters, enemyTeam.characters);
+                                io.sockets.in(socket.serSt.battleRoom).emit('turnEndedResult', battleData);
+                            });
+                            break;
+                    }
+                });                            
+            }, 2000);
         });
     });
 };
