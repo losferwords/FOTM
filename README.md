@@ -26,4 +26,5 @@ CHANGELOG
 - version 0.6.4 - fix small bugs after open test
 - version 0.6.5 - Add chat and draw
 - version 0.6.6 - Chat and sound improvements
+- version 0.7.0 - Add ability to start training with bots
 
