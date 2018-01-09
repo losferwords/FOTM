@@ -211,14 +211,14 @@ module.exports = function (serverIO) {
                 }
 
                 var chooseActionTimeStart = new Date();
-                botService.buildActionBranchAsync(myTeamForSimulation, enemyTeamForSimulation, activeChar.id, battleData.wallPositions, function(actions, actionsCounter) {
+                botService.buildActionBranchAsync(myTeamForSimulation, enemyTeamForSimulation, activeChar.id, battleData.wallPositions, chooseActionTimeStart, function(actions, actionsCounter) {
                     var action = actions[0];
                     var chooseActionTimeEnd = new Date();
     
                     //botService.buildDubugTree(actions);
                     var thinkTime = chooseActionTimeEnd.getTime() - chooseActionTimeStart.getTime();
-                    if(thinkTime > 3000){
-                        console.log("Think time: " + thinkTime + "ms, actions count: " + actionsCounter + ", speed: " + Math.round(actionsCounter / thinkTime * 1000) + " actions per second");
+                    if(thinkTime > botService.thinkTimeLimit){
+                        console.log("Think time: " + thinkTime + "ms, actions count: " + actionsCounter + ", speed: " + Math.round(actionsCounter / (thinkTime + 1) * 1000) + " actions per second");
                     }
     
                     switch(action.type){

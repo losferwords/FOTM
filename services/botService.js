@@ -9,10 +9,8 @@ var async = require('async');
 var fs = require('fs');
 var sizeof = require('object-sizeof');
 
-var actionsCounter = 0;
-var actionsCounterLimit = 15000;
-
 module.exports = {
+    thinkTimeLimit: 5000,
     generateBotTeam: function(){
         var newTeam = {
             id: chance.integer({min: 1000000, max: 9999999}),
@@ -57,12 +55,13 @@ module.exports = {
             }
         }
     },
-    buildActionBranchSync: function(myTeam, enemyTeam, activeCharId, wallPositions){
-        var actionList = this.createActionList(myTeam, enemyTeam, activeCharId, wallPositions);
+    buildActionBranchSync: function(myTeam, enemyTeam, activeCharId, wallPositions, thinkTimeStart, actionsCounter){
+        var actionList = this.createActionList(myTeam, enemyTeam, activeCharId, wallPositions, thinkTimeStart);
 
         for(var z = 0; z < actionList.length; z++){
             if(actionList[z].type != "endTurn") {
-                actionList[z].branch = this.buildActionBranchSync(actionList[z].myTeamState, actionList[z].enemyTeamState, actionList[z].activeCharId, wallPositions);
+                actionList[z].branch = this.buildActionBranchSync(actionList[z].myTeamState, actionList[z].enemyTeamState, actionList[z].activeCharId, wallPositions, thinkTimeStart, actionsCounter);
+                actionsCounter.value += actionList[z].branch.length;
                 if(actionList[z].branch && actionList[z].branch[0]) {
                     actionList[z].score = actionList[z].selfScore + actionList[z].branch[0].score;
                     delete actionList[z].branch;
@@ -88,15 +87,17 @@ module.exports = {
 
         return actionList;                     
     }, 
-    buildActionBranchAsync: function(myTeam, enemyTeam, activeCharId, wallPositions, cb){
-        var self = this;
-        actionsCounter = 0;
+    buildActionBranchAsync: function(myTeam, enemyTeam, activeCharId, wallPositions, thinkTimeStart, cb){
+        var self = this;        
         var actionList = this.createActionList(myTeam, enemyTeam, activeCharId, wallPositions);
+        var actionsCounter = {
+            value: actionList.length
+        };
 
         async.eachOf(actionList, function(actionInList, index, cb){
             process.nextTick(function() {
                 if(actionInList.type != "endTurn" ) {
-                    actionInList.branch = self.buildActionBranchSync(actionInList.myTeamState, actionInList.enemyTeamState, actionInList.activeCharId, wallPositions);
+                    actionInList.branch = self.buildActionBranchSync(actionInList.myTeamState, actionInList.enemyTeamState, actionInList.activeCharId, wallPositions, thinkTimeStart, actionsCounter);
                     if(actionInList.branch && actionInList.branch[0]) {
                         actionInList.score = actionInList.selfScore + actionInList.branch[0].score;
                         delete actionInList.branch;
@@ -124,18 +125,16 @@ module.exports = {
                     return -1;
                 }
             });     
-            cb(actionList, actionsCounter); 
-            actionsCounter = 0;
+            cb(actionList, actionsCounter.value);
         })                            
     },    
-    createActionList: function(myTeam, enemyTeam, activeCharId, wallPositions) {    
+    createActionList: function(myTeam, enemyTeam, activeCharId, wallPositions, thinkTimeStart) {    
         var activeChar = arenaService.findCharInMyTeam(activeCharId, myTeam.characters);  
         var score = 0;        
         var actionList = [];
         var bestMovePoints = [];
 
-        if(actionsCounter > actionsCounterLimit) {
-            actionsCounter += 1; 
+        if(+(new Date()) - thinkTimeStart > this.thinkTimeLimit) {
             return [{
                 type: "endTurn",
                 selfScore: this.situationCost(activeChar, myTeam, enemyTeam, wallPositions)
@@ -294,7 +293,7 @@ module.exports = {
             });
         }
 
-        if(actionsCounter > actionsCounterLimit) {
+        if(+(new Date()) - thinkTimeStart > this.thinkTimeLimit) {
             actionList = [];
         }
 
@@ -302,8 +301,6 @@ module.exports = {
             type: "endTurn",
             selfScore: actionList.length == 0 ? this.situationCost(activeChar, myTeam, enemyTeam, wallPositions) : 0
         });
-
-        actionsCounter += actionList.length; 
 
         return actionList;
     },

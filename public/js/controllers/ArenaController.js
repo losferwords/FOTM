@@ -572,7 +572,7 @@
                         log("The battle ends after "+(50-$scope.turnsSpended)+" turns.");
                     }
 
-                    if($scope.trainingBattle && $scope.activeChar.isBot) {
+                    if($scope.botBattle || ($scope.trainingBattle && $scope.activeChar.isBot)) {
                         chooseAction();
                     }
                 }
