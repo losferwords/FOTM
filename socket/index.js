@@ -13,7 +13,7 @@ module.exports = function (server) {
 
     var io = require('socket.io').listen(server,
         {
-            pingInterval: 90000,
+            pingInterval: 30000,
             pingTimeout: 30000
         });
 
