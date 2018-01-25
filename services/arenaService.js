@@ -439,9 +439,6 @@ module.exports = {
     },
     makeLoseTraining: function(myTeam, gainedSouls, cb){
         var cb = cb;
-        gainedSouls.red += 1;
-        gainedSouls.green += 1;
-        gainedSouls.blue += 1;
 
         myTeam.souls.red += gainedSouls.red;
         myTeam.souls.green += gainedSouls.green;

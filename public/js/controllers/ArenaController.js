@@ -126,9 +126,16 @@
 
         //Функция перемещает персонажа на указанную клетку
         $scope.moveToTile = function(tile) {
+            var preparedAbilityName;
+            if($scope.preparedAbility && $scope.preparedAbility.targetType == "move") {
+                preparedAbilityName = $scope.preparedAbility.name;
+            }
+            else {
+                $scope.preparedAbility = undefined;
+            }
             if(tile.move){
                 //ПЕРЕВОРОТ ДЛЯ НЕ LEAD
-                mainSocket.emit("moveCharTo", $scope.myTeam.lead ? {x: tile.x, y: tile.y} : {x: tile.y, y: tile.x}, $scope.myTeam.id, $scope.enemyTeam.id, $scope.preparedAbility ? $scope.preparedAbility.name : null);
+                mainSocket.emit("moveCharTo", $scope.myTeam.lead ? {x: tile.x, y: tile.y} : {x: tile.y, y: tile.x}, $scope.myTeam.id, $scope.enemyTeam.id, preparedAbilityName ? preparedAbilityName : null);
             }
         };
 
@@ -144,8 +151,8 @@
                         mapUpdate();
                         return false;
                     }
-                    //Сбросим передвижение, если была выбрана абилка Speed Of Light
-                    if($scope.preparedAbility.name == "Speed Of Light") {
+                    //Сбросим передвижение, если была выбрана абилка передвижения
+                    if($scope.preparedAbility.targetType == "move") {
                         mapUpdate();
                     }
                 }

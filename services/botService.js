@@ -321,7 +321,7 @@ module.exports = {
     },
     situationCost: function(activeChar, myTeam, enemyTeam, wallPositions){
         var score = 0;
-        var effectScore = 0;
+        var effectScores = 0;
 
         //active
         score += activeChar.curHealth / activeChar.maxHealth * 110;

@@ -200,14 +200,14 @@ var Ability = function(name){
             cast : function (caster, target, myTeam, enemyTeam, walls) {
                 caster.spendEnergy(this.energyCost());
                 caster.spendMana(this.manaCost());
-                this.cd=this.cooldown();
+                this.cd = this.cooldown();
                 if(caster.checkHit()){
                     var physDamage = randomService.randomInt(caster.minDamage*(0.8+this.variant*0.3), caster.maxDamage*(0.8+this.variant*0.3));
                     var critical = caster.checkCrit();
                     if(critical){
-                        physDamage=caster.applyCrit(physDamage);
+                        physDamage = caster.applyCrit(physDamage);
                     }
-                    physDamage=target.applyResistance(physDamage, false);
+                    physDamage = target.applyResistance(physDamage, false);
 
                     caster.soundBuffer.push(this.name);
                     if(target.takeDamage(physDamage, caster, {name: this.name, icon: this.icon(), role: this.role()}, true, true, critical, myTeam, enemyTeam)){
