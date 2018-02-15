@@ -243,10 +243,10 @@ Character.prototype.calcChar = function(isSameEquip) {
         }
     }    
 
-    this.basicHealth = 10000;
+    this.basicHealth = 5000;
     this.basicHitChance = 0.8;
     this.basicEnergy = 1000;
-    this.basicMana = 9000;
+    this.basicMana = 4000;
 
     //Drop modifiers to 0 in case of negative values
     if(this.attackPowerMod < 0) this.attackPowerMod = 0;

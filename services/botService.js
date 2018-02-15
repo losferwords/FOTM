@@ -225,7 +225,7 @@ module.exports = {
                             var weights = arenaService.calculatePositionWeight(abilityMovePoints[i], activeChar, myTeam.characters, enemyTeam.characters, arenaService.getOptimalRange(activeChar), wallPositions);
                             bestPositions.push({
                                 point: abilityMovePoints[i],
-                                weightScore: weights[0] * 6 + weights[1] * 4
+                                weightScore: weights[0] * 250 + weights[1] * 125
                             })
                         }
 
@@ -265,7 +265,7 @@ module.exports = {
             var weights = arenaService.calculatePositionWeight(movePoints[i], activeChar, myTeam.characters, enemyTeam.characters, arenaService.getOptimalRange(activeChar), wallPositions);
             bestMovePoints.push({
                 point: movePoints[i],
-                weightScore: weights[0] * 6 + weights[1] * 4
+                weightScore: weights[0] * 250 + weights[1] * 125
             })
         }
 
@@ -299,7 +299,7 @@ module.exports = {
 
         actionList.push({
             type: "endTurn",
-            selfScore: actionList.length == 0 ? this.situationCost(activeChar, myTeam, enemyTeam, wallPositions) : 0
+            selfScore: this.situationCost(activeChar, myTeam, enemyTeam, wallPositions)
         });
 
         return actionList;
@@ -327,8 +327,8 @@ module.exports = {
         score += activeChar.curHealth / activeChar.maxHealth * 110;
         score += activeChar.curMana / activeChar.maxMana * 55;
         var positionWeights = arenaService.calculatePositionWeight(activeChar.position, activeChar, myTeam.characters, enemyTeam.characters, arenaService.getOptimalRange(activeChar), wallPositions);
-        score += positionWeights[0] * 250 + Math.random();
-        score += positionWeights[1] * 125 + Math.random();
+        score += positionWeights[0] * 250 + Math.random() * 50;
+        score += positionWeights[1] * 125 + Math.random() * 50;
 
         for(var j = 0; j < activeChar.buffs.length; j++){
             if(activeChar.buffs[j].score) {
