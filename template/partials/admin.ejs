@@ -45,7 +45,7 @@
                                     <div class="ability-slot-container btn-group" ng-if="char.charName!==char.id">
                                         <div class="ability-slot btn icon"
                                              ng-repeat="ability in char.abilities track by $index"
-                                             ng-style="{'background-image': ability.icon, 'background-color' : getAbilityColor(ability)}"
+                                             ng-style="{'background-image': ability.icon, 'background-color' : getAbilityColor(ability.role)}"
                                              ng-disabled = "ability.name==='Void'"
                                              uib-tooltip-html="getAbilityTooltip(ability)"
                                              tooltip-placement="top"
