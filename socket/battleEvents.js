@@ -248,7 +248,7 @@ module.exports = function (serverIO) {
                             break;
                     }
                 });                            
-            }, 2000);
+            }, 1000);
         });
     });
 };

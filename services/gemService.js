@@ -36,8 +36,8 @@ module.exports = {
                         newGem.name="Soul Of Power";
                         break;
                     case 2:
-                        newGem.maxHealth=randomService.randomInt(250, 500);
-                        newGem.quality=newGem.maxHealth/500;
+                        newGem.maxHealth=randomService.randomInt(150, 300);
+                        newGem.quality=newGem.maxHealth/300;
                         newGem.name="Soul Of Vitality";
                         break;
                     case 3:
@@ -108,8 +108,8 @@ module.exports = {
                         newGem.name="Soul Of Magic";
                         break;
                     case 2:
-                        newGem.maxMana=randomService.randomInt(200, 400);
-                        newGem.quality=newGem.maxMana/400;
+                        newGem.maxMana=randomService.randomInt(150, 300);
+                        newGem.quality=newGem.maxMana/300;
                         newGem.name="Soul Of Wisdom";
                         break;
                     case 3:

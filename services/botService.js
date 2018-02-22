@@ -10,7 +10,7 @@ var fs = require('fs');
 var sizeof = require('object-sizeof');
 
 module.exports = {
-    thinkTimeLimit: 5000,
+    thinkTimeLimit: 3000,
     generateBotTeam: function(){
         var newTeam = {
             id: chance.integer({min: 1000000, max: 9999999}),
@@ -43,7 +43,7 @@ module.exports = {
         char.abilities = abilitiesArrays[0];
         char.params = characterService.getStartParams(char.gender, char.race, char.role);
         char.equip = characterService.getEquip(char.role);
-        this.generateGemsForEquip(char);
+        //this.generateGemsForEquip(char);
         return CharacterFactory(char, true);
     },
     generateGemsForEquip: function(char){

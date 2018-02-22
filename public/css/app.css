@@ -668,8 +668,8 @@ form input {
   border: 3px solid #000;
   background-size: 100% 100%;
 
-  -webkit-transition: top 0.5s ease-in, left 0.5s ease-in;
-  transition: top 0.5s ease-in, 0.5s ease-in;
+  -webkit-transition: top 0.2s ease-in, left 0.2s ease-in;
+  transition: top 0.2s ease-in, 0.2s ease-in;
 }
 
 .overlay {

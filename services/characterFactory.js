@@ -270,7 +270,7 @@ Character.prototype.calcChar = function(isSameEquip) {
     this.attackPowerFromStr = this.str * 0.002;
     this.attackPower = (this.attackPowerFromStr + this.attackPowerFromEq) * this.attackPowerMod;
 
-    this.maxHealthFromStr = this.str * 30 + this.basicHealth;    
+    this.maxHealthFromStr = this.str * 20 + this.basicHealth;    
     this.maxHealth = Math.floor(this.maxHealthFromStr + this.maxHealthFromEq);
 
     this.healthRegFromStr = this.str * 0.00012;    
@@ -313,7 +313,7 @@ Character.prototype.calcChar = function(isSameEquip) {
     this.spellPowerFromInt = this.int * 0.003;    
     this.spellPower = (this.spellPowerFromInt + this.spellPowerFromEq) * this.spellPowerMod;
 
-    this.maxManaFromInt = this.int * 24 + this.basicMana;    
+    this.maxManaFromInt = this.int * 16 + this.basicMana;    
     this.maxMana = Math.floor(this.maxManaFromInt + this.maxManaFromEq);
 
     this.manaRegFromInt = this.int * 0.00015;    
