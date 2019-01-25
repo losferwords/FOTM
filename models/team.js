@@ -55,7 +55,7 @@ var schema = new Schema({
         type: Date,
         default: Date.now
     }
-});
+}, { usePushEach: true });
 
 schema.virtual('id').get(function() {
     return this._id;

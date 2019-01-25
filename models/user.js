@@ -36,7 +36,7 @@ var schema = new Schema({
     lastVisit: {
         type: Date
     }
-});
+}, { usePushEach: true });
 
 //GET---------------------------------------------------------------------
 
