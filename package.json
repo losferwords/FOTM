@@ -16,7 +16,7 @@
     "connect-mongo": "0.8.2",
     "cookie": "0.2.4",
     "cookie-parser": "1.4.3",
-    "debug": "2.2.0",
+    "debug": "4.2.0",
     "ejs": "2.5.2",
     "ejs-mate": "2.3.0",
     "errorhandler": "1.4.3",
